@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMaster - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .login-container {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+        .form-container {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .input-field:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl flex rounded-2xl overflow-hidden shadow-2xl">
+        <div class="login-container hidden md:flex md:w-1/2 p-8 flex-col justify-between text-white relative">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">CodeMaster</h1>
+                <p class="opacity-80">Your gateway to knowledge</p>
+            </div>
+            <div class="flex-grow flex items-center justify-center">
+                <img src="c22418cb-bb20-47d2-8715-050315f1d16b.png" alt="Login Illustration" class="w-64 h-64 object-contain">
+            </div>
+            <div>
+                <p class="text-sm opacity-70">© 2025 CodeMaster. All rights reserved.</p>
+            </div>
+        </div>
+        
+        <div class="w-full md:w-1/2 bg-white p-8 form-container">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Welcome Back!</h2>
+                <p class="text-gray-600">Please sign in to continue learning</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" placeholder="your@email.com" required>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">Forgot Password?</a>
+                    </div>
+                    <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium focus:outline-none">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center">
+                <p class="text-gray-600">Don't have an account? <a href="SignUpPage.html" class="text-indigo-600 font-medium hover:text-indigo-800">Sign up</a></p>
+            </div>
+
+            <div id="errorMessage" class="hidden mt-4 p-3 bg-red-100 border border-red-200 text-red-700 text-sm rounded-lg">
+                <p>An error occurred.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessageDiv = document.getElementById('errorMessage');
+            errorMessageDiv.classList.add('hidden'); // Ẩn thông báo lỗi cũ
+
+            const API_URL = '/api/auth/login';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Something went wrong');
+                }
+
+                // --- XỬ LÝ KHI ĐĂNG NHẬP THÀNH CÔNG ---
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                alert('Login successful! Welcome, ' + data.user.name);
+                
+                // Chuyển hướng người dùng đến trang dashboard hoặc trang khóa học
+if(data.user.role === 'admin') {
+    window.location.href = 'AdminDashboard.html';
+} else if (data.user.role === 'teacher') {
+    window.location.href = 'TeacherDashboard.html';
+} else {
+    // Đổi StudentDashboard.html thành CourseandLesson.html
+    window.location.href = 'CourseandLesson.html'; 
+}
+
+            } catch (error) {
+                console.error('Login Error:', error);
+                errorMessageDiv.querySelector('p').textContent = 'Login failed: ' + error.message;
+                errorMessageDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

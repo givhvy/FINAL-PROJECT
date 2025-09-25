@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | CodeMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
+        .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid #ffffff; }
+        .modal { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .modal.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <div class="w-64 bg-gradient-to-b from-blue-800 to-indigo-900 text-white flex flex-col">
+            <div class="p-5 border-b border-blue-700">
+                <h1 class="text-xl font-bold">CodeMaster Teacher</h1>
+            </div>
+            <div class="p-5 border-b border-blue-700">
+                <div class="flex items-center space-x-3">
+                    <img id="teacher-avatar-img" src="https://i.pravatar.cc/100?img=32" alt="Teacher profile" class="w-10 h-10 rounded-full">
+                    <div>
+                        <p id="teacher-name" class="font-semibold">Loading...</p>
+                        <p id="teacher-email" class="text-xs text-blue-200">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <a href="#" class="sidebar-link active flex items-center px-6 py-3 text-white">Dashboard</a>
+                <a href="CourseandLesson.html" class="sidebar-link flex items-center px-6 py-3 text-white">View Site as Student</a>
+            </nav>
+            <div class="p-5 border-t border-blue-700">
+                <button id="logout-button" class="flex items-center text-white w-full">Logout</button>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between p-4">
+                    <h2 class="text-xl font-semibold text-gray-800">My Dashboard</h2>
+                    <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Add New Course
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
+                <div class="mb-8">
+                    <h1 id="welcome-message" class="text-2xl font-bold text-gray-800">Welcome back!</h1>
+                    <p class="text-gray-600">Here's what's happening with your courses today.</p>
+                </div>
+                
+                <div id="my-courses-section">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">My Published Courses</h2>
+                    <div id="courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="course-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-lg w-full">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4">Add New Course</h2>
+            <form id="course-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700">Course Title</label>
+                        <input type="text" id="title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700">Price ($)</label>
+                        <input type="number" id="price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                     <div>
+                        <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
+                        <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    // Auth Guard and User Info
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
+        window.location.href = 'LoginPage.html';
+        return;
+    }
+    document.getElementById('teacher-name').textContent = user.name;
+    document.getElementById('teacher-email').textContent = user.email;
+    document.getElementById('welcome-message').textContent = `Welcome back, ${user.name}!`;
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = 'LoginPage.html';
+    });
+
+    const coursesListDiv = document.getElementById('courses-list');
+    
+    async function fetchAndRenderMyCourses() {
+        coursesListDiv.innerHTML = `<p>Loading your courses...</p>`;
+        try {
+            const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!response.ok) throw new Error('Could not fetch courses');
+            const allCourses = await response.json();
+            const myCourses = allCourses.filter(course => course.teacher_id === user.id);
+
+            if (myCourses.length === 0) {
+                coursesListDiv.innerHTML = `<p class="col-span-full text-center text-gray-500">You haven't created any courses yet.</p>`;
+                return;
+            }
+
+            coursesListDiv.innerHTML = '';
+            myCourses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'dashboard-card bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 flex flex-col justify-between';
+                courseCard.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-semibold text-gray-800">${course.title}</h3>
+                            <button data-course-id="${course.id}" class="delete-course-btn text-gray-400 hover:text-red-600">
+                                <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">${(course.description || '').substring(0, 50)}...</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-lg font-bold text-indigo-600">$${course.price}</span>
+                            <span class="text-xs font-medium text-gray-500">${course.level}</span>
+                        </div>
+                        <div class="mt-4 border-t pt-2">
+                            <a href="LessonManagement.html?courseId=${course.id}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                                Manage Lessons →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                coursesListDiv.appendChild(courseCard);
+            });
+        } catch (error) {
+            console.error(error);
+            coursesListDiv.innerHTML = `<p class="col-span-full text-center text-red-500">Failed to load courses.</p>`;
+        }
+    }
+    
+    // Modal Management
+    const modal = document.getElementById('course-modal');
+    const addCourseBtn = document.getElementById('add-course-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const courseForm = document.getElementById('course-form');
+    addCourseBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+    cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+    // Form Submission
+    courseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = courseForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Saving...';
+        
+        const courseData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            price: parseFloat(document.getElementById('price').value),
+            level: document.getElementById('level').value,
+            teacher_id: user.id
+        };
+        try {
+            const response = await fetch('/api/courses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(courseData)
+            });
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || 'Failed to create course');
+            }
+            alert('Course created successfully!');
+            modal.classList.add('hidden');
+            courseForm.reset();
+            fetchAndRenderMyCourses();
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Save Course';
+        }
+    });
+
+    // Delete Course Logic (Event Delegation)
+    coursesListDiv.addEventListener('click', async (e) => {
+        const deleteButton = e.target.closest('.delete-course-btn');
+        if (deleteButton) {
+            const courseId = deleteButton.dataset.courseId;
+            const courseTitle = deleteButton.closest('.dashboard-card').querySelector('h3').textContent;
+            if (confirm(`Are you sure you want to delete "${courseTitle}"?`)) {
+                try {
+                    const response = await fetch(`/api/courses/${courseId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) throw new Error('Failed to delete course.');
+                    alert('Course deleted successfully!');
+                    fetchAndRenderMyCourses();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+        }
+    });
+
+    fetchAndRenderMyCourses();
+});
+</script>
+</body>
+</html>
