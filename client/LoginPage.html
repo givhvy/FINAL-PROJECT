@@ -63,7 +63,6 @@
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <!-- Gán ID cho link Forgot Password -->
                         <a href="#" id="forgotPasswordLink" class="text-sm text-indigo-600 hover:text-indigo-800">Forgot Password?</a>
                     </div>
                     <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" placeholder="Enter your password" required>
@@ -89,18 +88,17 @@
         </div>
     </div>
     
-    <!-- START: Modal Quên Mật Khẩu -->
     <div id="forgot-password-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full flex items-center justify-center z-40">
         <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-sm w-full">
             <h2 class="text-xl font-bold mb-4 text-gray-800">Reset Password</h2>
-            <p class="text-sm text-gray-600 mb-6">Enter your email address and we'll send you a secure link or code to reset your password.</p>
+            <p class="text-sm text-gray-600 mb-6" id="reset-modal-text">Enter your email address and we'll send you a secure link or code to reset your password.</p>
             
             <form id="forgot-password-form" class="space-y-4">
                 <div>
                     <label for="reset-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                     <input type="email" id="reset-email" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" placeholder="your@email.com" required>
                 </div>
-                <div id="reset-message" class="hidden text-sm p-3 rounded-lg"></div>
+                <div id="reset-message-1" class="hidden text-sm p-3 rounded-lg"></div>
                 
                 <div class="flex justify-end space-x-3 pt-2">
                     <button type="button" id="cancel-reset-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancel</button>
@@ -109,19 +107,58 @@
             </form>
         </div>
     </div>
-    <!-- END: Modal Quên Mật Khẩu -->
+    <div id="verify-reset-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full flex items-center justify-center z-40">
+        <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-sm w-full">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Verify & Reset</h2>
+            <p class="text-sm text-gray-600 mb-6">Enter the 6-digit code sent to your email and set a new password.</p>
+            
+            <form id="reset-password-form" class="space-y-4">
+                <input type="hidden" id="reset-user-id">
+                <input type="hidden" id="reset-email-field">
 
+                <div>
+                    <label for="verification-code" class="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+                    <input type="text" id="verification-code" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 text-center text-xl font-mono tracking-widest focus:outline-none transition-all" maxlength="6" required>
+                </div>
+                <div>
+                    <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                    <input type="password" id="new-password" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" required>
+                </div>
+                
+                <div id="reset-message-2" class="hidden text-sm p-3 rounded-lg"></div>
+                
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="back-to-login-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Back to Login</button>
+                    <button type="submit" id="verify-and-reset-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">Reset Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         // --- COMMON ELEMENTS ---
         const loginForm = document.getElementById('loginForm');
         const forgotPasswordModal = document.getElementById('forgot-password-modal');
+        const verifyResetModal = document.getElementById('verify-reset-modal');
         const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const resetPasswordForm = document.getElementById('reset-password-form');
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-        const resetMessageDiv = document.getElementById('reset-message');
+        const resetMessageDiv1 = document.getElementById('reset-message-1');
+        const resetMessageDiv2 = document.getElementById('reset-message-2');
         const errorMessageDiv = document.getElementById('errorMessage');
         
         const API_BASE = '/api/auth';
 
+        // --- UTILITY FUNCTIONS ---
+        function showMessage(element, message, isSuccess = false) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            if (isSuccess) {
+                element.className = 'text-sm p-3 rounded-lg bg-green-100 border border-green-200 text-green-700';
+            } else {
+                element.className = 'text-sm p-3 rounded-lg bg-red-100 border border-red-200 text-red-700';
+            }
+        }
+        
         // --- LOGIN LOGIC ---
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -164,29 +201,31 @@
             }
         });
 
-        // --- FORGOT PASSWORD LOGIC ---
+        // --- FORGOT PASSWORD MODAL 1 (Send Code) ---
+        let currentResetUserId = null; // Lưu trữ ID người dùng để dùng cho Modal 2
         
-        // 1. Mở Modal
+        // 1. Mở Modal 1
         forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
             forgotPasswordModal.classList.remove('hidden');
-            document.getElementById('reset-email').value = document.getElementById('email').value; // Copy email nếu có
-            resetMessageDiv.classList.add('hidden');
+            verifyResetModal.classList.add('hidden'); // Đảm bảo Modal 2 đóng
+            document.getElementById('reset-email').value = document.getElementById('email').value; 
+            resetMessageDiv1.classList.add('hidden');
         });
         
-        // 2. Đóng Modal
+        // 2. Đóng Modal 1
         document.getElementById('cancel-reset-btn').addEventListener('click', () => {
             forgotPasswordModal.classList.add('hidden');
         });
 
-        // 3. Xử lý gửi yêu cầu Reset
+        // 3. Xử lý gửi yêu cầu Code
         forgotPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('reset-email').value;
             const submitBtn = document.getElementById('send-reset-email-btn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
-            resetMessageDiv.classList.add('hidden');
+            resetMessageDiv1.classList.add('hidden');
 
             try {
                 const response = await fetch(API_BASE + '/forgot-password', {
@@ -197,29 +236,89 @@
 
                 const data = await response.json();
                 
-                // Hiển thị thông báo thành công giả định (để bảo mật, không tiết lộ email tồn tại)
-                resetMessageDiv.textContent = 'A password reset link has been sent to your email address, if the account exists.';
-                resetMessageDiv.classList.remove('hidden');
-                resetMessageDiv.className = resetMessageDiv.className.replace(/bg-red-\d+|bg-green-\d+/g, 'bg-green-100 border border-green-200 text-green-700');
+                if (!response.ok) {
+                    // Nếu API trả về lỗi (ví dụ: email không hợp lệ)
+                    throw new Error(data.error || 'Failed to process request.');
+                }
+
+                // THÀNH CÔNG: Chuyển sang Modal 2
+                currentResetUserId = data.userId; // Lấy ID người dùng từ Backend
+                document.getElementById('reset-email-field').value = email; // Lưu email để hiển thị nếu cần
+                document.getElementById('reset-user-id').value = currentResetUserId; // Lưu ID người dùng
+
+                showMessage(resetMessageDiv1, 'A verification code has been sent to your email address, if the account exists. Proceed to enter the code.', true);
                 
-                // Sau khi gửi, có thể đóng modal sau 3s
                 setTimeout(() => {
                     forgotPasswordModal.classList.add('hidden');
-                }, 3000);
+                    verifyResetModal.classList.remove('hidden');
+                    document.getElementById('verification-code').focus();
+                }, 1500);
 
             } catch (error) {
-                // Lỗi mạng hoặc server sập
-                resetMessageDiv.textContent = 'Server error. Please try again later.';
-                resetMessageDiv.classList.remove('hidden');
-                resetMessageDiv.className = resetMessageDiv.className.replace(/bg-red-\d+|bg-green-\d+/g, 'bg-red-100 border border-red-200 text-red-700');
                 console.error("Forgot Password Fetch Error:", error);
-
+                showMessage(resetMessageDiv1, error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Send Link';
             }
         });
-  
+
+        // --- RESET PASSWORD MODAL 2 (Verify Code & New Password) ---
+
+        // Nút Back to Login
+        document.getElementById('back-to-login-btn').addEventListener('click', () => {
+            verifyResetModal.classList.add('hidden');
+        });
+
+        // 4. Xử lý Reset Mật khẩu cuối cùng
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('verification-code').value;
+            const newPassword = document.getElementById('new-password').value;
+            const userId = document.getElementById('reset-user-id').value; // Lấy ID từ hidden field
+            const submitBtn = document.getElementById('verify-and-reset-btn');
+
+            if (!userId) {
+                showMessage(resetMessageDiv2, 'Error: User session lost. Please restart the process from Forgot Password.', false);
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Resetting...';
+            resetMessageDiv2.classList.add('hidden');
+
+            try {
+                const response = await fetch(API_BASE + '/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, code, newPassword })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Verification failed. Invalid code or timeout.');
+                }
+
+                // Thành công
+                showMessage(resetMessageDiv2, 'Password successfully reset! You can now log in.', true);
+
+                setTimeout(() => {
+                    verifyResetModal.classList.add('hidden');
+                    // Xóa trường mật khẩu mới và code
+                    document.getElementById('new-password').value = ''; 
+                    document.getElementById('verification-code').value = '';
+                }, 3000);
+
+            } catch (error) {
+                console.error("Reset Error:", error);
+                showMessage(resetMessageDiv2, error.message, false);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Reset Password';
+            }
+        });
+    
     </script>
 </body>
 </html>

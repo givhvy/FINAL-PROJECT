@@ -1,18 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
-// Import các hàm từ controller mà chúng ta đã sửa
-const { register, login } = require('../controllers/authController');
+// Import các hàm từ controller
+const { register, login, forgotPassword, resetPassword } = require('../controllers/authController');
 
 // --- ĐỊNH NGHĨA CÁC ROUTE ---
 
-// Khi có yêu cầu POST đến /api/auth/register
-// Nó sẽ được chuyển đến hàm 'register' trong authController
+// POST /api/auth/register
 router.post('/register', register);
 
-// Khi có yêu cầu POST đến /api/auth/login
-// Nó sẽ được chuyển đến hàm 'login' trong authController
+// POST /api/auth/login
 router.post('/login', login);
+
+// NEW: POST /api/auth/forgot-password (Frontend gọi hàm này)
+router.post('/forgot-password', forgotPassword);
+
+// NEW: POST /api/auth/reset-password
+router.post('/reset-password', resetPassword);
 
 
 // Xuất router để server.js có thể sử dụng
