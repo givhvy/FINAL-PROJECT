@@ -12,12 +12,26 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
+        .dashboard-card { 
+            min-height: 220px; /* Đảm bảo chiều cao tối thiểu cho thẻ */
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
         .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .sidebar-link.active { background-color: #4338ca; border-left: 4px solid #a5b4fc; }
         .sidebar-link:not(.active):hover { background-color: #3730a3; }
         .modal { transition: opacity 0.3s ease, transform 0.3s ease; }
         .modal.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
         
+        /* FIX: CSS để tự động cắt chuỗi sau 2 dòng */
+        .two-line-ellipsis {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Thuộc tính WebKit */
+            line-clamp: 2; /* FIX: Thêm thuộc tính chuẩn CSS */
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
+
         /* === Styles for Certificate === */
         .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
         .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
@@ -45,6 +59,9 @@
                 <a href="#" class="sidebar-link active flex items-center px-6 py-3 text-white transition-colors" data-target="dashboard-page">
                     <i class="fas fa-tachometer-alt w-5 mr-3"></i> Dashboard
                 </a>
+                <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="students-page">
+                    <i class="fas fa-users w-5 mr-3"></i> Students
+                </a>
                 <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="quizzes-page">
                     <i class="fas fa-puzzle-piece w-5 mr-3"></i> Quizzes
                 </a>
@@ -63,6 +80,7 @@
         </div>
 
         <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- DASHBOARD PAGE -->
             <div id="dashboard-page" class="page-content flex-1 flex flex-col overflow-hidden">
                 <header class="bg-white shadow-sm">
                     <div class="flex items-center justify-between p-4">
@@ -76,16 +94,48 @@
                     <div id="my-courses-section">
                         <h2 class="text-lg font-semibold text-gray-800 mb-4">My Published Courses</h2>
                         <div id="courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            </div>
+                            <!-- Course cards will be rendered here -->
+                        </div>
+                    </div>
+                </main>
+            </div>
+            
+            <!-- STUDENTS PAGE (NEW) -->
+            <div id="students-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
+                <header class="bg-white shadow-sm">
+                    <div class="p-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Student Management</h2>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 border-b pb-2">All Registered Students</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500">Loading students...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </main>
             </div>
 
+            <!-- QUIZZES PAGE -->
             <div id="quizzes-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
                 <header class="bg-white shadow-sm"><div class="p-4"><h2 class="text-xl font-semibold text-gray-800">Quiz Management</h2></div></header>
                 <main class="flex-1 overflow-y-auto p-5 bg-gray-50"><p>Quiz feature coming soon.</p></main>
             </div>
 
+            <!-- CERTIFICATES PAGE -->
             <div id="certificates-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
                 <header class="bg-white shadow-sm">
                     <div class="p-4">
@@ -193,6 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Load data for the selected page
         if (targetId === 'dashboard-page') fetchAndRenderMyCourses();
+        else if (targetId === 'students-page') fetchAndRenderAllStudents();
         else if (targetId === 'quizzes-page') renderQuizManagementPage();
         else if (targetId === 'certificates-page') populateCertificateForm();
     }
@@ -200,7 +251,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- DATA FETCHING --- 
     async function fetchInitialData() {
         try {
-            // NOTE: Assumes /api/courses and /api/users endpoints exist
             const [coursesRes, usersRes] = await Promise.all([
                 fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } }),
                 fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } })
@@ -209,19 +259,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             allCourses = await coursesRes.json();
             const allUsers = await usersRes.json();
-            allStudents = allUsers.filter(u => u.role === 'student');
+            allStudents = allUsers.filter(u => u.role === 'student'); // Chỉ giữ lại students
             
             showPage('dashboard-page'); // Show dashboard after data is loaded
         } catch (error) {
             console.error(error);
-            // alert('Failed to load initial data. Check your API endpoints.');
+            alert('Failed to load initial data.');
         }
     }
 
     // === COURSE MANAGEMENT FUNCTIONS === 
     async function fetchAndRenderMyCourses() {
         const coursesListDiv = document.getElementById('courses-list');
-        // Filter courses for the current teacher
         const myCourses = allCourses.filter(course => course.teacher_id === user.id); 
 
         if (myCourses.length === 0) {
@@ -231,9 +280,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         coursesListDiv.innerHTML = '';
         myCourses.forEach(course => {
+            const descriptionText = course.description || 'No description provided.';
+            
             coursesListDiv.innerHTML += `
             <div class="dashboard-card bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 flex flex-col justify-between" data-course-id="${course.id}">
-                <div>
+                <div class="flex-grow"> 
                     <div class="flex justify-between items-start">
                         <h3 class="font-semibold text-gray-800">${course.title}</h3>
                         <div class="flex space-x-2">
@@ -241,9 +292,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button class="delete-course-btn text-gray-400 hover:text-red-600"><i class="fas fa-trash pointer-events-none"></i></button>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-500 mt-2">${(course.description || '').substring(0, 50)}...</p>
+                    <!-- FIX: Sử dụng CSS Ellipsis -->
+                    <p class="text-sm text-gray-500 mt-2 two-line-ellipsis">${descriptionText}</p>
                 </div>
-                <div class="mt-4">
+                <div class="mt-4 flex-shrink-0">
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-lg font-bold text-indigo-600">$${course.price}</span>
                         <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">${course.level}</span>
@@ -273,6 +325,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         courseModal.classList.remove('hidden');
     }
 
+    // === STUDENT MANAGEMENT FUNCTIONS (NEW) === 
+    function getInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase();
+    }
+    
+    async function fetchAndRenderAllStudents() {
+        const tableBody = document.getElementById('students-table-body');
+        
+        if (allStudents.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500 text-center">No students registered yet.</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = '';
+        allStudents.forEach(student => {
+            const studentRow = document.createElement('tr');
+            studentRow.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm">
+                                ${getInitials(student.name)}
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">${student.name}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        ${student.role.charAt(0).toUpperCase() + student.role.slice(1)}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button data-id="${student.id}" class="text-indigo-600 hover:text-indigo-900 view-student-btn">View Profile</button>
+                </td>
+            `;
+            tableBody.appendChild(studentRow);
+        });
+        
+        // Add listener for view profile (placeholder)
+        document.querySelectorAll('.view-student-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                alert(`Viewing profile for student ID: ${e.currentTarget.dataset.id}.`);
+            });
+        });
+    }
+
     // === QUIZ MANAGEMENT (Placeholder) === 
     function renderQuizManagementPage() { /* ... placeholder ... */ }
 
@@ -298,19 +403,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('certificate-preview-container').classList.add('hidden'); // Hide old preview
     }
 
-    // HÀM MỚI: TẢI CERTIFICATE
+    // HÀM: TẢI CERTIFICATE (Giữ nguyên)
     function downloadCertificate() {
         const certificateNode = document.getElementById('certificate-template');
         const userSelect = document.getElementById('cert-user');
         const studentName = userSelect.options[userSelect.selectedIndex]?.dataset.name; 
         const fileName = `certificate-${studentName.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
 
-        // Sử dụng html2canvas để "chụp ảnh"
         html2canvas(certificateNode, {
-            scale: 2, // Tăng độ phân giải cho ảnh
-            useCORS: true // Cần thiết nếu có ảnh từ nguồn khác
+            scale: 2, 
+            useCORS: true 
         }).then(canvas => {
-            // Tạo một link ẩn để tải ảnh
             const link = document.createElement('a');
             link.download = fileName;
             link.href = canvas.toDataURL('image/png');
@@ -321,7 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // CẬP NHẬT HÀM GENERATE CERTIFICATE PREVIEW
+    // HÀM GENERATE CERTIFICATE PREVIEW (Giữ nguyên)
     function generateCertificatePreview() {
         const userSelect = document.getElementById('cert-user');
         const courseSelect = document.getElementById('cert-course');
@@ -369,7 +472,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
 
-        // Gán sự kiện cho nút download mới được tạo
         document.getElementById('download-btn').addEventListener('click', downloadCertificate);
     }
     
@@ -395,55 +497,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('cancel-btn').addEventListener('click', () => courseModal.classList.add('hidden'));
 
     // Course form submission (Add/Edit)
-    // Sửa đổi hàm xử lý form (dòng ~225)
-courseForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Thu thập dữ liệu form (giữ nguyên)
-    const courseData = {
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        price: parseFloat(document.getElementById('price').value),
-        level: document.getElementById('level').value,
-        teacher_id: user.id,
-        imageUrl: document.getElementById('imageUrl').value
-    };
+    courseForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const courseData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            price: parseFloat(document.getElementById('price').value),
+            level: document.getElementById('level').value,
+            teacher_id: user.id,
+            imageUrl: document.getElementById('imageUrl').value
+        };
 
-    const isEditing = !!currentEditingCourseId;
-    const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
-    const method = isEditing ? 'PUT' : 'POST';
+        const isEditing = !!currentEditingCourseId;
+        const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
+        const method = isEditing ? 'PUT' : 'POST';
 
-    try {
-        const response = await fetch(apiUrl, {
-            method,
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(courseData)
-        });
+        try {
+            const response = await fetch(apiUrl, {
+                method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(courseData)
+            });
 
-        if (!response.ok) {
-            // Cố gắng đọc phản hồi dưới dạng JSON (nếu backend trả về JSON lỗi)
-            let errorMessage = 'An unknown error occurred during saving.';
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.error || errorData.message || errorMessage;
-            } catch {
-                // Nếu không phải JSON, lấy văn bản thô
-                errorMessage = await response.text();
+            if (!response.ok) {
+                let errorMessage = 'An unknown error occurred during saving.';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorData.message || errorMessage;
+                } catch {
+                    errorMessage = await response.text();
+                }
+                throw new Error(errorMessage);
             }
-            throw new Error(errorMessage);
+            
+            alert(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
+            courseModal.classList.add('hidden');
+            await fetchInitialData(); 
+            
+        } catch (error) {
+            console.error("Course Save Error:", error);
+            alert(`Error: Failed to ${isEditing ? 'update' : 'add'} course.\nDetails: ${error.message}`);
         }
-        
-        // Thao tác thành công
-        alert(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
-        courseModal.classList.add('hidden');
-        await fetchInitialData(); // Tải lại dữ liệu
-        
-    } catch (error) {
-        console.error("Course Save Error:", error);
-        // Hiển thị thông báo lỗi chi tiết
-        alert(`Error: Failed to ${isEditing ? 'update' : 'add'} course.\nDetails: ${error.message}`);
-    }
-});
+    });
+
     // Edit/Delete buttons on course cards
     document.getElementById('courses-list').addEventListener('click', async (e) => {
         const button = e.target.closest('button');

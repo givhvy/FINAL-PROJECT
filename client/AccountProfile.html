@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Learning | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
@@ -28,10 +29,27 @@
             border-bottom-color: #3b82f6;
             font-weight: 600;
         }
+        /* Tab Styles (Main Tabs) */
+        .tab-button { transition: color 0.2s; border-bottom: 2px solid transparent; }
+        .tab-button:hover { color: #4f46e5; }
+        .tab-button.active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 600; }
+        
+        /* New Quiz Card Styles */
+        .quiz-card {
+            transition: box-shadow 0.2s;
+        }
+        .quiz-card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        .grade-score {
+            min-width: 6rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
+        <!-- NAVIGATION BAR -->
         <nav class="bg-white shadow-md sticky top-0 z-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
@@ -43,12 +61,12 @@
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
                             <a href="CourseandLesson.html" class="nav-link">Courses</a>
                             <a href="AccountProfile.html" class="nav-link active">My Learning</a>
-                            <a href="QuizzAndGrades.html" class="nav-link">Quizz</a>
                             <a href="Community.html" class="nav-link">Community</a>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <div class="ml-3 relative">
+                            <!-- Nút AVATAR trỏ đến ProfilePage -->
                             <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
                                  <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
                             </button>
@@ -61,41 +79,75 @@
 
         <main class="flex-grow py-8">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-6">
-                    <h1 class="text-3xl font-bold text-gray-900">My Learning Dashboard</h1>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">My Learning Center</h1>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <h2 class="text-lg font-semibold mb-4">Learning Progress</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-medium">Web Development Fundamentals</span><span class="text-sm font-medium text-indigo-600">75%</span></div>
-                            <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                <!-- TAB Navigation (3 tabs) -->
+                <div class="flex border-b border-gray-200 mb-6 space-x-6">
+                    <button id="tab-dashboard" class="py-2 px-1 font-semibold text-lg tab-button active" data-target="content-dashboard">My Dashboard</button>
+                    <button id="tab-quizzes" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-quizzes">Quizzes</button>
+                    <button id="tab-grades" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-grades">Grades</button>
+                </div>
+                
+                <!-- Tab Content Container -->
+                <div id="tab-content-container">
+
+                    <!-- 1. MY LEARNING DASHBOARD CONTENT (Active by default) -->
+                    <div id="content-dashboard">
+                        <!-- Learning Progress -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-lg font-semibold mb-4">Learning Progress</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-sm font-medium">Web Development Fundamentals</span><span class="text-sm font-medium text-indigo-600">75%</span></div>
+                                    <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-sm font-medium">JavaScript Advanced Concepts</span><span class="text-sm font-medium text-indigo-600">45%</span></div>
+                                    <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-sm font-medium">Responsive Design</span><span class="text-sm font-medium text-indigo-600">90%</span></div>
+                                    <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-medium">JavaScript Advanced Concepts</span><span class="text-sm font-medium text-indigo-600">45%</span></div>
-                            <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1"><span class="text-sm font-medium">Responsive Design</span><span class="text-sm font-medium text-indigo-600">90%</span></div>
-                            <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+
+                        <!-- My Enrolled Courses -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">My Enrolled Courses</h2>
+                            <div id="enrolled-courses-list" class="space-y-4">
+                                <p class="text-gray-500">Loading your enrolled courses...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <h2 class="text-lg font-semibold mb-4">My Enrolled Courses</h2>
-                    <div id="enrolled-courses-list" class="space-y-4">
-                        <p class="text-gray-500">Loading your enrolled courses...</p>
+                    <!-- 2. QUIZZES CONTENT (Hidden by default) -->
+                    <div id="content-quizzes" class="hidden">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Available Quizzes</h2>
+                        <div id="available-quizzes-list" class="space-y-4">
+                            <p class="text-gray-500 text-center py-4">Loading available quizzes...</p>
                         </div>
+                    </div>
+
+                    <!-- 3. GRADES CONTENT (Hidden by default) -->
+                    <div id="content-grades" class="hidden">
+                         <h2 class="text-xl font-semibold mb-4 text-gray-800">My Quiz Grades</h2>
+                         <div id="my-grades-list" class="space-y-4">
+                            <p class="text-gray-500 text-center py-4">Loading your grades...</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
     </div>
 
+<!-- SCRIPTS -->
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- AUTH GUARD & USER INFO ---
+    // --- AUTH GUARD & GLOBAL VARS ---
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     
@@ -104,6 +156,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // --- UTILITIES ---
     function getUserInitials(name) {
         if (!name) return '??';
         const parts = name.split(' ');
@@ -114,31 +167,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         return initials;
     }
 
-    // --- POPULATE UI ---
-    const userAvatar = document.getElementById('user-avatar');
-    if (userAvatar) userAvatar.textContent = getUserInitials(user.name);
-    
-    // XÓA PHẦN UI PROFILE KHÔNG CẦN THIẾT
-    // document.getElementById('main-avatar').textContent = getUserInitials(user.name);
-    // document.getElementById('profile-name').textContent = user.name || 'Student';
-    // document.getElementById('profile-role').textContent = (user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1);
-    // document.getElementById('profile-email').textContent = user.email || 'N/A';
-    // document.getElementById('profile-created-date').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A';
-    
-    // --- EVENT LISTENERS ---
-    // Nút avatar (Profile Picture) trỏ đến ProfilePage.html
-    document.getElementById('user-menu-button').addEventListener('click', () => {
-         window.location.href = 'ProfilePage.html';
-    });
-    
-    document.getElementById('logout-button').addEventListener('click', () => {
-        localStorage.clear();
-        window.location.href = 'LoginPage.html';
-    });
+    // NEW: Function to handle switching main tabs (Dashboard, Quizzes, Grades)
+    function setActiveTab(targetId) {
+        // Switch main tabs
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+            document.getElementById(btn.dataset.target).classList.add('hidden');
+        });
+        
+        // Activate the selected tab
+        document.getElementById(`tab-${targetId}`).classList.add('active');
+        document.getElementById(`content-${targetId}`).classList.remove('hidden');
 
-    // --- FETCH AND RENDER ENROLLED COURSES ---
+        // Load data based on the active tab
+        if (targetId === 'dashboard') {
+             fetchAndRenderEnrolledCourses();
+        } else if (targetId === 'quizzes') {
+             fetchAndRenderAvailableQuizzes();
+        } else if (targetId === 'grades') {
+             fetchAndRenderMyGrades();
+        }
+    }
+
+
+    // --- FETCH AND RENDER FUNCTIONS ---
+    
+    // RENDER: My Enrolled Courses (Dashboard Tab)
     async function fetchAndRenderEnrolledCourses() {
         const enrolledListDiv = document.getElementById('enrolled-courses-list');
+        enrolledListDiv.innerHTML = '<p class="text-gray-500">Loading your enrolled courses...</p>';
         try {
             const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch courses.');
@@ -152,19 +209,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             enrolledListDiv.innerHTML = '';
             courses.slice(0, 3).forEach(course => { 
                 const courseItem = document.createElement('div');
-                courseItem.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow';
+                courseItem.className = 'quiz-card border rounded-lg p-4 hover:shadow-md transition-shadow';
                 courseItem.innerHTML = `
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mr-4">
-                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                <i class="fas fa-book text-blue-500"></i>
                             </div>
                             <div>
                                 <h3 class="font-medium">${course.title}</h3>
                                 <p class="text-sm text-gray-500">Instructor: ${course.teacher ? course.teacher.name : 'N/A'}</p>
                             </div>
                         </div>
-                        <a href="CourseandLesson.html" onclick="localStorage.setItem('selectedCourseId', '${course.id}')" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
+                        <a href="CourseandLesson.html?courseId=${course.id}" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
                             Continue
                         </a>
                     </div>
@@ -177,9 +234,118 @@ document.addEventListener('DOMContentLoaded', async () => {
             enrolledListDiv.innerHTML = `<p class="text-red-500">Error loading your courses.</p>`;
         }
     }
+
+    // RENDER: Available Quizzes (Quizzes Tab)
+    async function fetchAndRenderAvailableQuizzes() {
+        const quizListDiv = document.getElementById('available-quizzes-list');
+        quizListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">Loading available quizzes...</p>';
+
+        try {
+            const quizzesResponse = await fetch('/api/quizzes', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!quizzesResponse.ok) throw new Error('Failed to fetch quizzes.');
+            const quizzes = await quizzesResponse.json();
+            
+            const gradesResponse = await fetch('/api/grades', { headers: { 'Authorization': `Bearer ${token}` } });
+            const allGrades = gradesResponse.ok ? await gradesResponse.json() : [];
+            const completedQuizIds = new Set(allGrades.filter(g => g.user_id === user.id).map(g => g.quiz_id));
+
+
+            const availableQuizzes = quizzes.filter(q => !completedQuizIds.has(q.id));
+
+            if (availableQuizzes.length === 0) {
+                quizListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">No new quizzes currently available.</p>';
+                return;
+            }
+
+            quizListDiv.innerHTML = availableQuizzes.map(quiz => `
+                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-100 quiz-card flex justify-between items-center">
+                    <div class="flex-grow pr-4">
+                        <h3 class="text-lg font-semibold text-gray-800">${quiz.title}</h3>
+                        <p class="text-gray-600 text-sm">${quiz.description || 'Test your knowledge with this quiz.'}</p>
+                        <p class="text-xs text-gray-500 mt-2">
+                             <i class="fas fa-question-circle mr-1 text-purple-400"></i> ${quiz.questions ? quiz.questions.length : 'N/A'} Questions
+                             ${quiz.lesson ? ` | <span class="text-blue-500">${quiz.lesson.course ? quiz.lesson.course.title : 'N/A Course'}</span>` : ''}
+                        </p>
+                    </div>
+                    <a href="CourseandLesson.html?quizId=${quiz.id}&courseId=${quiz.course_id}" class="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium">
+                        Start Quiz
+                    </a>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error('Fetch Quizzes Error:', error);
+            quizListDiv.innerHTML = `<p class="text-red-500 text-center py-4">Error loading quizzes: ${error.message}</p>`;
+        }
+    }
+
+    // RENDER: My Grades (Grades Tab)
+    async function fetchAndRenderMyGrades() {
+        const gradesListDiv = document.getElementById('my-grades-list');
+        gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">Loading your grades...</p>';
+        
+        try {
+            const gradesResponse = await fetch('/api/grades', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!gradesResponse.ok) throw new Error('Failed to fetch grades.');
+            const allGrades = await gradesResponse.json();
+            
+            const myGrades = allGrades.filter(grade => grade.user_id === user.id); 
+
+            if (myGrades.length === 0) {
+                gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">You have not completed any quizzes yet.</p>';
+                return;
+            }
+
+            gradesListDiv.innerHTML = myGrades.map(grade => {
+                const score = grade.score || 0;
+                const isPassed = score >= 70;
+                const scoreColor = isPassed ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100';
+                
+                return `
+                    <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-100 quiz-card flex justify-between items-center">
+                        <div class="flex-grow pr-4">
+                            <h3 class="text-lg font-semibold text-gray-800">${grade.quiz ? grade.quiz.title : 'Quiz Deleted'}</h3>
+                            <p class="text-sm text-gray-600">Course: ${grade.quiz && grade.quiz.lesson && grade.quiz.lesson.course ? grade.quiz.lesson.course.title : 'N/A'}</p>
+                            <p class="text-xs text-gray-500 mt-2">Completed on: ${new Date(grade.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <div class="grade-score text-right">
+                            <span class="font-bold text-xl px-3 py-1 rounded-full ${scoreColor}">${score}%</span>
+                            <p class="text-xs text-gray-500 mt-1">${isPassed ? 'Passed' : 'Failed'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Fetch Grades Error:', error);
+            gradesListDiv.innerHTML = `<p class="text-red-500 text-center py-4">Error loading grades: ${error.message}</p>`;
+        }
+    }
+
+
+    // --- INITIALIZATION ---
+
+    // 1. Setup Listeners
+    document.getElementById('user-avatar').textContent = getUserInitials(user.name);
     
-    // Initial fetch
+    document.getElementById('user-menu-button').addEventListener('click', () => {
+        window.location.href = 'ProfilePage.html';
+    });
+    
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = 'LoginPage.html';
+    });
+
+    // Main Tab Switching
+    document.getElementById('tab-dashboard').addEventListener('click', () => setActiveTab('dashboard'));
+    document.getElementById('tab-quizzes').addEventListener('click', () => setActiveTab('quizzes'));
+    document.getElementById('tab-grades').addEventListener('click', () => setActiveTab('grades'));
+
+
+    // 2. Initial Data Load
     fetchAndRenderEnrolledCourses();
+    setActiveTab('dashboard'); // Mặc định hiển thị Dashboard
 });
 </script>
 </body>

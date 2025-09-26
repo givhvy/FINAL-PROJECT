@@ -18,11 +18,20 @@
         
         /* Progress Bar Styles for Cards */
         .progress-bar-container { height: 6px; border-radius: 3px; background-color: #e5e7eb; overflow: hidden; }
-        /* Tùy chỉnh màu progress bar theo gradient cho thẩm mỹ */
         .progress-fill-blue { background-color: #3b82f6; }
         .progress-fill-purple { background-color: #8b5cf6; }
         .progress-fill-green { background-color: #10b981; }
         
+        /* FIX: CSS để tự động cắt chuỗi sau 2 dòng */
+        .two-line-ellipsis {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+            line-clamp: 2; /* Thuộc tính chuẩn CSS */
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
+
         /* Lesson and Content Styles */
         .lesson-html-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .lesson-html-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
@@ -47,8 +56,7 @@
                     </a>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
                         <a href="CourseandLesson.html" class="nav-link active">Courses</a>
-                        <a href="AccountProfile.html" class="nav-link">My Learning</a> 
-                        <a href="QuizzAndGrades.html" class="nav-link">Quizz</a>
+                        <a href="AccountProfile.html" class="nav-link">My Learning</a>
                         <a href="Community.html" class="nav-link">Community</a>
                         <a href="PaymentPage.html" class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
                             <i class="fas fa-star text-yellow-400"></i>
@@ -59,7 +67,7 @@
                 <div class="flex items-center">
                     <div class="ml-3 relative">
                         <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
-                             <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
+                            <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
                         </button>
                     </div>
                     <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
@@ -69,6 +77,7 @@
     </nav>
 
     <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- COURSES PAGE -->
         <div id="courses-page" class="courses-container">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
@@ -84,6 +93,7 @@
             </div>
         </div>
         
+        <!-- LESSON PAGE (Nội dung Lesson/Quiz) -->
         <div id="lesson-page" class="lesson-container hidden"></div>
     </div>
 
@@ -156,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'All Levels': 'fa-balance-scale'
                 };
                 const iconClass = iconMap[course.level] || 'fa-graduation-cap';
+                const descriptionText = course.description || 'No description provided.';
 
 
                 const courseCard = document.createElement('div');
@@ -172,9 +183,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <span class="text-xs font-semibold px-2 py-1 bg-gray-200 text-gray-700 rounded-full">${course.level || 'All Levels'}</span>
                             <span class="text-sm text-gray-500">${totalLessons} lessons</span>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2 flex-grow">${course.title}</h3>
-                        <p class="text-gray-600 text-sm mb-4">${(course.description || '').substring(0, 100)}...</p>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${course.title}</h3>
+                        <!-- FIX: Sử dụng CSS Ellipsis -->
+                        <p class="text-gray-600 text-sm mb-4 two-line-ellipsis">${descriptionText}</p>
                         
+                        <!-- Progress Bar -->
                         <div class="mt-auto">
                             <div class="flex justify-between text-sm mb-1">
                                 <span class="text-gray-600">Progress</span>

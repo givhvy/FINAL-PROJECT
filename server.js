@@ -18,7 +18,9 @@ const gradeRoutes = require('./server/routes/gradeRoutes');
 const orderRoutes = require('./server/routes/orderRoutes');
 const paymentRoutes = require('./server/routes/paymentRoutes');
 const certificateRoutes = require('./server/routes/certificateRoutes');
-const subscriptionRoutes = require('./server/routes/subscriptionRoutes'); // Thêm dòng này
+const subscriptionRoutes = require('./server/routes/subscriptionRoutes');
+// BỔ SUNG ROUTE MỚI
+const communityRoutes = require('./server/routes/communityRoutes'); 
 
 // ====== 3. KHỞI TẠO ỨNG DỤNG VÀ FIREBASE ======
 const app = express();
@@ -26,9 +28,9 @@ const PORT = process.env.PORT || 5000;
 
 // Khởi tạo Firebase Admin SDK
 if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
 }
 
 // Tạo một đối tượng 'db' để dễ dàng truy cập Firestore
@@ -42,8 +44,8 @@ app.use(express.static('client')); // Phục vụ file từ thư mục client
 
 // Thêm đối tượng 'db' vào mọi request để các controller có thể sử dụng
 app.use((req, res, next) => {
-  req.db = db;
-  next();
+  req.db = db;
+  next();
 });
 
 // ====== 5. ĐỊNH NGHĨA API ROUTES ======
@@ -57,24 +59,25 @@ app.use('/api/grades', gradeRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/certificates', certificateRoutes);
-app.use('/api/subscriptions', subscriptionRoutes); // Thêm dòng này
+app.use('/api/subscriptions', subscriptionRoutes);
+// ĐĂNG KÝ COMMUNITY ROUTES
+app.use('/api/community', communityRoutes); 
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Welcome to the CodeMaster E-Learning API with Firebase!' });
+  res.json({ message: 'Welcome to the CodeMaster E-Learning API with Firebase!' });
 });
 
 // ====== 6. XỬ LÝ LỖI (ERROR HANDLING) ======
 app.use((req, res, next) => {
-  res.status(404).json({ message: 'Error: API endpoint not found' });
+  res.status(404).json({ message: 'Error: API endpoint not found' });
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Error: Something went wrong on the server' });
+  console.error(err.stack);
+  res.status(500).json({ message: 'Error: Something went wrong on the server' });
 });
 
 // ====== 7. KHỞI ĐỘNG SERVER ======
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-
