@@ -8,36 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-        }
-        .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #e5e7eb;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            background-color: #4f46e5;
-            transition: width 0.5s ease;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .progress-bar { height: 8px; border-radius: 4px; background-color: #e5e7eb; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; background-color: #4f46e5; transition: width 0.5s ease; }
         /* Styles cho thanh điều hướng mới */
         .nav-link {
             padding: 0.25rem 0.5rem;
-            color: #4b5563; /* Gray-600 */
+            color: #4b5563; 
             transition: color 0.2s, border-color 0.2s;
             border-bottom: 2px solid transparent;
             font-weight: 500;
         }
         .nav-link:hover {
-            color: #1f2937; /* Gray-800 */
-            border-bottom-color: #6366f1; /* Indigo-500 */
+            color: #1f2937; 
+            border-bottom-color: #6366f1;
         }
         .nav-link.active {
-            color: #3b82f6; /* Blue-600 */
+            color: #3b82f6; 
             border-bottom-color: #3b82f6;
             font-weight: 600;
         }
@@ -45,7 +32,6 @@
 </head>
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
-        <!-- Header mới, đồng bộ với trang Courses -->
         <nav class="bg-white shadow-md sticky top-0 z-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
@@ -73,47 +59,12 @@
             </div>
         </nav>
 
-        <!-- Nội dung chính được căn giữa -->
         <main class="flex-grow py-8">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Edit Profile</button>
+                <div class="mb-6">
+                    <h1 class="text-3xl font-bold text-gray-900">My Learning Dashboard</h1>
                 </div>
 
-                <!-- Profile Info -->
-                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <div class="flex flex-col md:flex-row items-center">
-                        <div class="md:w-1/4 flex justify-center mb-4 md:mb-0">
-                            <div id="main-avatar" class="h-32 w-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-5xl font-bold">
-                            </div>
-                        </div>
-                        <div class="md:w-3/4 md:pl-8">
-                            <h2 id="profile-name" class="text-2xl font-bold text-gray-800 mb-1"></h2>
-                            <p id="profile-role" class="text-gray-600 mb-4"></p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-500">Email</p>
-                                    <p id="profile-email"></p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Phone</p>
-                                    <p>(555) 123-4567</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Location</p>
-                                    <p>Ho Chi Minh City, Vietnam</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Member Since</p>
-                                    <p id="profile-created-date"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Learning Progress -->
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                     <h2 class="text-lg font-semibold mb-4">Learning Progress</h2>
                     <div class="space-y-4">
@@ -132,12 +83,11 @@
                     </div>
                 </div>
 
-                <!-- Current Courses -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <h2 class="text-lg font-semibold mb-4">My Enrolled Courses</h2>
                     <div id="enrolled-courses-list" class="space-y-4">
                         <p class="text-gray-500">Loading your enrolled courses...</p>
-                    </div>
+                        </div>
                 </div>
             </div>
         </main>
@@ -165,22 +115,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- POPULATE UI ---
-    // Header
     const userAvatar = document.getElementById('user-avatar');
     if (userAvatar) userAvatar.textContent = getUserInitials(user.name);
-
-    // Main Profile
-    document.getElementById('main-avatar').textContent = getUserInitials(user.name);
-    document.getElementById('profile-name').textContent = user.name || 'Student';
-    document.getElementById('profile-role').textContent = (user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1);
-    document.getElementById('profile-email').textContent = user.email || 'N/A';
-    document.getElementById('profile-created-date').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A';
+    
+    // XÓA PHẦN UI PROFILE KHÔNG CẦN THIẾT
+    // document.getElementById('main-avatar').textContent = getUserInitials(user.name);
+    // document.getElementById('profile-name').textContent = user.name || 'Student';
+    // document.getElementById('profile-role').textContent = (user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1);
+    // document.getElementById('profile-email').textContent = user.email || 'N/A';
+    // document.getElementById('profile-created-date').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A';
     
     // --- EVENT LISTENERS ---
+    // Nút avatar (Profile Picture) trỏ đến ProfilePage.html
     document.getElementById('user-menu-button').addEventListener('click', () => {
-        const role = user.role;
-        if (role === 'student') window.location.href = 'AccountProfile.html';
-        if (role === 'teacher' || role === 'admin') window.location.href = 'TeacherDashboard.html';
+         window.location.href = 'ProfilePage.html';
     });
     
     document.getElementById('logout-button').addEventListener('click', () => {
@@ -192,8 +140,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function fetchAndRenderEnrolledCourses() {
         const enrolledListDiv = document.getElementById('enrolled-courses-list');
         try {
-            // NOTE: This part requires a backend endpoint to get enrolled courses for a user.
-            // For this demo, we'll show all courses as if the user is enrolled.
             const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch courses.');
             const courses = await response.json();
@@ -204,14 +150,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             enrolledListDiv.innerHTML = '';
-            courses.slice(0, 3).forEach(course => { // Show first 3 for demo
+            courses.slice(0, 3).forEach(course => { 
                 const courseItem = document.createElement('div');
                 courseItem.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow';
                 courseItem.innerHTML = `
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mr-4">
-                                <i class="fas fa-book text-blue-500"></i>
+                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                             </div>
                             <div>
                                 <h3 class="font-medium">${course.title}</h3>

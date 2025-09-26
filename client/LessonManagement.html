@@ -10,89 +10,110 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
-        #editor-container { height: 200px; }
+        .two-column-layout { min-height: calc(100vh - 64px); } /* Cân bằng chiều cao */
+        .sidebar-content { max-height: 100%; overflow-y: auto; }
+        .lesson-item { cursor: pointer; transition: background-color 0.1s; }
+        .lesson-item:hover { background-color: #f0f4f8; }
+        .lesson-item.active { border-left: 3px solid #3b82f6; background-color: #eef2ff; }
+        .form-toggle-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="min-h-screen">
-        <header class="bg-white shadow-sm">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-sm sticky top-0 z-20">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between">
                     <h1 class="text-2xl font-bold text-gray-800">Content Management</h1>
-                    <a href="TeacherDashboard.html" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">← Back to Dashboard</a>
+                    <a href="TeacherDashboard.html" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                    </a>
                 </div>
             </div>
         </header>
 
-        <main class="py-10">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white shadow rounded-lg p-6 mb-8">
-                    <h2 class="text-xl font-semibold">Course: <span id="course-title">Loading...</span></h2>
-                    <p class="text-gray-600 mt-1" id="course-description">Loading course details...</p>
+        <main class="flex-grow max-w-7xl mx-auto w-full flex border-t border-gray-200">
+            
+            <div class="w-full lg:w-1/3 bg-white shadow-lg border-r border-gray-100 p-6 flex flex-col sidebar-content">
+                
+                <div class="bg-indigo-50 border-l-4 border-indigo-300 p-4 rounded-lg mb-6 flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Course: <span id="course-title">Loading...</span></h2>
+                    <p class="text-sm text-gray-600 mt-1" id="course-description">Loading course details...</p>
                 </div>
+                
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex-shrink-0">Existing Content</h3>
 
-                <div class="bg-white shadow rounded-lg mb-8">
-                    <div class="p-6">
-                        <h3 class="text-lg font-medium mb-4">Existing Content</h3>
-                        <ul id="content-list" class="space-y-3">
-                            </ul>
+                <div class="flex-grow overflow-y-auto pr-2">
+                    <ul id="content-list" class="space-y-3">
+                        <li><p class="text-gray-500">Loading content...</p></li>
+                        </ul>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-gray-50 p-6 overflow-y-auto">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    
+                    <div class="flex space-x-4 mb-6 border-b pb-4">
+                        <button id="show-lesson-form-btn" class="form-toggle-btn px-5 py-2 rounded-lg font-medium active">
+                            <i class="fas fa-book-open mr-2"></i> Add New Lesson
+                        </button>
+                        <button id="show-quiz-form-btn" class="form-toggle-btn px-5 py-2 rounded-lg font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">
+                            <i class="fas fa-puzzle-piece mr-2"></i> Add New Quiz
+                        </button>
                     </div>
-                </div>
 
-                <div class="bg-white shadow rounded-lg">
-                    <div class="p-6">
-                        <div class="flex space-x-4 mb-6 border-b pb-4">
-                            <button id="show-lesson-form-btn" class="px-5 py-2 rounded-md font-medium text-white bg-indigo-600 hover:bg-indigo-700">Add New Lesson</button>
-                            <button id="show-quiz-form-btn" class="px-5 py-2 rounded-md font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Add New Quiz</button>
+                    <form id="lesson-form" class="space-y-4">
+                        <h3 id="lesson-form-title" class="text-2xl font-bold text-gray-800 mb-6">Add a New Lesson</h3>
+                        
+                        <input type="hidden" id="form-course-id">
+
+                        <div>
+                            <label for="lesson-title" class="block text-sm font-medium text-gray-700">Lesson Title</label>
+                            <input type="text" id="lesson-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
+                        <div>
+                            <label for="lesson-video-url" class="block text-sm font-medium text-gray-700">Video URL (Optional)</label>
+                            <input type="text" id="lesson-video-url" placeholder="https://www.youtube.com/watch?v=..." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Lesson Content (Notes, Code...)</label>
+                            <div id="editor-container" class="mt-1 border border-gray-300 rounded-md"></div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-lesson-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">Save Lesson</button>
+                        </div>
+                    </form>
 
-                        <form id="lesson-form" class="hidden">
-                            <h3 id="lesson-form-title" class="text-lg font-medium mb-4">Add a New Lesson</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="lesson-title" class="block text-sm font-medium text-gray-700">Lesson Title</label>
-                                    <input type="text" id="lesson-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="lesson-video-url" class="block text-sm font-medium text-gray-700">Video URL (Optional)</label>
-                                    <input type="text" id="lesson-video-url" placeholder="https://www.youtube.com/watch?v=..." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Lesson Content (Notes, Code...)</label>
-                                    <div id="editor-container" class="mt-1 border border-gray-300 rounded-md"></div>
-                                </div>
+                    <form id="quiz-form" class="hidden space-y-4">
+                        <h3 id="quiz-form-title" class="text-2xl font-bold text-gray-800 mb-6">Add a New Quiz</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="quiz-title" class="block text-sm font-medium text-gray-700">Quiz Title</label>
+                                <input type="text" id="quiz-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
-                            <div class="mt-6 flex justify-end space-x-3">
-                                <button type="button" id="cancel-lesson-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
-                                <button type="submit" class="w-full md:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Lesson</button>
+                            <div>
+                                <label for="quiz-description" class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="quiz-description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                             </div>
-                        </form>
-
-                        <form id="quiz-form" class="hidden">
-                            <h3 id="quiz-form-title" class="text-lg font-medium mb-4">Add a New Quiz</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="quiz-title" class="block text-sm font-medium text-gray-700">Quiz Title</label>
-                                    <input type="text" id="quiz-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="quiz-description" class="block text-sm font-medium text-gray-700">Description</label>
-                                    <textarea id="quiz-description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-                                </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mt-8 mb-4 border-t pt-6">Questions</h3>
+                        <div id="questions-container" class="space-y-6"></div>
+                        
+                        <div class="mt-6 flex items-center justify-between pt-4">
+                            <button type="button" id="add-question-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center font-semibold">
+                                <i class="fas fa-plus mr-2"></i> Add Question
+                            </button>
+                            <div>
+                                <button type="button" id="cancel-quiz-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 ml-2 font-semibold">Save Quiz</button>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mt-8 mb-4 border-t pt-6">Questions</h3>
-                            <div id="questions-container" class="space-y-6"></div>
-                            <div class="mt-6 flex items-center justify-between">
-                                <button type="button" id="add-question-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center">
-                                    <i class="fas fa-plus mr-2"></i> Add Question
-                                </button>
-                                <div>
-                                    <button type="button" id="cancel-quiz-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
-                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 ml-2">Save Quiz</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
@@ -101,8 +122,10 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
+        // --- INITIAL SETUP ---
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
+        
         if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
             window.location.href = 'LoginPage.html';
             return;
@@ -115,88 +138,101 @@
             window.location.href = 'TeacherDashboard.html';
             return;
         }
-
+        
+        // Cài đặt Quill Editor
         const quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: { toolbar: [['bold', 'italic', 'underline'], ['link', 'code-block']] }
         });
         
+        // --- ELEMENTS ---
         const contentListUl = document.getElementById('content-list');
         const lessonForm = document.getElementById('lesson-form');
         const quizForm = document.getElementById('quiz-form');
         const lessonFormTitle = document.getElementById('lesson-form-title');
         const quizFormTitle = document.getElementById('quiz-form-title');
+        const questionsContainer = document.getElementById('questions-container');
+        
         let currentEditingContentId = null;
 
-        function showLessonForm() {
-            lessonForm.classList.remove('hidden');
-            quizForm.classList.add('hidden');
-            document.getElementById('show-lesson-form-btn').classList.add('bg-indigo-600', 'text-white');
-            document.getElementById('show-lesson-form-btn').classList.remove('bg-gray-200', 'text-gray-700');
-            document.getElementById('show-quiz-form-btn').classList.add('bg-gray-200', 'text-gray-700');
-            document.getElementById('show-quiz-form-btn').classList.remove('bg-indigo-600', 'text-white');
+        // --- CORE UI FUNCTIONS ---
+        function setActiveForm(formId) {
+            const isLesson = formId === 'lesson';
             
-            lessonForm.reset();
-            quill.setText('');
-            lessonFormTitle.textContent = 'Add a New Lesson';
-            lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
-            currentEditingContentId = null;
+            // Toggle form visibility
+            lessonForm.classList.toggle('hidden', !isLesson);
+            quizForm.classList.toggle('hidden', isLesson);
+
+            // Toggle button active state
+            document.getElementById('show-lesson-form-btn').classList.toggle('active', isLesson);
+            document.getElementById('show-lesson-form-btn').classList.toggle('bg-gray-200', !isLesson);
+            document.getElementById('show-lesson-form-btn').classList.toggle('text-gray-700', !isLesson);
+
+            document.getElementById('show-quiz-form-btn').classList.toggle('active', !isLesson);
+            document.getElementById('show-quiz-form-btn').classList.toggle('bg-gray-200', isLesson);
+            document.getElementById('show-quiz-form-btn').classList.toggle('text-gray-700', isLesson);
+
+            // Reset forms and state
+            if (isLesson) {
+                lessonForm.reset();
+                quill.setText('');
+                lessonFormTitle.textContent = 'Add a New Lesson';
+                lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
+                currentEditingContentId = null;
+            } else {
+                quizForm.reset();
+                questionsContainer.innerHTML = '';
+                quizFormTitle.textContent = 'Add a New Quiz';
+                quizForm.querySelector('button[type="submit"]').textContent = 'Save Quiz';
+                currentEditingContentId = null;
+                addQuestionField();
+            }
         }
 
-        function showQuizForm() {
-            quizForm.classList.remove('hidden');
-            lessonForm.classList.add('hidden');
-            document.getElementById('show-quiz-form-btn').classList.add('bg-indigo-600', 'text-white');
-            document.getElementById('show-quiz-form-btn').classList.remove('bg-gray-200', 'text-gray-700');
-            document.getElementById('show-lesson-form-btn').classList.add('bg-gray-200', 'text-gray-700');
-            document.getElementById('show-lesson-form-btn').classList.remove('bg-indigo-600', 'text-white');
-            
-            quizForm.reset();
-            document.getElementById('questions-container').innerHTML = '';
-            quizFormTitle.textContent = 'Add a New Quiz';
-            quizForm.querySelector('button[type="submit"]').textContent = 'Save Quiz';
-            currentEditingContentId = null;
-            addQuestionField();
-        }
-
+        // --- FETCH AND RENDER ---
         async function fetchAndRenderCourseDetails() {
             contentListUl.innerHTML = `<li><p class="text-gray-500">Loading course content...</p></li>`;
+            
             try {
+                // 1. Fetch Course Details (bộ điều khiển courses đã trả về lessons)
                 const courseResponse = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (!courseResponse.ok) throw new Error('Could not fetch course details');
                 const course = await courseResponse.json();
 
                 document.getElementById('course-title').textContent = course.title;
                 document.getElementById('course-description').textContent = course.description;
+                document.getElementById('form-course-id').value = course.id;
 
                 const lessons = course.lessons || [];
 
+                // 2. Fetch Quizzes (do course model chưa liên kết quiz, phải fetch riêng)
+                // Cần đảm bảo quizController.js có endpoint hỗ trợ query bằng courseId
                 const quizzesResponse = await fetch(`/api/quizzes?courseId=${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!quizzesResponse.ok) throw new Error('Could not fetch quizzes');
-                const quizzes = await quizzesResponse.json();
+                const quizzes = quizzesResponse.ok ? await quizzesResponse.json() : [];
 
-                const allContent = [...lessons, ...quizzes];
-                allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                // 3. Combine and Sort Content
+                const allContent = [...lessons.map(l => ({...l, type: 'lesson'})), ...quizzes.map(q => ({...q, type: 'quiz'}))];
+                allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // Sort theo thời gian tạo
 
                 if (allContent.length === 0) {
                     contentListUl.innerHTML = `<li><p class="text-gray-500">No lessons or quizzes have been added to this course yet.</p></li>`;
                     return;
                 }
 
+                // 4. Render Content List
                 contentListUl.innerHTML = '';
                 allContent.forEach(item => {
                     const listItem = document.createElement('li');
-                    listItem.className = 'p-3 border rounded-md flex justify-between items-center bg-gray-50';
-                    const itemType = item.type === 'quiz' ? 'quiz' : 'lesson';
-                    const icon = itemType === 'quiz' 
-                        ? '<i class="fas fa-puzzle-piece text-purple-600 mr-2"></i>'
-                        : '<i class="fas fa-book-open text-blue-600 mr-2"></i>';
+                    const itemType = item.type;
+                    const iconClass = itemType === 'quiz' ? 'fa-puzzle-piece text-purple-600' : 'fa-book-open text-blue-600';
+                    const listClass = itemType === 'quiz' ? 'bg-purple-50' : 'bg-blue-50';
+
+                    listItem.className = `lesson-item p-3 border rounded-md flex justify-between items-center ${listClass}`;
                     
                     listItem.innerHTML = `
                         <div class="flex items-center">
-                            ${icon}
+                            <i class="fas ${iconClass} mr-3"></i>
                             <span class="font-medium text-gray-800">${item.title}</span>
-                            <span class="ml-3 px-2 py-0.5 text-xs font-semibold text-gray-600 bg-gray-200 rounded-full">${itemType.charAt(0).toUpperCase() + itemType.slice(1)}</span>
                         </div>
                         <div class="space-x-3">
                             <button data-id="${item.id}" data-type="${itemType}" class="edit-content-btn text-sm font-medium text-indigo-600 hover:text-indigo-800">Edit</button>
@@ -212,6 +248,54 @@
             }
         }
 
+        // --- QUIZ MANAGEMENT FUNCTIONS ---
+        function addQuestionField(question = {}) {
+            const questionIndex = questionsContainer.children.length;
+            const field = document.createElement('div');
+            field.className = 'question-field bg-gray-100 border border-gray-200 p-4 rounded-lg';
+            field.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-medium text-gray-800">Question ${questionIndex + 1}</h4>
+                    <button type="button" class="remove-question-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove</button>
+                </div>
+                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2" rows="2" placeholder="Enter question text..." required>${question.question_text || ''}</textarea>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    ${Array(4).fill(0).map((_, i) => `
+                        <input type="text" placeholder="Option ${i + 1}" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="${question.options ? question.options[i] : ''}" required>
+                    `).join('')}
+                </div>
+                <div class="mt-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Correct Answer</label>
+                    <select class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="0">Option 1</option> <option value="1">Option 2</option>
+                        <option value="2">Option 3</option> <option value="3">Option 4</option>
+                    </select>
+                </div>
+            `;
+            
+            // Set correct answer if editing
+            if (question.correct_answer_index !== undefined) {
+                 field.querySelector('select').value = question.correct_answer_index;
+            }
+
+            questionsContainer.appendChild(field);
+            field.querySelector('.remove-question-btn').addEventListener('click', (e) => {
+                e.target.closest('.question-field').remove();
+                // Re-index question titles
+                questionsContainer.querySelectorAll('.question-field h4').forEach((h4, idx) => {
+                    h4.textContent = `Question ${idx + 1}`;
+                });
+            });
+        }
+        document.getElementById('add-question-btn').addEventListener('click', () => addQuestionField());
+
+        // --- EVENT HANDLERS ---
+        document.getElementById('show-lesson-form-btn').addEventListener('click', () => setActiveForm('lesson'));
+        document.getElementById('show-quiz-form-btn').addEventListener('click', () => setActiveForm('quiz'));
+        document.getElementById('cancel-lesson-edit-btn').addEventListener('click', () => setActiveForm('lesson'));
+        document.getElementById('cancel-quiz-edit-btn').addEventListener('click', () => setActiveForm('quiz'));
+
+        // Lesson Form Submission (Create/Update)
         lessonForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitButton = lessonForm.querySelector('button[type="submit"]');
@@ -221,8 +305,8 @@
             const lessonData = {
                 title: document.getElementById('lesson-title').value,
                 content_type: document.getElementById('lesson-video-url').value ? 'video' : 'text',
-                content_data: document.getElementById('lesson-video-url').value,
-                content_data_html: quill.root.innerHTML,
+                content_data: document.getElementById('lesson-video-url').value, // URL
+                content_data_html: quill.root.innerHTML, // HTML content from Quill
                 course_id: courseId
             };
             
@@ -239,8 +323,8 @@
                 if (!response.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} lesson.`);
                 
                 alert(`Lesson ${isEditing ? 'updated' : 'added'} successfully!`);
-                showLessonForm();
-                fetchAndRenderCourseDetails();
+                setActiveForm('lesson'); // Reset form
+                fetchAndRenderCourseDetails(); // Refresh list
             } catch (error) {
                 alert('Error: ' + error.message);
             } finally {
@@ -249,58 +333,7 @@
             }
         });
 
-        quizForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitButton = quizForm.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Saving...';
-            
-            const questions = [];
-            const questionFields = document.querySelectorAll('#quiz-form .question-field');
-
-            if (questionFields.length === 0) {
-                alert('Please add at least one question.');
-                submitButton.disabled = false;
-                submitButton.textContent = 'Save Quiz';
-                return;
-            }
-
-            questionFields.forEach(field => {
-                questions.push({
-                    question_text: field.querySelector('textarea').value,
-                    options: Array.from(field.querySelectorAll('input[type="text"]')).map(input => input.value),
-                    correct_answer_index: parseInt(field.querySelector('select').value, 10)
-                });
-            });
-
-            const quizPayload = {
-                title: document.getElementById('quiz-title').value,
-                description: document.getElementById('quiz-description').value,
-                course_id: courseId,
-                questions: questions
-            };
-            
-            try {
-                const response = await fetch('/api/quizzes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(quizPayload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to create quiz');
-                }
-                alert('Quiz created successfully!');
-                showLessonForm();
-                fetchAndRenderCourseDetails();
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Save Quiz';
-            }
-        });
-        
+        // Content List Event Delegation (Edit/Delete)
         contentListUl.addEventListener('click', async (e) => {
             const target = e.target.closest('button');
             if (!target) return;
@@ -310,7 +343,7 @@
 
             if (target.classList.contains('edit-content-btn')) {
                 if (type === 'lesson') {
-                    showLessonForm();
+                    setActiveForm('lesson');
                     lessonFormTitle.textContent = 'Edit Lesson';
                     lessonForm.querySelector('button[type="submit"]').textContent = 'Update Lesson';
                     currentEditingContentId = id;
@@ -320,13 +353,30 @@
                         const lesson = await res.json();
                         document.getElementById('lesson-title').value = lesson.title;
                         document.getElementById('lesson-video-url').value = lesson.content_data || '';
-                        quill.root.innerHTML = lesson.content_data_html || '';
-                        lessonForm.scrollIntoView({ behavior: 'smooth' });
+                        quill.root.innerHTML = lesson.content_data_html || ''; // Load content into editor
                     } catch (error) {
-                        alert('Error: ' + error.message);
+                        alert('Error fetching lesson: ' + error.message);
                     }
                 } else if (type === 'quiz') {
-                    alert('Editing quizzes directly from this form is not yet supported. Please delete and re-create if changes are needed.');
+                    // Quiz editing logic
+                    setActiveForm('quiz');
+                    quizFormTitle.textContent = 'Edit Quiz';
+                    quizForm.querySelector('button[type="submit"]').textContent = 'Update Quiz';
+                    currentEditingContentId = id;
+                     try {
+                        const res = await fetch(`/api/quizzes/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if (!res.ok) throw new Error('Could not fetch quiz details.');
+                        const quiz = await res.json();
+                        
+                        document.getElementById('quiz-title').value = quiz.title;
+                        document.getElementById('quiz-description').value = quiz.description;
+                        questionsContainer.innerHTML = ''; // Clear previous questions
+                        
+                        // Populate questions
+                        (quiz.questions || []).forEach(q => addQuestionField(q));
+                    } catch (error) {
+                        alert('Error fetching quiz: ' + error.message);
+                    }
                 }
             }
             
@@ -349,48 +399,10 @@
             }
         });
 
-        function addQuestionField() {
-            const container = document.getElementById('questions-container');
-            const questionIndex = container.children.length;
-            const questionField = document.createElement('div');
-            questionField.className = 'question-field bg-gray-100 border border-gray-200 p-4 rounded-lg';
-            questionField.innerHTML = `
-                <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-medium text-gray-800">Question ${questionIndex + 1}</h4>
-                    <button type="button" class="remove-question-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove</button>
-                </div>
-                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2" rows="2" placeholder="Enter question text..." required></textarea>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <input type="text" placeholder="Option 1" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    <input type="text" placeholder="Option 2" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    <input type="text" placeholder="Option 3" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                    <input type="text" placeholder="Option 4" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                </div>
-                <div class="mt-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Correct Answer</label>
-                    <select class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md">
-                        <option value="0">Option 1</option> <option value="1">Option 2</option>
-                        <option value="2">Option 3</option> <option value="3">Option 4</option>
-                    </select>
-                </div>
-            `;
-            container.appendChild(questionField);
-            questionField.querySelector('.remove-question-btn').addEventListener('click', (e) => {
-                e.target.closest('.question-field').remove();
-                document.querySelectorAll('#questions-container .question-field h4').forEach((h4, idx) => {
-                    h4.textContent = `Question ${idx + 1}`;
-                });
-            });
-        }
-        
-        document.getElementById('show-lesson-form-btn').addEventListener('click', showLessonForm);
-        document.getElementById('show-quiz-form-btn').addEventListener('click', showQuizForm);
-        document.getElementById('cancel-lesson-edit-btn').addEventListener('click', () => { showLessonForm(); });
-        document.getElementById('cancel-quiz-edit-btn').addEventListener('click', () => { showQuizForm(); });
-
+        // --- INITIALIZATION ---
         fetchAndRenderCourseDetails();
-        showLessonForm();
+        setActiveForm('lesson'); // Mặc định hiển thị form Add Lesson
     });
     </script>
 </body>
-</html> 
+</html>
