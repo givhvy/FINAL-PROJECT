@@ -5,14 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
         .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid #ffffff; }
+        .sidebar-link.active { background-color: #4338ca; border-left: 4px solid #a5b4fc; }
+        .sidebar-link:not(.active):hover { background-color: #3730a3; }
         .modal { transition: opacity 0.3s ease, transform 0.3s ease; }
         .modal.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        
+        /* === Styles for Certificate === */
+        .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
+        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
+        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; }
+        .seal { position: absolute; bottom: 30px; right: 40px; width: 120px; height: 120px; }
     </style>
 </head>
 <body>
@@ -23,7 +34,7 @@
             </div>
             <div class="p-5 border-b border-blue-700">
                 <div class="flex items-center space-x-3">
-                    <img id="teacher-avatar-img" src="https://i.pravatar.cc/100?img=32" alt="Teacher profile" class="w-10 h-10 rounded-full">
+                    <img id="teacher-avatar-img" alt="Teacher profile" class="w-10 h-10 rounded-full">
                     <div>
                         <p id="teacher-name" class="font-semibold">Loading...</p>
                         <p id="teacher-email" class="text-xs text-blue-200">Loading...</p>
@@ -31,37 +42,78 @@
                 </div>
             </div>
             <nav class="flex-1 overflow-y-auto py-4">
-                <a href="#" class="sidebar-link active flex items-center px-6 py-3 text-white">Dashboard</a>
-                <a href="CourseandLesson.html" class="sidebar-link flex items-center px-6 py-3 text-white">View Site as Student</a>
+                <a href="#" class="sidebar-link active flex items-center px-6 py-3 text-white transition-colors" data-target="dashboard-page">
+                    <i class="fas fa-tachometer-alt w-5 mr-3"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="quizzes-page">
+                    <i class="fas fa-puzzle-piece w-5 mr-3"></i> Quizzes
+                </a>
+                <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="certificates-page">
+                    <i class="fas fa-certificate w-5 mr-3"></i> Certificates
+                </a>
+                <a href="CourseandLesson.html" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors">
+                    <i class="fas fa-eye w-5 mr-3"></i> View Site as Student
+                </a>
             </nav>
             <div class="p-5 border-t border-blue-700">
-                <button id="logout-button" class="flex items-center text-white w-full">Logout</button>
+                <button id="logout-button" class="flex items-center text-white w-full hover:bg-indigo-800 p-2 rounded-md transition-colors">
+                    <i class="fas fa-sign-out-alt w-5 mr-3"></i> Logout
+                </button>
             </div>
         </div>
 
         <div class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white shadow-sm">
-                <div class="flex items-center justify-between p-4">
-                    <h2 class="text-xl font-semibold text-gray-800">My Dashboard</h2>
-                    <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Add New Course
-                    </button>
-                </div>
-            </header>
+            <div id="dashboard-page" class="page-content flex-1 flex flex-col overflow-hidden">
+                <header class="bg-white shadow-sm">
+                    <div class="flex items-center justify-between p-4">
+                        <h2 id="welcome-message" class="text-xl font-semibold text-gray-800">My Dashboard</h2>
+                        <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Course
+                        </button>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
+                    <div id="my-courses-section">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">My Published Courses</h2>
+                        <div id="courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            </div>
+                    </div>
+                </main>
+            </div>
 
-            <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
-                <div class="mb-8">
-                    <h1 id="welcome-message" class="text-2xl font-bold text-gray-800">Welcome back!</h1>
-                    <p class="text-gray-600">Here's what's happening with your courses today.</p>
-                </div>
-                
-                <div id="my-courses-section">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">My Published Courses</h2>
-                    <div id="courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="quizzes-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
+                <header class="bg-white shadow-sm"><div class="p-4"><h2 class="text-xl font-semibold text-gray-800">Quiz Management</h2></div></header>
+                <main class="flex-1 overflow-y-auto p-5 bg-gray-50"><p>Quiz feature coming soon.</p></main>
+            </div>
+
+            <div id="certificates-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
+                <header class="bg-white shadow-sm">
+                    <div class="p-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Certificate Generator</h2>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <div class="mb-6">
+                                <label for="cert-user" class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
+                                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="cert-course" class="block text-sm font-medium text-gray-700 mb-2">Select Your Completed Course</label>
+                                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="cert-date" class="block text-sm font-medium text-gray-700 mb-2">Date of Completion</label>
+                                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">Generate & Preview</button>
                         </div>
-                </div>
-            </main>
+                        <div id="certificate-preview-container" class="w-full mt-8 hidden">
+                            </div>
+                    </div>
+                </main>
+            </div>
         </div>
     </div>
 
@@ -82,7 +134,7 @@
                         <label for="price" class="block text-sm font-medium text-gray-700">Price ($)</label>
                         <input type="number" id="price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-                     <div>
+                    <div>
                         <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
                         <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option>Beginner</option>
@@ -92,7 +144,7 @@
                     </div>
                     <div>
                         <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
-                        <input type="text" id="imageUrl" placeholder="Paste image URL from Cloudinary" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="text" id="imageUrl" placeholder="e.g., https://example.com/image.png" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-3">
@@ -105,102 +157,246 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- AUTH GUARD & USER INFO ---
+    // --- AUTH, USER INFO, & GLOBAL VARS --- 
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
         window.location.href = 'LoginPage.html';
         return;
     }
+
+    let allCourses = [];
+    let allStudents = [];
+    let currentEditingCourseId = null;
+
+    // --- ELEMENTS ---
+    const courseModal = document.getElementById('course-modal');
+    const courseForm = document.getElementById('course-form');
+    
+    // Set user info
     document.getElementById('teacher-name').textContent = user.name;
     document.getElementById('teacher-email').textContent = user.email;
-    document.getElementById('welcome-message').textContent = `Welcome back, ${user.name}!`;
+    document.getElementById('teacher-avatar-img').src = user.avatarUrl || 'https://i.pravatar.cc/100';
+
+
+    // --- PAGE NAVIGATION --- 
+    function showPage(targetId) {
+        document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
+        document.getElementById(targetId).classList.remove('hidden');
+
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if(link.dataset.target === targetId) {
+                link.classList.add('active');
+            }
+        });
+
+        // Load data for the selected page
+        if (targetId === 'dashboard-page') fetchAndRenderMyCourses();
+        else if (targetId === 'quizzes-page') renderQuizManagementPage();
+        else if (targetId === 'certificates-page') populateCertificateForm();
+    }
+
+    // --- DATA FETCHING --- 
+    async function fetchInitialData() {
+        try {
+            // NOTE: Assumes /api/courses and /api/users endpoints exist
+            const [coursesRes, usersRes] = await Promise.all([
+                fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } })
+            ]);
+            if (!coursesRes.ok || !usersRes.ok) throw new Error('Could not fetch initial data');
+            
+            allCourses = await coursesRes.json();
+            const allUsers = await usersRes.json();
+            allStudents = allUsers.filter(u => u.role === 'student');
+            
+            showPage('dashboard-page'); // Show dashboard after data is loaded
+        } catch (error) {
+            console.error(error);
+            // alert('Failed to load initial data. Check your API endpoints.');
+        }
+    }
+
+    // === COURSE MANAGEMENT FUNCTIONS === 
+    async function fetchAndRenderMyCourses() {
+        const coursesListDiv = document.getElementById('courses-list');
+        // Filter courses for the current teacher
+        const myCourses = allCourses.filter(course => course.teacher_id === user.id); 
+
+        if (myCourses.length === 0) {
+            coursesListDiv.innerHTML = `<p class="col-span-full text-center text-gray-500">You haven't created any courses yet.</p>`;
+            return;
+        }
+
+        coursesListDiv.innerHTML = '';
+        myCourses.forEach(course => {
+            coursesListDiv.innerHTML += `
+            <div class="dashboard-card bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 flex flex-col justify-between" data-course-id="${course.id}">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-semibold text-gray-800">${course.title}</h3>
+                        <div class="flex space-x-2">
+                            <button class="edit-course-btn text-gray-400 hover:text-blue-600"><i class="fas fa-pencil-alt pointer-events-none"></i></button>
+                            <button class="delete-course-btn text-gray-400 hover:text-red-600"><i class="fas fa-trash pointer-events-none"></i></button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">${(course.description || '').substring(0, 50)}...</p>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-lg font-bold text-indigo-600">$${course.price}</span>
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">${course.level}</span>
+                    </div>
+                    <div class="mt-4 border-t pt-2">
+                        <a href="LessonManagement.html?courseId=${course.id}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Manage Lessons →</a>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+
+    function openCourseModal(course = null) {
+        courseForm.reset();
+        if (course) { // Editing mode
+            document.getElementById('modal-title').textContent = 'Edit Course';
+            document.getElementById('title').value = course.title;
+            document.getElementById('description').value = course.description;
+            document.getElementById('price').value = course.price;
+            document.getElementById('level').value = course.level;
+            document.getElementById('imageUrl').value = course.imageUrl || '';
+            currentEditingCourseId = course.id;
+        } else { // Adding mode
+            document.getElementById('modal-title').textContent = 'Add New Course';
+            currentEditingCourseId = null;
+        }
+        courseModal.classList.remove('hidden');
+    }
+
+    // === QUIZ MANAGEMENT (Placeholder) === 
+    function renderQuizManagementPage() { /* ... placeholder ... */ }
+
+    // === CERTIFICATE FUNCTIONS === 
+
+    function populateCertificateForm() {
+        const userSelect = document.getElementById('cert-user');
+        const courseSelect = document.getElementById('cert-course');
+        const dateInput = document.getElementById('cert-date');
+
+        userSelect.innerHTML = '<option value="">-- Select a Student --</option>';
+        allStudents.forEach(student => {
+            userSelect.innerHTML += `<option value="${student.id}" data-name="${student.name}">${student.name} (${student.email})</option>`;
+        });
+
+        courseSelect.innerHTML = '<option value="">-- Select Your Course --</option>';
+        const myCourses = allCourses.filter(course => course.teacher_id === user.id);
+        myCourses.forEach(course => {
+            courseSelect.innerHTML += `<option value="${course.id}" data-title="${course.title}">${course.title}</option>`;
+        });
+
+        dateInput.value = new Date().toISOString().split('T')[0];
+        document.getElementById('certificate-preview-container').classList.add('hidden'); // Hide old preview
+    }
+
+    // HÀM MỚI: TẢI CERTIFICATE
+    function downloadCertificate() {
+        const certificateNode = document.getElementById('certificate-template');
+        const userSelect = document.getElementById('cert-user');
+        const studentName = userSelect.options[userSelect.selectedIndex]?.dataset.name; 
+        const fileName = `certificate-${studentName.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
+
+        // Sử dụng html2canvas để "chụp ảnh"
+        html2canvas(certificateNode, {
+            scale: 2, // Tăng độ phân giải cho ảnh
+            useCORS: true // Cần thiết nếu có ảnh từ nguồn khác
+        }).then(canvas => {
+            // Tạo một link ẩn để tải ảnh
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(err => {
+            console.error('Error during certificate capture:', err);
+            alert('Failed to download certificate. Check console for details.');
+        });
+    }
+
+    // CẬP NHẬT HÀM GENERATE CERTIFICATE PREVIEW
+    function generateCertificatePreview() {
+        const userSelect = document.getElementById('cert-user');
+        const courseSelect = document.getElementById('cert-course');
+        const dateInput = document.getElementById('cert-date');
+        const studentName = userSelect.options[userSelect.selectedIndex]?.getAttribute('data-name');
+        const courseTitle = courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title');
+        const issueDate = dateInput.value ? new Date(dateInput.value).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+
+        if (!studentName || !courseTitle || !issueDate) {
+            alert('Please select all fields to generate a certificate.');
+            return;
+        }
+
+        const previewContainer = document.getElementById('certificate-preview-container');
+        previewContainer.classList.remove('hidden');
+        previewContainer.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Certificate Preview</h2>
+                <button id="download-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-md">
+                    <i class="fas fa-download mr-2"></i> Download PNG
+                </button>
+            </div>
+            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
+                <div class="text-center z-10 px-6"> 
+                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion</h2> 
+                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1> 
+                    <p class="text-gray-600 mb-2">This certifies that</p> 
+                    <h2 class="certificate-name text-center mx-auto my-6 px-4">${studentName.toUpperCase()}</h2> 
+                    <p class="text-gray-600 mb-6">has successfully completed the course</p> 
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-6">${courseTitle}</h3> 
+                    <p class="text-gray-600 mb-8">Issued on ${issueDate}</p> 
+                    <div class="text-center"> 
+                        <div class="text-xl text-blue-800 mb-2" style="font-family: 'Playfair Display', serif;">${user.name}</div> 
+                        <div class="w-40 border-t border-gray-400 mx-auto"></div> 
+                        <p class="text-sm text-gray-600 mt-1">Course Instructor</p> 
+                    </div> 
+                </div> 
+                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> 
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/> 
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/> 
+                    <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/> 
+                    <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text> 
+                    <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text> 
+                </svg> 
+            </div>
+        `;
+
+        // Gán sự kiện cho nút download mới được tạo
+        document.getElementById('download-btn').addEventListener('click', downloadCertificate);
+    }
+    
+    // --- EVENT LISTENERS --- 
+    // Sidebar navigation
+    document.querySelectorAll('.sidebar-link[data-target]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage(e.currentTarget.dataset.target);
+        });
+    });
+
+    // Logout
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
         window.location.href = 'LoginPage.html';
     });
 
-    // --- PAGE ELEMENTS ---
-    const coursesListDiv = document.getElementById('courses-list');
-    const modal = document.getElementById('course-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const courseForm = document.getElementById('course-form');
-    let currentEditingCourseId = null;
-
-    // --- FUNCTIONS ---
-    async function fetchAndRenderMyCourses() {
-        coursesListDiv.innerHTML = `<p>Loading your courses...</p>`;
-        try {
-            const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Could not fetch courses');
-            const allCourses = await response.json();
-            const myCourses = allCourses.filter(course => course.teacher_id === user.id);
-
-            if (myCourses.length === 0) {
-                coursesListDiv.innerHTML = `<p class="col-span-full text-center text-gray-500">You haven't created any courses yet.</p>`;
-                return;
-            }
-
-            coursesListDiv.innerHTML = '';
-            myCourses.forEach(course => {
-                const courseCard = document.createElement('div');
-                courseCard.className = 'dashboard-card bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 flex flex-col justify-between';
-                courseCard.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-semibold text-gray-800">${course.title}</h3>
-                            <div class="flex space-x-2">
-                                <button data-course-id="${course.id}" class="edit-course-btn text-gray-400 hover:text-blue-600">
-                                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
-                                </button>
-                                <button data-course-id="${course.id}" class="delete-course-btn text-gray-400 hover:text-red-600">
-                                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-2">${(course.description || '').substring(0, 50)}...</p>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-lg font-bold text-indigo-600">$${course.price}</span>
-                            <span class="text-xs font-medium text-gray-500">${course.level}</span>
-                        </div>
-                        <div class="mt-4 border-t pt-2">
-                            <a href="LessonManagement.html?courseId=${course.id}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
-                                Manage Lessons →
-                            </a>
-                        </div>
-                    </div>
-                `;
-                coursesListDiv.appendChild(courseCard);
-            });
-        } catch (error) {
-            coursesListDiv.innerHTML = `<p class="col-span-full text-center text-red-500">Failed to load courses.</p>`;
-        }
-    }
+    // Add Course button
+    document.getElementById('add-course-btn').addEventListener('click', () => openCourseModal());
     
-    // --- EVENT LISTENERS ---
-    
-    // Mở modal để Thêm Mới
-    document.getElementById('add-course-btn').addEventListener('click', () => {
-        currentEditingCourseId = null;
-        modalTitle.textContent = 'Add New Course';
-        courseForm.reset();
-        modal.classList.remove('hidden');
-    });
+    // Modal Cancel button
+    document.getElementById('cancel-btn').addEventListener('click', () => courseModal.classList.add('hidden'));
 
-    // Đóng modal
-    document.getElementById('cancel-btn').addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
-
-    // Xử lý Form (Thêm Mới và Cập Nhật)
+    // Course form submission (Add/Edit)
     courseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const submitButton = courseForm.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Saving...';
-        
         const courseData = {
             title: document.getElementById('title').value,
             description: document.getElementById('description').value,
@@ -220,59 +416,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(courseData)
             });
-            if (!response.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} course.`);
+            if (!response.ok) throw new Error(await response.text());
             
-            alert(`Course ${isEditing ? 'updated' : 'created'} successfully!`);
-            modal.classList.add('hidden');
-            fetchAndRenderMyCourses();
+            courseModal.classList.add('hidden');
+            await fetchInitialData(); // Refetch all data to update the view
         } catch (error) {
             alert('Error: ' + error.message);
-        } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Save Course';
         }
     });
 
-    // Xử lý Click trên danh sách (Edit và Delete)
-    coursesListDiv.addEventListener('click', async (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
+    // Edit/Delete buttons on course cards
+    document.getElementById('courses-list').addEventListener('click', async (e) => {
+        const button = e.target.closest('button');
+        if (!button) return;
+        const card = button.closest('.dashboard-card');
+        const courseId = card.dataset.courseId;
+        const courseToActOn = allCourses.find(c => c.id === courseId);
 
-        const courseId = target.dataset.courseId;
-
-        // Xử lý nút EDIT
-        if (target.classList.contains('edit-course-btn')) {
-            try {
-                const res = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!res.ok) throw new Error('Could not fetch course details.');
-                const course = await res.json();
-                
-                document.getElementById('title').value = course.title;
-                document.getElementById('description').value = course.description;
-                document.getElementById('price').value = course.price;
-                document.getElementById('level').value = course.level;
-                document.getElementById('imageUrl').value = course.imageUrl || '';
-                
-                modalTitle.textContent = 'Edit Course';
-                currentEditingCourseId = courseId;
-                modal.classList.remove('hidden');
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
-        }
-        
-        // Xử lý nút DELETE
-        if (target.classList.contains('delete-course-btn')) {
-            const courseTitle = target.closest('.dashboard-card').querySelector('h3').textContent;
-            if (confirm(`Are you sure you want to delete "${courseTitle}"?`)) {
+        if (button.classList.contains('edit-course-btn')) {
+            openCourseModal(courseToActOn);
+        } else if (button.classList.contains('delete-course-btn')) {
+            if (confirm(`Are you sure you want to delete "${courseToActOn.title}"?`)) {
                 try {
                     const response = await fetch(`/api/courses/${courseId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!response.ok) throw new Error('Failed to delete course.');
-                    alert('Course deleted successfully!');
-                    fetchAndRenderMyCourses();
+                    await fetchInitialData(); // Refetch
                 } catch (error) {
                     alert('Error: ' + error.message);
                 }
@@ -280,7 +451,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    fetchAndRenderMyCourses();
+    // Generate Certificate button
+    document.getElementById('generate-certificate').addEventListener('click', generateCertificatePreview);
+
+    // --- INITIALIZATION --- 
+    fetchInitialData();
 });
 </script>
 </body>
