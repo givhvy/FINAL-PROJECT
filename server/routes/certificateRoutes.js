@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const certificateController = require('../controllers/certificateController');
 
-router.get('/api/certificates', certificateController.getCertificates);
-router.post('/api/certificates', certificateController.createCertificate);
-router.get('/api/certificates/:id', certificateController.getCertificateById);
-router.put('/api/certificates/:id', certificateController.updateCertificate);
-router.delete('/api/certificates/:id', certificateController.deleteCertificate);
+// SỬA LẠI: Bỏ '/api/certificates' khỏi các đường dẫn
+router.get('/', certificateController.getCertificates);
+router.post('/', certificateController.createCertificate);
+router.get('/:id', certificateController.getCertificateById);
+router.put('/:id', certificateController.updateCertificate);
+router.delete('/:id', certificateController.deleteCertificate);
 
-module.exports = router; 
+module.exports = router;

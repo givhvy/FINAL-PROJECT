@@ -3,642 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Learning Admin Dashboard</title>
+    <title>CodeMaster Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-        
-        .sidebar-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .sidebar-item.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-left: 4px solid #ffffff;
-        }
-        
-        .card {
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; }
+        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
+        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; text-align: center; margin: 1.5rem 0; padding: 0 1rem; }
+        .seal { position: absolute; bottom: 30px; right: 40px; width: 120px; height: 120px; }
+        .sidebar { transition: all 0.3s ease; }
+        .sidebar-item:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .sidebar-item.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid #ffffff; }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .chart-container { height: 300px; position: relative; }
+        /* SỬA LỖI: Bỏ đi quy tắc CSS không cần thiết */
+        /* .page-content:not(.active) { display: none; } */
     </style>
 </head>
 <body>
     <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div id="sidebar" class="sidebar bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform md:relative md:translate-x-0 z-20">
+        <div id="sidebar" class="sidebar bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
             <div class="flex items-center justify-between px-4">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-graduation-cap text-2xl"></i>
-                    <span class="text-xl font-bold">EduAdmin</span>
+                    <span class="text-xl font-bold">CodeMaster Admin</span>
                 </div>
-                <button id="closeSidebar" class="md:hidden">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button id="closeSidebar" class="md:hidden"> <i class="fas fa-times"></i> </button>
             </div>
             
             <nav class="mt-10">
-                <div class="sidebar-item active flex items-center px-4 py-3 cursor-pointer" data-target="dashboard">
-                    <i class="fas fa-tachometer-alt mr-3"></i>
-                    <span>Dashboard</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="courses">
-                    <i class="fas fa-book mr-3"></i>
-                    <span>Courses</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="students">
-                    <i class="fas fa-users mr-3"></i>
-                    <span>Students</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="instructors">
-                    <i class="fas fa-chalkboard-teacher mr-3"></i>
-                    <span>Instructors</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="assignments">
-                    <i class="fas fa-tasks mr-3"></i>
-                    <span>Assignments</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="reports">
-                    <i class="fas fa-chart-bar mr-3"></i>
-                    <span>Reports</span>
-                </div>
-                <div class="sidebar-item flex items-center px-4 py-3 cursor-pointer" data-target="settings">
-                    <i class="fas fa-cog mr-3"></i>
-                    <span>Settings</span>
-                </div>
+                <div class="sidebar-item active flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="dashboard"> <i class="fas fa-tachometer-alt mr-3"></i> <span>Dashboard</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="courses"> <i class="fas fa-book mr-3"></i> <span>Courses</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="students"> <i class="fas fa-users mr-3"></i> <span>Students</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="instructors"> <i class="fas fa-chalkboard-teacher mr-3"></i> <span>Instructors</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="assignments"> <i class="fas fa-tasks mr-3"></i> <span>Assignments</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="reports"> <i class="fas fa-chart-bar mr-3"></i> <span>Reports</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
             
-            <div class="px-4 mt-auto pt-10">
-                <div class="flex items-center space-x-2 border-t border-indigo-700 pt-4">
-                    <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center">
-                        <i class="fas fa-user"></i>
-                    </div>
+            <div class="px-4 absolute bottom-4 left-0 right-0">
+                <div class="flex items-center space-x-3 border-t border-indigo-700 pt-4">
+                    <div id="admin-avatar" class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-lg"></div>
                     <div>
-                        <p class="text-sm font-medium">Admin User</p>
-                        <p class="text-xs text-indigo-300">admin@edulearn.com</p>
+                        <p id="admin-user-name" class="text-sm font-semibold">Admin User</p>
+                        <p id="admin-user-email" class="text-xs text-indigo-300">admin@codemaster.com</p>
                     </div>
-                    <button class="ml-auto text-indigo-300 hover:text-white">
-                        <i class="fas fa-sign-out-alt"></i>
+                    <button id="logout-button-sidebar" class="ml-auto text-indigo-300 hover:text-white" title="Logout">
+                        <i class="fas fa-sign-out-alt text-lg"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Header -->
             <header class="bg-white shadow-sm z-10">
                 <div class="flex items-center justify-between p-4">
                     <div class="flex items-center">
-                        <button id="openSidebar" class="md:hidden mr-4">
-                            <i class="fas fa-bars text-gray-600"></i>
-                        </button>
+                        <button id="openSidebar" class="md:hidden mr-4 text-gray-600"> <i class="fas fa-bars"></i> </button>
                         <h1 class="text-xl font-semibold text-gray-800" id="pageTitle">Dashboard</h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="relative p-2">
-                            <i class="fas fa-bell text-gray-600"></i>
-                            <span class="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
-                        </button>
-                        <button class="p-2">
-                            <i class="fas fa-envelope text-gray-600"></i>
-                        </button>
                         <div class="relative">
                             <button id="userMenuBtn" class="flex items-center space-x-2">
-                                <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <span class="hidden md:inline text-gray-700">Admin User</span>
+                                <div id="header-avatar" class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white"></div>
+                                <span id="header-user-name" class="hidden md:inline text-gray-700">Admin User</span>
                                 <i class="fas fa-chevron-down text-xs text-gray-500"></i>
                             </button>
-                            <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                            <div id="userMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 hidden">
+                                <a href="AccountProfile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile (Student View)</a>
+                                <button id="logout-button-header" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto bg-gray-50 p-4">
-                <!-- Dashboard Section -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
                 <section id="dashboard" class="page-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-4 text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm opacity-80">Total Students</p>
-                                    <h3 class="text-2xl font-bold">1,245</h3>
-                                    <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p>
-                                </div>
-                                <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full">
-                                    <i class="fas fa-users text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-4 text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm opacity-80">Active Courses</p>
-                                    <h3 class="text-2xl font-bold">42</h3>
-                                    <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p>
-                                </div>
-                                <div class="bg-green-400 bg-opacity-30 p-3 rounded-full">
-                                    <i class="fas fa-book text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-4 text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm opacity-80">Total Revenue</p>
-                                    <h3 class="text-2xl font-bold">$24,500</h3>
-                                    <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p>
-                                </div>
-                                <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full">
-                                    <i class="fas fa-dollar-sign text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-4 text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm opacity-80">Completion Rate</p>
-                                    <h3 class="text-2xl font-bold">78%</h3>
-                                    <p class="text-xs mt-1"><span class="text-red-300">↓ 3%</span> from last month</p>
-                                </div>
-                                <div class="bg-red-400 bg-opacity-30 p-3 rounded-full">
-                                    <i class="fas fa-chart-pie text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 class="text-2xl font-bold">1,245</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Active Courses</p> <h3 class="text-2xl font-bold">42</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Revenue</p> <h3 class="text-2xl font-bold">$24,500</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-dollar-sign text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Completion Rate</p> <h3 class="text-2xl font-bold">78%</h3> <p class="text-xs mt-1"><span class="text-red-300">↓ 3%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-chart-pie text-xl"></i> </div> </div> </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-                        <div class="card bg-white rounded-lg shadow col-span-2">
-                            <div class="p-4 border-b">
-                                <h3 class="font-semibold text-gray-700">Enrollment Statistics</h3>
-                            </div>
-                            <div class="p-4">
-                                <div class="chart-container" id="enrollmentChart">
-                                    <canvas id="enrollmentCanvas"></canvas>
-                                </div>
-                            </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="card bg-white rounded-lg shadow-md col-span-2">
+                            <div class="p-4 border-b"> <h3 class="font-semibold text-gray-700">Enrollment Statistics</h3> </div>
+                            <div class="p-4"> <div class="chart-container" id="enrollmentChart"> <canvas id="enrollmentCanvas"></canvas> </div> </div>
                         </div>
-                        
-                        <div class="card bg-white rounded-lg shadow">
-                            <div class="p-4 border-b">
-                                <h3 class="font-semibold text-gray-700">Course Categories</h3>
-                            </div>
-                            <div class="p-4">
-                                <div class="chart-container" id="categoriesChart">
-                                    <canvas id="categoriesCanvas"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="card bg-white rounded-lg shadow">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="font-semibold text-gray-700">Recent Enrollments</h3>
-                                <button class="text-sm text-indigo-600 hover:text-indigo-800">View All</button>
-                            </div>
-                            <div class="p-4">
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full">
-                                        <thead>
-                                            <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                <th class="px-4 py-2">Student</th>
-                                                <th class="px-4 py-2">Course</th>
-                                                <th class="px-4 py-2">Date</th>
-                                                <th class="px-4 py-2">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                            <tr>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex items-center">
-                                                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3">
-                                                            <span class="font-medium">JD</span>
-                                                        </div>
-                                                        <span>John Doe</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">Web Development Basics</td>
-                                                <td class="px-4 py-3 text-sm">May 12, 2023</td>
-                                                <td class="px-4 py-3">
-                                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex items-center">
-                                                        <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 mr-3">
-                                                            <span class="font-medium">AS</span>
-                                                        </div>
-                                                        <span>Alice Smith</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">Data Science Fundamentals</td>
-                                                <td class="px-4 py-3 text-sm">May 11, 2023</td>
-                                                <td class="px-4 py-3">
-                                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex items-center">
-                                                        <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-500 mr-3">
-                                                            <span class="font-medium">RJ</span>
-                                                        </div>
-                                                        <span>Robert Johnson</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">Digital Marketing</td>
-                                                <td class="px-4 py-3 text-sm">May 10, 2023</td>
-                                                <td class="px-4 py-3">
-                                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3">
-                                                    <div class="flex items-center">
-                                                        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 mr-3">
-                                                            <span class="font-medium">EW</span>
-                                                        </div>
-                                                        <span>Emma Wilson</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">UX/UI Design</td>
-                                                <td class="px-4 py-3 text-sm">May 9, 2023</td>
-                                                <td class="px-4 py-3">
-                                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card bg-white rounded-lg shadow">
-                            <div class="p-4 border-b flex justify-between items-center">
-                                <h3 class="font-semibold text-gray-700">Popular Courses</h3>
-                                <button class="text-sm text-indigo-600 hover:text-indigo-800">View All</button>
-                            </div>
-                            <div class="p-4">
-                                <ul class="divide-y divide-gray-200">
-                                    <li class="py-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div class="bg-blue-100 text-blue-600 p-2 rounded mr-3">
-                                                    <i class="fas fa-laptop-code"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-medium">Web Development Bootcamp</h4>
-                                                    <p class="text-sm text-gray-500">John Smith • 24 lessons</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="text-sm font-medium">352 students</div>
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star-half-alt"></i>
-                                                    <span class="text-gray-500 ml-1">4.8</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="py-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div class="bg-green-100 text-green-600 p-2 rounded mr-3">
-                                                    <i class="fas fa-chart-line"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-medium">Data Science Masterclass</h4>
-                                                    <p class="text-sm text-gray-500">Sarah Johnson • 32 lessons</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="text-sm font-medium">284 students</div>
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">5.0</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="py-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div class="bg-purple-100 text-purple-600 p-2 rounded mr-3">
-                                                    <i class="fas fa-paint-brush"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-medium">UX/UI Design Principles</h4>
-                                                    <p class="text-sm text-gray-500">Michael Brown • 18 lessons</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="text-sm font-medium">198 students</div>
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="far fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">4.2</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="py-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div class="bg-red-100 text-red-600 p-2 rounded mr-3">
-                                                    <i class="fas fa-bullhorn"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-medium">Digital Marketing Strategy</h4>
-                                                    <p class="text-sm text-gray-500">Emily Davis • 22 lessons</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="text-sm font-medium">176 students</div>
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star"></i>
-                                                    <i class="fas fa-star-half-alt"></i>
-                                                    <span class="text-gray-500 ml-1">4.7</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="card bg-white rounded-lg shadow-md">
+                            <div class="p-4 border-b"> <h3 class="font-semibold text-gray-700">Course Categories</h3> </div>
+                            <div class="p-4"> <div class="chart-container" id="categoriesChart"> <canvas id="categoriesCanvas"></canvas> </div> </div>
                         </div>
                     </div>
                 </section>
                 
-                <!-- Courses Section -->
-                <section id="courses" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow mb-6">
-                        <div class="p-4 border-b flex flex-col md:flex-row md:items-center md:justify-between">
-                            <h2 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Course Management</h2>
-                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-                                <div class="relative">
-                                    <input type="text" placeholder="Search courses..." class="border rounded-lg px-3 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Add New Course
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full">
-                                    <thead>
-                                        <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <th class="px-4 py-3">Course Name</th>
-                                            <th class="px-4 py-3">Instructor</th>
-                                            <th class="px-4 py-3">Category</th>
-                                            <th class="px-4 py-3">Students</th>
-                                            <th class="px-4 py-3">Rating</th>
-                                            <th class="px-4 py-3">Status</th>
-                                            <th class="px-4 py-3">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="bg-blue-100 text-blue-600 p-2 rounded mr-3">
-                                                        <i class="fas fa-laptop-code"></i>
-                                                    </div>
-                                                    <span class="font-medium">Web Development Bootcamp</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">John Smith</td>
-                                            <td class="px-4 py-3">Development</td>
-                                            <td class="px-4 py-3">352</td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">4.8</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="bg-green-100 text-green-600 p-2 rounded mr-3">
-                                                        <i class="fas fa-chart-line"></i>
-                                                    </div>
-                                                    <span class="font-medium">Data Science Masterclass</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">Sarah Johnson</td>
-                                            <td class="px-4 py-3">Data Science</td>
-                                            <td class="px-4 py-3">284</td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">5.0</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="bg-purple-100 text-purple-600 p-2 rounded mr-3">
-                                                        <i class="fas fa-paint-brush"></i>
-                                                    </div>
-                                                    <span class="font-medium">UX/UI Design Principles</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">Michael Brown</td>
-                                            <td class="px-4 py-3">Design</td>
-                                            <td class="px-4 py-3">198</td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">4.2</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="bg-red-100 text-red-600 p-2 rounded mr-3">
-                                                        <i class="fas fa-bullhorn"></i>
-                                                    </div>
-                                                    <span class="font-medium">Digital Marketing Strategy</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">Emily Davis</td>
-                                            <td class="px-4 py-3">Marketing</td>
-                                            <td class="px-4 py-3">176</td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">4.7</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Draft</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="bg-yellow-100 text-yellow-600 p-2 rounded mr-3">
-                                                        <i class="fas fa-language"></i>
-                                                    </div>
-                                                    <span class="font-medium">Spanish for Beginners</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">Carlos Rodriguez</td>
-                                            <td class="px-4 py-3">Languages</td>
-                                            <td class="px-4 py-3">145</td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center text-yellow-400 text-xs">
-                                                    <i class="fas fa-star"></i>
-                                                    <span class="text-gray-500 ml-1">4.5</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="text-sm text-gray-600">
-                                    Showing 1 to 5 of 42 entries
-                                </div>
-                                <div class="flex space-x-1">
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Previous</button>
-                                    <button class="px-3 py-1 rounded border bg-indigo-600 text-white">1</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">2</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">3</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Next</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                
-                <!-- Students Section -->
                 <section id="students" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow mb-6">
+                    <div class="bg-white rounded-lg shadow-md mb-6">
                         <div class="p-4 border-b flex flex-col md:flex-row md:items-center md:justify-between">
                             <h2 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Student Management</h2>
                             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
@@ -655,7 +123,7 @@
                         <div class="p-4">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full">
-                                    <thead>
+                                    <thead class="bg-gray-50">
                                         <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             <th class="px-4 py-3">Student</th>
                                             <th class="px-4 py-3">Email</th>
@@ -666,174 +134,14 @@
                                             <th class="px-4 py-3">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3">
-                                                        <span class="font-medium">JD</span>
-                                                    </div>
-                                                    <span>John Doe</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">john.doe@example.com</td>
-                                            <td class="px-4 py-3">3</td>
-                                            <td class="px-4 py-3">
-                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 65%"></div>
-                                                </div>
-                                                <span class="text-xs text-gray-500">65%</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-sm">Jan 15, 2023</td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 mr-3">
-                                                        <span class="font-medium">AS</span>
-                                                    </div>
-                                                    <span>Alice Smith</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">alice.smith@example.com</td>
-                                            <td class="px-4 py-3">2</td>
-                                            <td class="px-4 py-3">
-                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 42%"></div>
-                                                </div>
-                                                <span class="text-xs text-gray-500">42%</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-sm">Feb 3, 2023</td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-500 mr-3">
-                                                        <span class="font-medium">RJ</span>
-                                                    </div>
-                                                    <span>Robert Johnson</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">robert.j@example.com</td>
-                                            <td class="px-4 py-3">1</td>
-                                            <td class="px-4 py-3">
-                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 18%"></div>
-                                                </div>
-                                                <span class="text-xs text-gray-500">18%</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-sm">Mar 12, 2023</td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 mr-3">
-                                                        <span class="font-medium">EW</span>
-                                                    </div>
-                                                    <span>Emma Wilson</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">emma.w@example.com</td>
-                                            <td class="px-4 py-3">4</td>
-                                            <td class="px-4 py-3">
-                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 89%"></div>
-                                                </div>
-                                                <span class="text-xs text-gray-500">89%</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-sm">Jan 5, 2023</td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-500 mr-3">
-                                                        <span class="font-medium">DT</span>
-                                                    </div>
-                                                    <span>David Thompson</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3">david.t@example.com</td>
-                                            <td class="px-4 py-3">2</td>
-                                            <td class="px-4 py-3">
-                                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 54%"></div>
-                                                </div>
-                                                <span class="text-xs text-gray-500">54%</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-sm">Apr 18, 2023</td>
-                                            <td class="px-4 py-3">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Inactive</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <div class="flex space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="students-table-body" class="divide-y divide-gray-200">
+                                        </tbody>
                                 </table>
                             </div>
                             
                             <div class="flex items-center justify-between mt-4">
                                 <div class="text-sm text-gray-600">
-                                    Showing 1 to 5 of 1,245 entries
+                                    Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">1,245</span> entries
                                 </div>
                                 <div class="flex space-x-1">
                                     <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Previous</button>
@@ -847,455 +155,285 @@
                     </div>
                 </section>
                 
-                <!-- Instructors Section -->
-                <section id="instructors" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow mb-6">
-                        <div class="p-4 border-b flex flex-col md:flex-row md:items-center md:justify-between">
-                            <h2 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Instructor Management</h2>
-                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-                                <div class="relative">
-                                    <input type="text" placeholder="Search instructors..." class="border rounded-lg px-3 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Add New Instructor
-                                </button>
-                            </div>
+            <section id="certificates" class="page-content hidden">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Certificate Generator</h1>
+            
+            <div class="mb-6">
+                <label for="cert-user" class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
+                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <option value="">-- Loading Students --</option>
+                </select>
+            </div>
+            
+            <div class="mb-6">
+                <label for="cert-course" class="block text-sm font-medium text-gray-700 mb-2">Select Completed Course</label>
+                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <option value="">-- Loading Courses --</option>
+                </select>
+            </div>
+            
+            <div class="mb-6">
+                <label for="cert-date" class="block text-sm font-medium text-gray-700 mb-2">Date of Completion</label>
+                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+            
+            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                Generate Certificate
+            </button>
+        </div>
+        
+        <div id="certificate-preview-container" class="w-full mt-8 hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Certificate Preview</h2>
+            <div class="flex justify-end mb-4">
+                <button id="download-certificate" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition">Download Certificate</button>
+            </div>
+            
+            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
+                <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
+                <div class="absolute bottom-0 right-0 w-full h-16 bg-gradient-to-l from-blue-600/10 to-indigo-600/10"></div>
+                
+                <div class="text-center z-10 px-6">
+                    <div class="mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-16 h-16 mx-auto mb-2 text-blue-600">
+                            <path fill="currentColor" d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                            <path fill="currentColor" d="M14.829 9.172a.5.5 0 0 0-.708 0l-1.5 1.5a.5.5 0 0 0 0 .707l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0 0-.707l-1.5-1.5a.5.5 0 0 0-.708 0L17 10.293V5.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v4.793l-1.171-1.171z"/>
+                            <path fill="currentColor" d="M8.5 5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-2zM9 8V6h1v2H9zM6.5 10a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-2zm.5 3v-2h1v2H7z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion from CodeMaster</h2>
+                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
+                    <p class="text-gray-600 mb-2">This certifies that</p>
+                    <h2 id="preview-student-name" class="certificate-name">STUDENT NAME</h2>
+                    <p class="text-gray-600 mb-6">has successfully completed the course</p>
+                    <h3 id="preview-course-name" class="text-2xl font-semibold text-blue-800 mb-6">COURSE NAME</h3>
+                    <p id="preview-issue-date" class="text-gray-600 mb-8">Date</p>
+                    
+                    <div class="flex justify-center items-center gap-16 mt-2">
+                        <div class="text-center">
+                            <div id="preview-instructor-signature" class="signature text-xl text-blue-800 mb-2">Jane Smith</div>
+                            <div class="w-40 border-t border-gray-400"></div>
+                            <p class="text-sm text-gray-600 mt-1">Course Instructor</p>
                         </div>
-                        
-                        <div class="p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
-                                            <span class="text-xl font-bold">JS</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">John Smith</h3>
-                                            <p class="text-gray-600 text-sm">Web Development</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>john.smith@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 123-4567</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">4</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">352</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>4.8
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center text-green-500">
-                                            <span class="text-xl font-bold">SJ</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">Sarah Johnson</h3>
-                                            <p class="text-gray-600 text-sm">Data Science</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>sarah.j@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 987-6543</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">3</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">284</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>5.0
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center text-purple-500">
-                                            <span class="text-xl font-bold">MB</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">Michael Brown</h3>
-                                            <p class="text-gray-600 text-sm">UX/UI Design</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>michael.b@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 456-7890</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">2</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">198</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>4.2
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center text-red-500">
-                                            <span class="text-xl font-bold">ED</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">Emily Davis</h3>
-                                            <p class="text-gray-600 text-sm">Digital Marketing</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>emily.d@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 234-5678</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">3</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">176</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>4.7
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-500">
-                                            <span class="text-xl font-bold">CR</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">Carlos Rodriguez</h3>
-                                            <p class="text-gray-600 text-sm">Languages</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>carlos.r@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 876-5432</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">2</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">145</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>4.5
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="p-4 flex items-center space-x-4">
-                                        <div class="h-16 w-16 rounded-full bg-pink-100 flex items-center justify-center text-pink-500">
-                                            <span class="text-xl font-bold">LW</span>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-lg">Lisa Wang</h3>
-                                            <p class="text-gray-600 text-sm">Business & Finance</p>
-                                        </div>
-                                    </div>
-                                    <div class="px-4 pb-4">
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-envelope mr-2"></i>
-                                            <span>lisa.w@example.com</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                                            <i class="fas fa-phone mr-2"></i>
-                                            <span>+1 (555) 345-6789</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Courses</span>
-                                                <p class="font-semibold">3</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Students</span>
-                                                <p class="font-semibold">132</p>
-                                            </div>
-                                            <div>
-                                                <span class="text-xs font-medium text-gray-500">Rating</span>
-                                                <p class="font-semibold flex items-center">
-                                                    <i class="fas fa-star text-yellow-400 mr-1"></i>4.6
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4 flex space-x-2">
-                                            <button class="flex-1 bg-indigo-100 text-indigo-600 py-2 rounded hover:bg-indigo-200">View Profile</button>
-                                            <button class="flex-1 bg-gray-100 text-gray-600 py-2 rounded hover:bg-gray-200">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="text-sm text-gray-600">
-                                    Showing 1 to 6 of 24 entries
-                                </div>
-                                <div class="flex space-x-1">
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Previous</button>
-                                    <button class="px-3 py-1 rounded border bg-indigo-600 text-white">1</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">2</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">3</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Next</button>
-                                </div>
-                            </div>
+                        <div class="text-center">
+                            <div class="signature text-xl text-blue-800 mb-2">Robert Johnson</div>
+                            <div class="w-40 border-t border-gray-400"></div>
+                            <p class="text-sm text-gray-600 mt-1">Program Director</p>
                         </div>
                     </div>
-                </section>
-                
-                <!-- Other sections would be implemented similarly -->
-                <section id="assignments" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Assignment Management</h2>
-                        <p class="text-gray-600">This section will contain assignment management features.</p>
-                    </div>
-                </section>
-                
-                <section id="reports" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Reports & Analytics</h2>
-                        <p class="text-gray-600">This section will contain reporting and analytics features.</p>
-                    </div>
-                </section>
-                
-                <section id="settings" class="page-content hidden">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-800 mb-4">System Settings</h2>
-                        <p class="text-gray-600">This section will contain system settings and configuration options.</p>
-                    </div>
-                </section>
+                </div>
+                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                    <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/>
+                    <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text>
+                    <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+                <section id="courses" class="page-content hidden">...</section>
+                <section id="instructors" class="page-content hidden">...</section>
+                <section id="assignments" class="page-content hidden">...</section>
+                <section id="reports" class="page-content hidden">...</section>
+                <section id="settings" class="page-content hidden">...</section>
             </main>
         </div>
     </div>
 
-    <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        // Sidebar toggle functionality
-        const sidebar = document.getElementById('sidebar');
-        const openSidebarBtn = document.getElementById('openSidebar');
-        const closeSidebarBtn = document.getElementById('closeSidebar');
-        
-        openSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.add('open');
-        });
-        
-        closeSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-        });
-        
-        // User menu toggle
-        const userMenuBtn = document.getElementById('userMenuBtn');
-        const userMenu = document.getElementById('userMenu');
-        
-        userMenuBtn.addEventListener('click', () => {
-            userMenu.classList.toggle('hidden');
-        });
-        
-        // Close user menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
-                userMenu.classList.add('hidden');
-            }
-        });
-        
-        // Navigation functionality
-        const sidebarItems = document.querySelectorAll('.sidebar-item');
-        const pageContents = document.querySelectorAll('.page-content');
-        const pageTitle = document.getElementById('pageTitle');
-        
-        sidebarItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const target = item.getAttribute('data-target');
-                
-                // Update active state
-                sidebarItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                
-                // Show target content
-                pageContents.forEach(content => {
-                    content.classList.add('hidden');
-                    if (content.id === target) {
-                        content.classList.remove('hidden');
-                        pageTitle.textContent = target.charAt(0).toUpperCase() + target.slice(1);
-                    }
-                });
-                
-                // Close sidebar on mobile after selection
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('open');
-                }
+        // --- DATA STORAGE ---
+        let allUsers = [];
+        let allCourses = [];
+        let activeAdminUser = null;
+        const token = localStorage.getItem('token');
+
+        // --- SỬA LẠI HÀM UTILITY ---
+        function showPage(target) {
+            // Dùng class `hidden` của Tailwind để ẩn tất cả các section
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.add('hidden');
             });
-        });
-        
-        // Charts
-        document.addEventListener('DOMContentLoaded', () => {
-            // Enrollment Chart
-            const enrollmentCtx = document.getElementById('enrollmentCanvas').getContext('2d');
-            const enrollmentChart = new Chart(enrollmentCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'New Enrollments',
-                        data: [65, 78, 90, 85, 110, 142],
-                        borderColor: 'rgb(79, 70, 229)',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
+            
+            // Hiện section mục tiêu bằng cách xóa class `hidden`
+            const targetElement = document.getElementById(target);
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+            }
+            
+            // Cập nhật tiêu đề trang
+            const pageTitle = document.getElementById('pageTitle');
+            if(pageTitle) pageTitle.textContent = target.charAt(0).toUpperCase() + target.slice(1);
+
+            // Cập nhật trạng thái active trên sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-target') === target) {
+                    item.classList.add('active');
                 }
             });
             
-            // Categories Chart
-            const categoriesCtx = document.getElementById('categoriesCanvas').getContext('2d');
-            const categoriesChart = new Chart(categoriesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Development', 'Design', 'Business', 'Marketing', 'IT & Software', 'Other'],
-                    datasets: [{
-                        data: [35, 20, 15, 12, 10, 8],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(139, 92, 246, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(107, 114, 128, 0.8)'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15
-                            }
-                        }
-                    },
-                    cutout: '70%'
+            // Tải dữ liệu tương ứng với trang được chọn
+            if (target === 'certificates') {
+                populateCertificateForm();
+            } else if (target === 'students') {
+                fetchAndRenderStudents();
+            }
+        }
+        
+        // --- DATA FETCHING ---
+        async function fetchAllData() {
+            try {
+                const [usersRes, coursesRes] = await Promise.all([
+                    fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+
+                if (!usersRes.ok || !coursesRes.ok) throw new Error("Failed to fetch core data.");
+
+                allUsers = (await usersRes.json()).filter(u => u.role === 'student'); 
+                allCourses = await coursesRes.json();
+                
+            } catch (error) {
+                console.error('Core Data Fetch Error:', error);
+                alert('Error loading essential data: ' + error.message);
+            }
+        }
+
+        // --- STUDENT MANAGEMENT FUNCTIONS ---
+        async function fetchAndRenderStudents() {
+            const studentsTableBody = document.querySelector('#students tbody');
+            if (!studentsTableBody) return;
+
+            studentsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">Loading student data...</td></tr>';
+
+            try {
+                const students = allUsers; 
+                
+                let rowsHTML = ''; 
+
+                if (students.length === 0) {
+                    rowsHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">No students found.</td></tr>';
+                } else {
+                    students.forEach(student => {
+                        const parts = student.name ? student.name.split(' ') : [];
+                        let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (student.name ? student.name.charAt(0).toUpperCase() : 'GS');
+                        
+                        const enrolledCoursesCount = student.enrolled_courses ? student.enrolled_courses.length : 0;
+                        const progress = student.overall_progress || 0; 
+                        const statusText = 'Active';
+                        const statusClass = 'bg-green-100 text-green-800';
+
+                        rowsHTML += `
+                            <tr class="text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-semibold mr-3">
+                                            <span>${initials}</span>
+                                        </div>
+                                        <span>${student.name || 'N/A'}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">${student.email || 'N/A'}</td>
+                                <td class="px-4 py-3 text-center">${enrolledCoursesCount}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-500">${progress}%</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">${student.createdAt ? new Date(student.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 text-xs rounded-full ${statusClass}">${statusText}</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex space-x-3">
+                                        <button title="View Details" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
+                                        <button title="Delete User" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
                 }
-            });
+
+                studentsTableBody.innerHTML = rowsHTML;
+
+            } catch (error) {
+                console.error('Fetch Students Error:', error);
+                studentsTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">Error loading student data: ${error.message}</td></tr>`;
+            }
+        }
+        
+        // --- CERTIFICATE FUNCTIONS (GIỮ NGUYÊN) ---
+        function populateCertificateForm() {
+            // ... (code không đổi)
+        }
+        document.getElementById('generate-certificate').addEventListener('click', function(e) {
+            // ... (code không đổi)
         });
+
+        // --- EVENT LISTENERS & INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeAdminUser = JSON.parse(localStorage.getItem('user'));
+            if (!token || !activeAdminUser) {
+                window.location.href = 'LoginPage.html';
+                return;
+            }
+
+            const userName = activeAdminUser.name || 'Admin';
+            const userEmail = activeAdminUser.email || 'admin@codemaster.com';
+            const userInitials = userName.charAt(0).toUpperCase();
+
+            document.getElementById('admin-user-name').textContent = userName;
+            document.getElementById('admin-user-email').textContent = userEmail;
+            document.getElementById('admin-avatar').textContent = userInitials;
+            document.getElementById('header-user-name').textContent = userName;
+            document.getElementById('header-avatar').textContent = userInitials;
+
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', (e) => showPage(e.currentTarget.getAttribute('data-target')));
+            });
+
+            [document.getElementById('logout-button-sidebar'), document.getElementById('logout-button-header')]
+                .forEach(btn => btn.addEventListener('click', () => {
+                    localStorage.clear();
+                    window.location.href = 'LoginPage.html';
+                }));
+            
+            document.getElementById('openSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.remove('-translate-x-full'));
+            document.getElementById('closeSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.add('-translate-x-full'));
+
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userMenu = document.getElementById('userMenu');
+            userMenuBtn.addEventListener('click', () => userMenu.classList.toggle('hidden'));
+
+            await fetchAllData();
+            showPage('dashboard');
+            setupCharts();
+        });
+
+        // --- CHARTS FUNCTIONS ---
+        const setupCharts = () => {
+            const enrollmentCtx = document.getElementById('enrollmentCanvas').getContext('2d');
+            new Chart(enrollmentCtx, {
+                type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'New Enrollments', data: [65, 78, 90, 85, 110, 142], borderColor: 'rgb(79, 70, 229)', backgroundColor: 'rgba(79, 70, 229, 0.1)', tension: 0.3, fill: true }] },
+                options: { maintainAspectRatio: false, responsive: true }
+            });
+
+            const categoriesCtx = document.getElementById('categoriesCanvas').getContext('2d');
+            new Chart(categoriesCtx, {
+                type: 'doughnut', data: { labels: ['Development', 'Design', 'Business', 'Marketing', 'IT & Software', 'Other'], datasets: [{ data: [35, 20, 15, 12, 10, 8], backgroundColor: ['#3B82F6', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B', '#6B7280'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, responsive: true }
+            });
+        };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94ee652253d2a8fd',t:'MTc0OTc4NDIyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

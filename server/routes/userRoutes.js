@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-router.get('/api/users', userController.getUsers);
-router.post('/api/users', userController.createUser);
-router.get('/api/users/:id', userController.getUserById);
-router.put('/api/users/:id', userController.updateUser);
-router.delete('/api/users/:id', userController.deleteUser);
+// SỬA LẠI: Các đường dẫn bây giờ là tương đối so với '/api/users'
+router.get('/', userController.getUsers);
+router.post('/', userController.createUser);
+router.get('/:id', userController.getUserById);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
-module.exports = router; 
+module.exports = router;

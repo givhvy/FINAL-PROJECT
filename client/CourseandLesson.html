@@ -8,17 +8,80 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        .lesson-card:hover { background-color: #f0f9ff; }
-        .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
-        .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .lesson-html-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .lesson-html-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
-        .lesson-html-content pre { background-color: #1f2937; color: #d1d5db; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
-        .aspect-video { position: relative; width: 100%; padding-top: 56.25%; }
-        .aspect-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .lesson-card:hover {
+            background-color: #f0f9ff;
+        }
+        .active-lesson {
+            border-left: 4px solid #3b82f6;
+            background-color: #eff6ff;
+            font-weight: 600;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3b82f6;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .lesson-html-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .lesson-html-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .lesson-html-content pre {
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .aspect-video {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+        }
+        .aspect-video iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .nav-link {
+            padding: 0.25rem 0.5rem;
+            color: #4b5563;
+            transition: color 0.2s, border-color 0.2s;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: #1f2937;
+            border-bottom-color: #6366f1;
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -26,10 +89,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
                         <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                         <span class="ml-2 text-xl font-bold text-gray-800">CodeMaster</span>
                     </a>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
+                        <a href="CourseandLesson.html" class="nav-link active">Courses</a>
+                        <a href="AccountProfile.html" class="nav-link">My Learning</a>
+                        <a href="QuizzAndGrades.html" class="nav-link">Quizz</a>
+                        <a href="community.html" class="nav-link">Community</a>
+                    </div>
                 </div>
                 <div class="flex items-center">
                     <div class="ml-3 relative">
@@ -37,7 +106,7 @@
                              <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
                         </button>
                     </div>
-                     <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
+                    <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
                 </div>
             </div>
         </div>
@@ -47,6 +116,7 @@
         <div id="courses-page" class="courses-container">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
+                <a href="index.html" class="text-sm font-medium text-blue-600 hover:text-blue-800">Back to Home</a>
             </div>
             <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
@@ -62,18 +132,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- AUTH GUARD & USER INFO ---
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
+    
+    // Function to get initials
+    function getUserInitials(user) {
+        if (user && user.name) {
+            const parts = user.name.split(' ');
+            let initials = parts[0].charAt(0).toUpperCase();
+            if (parts.length > 1) {
+                initials += parts.pop().charAt(0).toUpperCase();
+            }
+            return initials;
+        }
+        return 'GS'; // Guest/General Student
+    }
+
     if (!token || !user) {
         window.location.href = 'LoginPage.html';
         return;
     }
-    const userAvatar = document.getElementById('user-avatar');
-    if (user.name) userAvatar.textContent = user.name.charAt(0).toUpperCase();
     
+    const userAvatar = document.getElementById('user-avatar');
+    userAvatar.textContent = getUserInitials(user);
+
     document.getElementById('user-menu-button').addEventListener('click', () => {
         const role = user.role;
-        if (role === 'student') window.location.href = 'StudentDashboard.html';
-        if (role === 'teacher' || role === 'admin') window.location.href = 'TeacherDashboard.html';
+        if (role === 'student') window.location.href = 'AccountProfile.html';
+        if (role === 'teacher' || role === 'admin') window.location.href = 'AdminDashboard.html';
     });
+    
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
         window.location.href = 'LoginPage.html';
@@ -162,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const lessonPageHTML = `
             <div class="mb-6">
-                <button onclick="document.dispatchEvent(new Event('showCourses'))" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                <button id="back-to-courses-btn" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
                     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Courses
                 </button>
@@ -186,7 +272,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to ${course.title}!</h2>
                             <p class="text-gray-700">${course.description}</p>
                              <div class="mt-6 border-t pt-6">
-                                <h3 class="text-lg font-semibold text-gray-800">Select a lesson from the left to begin.</h3>
+                                 <h3 class="text-lg font-semibold text-gray-800">Select a lesson from the left to begin.</h3>
                             </div>
                         </div>
                     </div>
@@ -195,6 +281,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         lessonPage.innerHTML = lessonPageHTML;
 
+        // Add event listener to the new back button
+        document.getElementById('back-to-courses-btn').addEventListener('click', fetchAndRenderCourses);
+
         document.querySelectorAll('#lessons-list-sidebar .lesson-card').forEach(card => {
             card.addEventListener('click', async () => {
                 const lessonId = card.dataset.lessonId;
@@ -202,7 +291,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 card.classList.add('active-lesson');
                 
                 const contentArea = document.getElementById('lesson-content-main');
-                contentArea.innerHTML = `<div class="flex justify-center items-center h-64"><div class="loader"></div></div>`;
+                contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
                 
                 try {
                     const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -210,7 +299,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const lesson = await res.json();
                     renderLessonContent(lesson);
                 } catch (error) {
-                    contentArea.innerHTML = `<p class="p-8 text-red-500">Error loading lesson content.</p>`;
+                    contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content.</p></div>`;
                 }
             });
         });
@@ -247,7 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="mt-6">
                             <textarea id="new-comment-input" class="w-full p-3 border border-gray-300 rounded-lg" rows="3" placeholder="Add your comment..."></textarea>
                             <div class="mt-2 flex justify-end">
-                                <button id="post-comment-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Post Comment</button>
+                                <button id="post-comment-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Post Comment</button>
                             </div>
                         </div>
                     </div>
@@ -257,7 +346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentMainDiv.innerHTML = contentHTML;
     }
 
-    document.addEventListener('showCourses', showCoursesPage);
+    // Initialize the page
     fetchAndRenderCourses();
 });
 </script>

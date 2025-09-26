@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
 
-router.get('/api/payments', paymentController.getPayments);
-router.post('/api/payments', paymentController.createPayment);
-router.get('/api/payments/:id', paymentController.getPaymentById);
-router.put('/api/payments/:id', paymentController.updatePayment);
-router.delete('/api/payments/:id', paymentController.deletePayment);
+// SỬA LẠI: Bỏ '/api/payments' khỏi các đường dẫn
+router.get('/', paymentController.getPayments);
+router.post('/', paymentController.createPayment);
+router.get('/:id', paymentController.getPaymentById);
+router.put('/:id', paymentController.updatePayment);
+router.delete('/:id', paymentController.deletePayment);
 
-module.exports = router; 
+module.exports = router;

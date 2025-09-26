@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
 
-router.get('/api/orders', orderController.getOrders);
-router.post('/api/orders', orderController.createOrder);
-router.get('/api/orders/:id', orderController.getOrderById);
-router.put('/api/orders/:id', orderController.updateOrder);
-router.delete('/api/orders/:id', orderController.deleteOrder);
+// SỬA LẠI: Bỏ '/api/orders' khỏi các đường dẫn
+router.get('/', orderController.getOrders);
+router.post('/', orderController.createOrder);
+router.get('/:id', orderController.getOrderById);
+router.put('/:id', orderController.updateOrder);
+router.delete('/:id', orderController.deleteOrder);
 
-module.exports = router; 
+module.exports = router;
