@@ -6,6 +6,7 @@
     <title>Courses | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
         .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
@@ -105,11 +106,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 courseCard.className = 'course-card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 cursor-pointer flex flex-col';
                 courseCard.dataset.courseId = course.id;
                 courseCard.innerHTML = `
-                    <div class="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
-                        <p class="text-white text-xl font-bold p-4 text-center">${course.title}</p>
+                    <div class="h-40 bg-gray-200">
+                        <img src="${course.imageUrl || 'https://via.placeholder.com/400x200?text=CodeMaster'}" alt="${course.title}" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5 flex-grow flex flex-col">
-                        <p class="text-gray-600 text-sm mb-4 flex-grow">${(course.description || '').substring(0, 100)}...</p>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2 flex-grow">${course.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${(course.description || '').substring(0, 100)}...</p>
                         <div class="text-sm text-gray-500">By ${course.teacher ? course.teacher.name : 'N/A'}</div>
                     </div>
                 `;
@@ -220,14 +222,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         if (lesson.content_type === 'video' && lesson.content_data) {
             videoHTML = `
-<div class="aspect-video bg-black rounded-lg mb-6">
-    <iframe class="w-full h-full rounded-lg" 
-            src="${lesson.content_data.replace('watch?v=', 'embed/')}?controls=0&showinfo=0&rel=0&iv_load_policy=3" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-    </iframe>
-</div>
+                <div class="aspect-video bg-black rounded-lg mb-6">
+                    <iframe class="w-full h-full rounded-lg" src="${lesson.content_data.replace('watch?v=', 'embed/')}?rel=0&showinfo=0&iv_load_policy=3" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
             `;
         }
         

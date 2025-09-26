@@ -6,6 +6,7 @@
     <title>Teacher Dashboard | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
         .dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
@@ -89,6 +90,10 @@
                             <option>Advanced</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
+                        <input type="text" id="imageUrl" placeholder="Paste image URL from Cloudinary" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-3">
                     <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
@@ -100,7 +105,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // Auth Guard and User Info
+    // --- AUTH GUARD & USER INFO ---
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
@@ -115,8 +120,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'LoginPage.html';
     });
 
+    // --- PAGE ELEMENTS ---
     const coursesListDiv = document.getElementById('courses-list');
-    
+    const modal = document.getElementById('course-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const courseForm = document.getElementById('course-form');
+    let currentEditingCourseId = null;
+
+    // --- FUNCTIONS ---
     async function fetchAndRenderMyCourses() {
         coursesListDiv.innerHTML = `<p>Loading your courses...</p>`;
         try {
@@ -138,9 +149,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div>
                         <div class="flex justify-between items-start">
                             <h3 class="font-semibold text-gray-800">${course.title}</h3>
-                            <button data-course-id="${course.id}" class="delete-course-btn text-gray-400 hover:text-red-600">
-                                <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
+                            <div class="flex space-x-2">
+                                <button data-course-id="${course.id}" class="edit-course-btn text-gray-400 hover:text-blue-600">
+                                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
+                                </button>
+                                <button data-course-id="${course.id}" class="delete-course-btn text-gray-400 hover:text-red-600">
+                                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
                         </div>
                         <p class="text-sm text-gray-500 mt-2">${(course.description || '').substring(0, 50)}...</p>
                     </div>
@@ -159,20 +175,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 coursesListDiv.appendChild(courseCard);
             });
         } catch (error) {
-            console.error(error);
             coursesListDiv.innerHTML = `<p class="col-span-full text-center text-red-500">Failed to load courses.</p>`;
         }
     }
     
-    // Modal Management
-    const modal = document.getElementById('course-modal');
-    const addCourseBtn = document.getElementById('add-course-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const courseForm = document.getElementById('course-form');
-    addCourseBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-    cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    // --- EVENT LISTENERS ---
+    
+    // Mở modal để Thêm Mới
+    document.getElementById('add-course-btn').addEventListener('click', () => {
+        currentEditingCourseId = null;
+        modalTitle.textContent = 'Add New Course';
+        courseForm.reset();
+        modal.classList.remove('hidden');
+    });
 
-    // Form Submission
+    // Đóng modal
+    document.getElementById('cancel-btn').addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+    // Xử lý Form (Thêm Mới và Cập Nhật)
     courseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitButton = courseForm.querySelector('button[type="submit"]');
@@ -184,21 +206,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             description: document.getElementById('description').value,
             price: parseFloat(document.getElementById('price').value),
             level: document.getElementById('level').value,
-            teacher_id: user.id
+            teacher_id: user.id,
+            imageUrl: document.getElementById('imageUrl').value
         };
+
+        const isEditing = !!currentEditingCourseId;
+        const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
+        const method = isEditing ? 'PUT' : 'POST';
+
         try {
-            const response = await fetch('/api/courses', {
-                method: 'POST',
+            const response = await fetch(apiUrl, {
+                method,
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(courseData)
             });
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.error || 'Failed to create course');
-            }
-            alert('Course created successfully!');
+            if (!response.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} course.`);
+            
+            alert(`Course ${isEditing ? 'updated' : 'created'} successfully!`);
             modal.classList.add('hidden');
-            courseForm.reset();
             fetchAndRenderMyCourses();
         } catch (error) {
             alert('Error: ' + error.message);
@@ -208,12 +233,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Delete Course Logic (Event Delegation)
+    // Xử lý Click trên danh sách (Edit và Delete)
     coursesListDiv.addEventListener('click', async (e) => {
-        const deleteButton = e.target.closest('.delete-course-btn');
-        if (deleteButton) {
-            const courseId = deleteButton.dataset.courseId;
-            const courseTitle = deleteButton.closest('.dashboard-card').querySelector('h3').textContent;
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        const courseId = target.dataset.courseId;
+
+        // Xử lý nút EDIT
+        if (target.classList.contains('edit-course-btn')) {
+            try {
+                const res = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) throw new Error('Could not fetch course details.');
+                const course = await res.json();
+                
+                document.getElementById('title').value = course.title;
+                document.getElementById('description').value = course.description;
+                document.getElementById('price').value = course.price;
+                document.getElementById('level').value = course.level;
+                document.getElementById('imageUrl').value = course.imageUrl || '';
+                
+                modalTitle.textContent = 'Edit Course';
+                currentEditingCourseId = courseId;
+                modal.classList.remove('hidden');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        // Xử lý nút DELETE
+        if (target.classList.contains('delete-course-btn')) {
+            const courseTitle = target.closest('.dashboard-card').querySelector('h3').textContent;
             if (confirm(`Are you sure you want to delete "${courseTitle}"?`)) {
                 try {
                     const response = await fetch(`/api/courses/${courseId}`, {

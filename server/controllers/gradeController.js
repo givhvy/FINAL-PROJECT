@@ -1,21 +1,11 @@
-// Import các hàm cần thiết từ Firestore
-const { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  getDoc, 
-  doc, 
-  updateDoc, 
-  deleteDoc 
-} = require('firebase-admin/firestore');
+const { getFirestore } = require('firebase-admin/firestore');
 
 // Create a new grade
 exports.createGrade = async (req, res) => {
   try {
     const db = getFirestore();
     const gradeData = { ...req.body, createdAt: new Date().toISOString() };
-    const newGradeRef = await addDoc(collection(db, 'grades'), gradeData);
+    const newGradeRef = await db.collection('grades').add(gradeData);
     res.status(201).json({ id: newGradeRef.id, ...gradeData });
   } catch (err) {
     console.error("Create Grade Error:", err);
@@ -23,30 +13,31 @@ exports.createGrade = async (req, res) => {
   }
 };
 
-// Get all grades (với logic "populate" thủ công)
+// Get all grades
 exports.getGrades = async (req, res) => {
   try {
     const db = getFirestore();
-    const gradesSnapshot = await getDocs(collection(db, 'grades'));
+    const gradesRef = db.collection('grades');
+    const snapshot = await gradesRef.get();
 
-    const grades = await Promise.all(gradesSnapshot.docs.map(async (gradeDoc) => {
+    const grades = await Promise.all(snapshot.docs.map(async (gradeDoc) => {
       const gradeData = gradeDoc.data();
       let userData = null;
       let quizData = null;
 
-      // Lấy thông tin user (populate user)
       if (gradeData.user_id) {
-        const userSnap = await getDoc(doc(db, 'users', gradeData.user_id));
-        if (userSnap.exists()) {
+        const userRef = db.collection('users').doc(gradeData.user_id);
+        const userSnap = await userRef.get();
+        if (userSnap.exists) {
           userData = { id: userSnap.id, ...userSnap.data() };
           delete userData.password;
         }
       }
 
-      // Lấy thông tin quiz (populate quiz)
       if (gradeData.quiz_id) {
-        const quizSnap = await getDoc(doc(db, 'quizzes', gradeData.quiz_id));
-        if (quizSnap.exists()) {
+        const quizRef = db.collection('quizzes').doc(gradeData.quiz_id);
+        const quizSnap = await quizRef.get();
+        if (quizSnap.exists) {
           quizData = { id: quizSnap.id, ...quizSnap.data() };
         }
       }
@@ -66,14 +57,14 @@ exports.getGrades = async (req, res) => {
   }
 };
 
-// Get grade by ID (với logic "populate" thủ công)
+// Get grade by ID
 exports.getGradeById = async (req, res) => {
   try {
     const db = getFirestore();
-    const gradeRef = doc(db, 'grades', req.params.id);
-    const gradeSnap = await getDoc(gradeRef);
+    const gradeRef = db.collection('grades').doc(req.params.id);
+    const gradeSnap = await gradeRef.get();
 
-    if (!gradeSnap.exists()) {
+    if (!gradeSnap.exists) {
       return res.status(404).json({ error: 'Grade not found' });
     }
 
@@ -81,19 +72,19 @@ exports.getGradeById = async (req, res) => {
     let userData = null;
     let quizData = null;
 
-    // Lấy thông tin user (populate user)
     if (gradeData.user_id) {
-        const userSnap = await getDoc(doc(db, 'users', gradeData.user_id));
-        if (userSnap.exists()) {
+        const userRef = db.collection('users').doc(gradeData.user_id);
+        const userSnap = await userRef.get();
+        if (userSnap.exists) {
           userData = { id: userSnap.id, ...userSnap.data() };
           delete userData.password;
         }
     }
 
-    // Lấy thông tin quiz (populate quiz)
     if (gradeData.quiz_id) {
-        const quizSnap = await getDoc(doc(db, 'quizzes', gradeData.quiz_id));
-        if (quizSnap.exists()) {
+        const quizRef = db.collection('quizzes').doc(gradeData.quiz_id);
+        const quizSnap = await quizRef.get();
+        if (quizSnap.exists) {
           quizData = { id: quizSnap.id, ...quizSnap.data() };
         }
     }
@@ -115,14 +106,12 @@ exports.getGradeById = async (req, res) => {
 exports.updateGrade = async (req, res) => {
   try {
     const db = getFirestore();
-    const docRef = doc(db, 'grades', req.params.id);
-
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+    const docRef = db.collection('grades').doc(req.params.id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
       return res.status(404).json({ error: 'Grade not found' });
     }
-
-    await updateDoc(docRef, req.body);
+    await docRef.update(req.body);
     res.status(200).json({ id: req.params.id, ...req.body });
   } catch (err) {
     console.error("Update Grade Error:", err);
@@ -134,14 +123,12 @@ exports.updateGrade = async (req, res) => {
 exports.deleteGrade = async (req, res) => {
   try {
     const db = getFirestore();
-    const docRef = doc(db, 'grades', req.params.id);
-    
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+    const docRef = db.collection('grades').doc(req.params.id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
       return res.status(404).json({ error: 'Grade not found' });
     }
-
-    await deleteDoc(docRef);
+    await docRef.delete();
     res.status(200).json({ message: 'Grade deleted successfully' });
   } catch (err) {
     console.error("Delete Grade Error:", err);

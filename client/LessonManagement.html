@@ -40,7 +40,7 @@
 
                 <div class="bg-white shadow rounded-lg">
                     <form id="add-lesson-form" class="p-6">
-                        <h3 class="text-lg font-medium mb-4">Add a New Lesson</h3>
+                        <h3 id="form-title" class="text-lg font-medium mb-4">Add a New Lesson</h3>
                         <div class="space-y-4">
                             <div>
                                 <label for="lesson-title" class="block text-sm font-medium text-gray-700">Lesson Title</label>
@@ -55,8 +55,8 @@
                                 <div id="editor-container" class="mt-1"></div>
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add Lesson</button>
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit" class="w-full md:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Lesson</button>
                         </div>
                     </form>
                 </div>
@@ -67,7 +67,7 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        // Auth Guard
+        // --- AUTH GUARD ---
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user'));
         if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
@@ -75,13 +75,7 @@
             return;
         }
 
-        // Khởi tạo Quill Editor
-        const quill = new Quill('#editor-container', {
-            theme: 'snow',
-            modules: { toolbar: [['bold', 'italic', 'underline'], ['link', 'code-block']] }
-        });
-
-        // Lấy courseId từ URL
+        // --- LẤY COURSE ID TỪ URL ---
         const urlParams = new URLSearchParams(window.location.search);
         const courseId = urlParams.get('courseId');
         if (!courseId) {
@@ -90,8 +84,19 @@
             return;
         }
 
+        // --- KHỞI TẠO QUILL EDITOR ---
+        const quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: { toolbar: [['bold', 'italic', 'underline'], ['link', 'code-block']] }
+        });
+        
+        // --- LẤY CÁC ELEMENT TỪ DOM ---
         const lessonsListUl = document.getElementById('lessons-list');
+        const addLessonForm = document.getElementById('add-lesson-form');
+        const formTitle = document.getElementById('form-title');
+        let currentEditingLessonId = null;
 
+        // --- HÀM LẤY VÀ HIỂN THỊ DỮ LIỆU ---
         async function fetchAndRenderCourseDetails() {
             lessonsListUl.innerHTML = `<li>Loading lessons...</li>`;
             try {
@@ -106,27 +111,30 @@
                     lessonsListUl.innerHTML = '';
                     course.lessons.forEach(lesson => {
                         const lessonItem = document.createElement('li');
-                        lessonItem.className = 'p-3 border rounded-md flex justify-between items-center';
+                        lessonItem.className = 'p-3 border rounded-md flex justify-between items-center bg-gray-50';
                         lessonItem.innerHTML = `
-                            <span>${lesson.title}</span>
-                            <button data-lesson-id="${lesson.id}" class="delete-lesson-btn text-gray-400 hover:text-red-600 text-sm">Delete</button>
+                            <span class="font-medium text-gray-800">${lesson.title}</span>
+                            <div class="space-x-3">
+                                <button data-lesson-id="${lesson.id}" class="edit-lesson-btn text-sm font-medium text-indigo-600 hover:text-indigo-800">Edit</button>
+                                <button data-lesson-id="${lesson.id}" class="delete-lesson-btn text-sm font-medium text-red-600 hover:text-red-800">Delete</button>
+                            </div>
                         `;
                         lessonsListUl.appendChild(lessonItem);
                     });
                 } else {
-                    lessonsListUl.innerHTML = `<li>No lessons have been added to this course yet.</li>`;
+                    lessonsListUl.innerHTML = `<li><p class="text-gray-500">No lessons have been added to this course yet.</p></li>`;
                 }
             } catch (error) {
                 lessonsListUl.innerHTML = `<li><p class="text-red-500">Failed to load lessons.</p></li>`;
             }
         }
 
-        const addLessonForm = document.getElementById('add-lesson-form');
+        // --- XỬ LÝ SỰ KIỆN ---
         addLessonForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitButton = addLessonForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
-            submitButton.textContent = 'Adding...';
+            submitButton.textContent = 'Saving...';
 
             const lessonData = {
                 title: document.getElementById('lesson-title').value,
@@ -135,31 +143,60 @@
                 content_data_html: quill.root.innerHTML,
                 course_id: courseId
             };
+            
+            const isEditing = !!currentEditingLessonId;
+            const apiUrl = isEditing ? `/api/lessons/${currentEditingLessonId}` : '/api/lessons';
+            const method = isEditing ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch('/api/lessons', {
-                    method: 'POST',
+                const response = await fetch(apiUrl, {
+                    method,
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(lessonData)
                 });
-                if (!response.ok) throw new Error('Failed to create lesson.');
-                alert('Lesson added successfully!');
+                if (!response.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} lesson.`);
+                
+                alert(`Lesson ${isEditing ? 'updated' : 'added'} successfully!`);
                 addLessonForm.reset();
-                quill.setText(''); // Xóa nội dung trong editor
+                quill.setText('');
+                formTitle.textContent = 'Add a New Lesson';
+                currentEditingLessonId = null;
                 fetchAndRenderCourseDetails();
             } catch (error) {
                 alert('Error: ' + error.message);
             } finally {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Add Lesson';
+                submitButton.textContent = isEditing ? 'Update Lesson' : 'Add Lesson';
             }
         });
         
         lessonsListUl.addEventListener('click', async (e) => {
-            if(e.target.classList.contains('delete-lesson-btn')) {
-                const lessonId = e.target.dataset.lessonId;
-                const lessonTitle = e.target.previousElementSibling.textContent;
-                if(confirm(`Are you sure you want to delete "${lessonTitle}"?`)) {
+            const target = e.target;
+            const lessonId = target.dataset.lessonId;
+            if (!lessonId) return;
+
+            // Xử lý nút EDIT
+            if (target.classList.contains('edit-lesson-btn')) {
+                try {
+                    const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    if (!res.ok) throw new Error('Could not fetch lesson details.');
+                    const lesson = await res.json();
+                    
+                    document.getElementById('lesson-title').value = lesson.title;
+                    document.getElementById('lesson-video-url').value = lesson.content_data || '';
+                    quill.root.innerHTML = lesson.content_data_html || '';
+                    formTitle.textContent = `Edit Lesson: ${lesson.title}`;
+                    addLessonForm.querySelector('button[type="submit"]').textContent = 'Update Lesson';
+                    currentEditingLessonId = lessonId;
+                    addLessonForm.scrollIntoView({ behavior: 'smooth' });
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+            // Xử lý nút DELETE
+            if (target.classList.contains('delete-lesson-btn')) {
+                const lessonTitle = target.closest('li').querySelector('span').textContent;
+                if (confirm(`Are you sure you want to delete "${lessonTitle}"?`)) {
                     try {
                          const response = await fetch(`/api/lessons/${lessonId}`, {
                             method: 'DELETE',
@@ -175,8 +212,9 @@
             }
         });
 
+        // Tải dữ liệu ban đầu
         fetchAndRenderCourseDetails();
     });
     </script>
 </body>
-</html> 
+</html>

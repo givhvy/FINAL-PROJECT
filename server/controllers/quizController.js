@@ -1,21 +1,11 @@
-// Import các hàm cần thiết từ Firestore
-const { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs, 
-  getDoc, 
-  doc, 
-  updateDoc, 
-  deleteDoc 
-} = require('firebase-admin/firestore');
+const { getFirestore } = require('firebase-admin/firestore');
 
 // Create a new quiz
 exports.createQuiz = async (req, res) => {
   try {
     const db = getFirestore();
     const quizData = { ...req.body, createdAt: new Date().toISOString() };
-    const newQuizRef = await addDoc(collection(db, 'quizzes'), quizData);
+    const newQuizRef = await db.collection('quizzes').add(quizData);
     res.status(201).json({ id: newQuizRef.id, ...quizData });
   } catch (err) {
     console.error("Create Quiz Error:", err);
@@ -27,16 +17,17 @@ exports.createQuiz = async (req, res) => {
 exports.getQuizzes = async (req, res) => {
   try {
     const db = getFirestore();
-    const quizzesSnapshot = await getDocs(collection(db, 'quizzes'));
+    const quizzesRef = db.collection('quizzes');
+    const snapshot = await quizzesRef.get();
 
-    const quizzes = await Promise.all(quizzesSnapshot.docs.map(async (quizDoc) => {
+    const quizzes = await Promise.all(snapshot.docs.map(async (quizDoc) => {
       const quizData = quizDoc.data();
       let lessonData = null;
 
-      // Lấy thông tin lesson (populate lesson)
       if (quizData.lesson_id) {
-        const lessonSnap = await getDoc(doc(db, 'lessons', quizData.lesson_id));
-        if (lessonSnap.exists()) {
+        const lessonRef = db.collection('lessons').doc(quizData.lesson_id);
+        const lessonSnap = await lessonRef.get();
+        if (lessonSnap.exists) {
           lessonData = { id: lessonSnap.id, ...lessonSnap.data() };
         }
       }
@@ -44,7 +35,7 @@ exports.getQuizzes = async (req, res) => {
       return { 
         id: quizDoc.id, 
         ...quizData,
-        lesson: lessonData, // Thêm thông tin lesson vào kết quả
+        lesson: lessonData,
       };
     }));
 
@@ -59,20 +50,20 @@ exports.getQuizzes = async (req, res) => {
 exports.getQuizById = async (req, res) => {
   try {
     const db = getFirestore();
-    const quizRef = doc(db, 'quizzes', req.params.id);
-    const quizSnap = await getDoc(quizRef);
+    const quizRef = db.collection('quizzes').doc(req.params.id);
+    const quizSnap = await quizRef.get();
 
-    if (!quizSnap.exists()) {
+    if (!quizSnap.exists) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
     const quizData = quizSnap.data();
     let lessonData = null;
 
-    // Lấy thông tin lesson (populate lesson)
     if (quizData.lesson_id) {
-      const lessonSnap = await getDoc(doc(db, 'lessons', quizData.lesson_id));
-      if (lessonSnap.exists()) {
+      const lessonRef = db.collection('lessons').doc(quizData.lesson_id);
+      const lessonSnap = await lessonRef.get();
+      if (lessonSnap.exists) {
         lessonData = { id: lessonSnap.id, ...lessonSnap.data() };
       }
     }
@@ -93,14 +84,12 @@ exports.getQuizById = async (req, res) => {
 exports.updateQuiz = async (req, res) => {
   try {
     const db = getFirestore();
-    const docRef = doc(db, 'quizzes', req.params.id);
-
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+    const docRef = db.collection('quizzes').doc(req.params.id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
-
-    await updateDoc(docRef, req.body);
+    await docRef.update(req.body);
     res.status(200).json({ id: req.params.id, ...req.body });
   } catch (err) {
     console.error("Update Quiz Error:", err);
@@ -112,14 +101,12 @@ exports.updateQuiz = async (req, res) => {
 exports.deleteQuiz = async (req, res) => {
   try {
     const db = getFirestore();
-    const docRef = doc(db, 'quizzes', req.params.id);
-    
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+    const docRef = db.collection('quizzes').doc(req.params.id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
-
-    await deleteDoc(docRef);
+    await docRef.delete();
     res.status(200).json({ message: 'Quiz deleted successfully' });
   } catch (err) {
     console.error("Delete Quiz Error:", err);

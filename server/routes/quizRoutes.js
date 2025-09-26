@@ -2,10 +2,15 @@ const express = require('express');
 const router = express.Router();
 const quizController = require('../controllers/quizController');
 
-router.get('/api/quizzes', quizController.getQuizzes);
-router.post('/api/quizzes', quizController.createQuiz);
-router.get('/api/quizzes/:id', quizController.getQuizById);
-router.put('/api/quizzes/:id', quizController.updateQuiz);
-router.delete('/api/quizzes/:id', quizController.deleteQuiz);
+// GET /api/quizzes
+router.get('/', quizController.getQuizzes);
+// POST /api/quizzes
+router.post('/', quizController.createQuiz);
+// GET /api/quizzes/:id
+router.get('/:id', quizController.getQuizById);
+// PUT /api/quizzes/:id
+router.put('/:id', quizController.updateQuiz);
+// DELETE /api/quizzes/:id
+router.delete('/:id', quizController.deleteQuiz);
 
-module.exports = router; 
+module.exports = router;
