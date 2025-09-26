@@ -1,6 +1,70 @@
-// server/controllers/paymentController.js
+const {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    getDoc,
+    doc,
+    updateDoc,
+    deleteDoc
+} = require('firebase-admin/firestore');
 
-const { getFirestore } = require('firebase-admin/firestore');
+// Đảm bảo bạn đã chạy 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); 
+
+// --- Stripe Integration Logic ---
+exports.createCheckoutSession = async (req, res) => {
+    try {
+        // Lấy thông tin cần thiết từ Frontend
+        const { courseId, courseName, price, successUrl, cancelUrl, userId } = req.body;
+        
+        // Kiểm tra khóa Stripe
+        if (!process.env.STRIPE_SECRET_KEY) {
+            return res.status(500).json({ 
+                message: 'Stripe Secret Key is missing from .env configuration.',
+                error: 'Configuration Error' 
+            });
+        }
+        
+        // 1. Tạo phiên Stripe Checkout
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: courseName,
+                            description: `Access to the ${courseName} masterclass.`,
+                        },
+                        // Stripe cần số tiền tính bằng cents
+                        unit_amount: Math.round(price * 100), 
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            // Truyền dữ liệu bổ sung để xử lý logic sau khi thanh toán thành công
+            client_reference_id: userId,
+            metadata: {
+                course_id: courseId,
+                user_id: userId
+            },
+            success_url: successUrl,
+            cancel_url: cancelUrl,
+        });
+
+        // 2. Trả về URL của phiên Stripe cho Frontend
+        res.status(200).json({ sessionId: session.id, url: session.url });
+
+    } catch (err) {
+        console.error("Stripe Checkout Error:", err);
+        res.status(500).json({ error: err.message, message: 'Failed to create payment session.' });
+    }
+};
+
+
+// --- CRUD Operations (Giữ nguyên) ---
 
 exports.createPayment = async (req, res) => {
     try {

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,25 +6,13 @@
     <title>Complete Your Order - LearnHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f7fa;
-        }
-        .course-image {
-            transition: transform 0.3s ease;
-        }
-        .course-image:hover {
-            transform: scale(1.03);
-        }
-        .promo-applied {
-            animation: pulse 1.5s;
-        }
-        @keyframes pulse {
-            0% { background-color: #d1fae5; }
-            50% { background-color: #a7f3d0; }
-            100% { background-color: #d1fae5; }
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f5f7fa; }
+        .course-image { transition: transform 0.3s ease; }
+        .course-image:hover { transform: scale(1.03); }
+        .promo-applied { animation: pulse 1.5s; }
+        @keyframes pulse { 0% { background-color: #d1fae5; } 50% { background-color: #a7f3d0; } 100% { background-color: #d1fae5; } }
     </style>
 </head>
 <body>
@@ -63,44 +49,22 @@
                     <div class="flex flex-col md:flex-row gap-4 mb-6 items-start">
                         <div class="md:w-1/4 overflow-hidden rounded-lg">
                             <div class="course-image bg-indigo-100 h-40 rounded-lg flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
+                                <i class="fas fa-code text-indigo-500 text-6xl"></i>
                             </div>
                         </div>
                         <div class="md:w-3/4">
-                            <h3 class="font-semibold text-lg text-gray-800">Advanced Web Development Masterclass</h3>
+                            <h3 id="course-name-summary" class="font-semibold text-lg text-gray-800">Advanced Web Development Masterclass</h3>
                             <p class="text-gray-600 mb-2">Learn modern web development techniques with practical projects</p>
-                            <div class="flex items-center mb-1">
+                            <div class="flex items-center mb-1 text-sm text-gray-600">
                                 <div class="flex text-yellow-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                                 </div>
-                                <span class="ml-2 text-gray-600">4.9 (2,546 reviews)</span>
+                                <span class="ml-2">4.9 (2,546 reviews)</span>
                             </div>
-                            <div class="flex items-center text-gray-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>42 hours of content</span>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="far fa-clock mr-1"></i><span>42 hours of content</span>
                                 <span class="mx-2">•</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                </svg>
-                                <span>12 projects</span>
+                                <i class="fas fa-folder-open mr-1"></i><span>12 projects</span>
                             </div>
                         </div>
                     </div>
@@ -127,9 +91,9 @@
                             <span class="text-gray-600">Discount:</span>
                             <span class="text-green-600" id="discount-amount">-$0.00</span>
                         </div>
-                        <div class="flex justify-between font-semibold">
+                        <div class="flex justify-between font-semibold text-xl">
                             <span>Total:</span>
-                            <span class="text-lg" id="total-price">$99.99</span>
+                            <span class="text-2xl" id="total-price">$99.99</span>
                         </div>
                     </div>
                 </div>
@@ -140,103 +104,61 @@
                         <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Payment Information</h2>
                         
                         <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-yellow-700">
-                                        This is a demo page. No actual payment will be processed.
+                            <div class="flex items-start">
+                                <i class="fas fa-exclamation-triangle h-5 w-5 text-yellow-400 mr-3 mt-1"></i>
+                                <div>
+                                    <p class="text-sm text-yellow-700 font-medium">
+                                        DEMO MODE: No actual payment will be processed.
+                                    </p>
+                                    <p class="text-xs text-yellow-700 mt-1">
+                                        You will be redirected to Stripe's secure test checkout page.
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Payment Form Fields (Retained for structure) -->
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-medium mb-2" for="card-name">
-                                Name on Card
-                            </label>
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="card-name">Name on Card</label>
                             <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" id="card-name" placeholder="John Smith">
                         </div>
                         
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">
-                                Card Information
-                            </label>
+                            <label class="block text-gray-700 text-sm font-medium mb-2">Card Information</label>
                             <div class="border border-gray-300 rounded-md p-2 bg-gray-50 text-gray-500 text-center">
-                                [Demo] Card details input would appear here
+                                <i class="fas fa-credit-card mr-2"></i> [Simulated Card Fields]
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div>
-                                <label class="block text-gray-700 text-sm font-medium mb-2">
-                                    Expiration Date
-                                </label>
-                                <div class="border border-gray-300 rounded-md p-2 bg-gray-50 text-gray-500 text-center">
-                                    MM/YY
-                                </div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Expiration Date</label>
+                                <div class="border border-gray-300 rounded-md p-2 bg-gray-50 text-gray-500 text-center">MM/YY</div>
                             </div>
                             <div>
-                                <label class="block text-gray-700 text-sm font-medium mb-2">
-                                    Security Code
-                                </label>
-                                <div class="border border-gray-300 rounded-md p-2 bg-gray-50 text-gray-500 text-center">
-                                    CVC
-                                </div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Security Code</label>
+                                <div class="border border-gray-300 rounded-md p-2 bg-gray-50 text-gray-500 text-center">CVC</div>
                             </div>
                         </div>
                         
-                        <div class="mb-6">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">
-                                Billing Address
-                            </label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option>United States</option>
-                                <option>Canada</option>
-                                <option>United Kingdom</option>
-                                <option>Australia</option>
+                        <!-- Billing Address Fields -->
+                        <h3 class="font-semibold text-sm text-gray-800 mb-2 border-t pt-4">Billing Address</h3>
+                        <div class="mb-6 space-y-2">
+                             <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option>United States</option><option>Canada</option><option>Vietnam</option>
                             </select>
-                            <div class="mt-2">
-                                <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="Address line 1">
-                            </div>
-                            <div class="mt-2">
-                                <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="Address line 2 (optional)">
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <input class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="City">
-                                <input class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="State/Province">
-                            </div>
-                            <div class="mt-2">
-                                <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="ZIP/Postal code">
-                            </div>
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="Address line 1">
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="ZIP/Postal code">
                         </div>
                         
                         <button id="complete-purchase" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 flex items-center justify-center">
-                            <span>Complete Purchase</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
+                            <span id="purchase-text">Complete Purchase ($99.99)</span>
+                            <i id="loading-spinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
                         </button>
                         
                         <p class="text-sm text-gray-600 mt-4 text-center">
-                            By completing your purchase you agree to our 
-                            <a href="#" class="text-indigo-600 hover:text-indigo-800">Terms of Service</a> and 
-                            <a href="#" class="text-indigo-600 hover:text-indigo-800">Privacy Policy</a>
+                            By completing your purchase you agree to our <a href="#" class="text-indigo-600 hover:text-indigo-800">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-800">Privacy Policy</a>
                         </p>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="font-semibold text-gray-800 mb-2">Need Help?</h3>
-                        <p class="text-gray-600 mb-4">Our support team is here to assist you with any questions.</p>
-                        <a href="#" class="text-indigo-600 hover:text-indigo-800 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Contact Support
-                        </a>
                     </div>
                 </div>
             </div>
@@ -245,29 +167,6 @@
         <!-- Footer -->
         <footer class="bg-gray-800 text-white py-8 px-6 mt-12">
             <div class="container mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">LearnHub</h3>
-                        <p class="text-gray-400">Empowering your learning journey with quality courses and expert instructors.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                        <ul class="space-y-2 text-gray-400">
-                            <li><a href="#" class="hover:text-white">About Us</a></li>
-                            <li><a href="#" class="hover:text-white">Courses</a></li>
-                            <li><a href="#" class="hover:text-white">Instructors</a></li>
-                            <li><a href="#" class="hover:text-white">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Legal</h3>
-                        <ul class="space-y-2 text-gray-400">
-                            <li><a href="#" class="hover:text-white">Terms of Service</a></li>
-                            <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-white">Cookie Policy</a></li>
-                        </ul>
-                    </div>
-                </div>
                 <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
                     <p>&copy; 2023 LearnHub. All rights reserved.</p>
                 </div>
@@ -276,64 +175,122 @@
     </div>
 
     <script>
-        // Promo code functionality
+        // Data giả định cho trang (Trong thực tế sẽ dùng URL params)
+        const INITIAL_PRICE = 99.99;
+        const COURSE_ID = 'dev-masterclass-01'; // ID giả định
+        let currentTotal = INITIAL_PRICE;
+        let appliedDiscount = 0;
+        
+        // Mock Promo Codes
         const promoCodes = {
             'WELCOME20': { discount: 0.2, message: '20% discount applied!' },
             'SUMMER10': { discount: 0.1, message: '10% discount applied!' },
-            'NEWSTUDENT': { discount: 0.15, message: '15% discount for new students!' }
+            'FREECOURSE': { discount: 1.0, message: '100% discount applied! Course is FREE!' }
         };
-        
-        const originalPrice = 99.99;
-        let currentDiscount = 0;
-        
+
+        // UI Update Functions
+        function formatPrice(price) {
+            return `$${price.toFixed(2)}`;
+        }
+
+        function updateSummary() {
+            const totalPriceElement = document.getElementById('total-price');
+            const originalPriceElement = document.getElementById('original-price');
+            const discountRow = document.getElementById('discount-row');
+            const discountAmountElement = document.getElementById('discount-amount');
+            const purchaseText = document.getElementById('purchase-text');
+            
+            currentTotal = INITIAL_PRICE * (1 - appliedDiscount);
+            const discountValue = INITIAL_PRICE * appliedDiscount;
+
+            originalPriceElement.textContent = formatPrice(INITIAL_PRICE);
+            totalPriceElement.textContent = formatPrice(currentTotal);
+            purchaseText.textContent = `Complete Purchase (${formatPrice(currentTotal)})`;
+
+            if (appliedDiscount > 0) {
+                discountRow.classList.remove('hidden');
+                discountAmountElement.textContent = `-${formatPrice(discountValue)}`;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+        }
+
+        // Event Handler for Promo Code
         document.getElementById('apply-promo').addEventListener('click', function() {
             const promoInput = document.getElementById('promo-code');
             const promoMessage = document.getElementById('promo-message');
-            const discountRow = document.getElementById('discount-row');
-            const discountAmount = document.getElementById('discount-amount');
-            const totalPrice = document.getElementById('total-price');
-            
             const code = promoInput.value.trim().toUpperCase();
             
+            promoMessage.classList.add('hidden'); // Hide previous messages
+            
             if (promoCodes[code]) {
-                // Valid promo code
-                currentDiscount = promoCodes[code].discount;
-                const discountValue = originalPrice * currentDiscount;
-                const newTotal = originalPrice - discountValue;
-                
-                // Update UI
-                discountRow.classList.remove('hidden');
-                discountAmount.textContent = `-$${discountValue.toFixed(2)}`;
-                totalPrice.textContent = `$${newTotal.toFixed(2)}`;
-                
+                appliedDiscount = promoCodes[code].discount;
+                updateSummary();
                 promoMessage.textContent = promoCodes[code].message;
-                promoMessage.classList.remove('hidden', 'text-red-600');
-                promoMessage.classList.add('text-green-600');
-                
-                // Add animation effect
-                discountRow.classList.add('promo-applied');
-                setTimeout(() => {
-                    discountRow.classList.remove('promo-applied');
-                }, 1500);
+                promoMessage.className = 'mt-2 text-sm text-green-600 bg-green-100 p-2 rounded';
             } else {
-                // Invalid promo code
+                appliedDiscount = 0;
+                updateSummary();
                 promoMessage.textContent = 'Invalid promotion code. Please try again.';
-                promoMessage.classList.remove('hidden', 'text-green-600');
-                promoMessage.classList.add('text-red-600');
-                
-                // Reset to original price if a previous discount was applied
-                if (currentDiscount > 0) {
-                    currentDiscount = 0;
-                    discountRow.classList.add('hidden');
-                    totalPrice.textContent = `$${originalPrice.toFixed(2)}`;
+                promoMessage.className = 'mt-2 text-sm text-red-600 bg-red-100 p-2 rounded';
+            }
+            promoMessage.classList.remove('hidden');
+        });
+
+        // Event Handler for Purchase
+        document.getElementById('complete-purchase').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const userId = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).id : 'guest-user-123';
+            const courseName = document.getElementById('course-name-summary').textContent;
+            
+            const submitBtn = document.getElementById('complete-purchase');
+            const spinner = document.getElementById('loading-spinner');
+
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            
+            // Lấy giá trị thanh toán cuối cùng (đã tính discount)
+            const finalPrice = parseFloat(currentTotal.toFixed(2));
+
+            try {
+                // Prepare URLs for Stripe redirection
+                // NOTE: {CHECKOUT_SESSION_ID} là biến Stripe sẽ thay thế trong quá trình chuyển hướng
+                const successUrl = `${window.location.origin}/SuccessPage.html?session_id={CHECKOUT_SESSION_ID}`;
+                const cancelUrl = `${window.location.origin}/CancelPage.html`;
+
+                const response = await fetch('/api/payments/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: COURSE_ID,
+                        courseName: courseName,
+                        price: finalPrice, // Sử dụng giá trị đã tính toán
+                        userId: userId,
+                        successUrl: successUrl,
+                        cancelUrl: cancelUrl
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.url) {
+                    throw new Error(data.message || 'Failed to initialize payment gateway.');
                 }
+
+                // Redirect to Stripe Checkout Page
+                window.location.href = data.url;
+
+            } catch (error) {
+                console.error('Payment Error:', error);
+                alert(`Payment Initialization Failed: ${error.message}. Please check console for details.`);
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.add('hidden');
             }
         });
-        
-        // Complete purchase button
-        document.getElementById('complete-purchase').addEventListener('click', function() {
-            alert('This is a demo page. In a real application, this would process your payment and enroll you in the course.');
-        });
+
+        document.addEventListener('DOMContentLoaded', updateSummary);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94ee94a8a7dee6f4',t:'MTc0OTc4NjE3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
