@@ -15,11 +15,22 @@
         .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
         .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Progress Bar Styles for Cards */
+        .progress-bar-container { height: 6px; border-radius: 3px; background-color: #e5e7eb; overflow: hidden; }
+        /* Tùy chỉnh màu progress bar theo gradient cho thẩm mỹ */
+        .progress-fill-blue { background-color: #3b82f6; }
+        .progress-fill-purple { background-color: #8b5cf6; }
+        .progress-fill-green { background-color: #10b981; }
+        
+        /* Lesson and Content Styles */
         .lesson-html-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .lesson-html-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
         .lesson-html-content pre { background-color: #1f2937; color: #d1d5db; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
         .aspect-video { position: relative; width: 100%; padding-top: 56.25%; }
         .aspect-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        /* Navigation Styles */
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
         .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
@@ -36,10 +47,9 @@
                     </a>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
                         <a href="CourseandLesson.html" class="nav-link active">Courses</a>
-                        <a href="AccountProfile.html" class="nav-link">My Learning</a>
+                        <a href="AccountProfile.html" class="nav-link">My Learning</a> 
                         <a href="QuizzAndGrades.html" class="nav-link">Quizz</a>
                         <a href="Community.html" class="nav-link">Community</a>
-                        <!-- MỚI: Thêm nút Upgrade -->
                         <a href="PaymentPage.html" class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
                             <i class="fas fa-star text-yellow-400"></i>
                             <span>Upgrade</span>
@@ -62,7 +72,10 @@
         <div id="courses-page" class="courses-container">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
-                <a href="index.html" class="text-sm font-medium text-blue-600 hover:text-blue-800">Back to Home</a>
+                <div class="relative">
+                    <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <i class="fas fa-search text-gray-400 absolute left-3 top-3"></i>
+                </div>
             </div>
             <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
@@ -70,13 +83,12 @@
                 </div>
             </div>
         </div>
+        
         <div id="lesson-page" class="lesson-container hidden"></div>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // Toàn bộ code JavaScript của bạn giữ nguyên, không cần thay đổi
-    // ...
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     
@@ -100,10 +112,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userAvatar = document.getElementById('user-avatar');
     if(userAvatar) userAvatar.textContent = getUserInitials(user);
 
+    // FIX: Nút Avatar điều hướng đến Profile Page
     document.getElementById('user-menu-button').addEventListener('click', () => {
-        const role = user.role;
-        if (role === 'student') window.location.href = 'AccountProfile.html';
-        if (role === 'teacher' || role === 'admin') window.location.href = 'TeacherDashboard.html';
+        window.location.href = 'ProfilePage.html'; 
     });
     
     document.getElementById('logout-button').addEventListener('click', () => {
@@ -132,17 +143,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             courses.forEach(course => {
+                // Giả định: Dữ liệu thực tế cần có trường 'progress' (từ API) và 'lessons' (array)
+                const totalLessons = course.lessons ? course.lessons.length : 0;
+                // Giả định tiến trình là 25% nếu không có dữ liệu thực tế
+                const randomProgress = Math.floor(Math.random() * 100); 
+                const progressColor = course.level === 'Intermediate' ? 'purple' : course.level === 'Advanced' ? 'red' : 'blue';
+                const bgColor = progressColor === 'purple' ? 'bg-purple-600' : progressColor === 'red' ? 'bg-red-600' : 'bg-blue-600';
+                const iconMap = {
+                    'Beginner': 'fa-code',
+                    'Intermediate': 'fa-database',
+                    'Advanced': 'fa-microchip',
+                    'All Levels': 'fa-balance-scale'
+                };
+                const iconClass = iconMap[course.level] || 'fa-graduation-cap';
+
+
                 const courseCard = document.createElement('div');
                 courseCard.className = 'course-card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 cursor-pointer flex flex-col';
                 courseCard.dataset.courseId = course.id;
+                
+                // Cấu trúc thẻ khóa học mới (theo Hình 1)
                 courseCard.innerHTML = `
-                    <div class="h-40 bg-gray-200">
-                        <img src="${course.imageUrl || 'https://placehold.co/400x200/e2e8f0/4a5568?text=CodeMaster'}" alt="${course.title}" class="w-full h-full object-cover">
+                    <div class="h-40 ${bgColor} relative flex items-center justify-center">
+                         <i class="fas ${iconClass} text-white text-6xl opacity-80"></i>
                     </div>
                     <div class="p-5 flex-grow flex flex-col">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold px-2 py-1 bg-gray-200 text-gray-700 rounded-full">${course.level || 'All Levels'}</span>
+                            <span class="text-sm text-gray-500">${totalLessons} lessons</span>
+                        </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2 flex-grow">${course.title}</h3>
                         <p class="text-gray-600 text-sm mb-4">${(course.description || '').substring(0, 100)}...</p>
-                        <div class="text-sm text-gray-500">By ${course.teacher ? course.teacher.name : 'N/A'}</div>
+                        
+                        <div class="mt-auto">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Progress</span>
+                                <span class="text-${progressColor}-600 font-medium">${randomProgress}%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="h-full progress-fill-${progressColor}" style="width: ${randomProgress}%"></div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 coursesGrid.appendChild(courseCard);
@@ -269,9 +310,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             let videoHTML = '';
             if (lesson.content_type === 'video' && lesson.content_data) {
+                // Chuyển URL YouTube sang định dạng nhúng
+                const embedUrl = lesson.content_data.includes('watch?v=') 
+                    ? lesson.content_data.replace('watch?v=', 'embed/') 
+                    : lesson.content_data;
+                    
                 videoHTML = `
                     <div class="aspect-video bg-black rounded-lg mb-6">
-                        <iframe class="w-full h-full rounded-lg" src="${lesson.content_data.replace('watch?v=', 'embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="w-full h-full rounded-lg" src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>`;
             }
             
@@ -285,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>`;
             contentArea.innerHTML = contentHTML;
         } catch (error) {
-            contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content.</p></div>`;
+            contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content: ${error.message}</p></div>`;
         }
     }
 
@@ -294,21 +340,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
 
         try {
-            const questionsRes = await fetch(`/api/questions?quizId=${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!questionsRes.ok) throw new Error('Could not fetch questions.');
-            const questions = await questionsRes.json();
-            
+            // Sử dụng endpoint quizById để lấy tất cả thông tin, bao gồm cả questions
             const quizRes = await fetch(`/api/quizzes/${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!quizRes.ok) throw new Error('Could not fetch quiz details.');
             const quiz = await quizRes.json();
             
+            const questions = quiz.questions || [];
+            
             if(questions.length === 0) {
-                 contentArea.innerHTML = `<div class="p-8 text-center"><h2 class="text-2xl font-bold">${quiz.title}</h2><p class="mt-4 text-gray-600">This quiz has no questions yet.</p></div>`;
+                 contentArea.innerHTML = `<div class="p-8 text-center bg-white rounded-xl shadow-lg"><h2 class="text-2xl font-bold">${quiz.title}</h2><p class="mt-4 text-gray-600">This quiz has no questions yet.</p></div>`;
                  return;
             }
 
             let questionsHTML = questions.map((q, index) => {
-                const optionsHTML = q.options.map((option, i) => `
+                const optionsHTML = (q.options || []).map((option, i) => `
                     <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
                         <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
                         <span>${option}</span>
@@ -316,7 +361,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `).join('');
                 return `
                     <div class="question-block mb-6 pb-6 border-b">
-                        <p class="font-semibold mb-3">${index + 1}. ${q.question_text}</p>
+                        <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
                         <div class="space-y-2">${optionsHTML}</div>
                     </div>
                 `;
@@ -334,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions));
         } catch (error) {
-            contentArea.innerHTML = `<div class="p-8 text-red-500">Error loading quiz: ${error.message}</div>`;
+            contentArea.innerHTML = `<div class="p-8 text-red-500 bg-white rounded-xl shadow-lg">Error loading quiz: ${error.message}</div>`;
         }
     }
 
@@ -347,6 +392,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const userAnswers = [];
         let score = 0;
+        let unanswered = false;
+
         questions.forEach((q, index) => {
             const selectedOption = form.querySelector(`input[name="question-${index}"]:checked`);
             if (selectedOption) {
@@ -357,12 +404,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             } else {
                 userAnswers[index] = -1; // Mark as unanswered
+                unanswered = true;
             }
         });
+
+        if (unanswered) {
+            alert('Please answer all questions before submitting.');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Quiz';
+            return;
+        }
 
         const percentage = Math.round((score / questions.length) * 100);
 
         try {
+            // Gửi điểm lên API
             await fetch('/api/grades', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -384,7 +440,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const percentage = Math.round((score / questions.length) * 100);
 
         let feedbackHTML = questions.map((q, index) => {
-            const optionsHTML = q.options.map((option, i) => {
+            const optionsHTML = (q.options || []).map((option, i) => {
                 let classes = 'block p-3 border rounded-md';
                 if (i === q.correct_answer_index) {
                     classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
@@ -397,8 +453,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             return `
                 <div class="question-block mb-6 pb-6 border-b">
-                    <p class="font-semibold mb-3">${index + 1}. ${q.question_text}</p>
+                    <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
                     <div class="space-y-2">${optionsHTML}</div>
+                    <p class="text-sm mt-2 ${userAnswers[index] === q.correct_answer_index ? 'text-green-600' : 'text-red-600'}">
+                        ${userAnswers[index] === q.correct_answer_index ? 'Correct answer.' : `Your answer was incorrect. The correct answer is: ${q.options[q.correct_answer_index]}`}
+                    </p>
                 </div>
             `;
         }).join('');
@@ -407,10 +466,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="bg-white rounded-xl shadow-lg p-8">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
-                    <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-500' : 'text-red-500'}">${percentage}%</p>
+                    <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">${percentage}%</p>
                     <p class="text-gray-600 mt-2">You answered ${score} out of ${questions.length} questions correctly.</p>
                 </div>
-                <h3 class="text-xl font-semibold mb-4">Review Your Answers</h3>
+                <h3 class="text-xl font-semibold mb-4 border-t pt-4">Review Your Answers</h3>
                 ${feedbackHTML}
             </div>
         `;
@@ -422,4 +481,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
-

@@ -395,36 +395,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('cancel-btn').addEventListener('click', () => courseModal.classList.add('hidden'));
 
     // Course form submission (Add/Edit)
-    courseForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const courseData = {
-            title: document.getElementById('title').value,
-            description: document.getElementById('description').value,
-            price: parseFloat(document.getElementById('price').value),
-            level: document.getElementById('level').value,
-            teacher_id: user.id,
-            imageUrl: document.getElementById('imageUrl').value
-        };
+    // Sửa đổi hàm xử lý form (dòng ~225)
+courseForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Thu thập dữ liệu form (giữ nguyên)
+    const courseData = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        price: parseFloat(document.getElementById('price').value),
+        level: document.getElementById('level').value,
+        teacher_id: user.id,
+        imageUrl: document.getElementById('imageUrl').value
+    };
 
-        const isEditing = !!currentEditingCourseId;
-        const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
-        const method = isEditing ? 'PUT' : 'POST';
+    const isEditing = !!currentEditingCourseId;
+    const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
+    const method = isEditing ? 'PUT' : 'POST';
 
-        try {
-            const response = await fetch(apiUrl, {
-                method,
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(courseData)
-            });
-            if (!response.ok) throw new Error(await response.text());
-            
-            courseModal.classList.add('hidden');
-            await fetchInitialData(); // Refetch all data to update the view
-        } catch (error) {
-            alert('Error: ' + error.message);
+    try {
+        const response = await fetch(apiUrl, {
+            method,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(courseData)
+        });
+
+        if (!response.ok) {
+            // Cố gắng đọc phản hồi dưới dạng JSON (nếu backend trả về JSON lỗi)
+            let errorMessage = 'An unknown error occurred during saving.';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || errorData.message || errorMessage;
+            } catch {
+                // Nếu không phải JSON, lấy văn bản thô
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
-    });
-
+        
+        // Thao tác thành công
+        alert(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
+        courseModal.classList.add('hidden');
+        await fetchInitialData(); // Tải lại dữ liệu
+        
+    } catch (error) {
+        console.error("Course Save Error:", error);
+        // Hiển thị thông báo lỗi chi tiết
+        alert(`Error: Failed to ${isEditing ? 'update' : 'add'} course.\nDetails: ${error.message}`);
+    }
+});
     // Edit/Delete buttons on course cards
     document.getElementById('courses-list').addEventListener('click', async (e) => {
         const button = e.target.closest('button');
