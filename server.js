@@ -8,25 +8,28 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
 // ====== 2. IMPORT CÁC ROUTE ======
-// Các route này vẫn giữ nguyên, chúng ta sẽ sửa logic BÊN TRONG chúng sau
 const authRoutes = require('./server/routes/authRoutes');
 const userRoutes = require('./server/routes/userRoutes');
 const courseRoutes = require('./server/routes/courseRoutes');
 const lessonRoutes = require('./server/routes/lessonRoutes');
 const quizRoutes = require('./server/routes/quizRoutes');
+const questionRoutes = require('./server/routes/questionRoutes');
 const gradeRoutes = require('./server/routes/gradeRoutes');
 const orderRoutes = require('./server/routes/orderRoutes');
 const paymentRoutes = require('./server/routes/paymentRoutes');
 const certificateRoutes = require('./server/routes/certificateRoutes');
+const subscriptionRoutes = require('./server/routes/subscriptionRoutes'); // Thêm dòng này
 
 // ====== 3. KHỞI TẠO ỨNG DỤNG VÀ FIREBASE ======
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Khởi tạo Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+}
 
 // Tạo một đối tượng 'db' để dễ dàng truy cập Firestore
 const db = admin.firestore();
@@ -35,7 +38,7 @@ console.log('Firebase Admin SDK initialized successfully!');
 // ====== 4. MIDDLEWARE (PHẦN MỀM TRUNG GIAN) ======
 app.use(cors());
 app.use(express.json());
-app.use(express.static('client')); // Sửa 'public' thành 'client' để phục vụ file HTML
+app.use(express.static('client')); // Phục vụ file từ thư mục client
 
 // Thêm đối tượng 'db' vào mọi request để các controller có thể sử dụng
 app.use((req, res, next) => {
@@ -47,14 +50,14 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
-// ... (giữ nguyên các app.use route khác)
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/questions', questionRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/certificates', certificateRoutes);
-
+app.use('/api/subscriptions', subscriptionRoutes); // Thêm dòng này
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to the CodeMaster E-Learning API with Firebase!' });
@@ -74,3 +77,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+

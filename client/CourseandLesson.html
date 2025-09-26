@@ -5,83 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Courses | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-        }
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .lesson-card:hover {
-            background-color: #f0f9ff;
-        }
-        .active-lesson {
-            border-left: 4px solid #3b82f6;
-            background-color: #eff6ff;
-            font-weight: 600;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 4px solid #3b82f6;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .lesson-html-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-        .lesson-html-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .lesson-html-content pre {
-            background-color: #1f2937;
-            color: #d1d5db;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin-bottom: 1rem;
-        }
-        .aspect-video {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-        }
-        .aspect-video iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .nav-link {
-            padding: 0.25rem 0.5rem;
-            color: #4b5563;
-            transition: color 0.2s, border-color 0.2s;
-            border-bottom: 2px solid transparent;
-            font-weight: 500;
-        }
-        .nav-link:hover {
-            color: #1f2937;
-            border-bottom-color: #6366f1;
-        }
-        .nav-link.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .lesson-card:hover { background-color: #f0f9ff; }
+        .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
+        .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .lesson-html-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .lesson-html-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .lesson-html-content pre { background-color: #1f2937; color: #d1d5db; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
+        .aspect-video { position: relative; width: 100%; padding-top: 56.25%; }
+        .aspect-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
     </style>
 </head>
 <body>
@@ -97,7 +38,12 @@
                         <a href="CourseandLesson.html" class="nav-link active">Courses</a>
                         <a href="AccountProfile.html" class="nav-link">My Learning</a>
                         <a href="QuizzAndGrades.html" class="nav-link">Quizz</a>
-                        <a href="community.html" class="nav-link">Community</a>
+                        <a href="Community.html" class="nav-link">Community</a>
+                        <!-- MỚI: Thêm nút Upgrade -->
+                        <a href="PaymentPage.html" class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <span>Upgrade</span>
+                        </a>
                     </div>
                 </div>
                 <div class="flex items-center">
@@ -129,21 +75,21 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- AUTH GUARD & USER INFO ---
+    // Toàn bộ code JavaScript của bạn giữ nguyên, không cần thay đổi
+    // ...
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     
-    // Function to get initials
     function getUserInitials(user) {
         if (user && user.name) {
             const parts = user.name.split(' ');
             let initials = parts[0].charAt(0).toUpperCase();
             if (parts.length > 1) {
-                initials += parts.pop().charAt(0).toUpperCase();
+                initials += parts[parts.length - 1].charAt(0).toUpperCase();
             }
             return initials;
         }
-        return 'GS'; // Guest/General Student
+        return 'GS';
     }
 
     if (!token || !user) {
@@ -152,12 +98,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     const userAvatar = document.getElementById('user-avatar');
-    userAvatar.textContent = getUserInitials(user);
+    if(userAvatar) userAvatar.textContent = getUserInitials(user);
 
     document.getElementById('user-menu-button').addEventListener('click', () => {
         const role = user.role;
         if (role === 'student') window.location.href = 'AccountProfile.html';
-        if (role === 'teacher' || role === 'admin') window.location.href = 'AdminDashboard.html';
+        if (role === 'teacher' || role === 'admin') window.location.href = 'TeacherDashboard.html';
     });
     
     document.getElementById('logout-button').addEventListener('click', () => {
@@ -165,13 +111,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'LoginPage.html';
     });
 
-    // --- PAGE ELEMENTS ---
     const coursesGrid = document.getElementById('courses-grid');
     const loadingSpinner = document.getElementById('loading-spinner');
     const coursesPage = document.getElementById('courses-page');
     const lessonPage = document.getElementById('lesson-page');
 
-    // --- FUNCTIONS ---
     async function fetchAndRenderCourses() {
         showCoursesPage();
         loadingSpinner.style.display = 'flex';
@@ -183,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             loadingSpinner.style.display = 'none';
             if (courses.length === 0) {
-                coursesGrid.innerHTML = `<p class="col-span-3 text-center text-gray-500">No courses available. Ask a teacher to create one!</p>`;
+                coursesGrid.innerHTML = `<p class="col-span-3 text-center text-gray-500">No courses available yet.</p>`;
                 return;
             }
             
@@ -193,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 courseCard.dataset.courseId = course.id;
                 courseCard.innerHTML = `
                     <div class="h-40 bg-gray-200">
-                        <img src="${course.imageUrl || 'https://via.placeholder.com/400x200?text=CodeMaster'}" alt="${course.title}" class="w-full h-full object-cover">
+                        <img src="${course.imageUrl || 'https://placehold.co/400x200/e2e8f0/4a5568?text=CodeMaster'}" alt="${course.title}" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5 flex-grow flex flex-col">
                         <h3 class="text-xl font-bold text-gray-800 mb-2 flex-grow">${course.title}</h3>
@@ -238,13 +182,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderLessonPage(course) {
-        const lessonsListHTML = (course.lessons && course.lessons.length > 0)
-            ? course.lessons.map((lesson, index) => `
-                <li class="lesson-card p-3 rounded-md cursor-pointer flex justify-between items-center" data-lesson-id="${lesson.id}">
-                    <span class="text-sm font-medium pointer-events-none">${index + 1}. ${lesson.title}</span>
-                </li>
-            `).join('')
-            : '<li><p class="text-sm text-gray-500 p-3">No lessons yet.</p></li>';
+        const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
+        const quizzes = (course.quizzes || []).map(item => ({...item, contentType: 'quiz'}));
+        
+        const allContent = [...lessons, ...quizzes];
+        allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        const contentListHTML = allContent.length > 0
+            ? allContent.map((item, index) => {
+                const isQuiz = item.contentType === 'quiz';
+                const icon = isQuiz 
+                    ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>` 
+                    : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
+                
+                return `
+                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center" 
+                        data-id="${item.id}" 
+                        data-type="${item.contentType}">
+                        ${icon}
+                        <span class="text-sm font-medium pointer-events-none">${index + 1}. ${item.title}</span>
+                    </li>
+                `;
+            }).join('')
+            : '<li><p class="text-sm text-gray-500 p-3">No content available for this course yet.</p></li>';
 
         const lessonPageHTML = `
             <div class="mb-6">
@@ -262,17 +222,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <div class="p-5">
                             <h3 class="font-semibold text-gray-800 mb-3">Course Content</h3>
-                            <ul id="lessons-list-sidebar" class="space-y-1">${lessonsListHTML}</ul>
+                            <ul id="content-list-sidebar" class="space-y-1">${contentListHTML}</ul>
                         </div>
                     </div>
                 </div>
-                <div id="lesson-content-main" class="lg:col-span-3">
+                <div id="content-main" class="lg:col-span-3">
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden min-h-[40rem]">
-                        <div id="lesson-content-area" class="p-8">
+                        <div id="content-area" class="p-8">
                             <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to ${course.title}!</h2>
                             <p class="text-gray-700">${course.description}</p>
-                             <div class="mt-6 border-t pt-6">
-                                 <h3 class="text-lg font-semibold text-gray-800">Select a lesson from the left to begin.</h3>
+                            <div class="mt-6 border-t pt-6">
+                                <h3 class="text-lg font-semibold text-gray-800">Select a lesson or quiz from the left to begin.</h3>
                             </div>
                         </div>
                     </div>
@@ -280,75 +240,186 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
         lessonPage.innerHTML = lessonPageHTML;
-
-        // Add event listener to the new back button
         document.getElementById('back-to-courses-btn').addEventListener('click', fetchAndRenderCourses);
 
-        document.querySelectorAll('#lessons-list-sidebar .lesson-card').forEach(card => {
+        document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(card => {
             card.addEventListener('click', async () => {
-                const lessonId = card.dataset.lessonId;
-                document.querySelectorAll('#lessons-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
+                const id = card.dataset.id;
+                const type = card.dataset.type;
+
+                document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
                 card.classList.add('active-lesson');
                 
-                const contentArea = document.getElementById('lesson-content-main');
-                contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
-                
-                try {
-                    const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    if (!res.ok) throw new Error('Could not fetch lesson content.');
-                    const lesson = await res.json();
-                    renderLessonContent(lesson);
-                } catch (error) {
-                    contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content.</p></div>`;
+                if (type === 'lesson') {
+                    await renderLessonContent(id);
+                } else if (type === 'quiz') {
+                    await renderQuizInterface(id);
                 }
             });
         });
     }
 
-    function renderLessonContent(lesson) {
-        const contentMainDiv = document.getElementById('lesson-content-main');
-        let videoHTML = '';
-        
-        if (lesson.content_type === 'video' && lesson.content_data) {
-            videoHTML = `
-                <div class="aspect-video bg-black rounded-lg mb-6">
-                    <iframe class="w-full h-full rounded-lg" src="${lesson.content_data.replace('watch?v=', 'embed/')}?rel=0&showinfo=0&iv_load_policy=3" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                    </iframe>
-                </div>
-            `;
-        }
-        
-        const contentHTML = `
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                ${videoHTML}
-                <div class="p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">${lesson.title}</h2>
-                    <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
-                    
-                    <div class="border-t mt-8 pt-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Discussion</h3>
-                        <div class="space-y-4" id="comments-section">
-                            <p class="text-gray-500">Comments coming soon.</p>
-                        </div>
-                        <div class="mt-6">
-                            <textarea id="new-comment-input" class="w-full p-3 border border-gray-300 rounded-lg" rows="3" placeholder="Add your comment..."></textarea>
-                            <div class="mt-2 flex justify-end">
-                                <button id="post-comment-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Post Comment</button>
-                            </div>
-                        </div>
+    async function renderLessonContent(lessonId) {
+        const contentArea = document.getElementById('content-main');
+        contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
+        try {
+            const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) throw new Error('Could not fetch lesson content.');
+            const lesson = await res.json();
+            
+            let videoHTML = '';
+            if (lesson.content_type === 'video' && lesson.content_data) {
+                videoHTML = `
+                    <div class="aspect-video bg-black rounded-lg mb-6">
+                        <iframe class="w-full h-full rounded-lg" src="${lesson.content_data.replace('watch?v=', 'embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>`;
+            }
+            
+            const contentHTML = `
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    ${videoHTML}
+                    <div class="p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">${lesson.title}</h2>
+                        <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
                     </div>
-                </div>
-            </div>
-        `;
-        contentMainDiv.innerHTML = contentHTML;
+                </div>`;
+            contentArea.innerHTML = contentHTML;
+        } catch (error) {
+            contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content.</p></div>`;
+        }
     }
 
-    // Initialize the page
+    async function renderQuizInterface(quizId) {
+        const contentArea = document.getElementById('content-main');
+        contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
+
+        try {
+            const questionsRes = await fetch(`/api/questions?quizId=${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!questionsRes.ok) throw new Error('Could not fetch questions.');
+            const questions = await questionsRes.json();
+            
+            const quizRes = await fetch(`/api/quizzes/${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!quizRes.ok) throw new Error('Could not fetch quiz details.');
+            const quiz = await quizRes.json();
+            
+            if(questions.length === 0) {
+                 contentArea.innerHTML = `<div class="p-8 text-center"><h2 class="text-2xl font-bold">${quiz.title}</h2><p class="mt-4 text-gray-600">This quiz has no questions yet.</p></div>`;
+                 return;
+            }
+
+            let questionsHTML = questions.map((q, index) => {
+                const optionsHTML = q.options.map((option, i) => `
+                    <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
+                        <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
+                        <span>${option}</span>
+                    </label>
+                `).join('');
+                return `
+                    <div class="question-block mb-6 pb-6 border-b">
+                        <p class="font-semibold mb-3">${index + 1}. ${q.question_text}</p>
+                        <div class="space-y-2">${optionsHTML}</div>
+                    </div>
+                `;
+            }).join('');
+
+            contentArea.innerHTML = `
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">${quiz.title}</h2>
+                    <p class="text-gray-600 mb-8">${quiz.description || ''}</p>
+                    <form id="quiz-form">${questionsHTML}
+                        <button type="submit" class="w-full mt-4 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">Submit Quiz</button>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions));
+        } catch (error) {
+            contentArea.innerHTML = `<div class="p-8 text-red-500">Error loading quiz: ${error.message}</div>`;
+        }
+    }
+
+    async function handleQuizSubmission(event, quizId, questions) {
+        event.preventDefault();
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="loader" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></span> Grading...`;
+        
+        const userAnswers = [];
+        let score = 0;
+        questions.forEach((q, index) => {
+            const selectedOption = form.querySelector(`input[name="question-${index}"]:checked`);
+            if (selectedOption) {
+                const answerIndex = parseInt(selectedOption.value, 10);
+                userAnswers[index] = answerIndex;
+                if (answerIndex === q.correct_answer_index) {
+                    score++;
+                }
+            } else {
+                userAnswers[index] = -1; // Mark as unanswered
+            }
+        });
+
+        const percentage = Math.round((score / questions.length) * 100);
+
+        try {
+            await fetch('/api/grades', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    quiz_id: quizId,
+                    score: percentage
+                })
+            });
+        } catch (error) {
+            console.error("Failed to save grade:", error);
+        }
+
+        displayQuizResults(score, questions, userAnswers);
+    }
+    
+    function displayQuizResults(score, questions, userAnswers) {
+        const contentArea = document.getElementById('content-main');
+        const percentage = Math.round((score / questions.length) * 100);
+
+        let feedbackHTML = questions.map((q, index) => {
+            const optionsHTML = q.options.map((option, i) => {
+                let classes = 'block p-3 border rounded-md';
+                if (i === q.correct_answer_index) {
+                    classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
+                }
+                if (i === userAnswers[index] && i !== q.correct_answer_index) {
+                    classes += ' bg-red-100 border-red-300 text-red-800 line-through';
+                }
+                return `<div class="${classes}">${option}</div>`;
+            }).join('');
+            
+            return `
+                <div class="question-block mb-6 pb-6 border-b">
+                    <p class="font-semibold mb-3">${index + 1}. ${q.question_text}</p>
+                    <div class="space-y-2">${optionsHTML}</div>
+                </div>
+            `;
+        }).join('');
+
+        contentArea.innerHTML = `
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
+                    <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-500' : 'text-red-500'}">${percentage}%</p>
+                    <p class="text-gray-600 mt-2">You answered ${score} out of ${questions.length} questions correctly.</p>
+                </div>
+                <h3 class="text-xl font-semibold mb-4">Review Your Answers</h3>
+                ${feedbackHTML}
+            </div>
+        `;
+    }
+
+    // --- INITIALIZATION ---
     fetchAndRenderCourses();
 });
 </script>
 </body>
 </html>
+

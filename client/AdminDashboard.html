@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; }
+        .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
         .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
         .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; text-align: center; margin: 1.5rem 0; padding: 0 1rem; }
@@ -22,8 +22,12 @@
         .card { transition: all 0.3s ease; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .chart-container { height: 300px; position: relative; }
-        /* SỬA LỖI: Bỏ đi quy tắc CSS không cần thiết */
-        /* .page-content:not(.active) { display: none; } */
+
+        /* === MERGED FROM FILE 1: CSS FOR MODAL === */
+        .modal { transition: opacity 0.3s ease; }
+        .modal.hidden { pointer-events: none; opacity: 0; }
+        .modal-content { transition: transform 0.3s ease; }
+        .modal.hidden .modal-content { transform: translateY(-20px); }
     </style>
 </head>
 <body>
@@ -36,18 +40,18 @@
                 </div>
                 <button id="closeSidebar" class="md:hidden"> <i class="fas fa-times"></i> </button>
             </div>
-            
             <nav class="mt-10">
                 <div class="sidebar-item active flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="dashboard"> <i class="fas fa-tachometer-alt mr-3"></i> <span>Dashboard</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="courses"> <i class="fas fa-book mr-3"></i> <span>Courses</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="students"> <i class="fas fa-users mr-3"></i> <span>Students</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="quizzes"> <i class="fas fa-puzzle-piece mr-3"></i> <span>Quizzes</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="subscriptions"> <i class="fas fa-tags mr-3"></i> <span>Subscriptions</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="instructors"> <i class="fas fa-chalkboard-teacher mr-3"></i> <span>Instructors</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="assignments"> <i class="fas fa-tasks mr-3"></i> <span>Assignments</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="reports"> <i class="fas fa-chart-bar mr-3"></i> <span>Reports</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
-            
             <div class="px-4 absolute bottom-4 left-0 right-0">
                 <div class="flex items-center space-x-3 border-t border-indigo-700 pt-4">
                     <div id="admin-avatar" class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-lg"></div>
@@ -55,13 +59,11 @@
                         <p id="admin-user-name" class="text-sm font-semibold">Admin User</p>
                         <p id="admin-user-email" class="text-xs text-indigo-300">admin@codemaster.com</p>
                     </div>
-                    <button id="logout-button-sidebar" class="ml-auto text-indigo-300 hover:text-white" title="Logout">
-                        <i class="fas fa-sign-out-alt text-lg"></i>
-                    </button>
+                    <button id="logout-button-sidebar" class="ml-auto text-indigo-300 hover:text-white" title="Logout"><i class="fas fa-sign-out-alt text-lg"></i></button>
                 </div>
             </div>
         </div>
-
+        
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="bg-white shadow-sm z-10">
                 <div class="flex items-center justify-between p-4">
@@ -84,7 +86,7 @@
                     </div>
                 </div>
             </header>
-
+            
             <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
                 <section id="dashboard" class="page-content">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -119,321 +121,340 @@
                                 </button>
                             </div>
                         </div>
-                        
-                        <div class="p-4">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full">
-                                    <thead class="bg-gray-50">
-                                        <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <th class="px-4 py-3">Student</th>
-                                            <th class="px-4 py-3">Email</th>
-                                            <th class="px-4 py-3">Enrolled Courses</th>
-                                            <th class="px-4 py-3">Progress</th>
-                                            <th class="px-4 py-3">Join Date</th>
-                                            <th class="px-4 py-3">Status</th>
-                                            <th class="px-4 py-3">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="students-table-body" class="divide-y divide-gray-200">
-                                        </tbody>
-                                </table>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">Student</th>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Enrolled Courses</th>
+                                        <th class="px-4 py-3">Progress</th>
+                                        <th class="px-4 py-3">Join Date</th>
+                                        <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body" class="divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quizzes" class="page-content hidden"><p>Quizzes Management Coming Soon</p></section>
+
+                <section id="subscriptions" class="page-content hidden">
+                    <div id="subscriptions-container">
+                        </div>
+                </section>
+
+                <section id="certificates" class="page-content hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Certificate Generator</h1>
+                            <div class="mb-6">
+                                <label for="cert-user" class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
+                                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="">-- Loading Students --</option>
+                                </select>
                             </div>
-                            
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="text-sm text-gray-600">
-                                    Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">1,245</span> entries
+                            <div class="mb-6">
+                                <label for="cert-course" class="block text-sm font-medium text-gray-700 mb-2">Select Completed Course</label>
+                                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="">-- Loading Courses --</option>
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="cert-date" class="block text-sm font-medium text-gray-700 mb-2">Date of Completion</label>
+                                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                                Generate Certificate
+                            </button>
+                        </div>
+                        <div id="certificate-preview-container" class="w-full mt-8 hidden">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Certificate Preview</h2>
+                            <div class="flex justify-end mb-4">
+                                <button id="download-certificate" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition">Download Certificate</button>
+                            </div>
+                            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
+                                <div class="text-center z-10 px-6">
+                                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion from CodeMaster</h2>
+                                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
+                                    <p class="text-gray-600 mb-2">This certifies that</p>
+                                    <h2 id="preview-student-name" class="certificate-name">STUDENT NAME</h2>
+                                    <p class="text-gray-600 mb-6">has successfully completed the course</p>
+                                    <h3 id="preview-course-name" class="text-2xl font-semibold text-blue-800 mb-6">COURSE NAME</h3>
+                                    <p id="preview-issue-date" class="text-gray-600 mb-8">Date</p>
                                 </div>
-                                <div class="flex space-x-1">
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Previous</button>
-                                    <button class="px-3 py-1 rounded border bg-indigo-600 text-white">1</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">2</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">3</button>
-                                    <button class="px-3 py-1 rounded border text-gray-600 hover:bg-gray-100">Next</button>
-                                </div>
+                                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/> <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/> <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/> <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text> <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text> </svg>
                             </div>
                         </div>
                     </div>
                 </section>
                 
-            <section id="certificates" class="page-content hidden">
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-            <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Certificate Generator</h1>
-            
-            <div class="mb-6">
-                <label for="cert-user" class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
-                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                    <option value="">-- Loading Students --</option>
-                </select>
-            </div>
-            
-            <div class="mb-6">
-                <label for="cert-course" class="block text-sm font-medium text-gray-700 mb-2">Select Completed Course</label>
-                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                    <option value="">-- Loading Courses --</option>
-                </select>
-            </div>
-            
-            <div class="mb-6">
-                <label for="cert-date" class="block text-sm font-medium text-gray-700 mb-2">Date of Completion</label>
-                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-            </div>
-            
-            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
-                Generate Certificate
-            </button>
-        </div>
-        
-        <div id="certificate-preview-container" class="w-full mt-8 hidden">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Certificate Preview</h2>
-            <div class="flex justify-end mb-4">
-                <button id="download-certificate" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition">Download Certificate</button>
-            </div>
-            
-            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
-                <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
-                <div class="absolute bottom-0 right-0 w-full h-16 bg-gradient-to-l from-blue-600/10 to-indigo-600/10"></div>
-                
-                <div class="text-center z-10 px-6">
-                    <div class="mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-16 h-16 mx-auto mb-2 text-blue-600">
-                            <path fill="currentColor" d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
-                            <path fill="currentColor" d="M14.829 9.172a.5.5 0 0 0-.708 0l-1.5 1.5a.5.5 0 0 0 0 .707l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0 0-.707l-1.5-1.5a.5.5 0 0 0-.708 0L17 10.293V5.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v4.793l-1.171-1.171z"/>
-                            <path fill="currentColor" d="M8.5 5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-2zM9 8V6h1v2H9zM6.5 10a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-2zm.5 3v-2h1v2H7z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion from CodeMaster</h2>
-                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
-                    <p class="text-gray-600 mb-2">This certifies that</p>
-                    <h2 id="preview-student-name" class="certificate-name">STUDENT NAME</h2>
-                    <p class="text-gray-600 mb-6">has successfully completed the course</p>
-                    <h3 id="preview-course-name" class="text-2xl font-semibold text-blue-800 mb-6">COURSE NAME</h3>
-                    <p id="preview-issue-date" class="text-gray-600 mb-8">Date</p>
-                    
-                    <div class="flex justify-center items-center gap-16 mt-2">
-                        <div class="text-center">
-                            <div id="preview-instructor-signature" class="signature text-xl text-blue-800 mb-2">Jane Smith</div>
-                            <div class="w-40 border-t border-gray-400"></div>
-                            <p class="text-sm text-gray-600 mt-1">Course Instructor</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="signature text-xl text-blue-800 mb-2">Robert Johnson</div>
-                            <div class="w-40 border-t border-gray-400"></div>
-                            <p class="text-sm text-gray-600 mt-1">Program Director</p>
-                        </div>
-                    </div>
-                </div>
-                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
-                    <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/>
-                    <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text>
-                    <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text>
-                </svg>
-            </div>
-        </div>
-    </div>
-</section>
-
-                <section id="courses" class="page-content hidden">...</section>
-                <section id="instructors" class="page-content hidden">...</section>
-                <section id="assignments" class="page-content hidden">...</section>
-                <section id="reports" class="page-content hidden">...</section>
-                <section id="settings" class="page-content hidden">...</section>
+                <section id="courses" class="page-content hidden"><p>Course Management Coming Soon</p></section>
+                <section id="instructors" class="page-content hidden"><p>Instructor Management Coming Soon</p></section>
+                <section id="assignments" class="page-content hidden"><p>Assignment Management Coming Soon</p></section>
+                <section id="reports" class="page-content hidden"><p>Reports Coming Soon</p></section>
+                <section id="settings" class="page-content hidden"><p>Settings Coming Soon</p></section>
             </main>
         </div>
     </div>
 
+    <div id="subscription-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-lg w-full">
+            <h2 id="subscription-modal-title" class="text-2xl font-bold mb-6">Add New Plan</h2>
+            <form id="subscription-form">
+                <div class="space-y-4">
+                    <div><label for="plan-name" class="block text-sm font-medium text-gray-700">Plan Name</label><input type="text" id="plan-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Pro"></div>
+                    <div><label for="plan-monthly-price" class="block text-sm font-medium text-gray-700">Monthly Price ($)</label><input type="number" id="plan-monthly-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="19.99"></div>
+                    <div><label for="plan-annual-price" class="block text-sm font-medium text-gray-700">Annual Price ($)</label><input type="number" id="plan-annual-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="199.99"></div>
+                    <div><label for="plan-features" class="block text-sm font-medium text-gray-700">Features (one per line)</label><textarea id="plan-features" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Access to all courses&#10;Priority support"></textarea></div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-subscription-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Plan</button></div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script>
-        // --- DATA STORAGE ---
-        let allUsers = [];
-        let allCourses = [];
-        let activeAdminUser = null;
+    document.addEventListener('DOMContentLoaded', async () => {
         const token = localStorage.getItem('token');
-
-        // --- SỬA LẠI HÀM UTILITY ---
-        function showPage(target) {
-            // Dùng class `hidden` của Tailwind để ẩn tất cả các section
-            document.querySelectorAll('.page-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            
-            // Hiện section mục tiêu bằng cách xóa class `hidden`
-            const targetElement = document.getElementById(target);
-            if (targetElement) {
-                targetElement.classList.remove('hidden');
-            }
-            
-            // Cập nhật tiêu đề trang
-            const pageTitle = document.getElementById('pageTitle');
-            if(pageTitle) pageTitle.textContent = target.charAt(0).toUpperCase() + target.slice(1);
-
-            // Cập nhật trạng thái active trên sidebar
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-target') === target) {
-                    item.classList.add('active');
-                }
-            });
-            
-            // Tải dữ liệu tương ứng với trang được chọn
-            if (target === 'certificates') {
-                populateCertificateForm();
-            } else if (target === 'students') {
-                fetchAndRenderStudents();
-            }
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
+            window.location.href = 'LoginPage.html';
+            return;
         }
-        
-        // --- DATA FETCHING ---
+
+        // Global data stores
+        let allCourses = [];
+        let allUsers = [];
+
+        // === MERGED FROM FILE 1: VARIABLES FOR SUBSCRIPTION MODAL ===
+        const subscriptionModal = document.getElementById('subscription-modal');
+        const subscriptionForm = document.getElementById('subscription-form');
+        const subscriptionModalTitle = document.getElementById('subscription-modal-title');
+        let currentEditingPlanId = null;
+
+        // --- MERGED & REFINED UTILITY FUNCTIONS ---
+        function showPage(targetId) {
+            document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) targetElement.classList.remove('hidden');
+            
+            document.getElementById('pageTitle').textContent = targetId.charAt(0).toUpperCase() + targetId.slice(1);
+
+            document.querySelectorAll('.sidebar-item').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.target === targetId) link.classList.add('active');
+            });
+            
+            // Call appropriate render function for the page
+            if (targetId === 'students') fetchAndRenderStudents();
+            else if (targetId === 'subscriptions') renderSubscriptionManagementPage();
+            else if (targetId === 'certificates') populateCertificateForm();
+        }
+
         async function fetchAllData() {
             try {
                 const [usersRes, coursesRes] = await Promise.all([
                     fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } }),
                     fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } })
                 ]);
-
                 if (!usersRes.ok || !coursesRes.ok) throw new Error("Failed to fetch core data.");
-
-                allUsers = (await usersRes.json()).filter(u => u.role === 'student'); 
+                allUsers = await usersRes.json();
                 allCourses = await coursesRes.json();
-                
             } catch (error) {
                 console.error('Core Data Fetch Error:', error);
                 alert('Error loading essential data: ' + error.message);
             }
         }
-
-        // --- STUDENT MANAGEMENT FUNCTIONS ---
+        
+        // --- STUDENT MANAGEMENT (from File 2 - More Advanced) ---
         async function fetchAndRenderStudents() {
-            const studentsTableBody = document.querySelector('#students tbody');
-            if (!studentsTableBody) return;
+            const container = document.getElementById('students-table-body');
+            if(!container) return;
 
-            studentsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">Loading student data...</td></tr>';
+            const students = allUsers.filter(u => u.role === 'student');
+            let studentRows = students.map(student => {
+                const parts = student.name ? student.name.split(' ') : [];
+                let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (student.name ? student.name.charAt(0).toUpperCase() : '??');
+                const progress = student.overall_progress || 0;
 
+                return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                        <td class="px-4 py-3"><div class="flex items-center"><div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-semibold mr-3"><span>${initials}</span></div><span>${student.name || 'N/A'}</span></div></td>
+                        <td class="px-4 py-3">${student.email || 'N/A'}</td>
+                        <td class="px-4 py-3 text-center">${student.enrolled_courses?.length || 0}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2 mr-2"><div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div></div>
+                                <span class="text-xs text-gray-500">${progress}%</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">${student.createdAt ? new Date(student.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span></td>
+                        <td class="px-4 py-3"><div class="flex space-x-3"><button class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button><button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button></div></td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = students.length > 0 ? studentRows : '<tr><td colspan="7" class="text-center py-4 text-gray-500">No students found.</td></tr>';
+        }
+
+        // === MERGED FROM FILE 1: COMPLETE SUBSCRIPTION MANAGEMENT LOGIC ===
+        async function renderSubscriptionManagementPage() {
+            const container = document.getElementById('subscriptions-container');
+            container.innerHTML = `<p class="text-gray-500 p-4">Loading subscription plans...</p>`;
             try {
-                const students = allUsers; 
+                const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch plans');
+                const plans = await response.json();
                 
-                let rowsHTML = ''; 
+                let plansHTML = plans.map(plan => `
+                    <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-lg">${plan.name}</p>
+                            <p class="text-sm text-gray-600">$${plan.monthlyPrice}/month - $${plan.annualPrice}/year</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button data-plan-id="${plan.id}" class="edit-plan-btn text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                            <button data-plan-id="${plan.id}" class="delete-plan-btn text-red-600 hover:text-red-800 font-medium">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
 
-                if (students.length === 0) {
-                    rowsHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">No students found.</td></tr>';
-                } else {
-                    students.forEach(student => {
-                        const parts = student.name ? student.name.split(' ') : [];
-                        let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (student.name ? student.name.charAt(0).toUpperCase() : 'GS');
-                        
-                        const enrolledCoursesCount = student.enrolled_courses ? student.enrolled_courses.length : 0;
-                        const progress = student.overall_progress || 0; 
-                        const statusText = 'Active';
-                        const statusClass = 'bg-green-100 text-green-800';
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Subscription Plans</h2>
+                        <button id="add-plan-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add New Plan</button>
+                    </div>
+                    <div class="space-y-4">${plans.length > 0 ? plansHTML : '<p class="text-center py-4 text-gray-500">No subscription plans created yet.</p>'}</div>
+                `;
 
-                        rowsHTML += `
-                            <tr class="text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center">
-                                        <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-semibold mr-3">
-                                            <span>${initials}</span>
-                                        </div>
-                                        <span>${student.name || 'N/A'}</span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">${student.email || 'N/A'}</td>
-                                <td class="px-4 py-3 text-center">${enrolledCoursesCount}</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center">
-                                        <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
-                                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
-                                        </div>
-                                        <span class="text-xs text-gray-500">${progress}%</span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">${student.createdAt ? new Date(student.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-1 text-xs rounded-full ${statusClass}">${statusText}</span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex space-x-3">
-                                        <button title="View Details" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
-                                        <button title="Delete User" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                studentsTableBody.innerHTML = rowsHTML;
-
+                document.getElementById('add-plan-btn').addEventListener('click', () => openSubscriptionModal());
+                container.querySelectorAll('.edit-plan-btn').forEach(btn => btn.addEventListener('click', (e) => openSubscriptionModal(e.target.dataset.planId)));
+                container.querySelectorAll('.delete-plan-btn').forEach(btn => btn.addEventListener('click', handleDeletePlan));
             } catch (error) {
-                console.error('Fetch Students Error:', error);
-                studentsTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">Error loading student data: ${error.message}</td></tr>`;
+                container.innerHTML = `<p class="text-red-500 p-4">${error.message}</p>`;
+            }
+        }
+
+        async function openSubscriptionModal(planId = null) {
+            currentEditingPlanId = planId;
+            subscriptionForm.reset();
+            if (planId) {
+                subscriptionModalTitle.textContent = 'Edit Plan';
+                try {
+                    const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const plans = await response.json();
+                    const plan = plans.find(p => p.id === planId);
+                    if (plan) {
+                        document.getElementById('plan-name').value = plan.name;
+                        document.getElementById('plan-monthly-price').value = plan.monthlyPrice;
+                        document.getElementById('plan-annual-price').value = plan.annualPrice;
+                        document.getElementById('plan-features').value = plan.features.join('\n');
+                    }
+                } catch (error) {
+                    alert('Could not load plan details.');
+                    return;
+                }
+            } else {
+                subscriptionModalTitle.textContent = 'Add New Plan';
+            }
+            subscriptionModal.classList.remove('hidden');
+        }
+
+        function closeSubscriptionModal() {
+            subscriptionModal.classList.add('hidden');
+        }
+
+        async function handleSubscriptionFormSubmit(e) {
+            e.preventDefault();
+            const planData = {
+                name: document.getElementById('plan-name').value,
+                monthlyPrice: parseFloat(document.getElementById('plan-monthly-price').value),
+                annualPrice: parseFloat(document.getElementById('plan-annual-price').value),
+                features: document.getElementById('plan-features').value.split('\n').filter(f => f.trim() !== '')
+            };
+            const method = currentEditingPlanId ? 'PUT' : 'POST';
+            const url = currentEditingPlanId ? `/api/subscriptions/${currentEditingPlanId}` : '/api/subscriptions';
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(planData)
+                });
+                if (!response.ok) throw new Error('Failed to save plan.');
+                closeSubscriptionModal();
+                renderSubscriptionManagementPage();
+            } catch (error) { alert(`Error: ${error.message}`); }
+        }
+        
+        async function handleDeletePlan(e) {
+            const planId = e.target.dataset.planId;
+            if (confirm('Are you sure you want to delete this plan?')) {
+                try {
+                    const response = await fetch(`/api/subscriptions/${planId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+                    if (!response.ok) throw new Error('Failed to delete plan.');
+                    renderSubscriptionManagementPage();
+                } catch (error) { alert(`Error: ${error.message}`); }
             }
         }
         
-        // --- CERTIFICATE FUNCTIONS (GIỮ NGUYÊN) ---
-        function populateCertificateForm() {
-            // ... (code không đổi)
-        }
-        document.getElementById('generate-certificate').addEventListener('click', function(e) {
-            // ... (code không đổi)
-        });
+        // --- CERTIFICATE & OTHER FUNCTIONS ---
+        function populateCertificateForm() { /* Placeholder */ }
+        function renderQuizManagementPage() { /* Placeholder */ }
 
-        // --- EVENT LISTENERS & INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            activeAdminUser = JSON.parse(localStorage.getItem('user'));
-            if (!token || !activeAdminUser) {
-                window.location.href = 'LoginPage.html';
-                return;
-            }
-
-            const userName = activeAdminUser.name || 'Admin';
-            const userEmail = activeAdminUser.email || 'admin@codemaster.com';
-            const userInitials = userName.charAt(0).toUpperCase();
-
-            document.getElementById('admin-user-name').textContent = userName;
-            document.getElementById('admin-user-email').textContent = userEmail;
-            document.getElementById('admin-avatar').textContent = userInitials;
-            document.getElementById('header-user-name').textContent = userName;
-            document.getElementById('header-avatar').textContent = userInitials;
-
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.addEventListener('click', (e) => showPage(e.currentTarget.getAttribute('data-target')));
-            });
-
-            [document.getElementById('logout-button-sidebar'), document.getElementById('logout-button-header')]
-                .forEach(btn => btn.addEventListener('click', () => {
-                    localStorage.clear();
-                    window.location.href = 'LoginPage.html';
-                }));
-            
-            document.getElementById('openSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.remove('-translate-x-full'));
-            document.getElementById('closeSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.add('-translate-x-full'));
-
-            const userMenuBtn = document.getElementById('userMenuBtn');
-            const userMenu = document.getElementById('userMenu');
-            userMenuBtn.addEventListener('click', () => userMenu.classList.toggle('hidden'));
-
-            await fetchAllData();
-            showPage('dashboard');
-            setupCharts();
-        });
-
-        // --- CHARTS FUNCTIONS ---
+        // --- CHARTS FUNCTIONS (from File 2) ---
         const setupCharts = () => {
             const enrollmentCtx = document.getElementById('enrollmentCanvas').getContext('2d');
             new Chart(enrollmentCtx, {
                 type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'New Enrollments', data: [65, 78, 90, 85, 110, 142], borderColor: 'rgb(79, 70, 229)', backgroundColor: 'rgba(79, 70, 229, 0.1)', tension: 0.3, fill: true }] },
                 options: { maintainAspectRatio: false, responsive: true }
             });
-
             const categoriesCtx = document.getElementById('categoriesCanvas').getContext('2d');
             new Chart(categoriesCtx, {
                 type: 'doughnut', data: { labels: ['Development', 'Design', 'Business', 'Marketing', 'IT & Software', 'Other'], datasets: [{ data: [35, 20, 15, 12, 10, 8], backgroundColor: ['#3B82F6', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B', '#6B7280'], borderWidth: 0 }] },
                 options: { maintainAspectRatio: false, responsive: true }
             });
         };
+        
+        // --- EVENT LISTENERS & INITIALIZATION ---
+        const userName = user.name || 'Admin';
+        const userEmail = user.email || 'admin@codemaster.com';
+        const userInitials = userName.split(' ').map(n=>n[0]).join('').toUpperCase() || userName.charAt(0).toUpperCase();
+        
+        document.getElementById('admin-user-name').textContent = userName;
+        document.getElementById('admin-user-email').textContent = userEmail;
+        document.getElementById('admin-avatar').textContent = userInitials;
+        document.getElementById('header-user-name').textContent = userName;
+        document.getElementById('header-avatar').textContent = userInitials;
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', (e) => showPage(e.currentTarget.getAttribute('data-target')));
+        });
+
+        [document.getElementById('logout-button-sidebar'), document.getElementById('logout-button-header')]
+            .forEach(btn => btn.addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'LoginPage.html';
+            }));
+        
+        document.getElementById('openSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.remove('-translate-x-full'));
+        document.getElementById('closeSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.add('-translate-x-full'));
+        document.getElementById('userMenuBtn').addEventListener('click', () => document.getElementById('userMenu').classList.toggle('hidden'));
+        
+        // Event listeners for Subscription Modal (from File 1)
+        document.getElementById('cancel-subscription-btn').addEventListener('click', closeSubscriptionModal);
+        subscriptionForm.addEventListener('submit', handleSubscriptionFormSubmit);
+
+        // Initial calls
+        await fetchAllData();
+        showPage('dashboard');
+        setupCharts();
+    });
     </script>
 </body>
 </html>
