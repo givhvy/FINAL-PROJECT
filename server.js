@@ -24,7 +24,8 @@ const progressRoutes = require('./server/routes/progressRoutes');
 
 
 // BỔ SUNG ROUTE MỚI
-const communityRoutes = require('./server/routes/communityRoutes'); 
+const communityRoutes = require('./server/routes/communityRoutes');
+const blogRoutes = require('./server/routes/blogRoutes'); 
 
 // ====== 3. KHỞI TẠO ỨNG DỤNG VÀ FIREBASE ======
 const app = express();
@@ -67,7 +68,9 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/marketing', marketingRoutes); 
 app.use('/api/progress', progressRoutes);
 // ĐĂNG KÝ COMMUNITY ROUTES
-app.use('/api/community', communityRoutes); 
+app.use('/api/community', communityRoutes);
+// ĐĂNG KÝ BLOG ROUTES
+app.use('/api/blog', blogRoutes); 
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to the CodeMaster E-Learning API with Firebase!' });
