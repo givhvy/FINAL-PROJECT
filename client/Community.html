@@ -6,12 +6,9 @@
     <title>Community | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CẬP NHẬT FONT: Sử dụng Poppins cho đồng bộ -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- CẬP NHẬT LOGO FAVICON -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
-        /* CẬP NHẬT FONT CHO BODY */
         body { font-family: 'Poppins', sans-serif; box-sizing: border-box; background-color: #f0f4f8; }
         .progress-bar { transition: width 0.5s ease-in-out; }
         .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -31,28 +28,21 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-6">
                 <a href="index.html" class="flex-shrink-0 flex items-center space-x-1">
-                    <!-- LOGO SVG MỚI -->
                     <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                    <!-- LOGO TEXT ĐỒNG BỘ -->
                     <div class="text-2xl font-bold header-logo">CodeMaster</div>
                 </a>
                 <nav class="hidden sm:flex space-x-4 lg:space-x-8 h-full items-center">
                     <a href="CourseandLesson.html" class="nav-link">Courses</a>
                     <a href="AccountProfile.html" class="nav-link">My Learning</a>
-                    <!-- ĐÃ XÓA LIÊN KẾT QUIZZ -->
                     <a href="Community.html" class="nav-link active">Community</a>
-                    <!-- ĐÃ XÓA NÚT UPGRADE -->
                 </nav>
             </div>
             
-            <!-- KHU VỰC USER/ACTION -->
             <div class="flex items-center space-x-4">
-                 <!-- GIỮ LẠI KHU VỰC TÌM KIẾM TRÊN HEADER VÀ ĐIỀU CHỈNH STYLE -->
                 <div class="relative hidden sm:block">
                     <input type="text" placeholder="Search friends or groups..." class="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
                     <span class="absolute left-3 top-2.5 text-gray-400"><i class="fas fa-search"></i></span>
                 </div>
-                <!-- KHU VỰC AVATAR & LOGOUT -->
                 <div id="user-profile-btn" class="flex items-center cursor-pointer space-x-2">
                     <div id="user-avatar" class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold"></div>
                     <span id="user-name" class="text-sm font-medium hidden sm:block">Loading...</span>
@@ -64,12 +54,8 @@
 
     <div class="max-w-7xl mx-auto px-4 py-6">
         <div class="grid lg:grid-cols-4 gap-6">
-
-             <!-- KHU VỰC TÌM KIẾM DƯỚI HEADER (ĐÃ XÓA KHU VỰC NÀY) -->
             
-            <!-- Cột trái: Progress & Actions -->
             <div class="lg:col-span-1 space-y-6">
-                <!-- My Progress Today -->
                 <div id="progress-card" class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold mb-4 text-gray-800">My Progress Today</h3>
                     <div id="progress-data-container">
@@ -80,26 +66,23 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
                     <div class="space-y-3">
-                        <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                        <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors quick-action-btn">
                             Start Study Session
                         </button>
-                        <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                        <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors quick-action-btn">
                             Create Study Group
                         </button>
-                        <button class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors quick-action-btn">
                             Find Study Buddy
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Cột giữa: Leaderboard & Study Groups -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Weekly Leaderboard -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-gray-800">🏆 Weekly Leaderboard</h3>
@@ -117,16 +100,14 @@
                     </div>
                 </div>
 
-                <!-- My Study Groups (Placeholder) -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-gray-800">📚 My Study Groups</h3>
-                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
+                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors group-action-btn">
                             Join New Group
                         </button>
                     </div>
-                    <!-- Giữ nguyên dữ liệu hardcode (chưa có API Groups) -->
-                     <div class="grid md:grid-cols-2 gap-4">
+                    <div class="grid md:grid-cols-2 gap-4">
                         <div class="border rounded-lg p-4 card-hover">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="font-semibold text-gray-800">JavaScript Masters</h4>
@@ -143,8 +124,8 @@
                             </div>
                             <div class="text-sm text-gray-600 mb-3">Next session: Today 7:00 PM</div>
                             <div class="flex space-x-2">
-                                <button class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors">Join Session</button>
-                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors">💬</button>
+                                <button class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors group-action-btn">Join Session</button>
+                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors group-action-btn">💬</button>
                             </div>
                         </div>
 
@@ -163,17 +144,16 @@
                             </div>
                             <div class="text-sm text-gray-600 mb-3">Next session: Tomorrow 2:00 PM</div>
                             <div class="flex space-x-2">
-                                <button class="flex-1 bg-green-500 text-white py-2 px-3 rounded text-sm hover:bg-green-600 transition-colors">View Progress</button>
-                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors">💬</button>
+                                <button class="flex-1 bg-green-500 text-white py-2 px-3 rounded text-sm hover:bg-green-600 transition-colors group-action-btn">View Progress</button>
+                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors group-action-btn">💬</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                 <!-- Recent Activity (Giữ nguyên dữ liệu hardcode) -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-xl font-bold mb-6 text-gray-800">📈 Recent Activity</h3>
-                     <div class="space-y-4">
+                    <div class="space-y-4">
                         <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
                             <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">SM</div>
                             <div class="flex-1">
@@ -198,9 +178,7 @@
                 </div>
             </div>
             
-            <!-- Cột phải: Friends Online & Challenges -->
             <div class="lg:col-span-1 space-y-6">
-                <!-- Friends Online -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold text-gray-800">👥 Friends Online</h3>
@@ -216,10 +194,9 @@
                     </button>
                 </div>
 
-                <!-- Active Challenges (Giữ nguyên dữ liệu hardcode) -->
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold mb-4 text-gray-800">🎯 Active Challenges</h3>
-                     <div class="space-y-4">
+                    <div class="space-y-4">
                         <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
                             <div class="flex items-center justify-between mb-2">
                                 <h4 class="font-semibold text-blue-800">7-Day Streak</h4>
@@ -247,7 +224,6 @@
         
         if (!token || !user) {
             window.location.href = 'LoginPage.html';
-            // Fallback for demo, but typically this should redirect
         }
 
         function getUserInitials() {
@@ -268,6 +244,7 @@
         async function renderUserProgress() {
             const container = document.getElementById('progress-data-container');
             try {
+                // SỬ DỤNG API_BASE TỪ BIẾN TOÀN CỤC
                 const response = await fetch(`${API_BASE}/progress`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (!response.ok) throw new Error('Failed to fetch progress.');
                 const data = await response.json();
@@ -328,7 +305,8 @@
                 const leaderboard = await response.json();
 
                 container.innerHTML = leaderboard.map(entry => {
-                    const isCurrentUser = entry.name.includes(user.name || "Alex Chen");
+                    // Giả định Alex Chen là người dùng hiện tại nếu user.name không có
+                    const isCurrentUser = entry.name.includes(user.name || "Alex Chen"); 
                     const bgColor = isCurrentUser ? 'bg-orange-50 border border-orange-300' : 'bg-gray-50';
                     const rankEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank;
                     const rankColor = entry.rank <= 3 ? 'text-2xl' : 'text-lg text-gray-400';
@@ -405,7 +383,7 @@
         }
 
         // --- INITIALIZATION ---
-        function setupListeners() {
+        document.addEventListener('DOMContentLoaded', () => {
             // Update user info in header
             const initials = getUserInitials();
             document.getElementById('user-avatar').textContent = initials;
@@ -426,15 +404,14 @@
             document.querySelectorAll('.quick-action-btn, .group-action-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     alert(`Action triggered: ${e.currentTarget.textContent.trim()}`);
-                    // In a real app, this would trigger an API call to start session/create group/etc.
                 });
             });
-        }
-        
-        setupListeners();
-        renderUserProgress();
-        renderLeaderboard();
-        renderFriendsStatus();
+
+            // Run data fetching functions
+            renderUserProgress();
+            renderLeaderboard();
+            renderFriendsStatus();
+        });
 
     </script>
 </body>
