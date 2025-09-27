@@ -4,38 +4,51 @@ const { sendMailListConfirmation } = require('../services/emailService');
 // Sửa lỗi: Không gọi getFirestore() ở ngoài hàm
 // const db = getFirestore(); // Dòng này đã được xóa
 
+
+// Subscribe to newsletter
 exports.subscribeToNewsletter = async (req, res) => {
-    // Gọi getFirestore() bên trong hàm, sau khi app đã khởi tạo
-    const db = getFirestore(); 
+  try {
+    const db = getFirestore();
     const { email } = req.body;
 
-    if (!email) {
-        return res.status(400).json({ message: 'Email is required.' });
+    // Check if email already exists
+    const subscribersRef = db.collection('newsletter_subscribers');
+    const q = subscribersRef.where('email', '==', email);
+    const snapshot = await q.get();
+
+    if (!snapshot.empty) {
+      return res.status(200).json({ message: 'Email đã được đăng ký trước đó!' });
     }
 
-    try {
-        // 1. Kiểm tra xem email đã tồn tại trong danh sách (MailList) chưa
-        const subscriberRef = db.collection('MailList').doc(email);
-        const doc = await subscriberRef.get();
+    // Add new subscriber
+    await subscribersRef.add({
+      email: email,
+      subscribedAt: new Date().toISOString(),
+      active: true
+    });
 
-        if (doc.exists) {
-            return res.status(200).json({ message: 'Bạn đã đăng ký nhận tin rồi!' });
-        }
+    res.status(201).json({ message: 'Đăng ký thành công!' });
+  } catch (err) {
+    console.error("Newsletter Subscribe Error:", err);
+    res.status(500).json({ error: 'Có lỗi xảy ra khi đăng ký' });
+  }
+};
 
-        // 2. Nếu chưa tồn tại, thêm email mới vào MailList
-        await subscriberRef.set({
-            email: email,
-            subscribedAt: new Date(),
-        });
+// Check subscription status
+exports.getSubscriptionStatus = async (req, res) => {
+  try {
+    const db = getFirestore();
+    const userEmail = req.user.email; // From auth middleware
 
-        // 3. Gửi email xác nhận (Không cần await để tăng tốc độ phản hồi API)
-        sendMailListConfirmation(email); 
+    const subscribersRef = db.collection('newsletter_subscribers');
+    const q = subscribersRef.where('email', '==', userEmail);
+    const snapshot = await q.get();
 
-        // 4. Trả về phản hồi thành công
-        res.status(201).json({ message: 'Đăng ký thành công! Chào mừng bạn đến với Mail List của Codemaster.' });
-
-    } catch (error) {
-        console.error("Error subscribing email:", error);
-        res.status(500).json({ message: 'Đăng ký thất bại. Vui lòng thử lại.' });
-    }
+    const subscribed = !snapshot.empty && snapshot.docs[0].data().active;
+    
+    res.json({ subscribed });
+  } catch (err) {
+    console.error("Check Subscription Error:", err);
+    res.status(500).json({ error: 'Không thể kiểm tra trạng thái đăng ký' });
+  }
 };

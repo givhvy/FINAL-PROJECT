@@ -1,8 +1,9 @@
 const express = require('express');
-const { subscribeToNewsletter } = require('../controllers/marketingController');
 const router = express.Router();
+const marketingController = require('../controllers/marketingController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// POST /api/marketing/subscribe
-router.post('/subscribe', subscribeToNewsletter);
+router.post('/subscribe', marketingController.subscribeToNewsletter);
+router.get('/subscription-status', authMiddleware, marketingController.getSubscriptionStatus);
 
 module.exports = router;

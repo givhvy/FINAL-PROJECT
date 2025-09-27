@@ -34,7 +34,7 @@
             min-height: 2.5rem;
         }
 
-        /* BANNER STYLES - MODIFIED FOR CAROUSEL */
+        /* BANNER CAROUSEL STYLES - Enhanced */
         .featured-banner {
             height: 300px;
             background-size: cover;
@@ -42,80 +42,68 @@
             position: relative;
             display: flex;
             align-items: center;
-            padding: 3rem;
+            padding: 2rem 3rem;
             overflow: hidden;
-            transition: background-image 1s ease-in-out; /* Smooth background transition */
+            transition: background-image 1s ease-in-out;
         }
         .featured-banner::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
             z-index: 1;
         }
-        .banner-content { z-index: 2; color: white; max-width: 600px; }
+        .banner-content { 
+            z-index: 2; color: white; max-width: 600px; 
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CATEGORIES BAR (PILL FILTER) */
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 9999px; 
-            transition: all 0.2s;
-            cursor: pointer;
-            font-weight: 500;
-            color: #4b5563; 
-            background-color: #f3f4f6; 
-        }
-        .filter-btn:hover:not(.active) {
-             background-color: #e5e7eb; 
-        }
-        .filter-btn.active {
-            background-color: #4f46e5; 
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
-        }
-        
-        /* GALLERY CATEGORY STYLES (Bottom Section) */
-        .category-gallery-item {
-            aspect-ratio: 16/9; 
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .category-gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-
-        /* Navigation Styles */
-        .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
-        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
-        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
-
-        /* Carousel Pagination Dots */
+        /* CAROUSEL PAGINATION DOTS */
         .carousel-pagination {
             position: absolute;
-            bottom: 1.5rem; /* Adjust as needed */
+            bottom: 1.5rem;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 3; /* Above the overlay */
+            z-index: 3;
             display: flex;
             gap: 0.5rem;
         }
         .pagination-dot {
-            width: 10px;
-            height: 10px;
+            width: 12px; height: 12px;
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
+        .pagination-dot:hover { background-color: rgba(255, 255, 255, 0.8); }
         .pagination-dot.active {
-            background-color: rgba(255, 255, 255, 1);
+            background-color: white;
+            transform: scale(1.2);
+        }
+
+        /* FILTER & NAV STYLES */
+        .filter-btn { padding: 0.5rem 1rem; border-radius: 9999px; transition: all 0.2s; cursor: pointer; font-weight: 500; color: #4b5563; background-color: #f3f4f6; }
+        .filter-btn:hover:not(.active) { background-color: #e5e7eb; }
+        .filter-btn.active { background-color: #4f46e5; color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3); }
+        
+        .category-gallery-item { aspect-ratio: 16/9; background-size: cover; background-position: center; position: relative; cursor: pointer; transition: transform 0.3s ease; }
+        .category-gallery-item:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+
+        .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+
+        /* Progress indicator animation */
+        .progress-indicator {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ef4444, #10b981);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
@@ -150,33 +138,28 @@
         </div>
     </nav>
 
-    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="courses-page" class="courses-container">
+    <div id="app">
+        <div id="courses-page" class="courses-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-6">Courses</h1>
             
             <div id="featured-banner" class="featured-banner rounded-xl shadow-2xl mb-10">
-                <div class="banner-content">
-                    <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-yellow-400/80 rounded-full mb-3 inline-block">FULL STACK</span>
-                    <h2 class="text-4xl font-extrabold mb-3">Master Web Development 2025</h2>
-                    <p class="text-white/80 mb-6 max-w-lg">Trở thành Full Stack Developer chuyên nghiệp với React, Node.js, và cơ sở dữ liệu hiện đại.</p>
-                    <a href="#" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors inline-flex items-center">
-                        Bắt đầu Khóa học →
-                    </a>
-                </div>
+                <div id="banner-content" class="banner-content"></div>
                 <div id="carousel-pagination-dots" class="carousel-pagination"></div>
             </div>
 
-            <div class="mb-8 flex space-x-4 items-center overflow-x-auto pb-2 border-b border-gray-200">
-                <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Khám phá:</div>
-                <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                    <button data-filter="All" class="filter-btn active">Tất cả</button>
-                    <button data-filter="Development" class="filter-btn">💻 Development</button>
-                    <button data-filter="Design" class="filter-btn">🎨 Design</button>
-                    <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
-                    <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
-                    <button data-filter="Business" class="filter-btn">💼 Business</button>
+            <div class="mb-8 flex flex-wrap gap-4 items-center justify-between pb-2 border-b border-gray-200">
+                <div class="flex items-center space-x-3 overflow-x-auto">
+                    <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Khám phá:</div>
+                    <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
+                        <button data-filter="All" class="filter-btn active">Tất cả</button>
+                        <button data-filter="Development" class="filter-btn">💻 Development</button>
+                        <button data-filter="Design" class="filter-btn">🎨 Design</button>
+                        <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
+                        <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                        <button data-filter="Business" class="filter-btn">💼 Business</button>
+                    </div>
                 </div>
-                <div class="relative ml-auto flex-shrink-0">
+                <div class="relative flex-shrink-0">
                     <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                     <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
                 </div>
@@ -191,190 +174,285 @@
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Khám phá các Chủ đề</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Development" onclick="document.querySelector('[data-filter=\'Development\']').click()" style="background-image: url('https://placehold.co/400x225/3b82f6/ffffff?text=Development');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">Development</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Development" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Development</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Design" onclick="document.querySelector('[data-filter=\'Design\']').click()" style="background-image: url('https://placehold.co/400x225/8b5cf6/ffffff?text=Design');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">Design</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Design" style="background-image: url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Design</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Data Science" onclick="document.querySelector('[data-filter=\'Data Science\']').click()" style="background-image: url('https://placehold.co/400x225/10b981/ffffff?text=Data+Science');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">Data Science</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Data Science" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Data Science</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Marketing" onclick="document.querySelector('[data-filter=\'Marketing\']').click()" style="background-image: url('https://placehold.co/400x225/f97316/ffffff?text=Marketing');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">Marketing</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Marketing" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Marketing</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Advanced" onclick="document.querySelector('[data-filter=\'Advanced\']').click()" style="background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">AI & ML</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Advanced" style="background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">AI & ML</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Business" onclick="document.querySelector('[data-filter=\'Business\']').click()" style="background-image: url('https://placehold.co/400x225/475569/ffffff?text=Business');">
-                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
-                            <h3 class="text-xl font-bold text-white">Business</h3>
-                        </div>
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Business" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
+                        <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Business</h3></div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div id="lesson-page" class="lesson-container hidden"></div>
-
-        <section class="bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Đăng ký nhận Email Thông báo
-                </h2>
-                <p class="mt-4 text-xl text-gray-600">
-                    Nhận các ưu đãi mới nhất, khóa học miễn phí và tin tức công nghệ hàng tuần từ Codemaster.
-                </p>
-                <form id="newsletter-form" class="mt-8 sm:flex sm:max-w-lg sm:mx-auto">
-                    <label for="email-address" class="sr-only">Email address</label>
-                    <input id="email-address" name="email" type="email" autocomplete="email" required
-                        class="w-full px-5 py-3 border border-gray-300 shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-md"
-                        placeholder="Nhập địa chỉ email của bạn"
-                    >
-                    <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
-                        <button type="submit" id="newsletter-submit-btn"
-                            class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Đăng ký
-                        </button>
-                    </div>
-                </form>
-                <p id="newsletter-message" class="mt-4 text-sm font-medium"></p>
-            </div>
-        </section>
-
-        <footer class="bg-gray-800">
-            <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
-                <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-                    <div class="px-5 py-2">
-                        <a href="CourseandLesson.html" class="text-base text-gray-300 hover:text-white">Courses</a>
-                    </div>
-                    <div class="px-5 py-2">
-                        <a href="AccountProfile.html" class="text-base text-gray-300 hover:text-white">My Learning</a>
-                    </div>
-                    <div class="px-5 py-2">
-                        <a href="QuizzAndGrades.html" class="text-base text-gray-300 hover:text-white">Quiz & Grades</a>
-                    </div>
-                    <div class="px-5 py-2">
-                        <a href="Community.html" class="text-base text-gray-300 hover:text-white">Community</a>
-                    </div>
-                </nav>
-                <p class="mt-8 text-center text-base text-gray-400">
-                    &copy; 2025 CodeMaster. All rights reserved.
-                </p>
-            </div>
-        </footer>
+        <div id="lesson-page" class="lesson-container hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"></div>
     </div>
 
+    <section id="newsletter-section" class="bg-gradient-to-br from-blue-50 to-indigo-100 py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                Đăng ký nhận Email Thông báo
+            </h2>
+            <p class="mt-4 text-xl text-gray-600">
+                Nhận các ưu đãi mới nhất, khóa học miễn phí và tin tức công nghệ hàng tuần từ Codemaster.
+            </p>
+            <form id="newsletter-form" class="mt-8 sm:flex sm:max-w-lg sm:mx-auto">
+                <label for="email-address" class="sr-only">Email address</label>
+                <input id="email-address" name="email" type="email" autocomplete="email" required
+                    class="w-full px-5 py-3 border border-gray-300 shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                    placeholder="Nhập địa chỉ email của bạn">
+                <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+                    <button type="submit" id="newsletter-submit-btn"
+                        class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Đăng ký
+                    </button>
+                </div>
+            </form>
+            <p id="newsletter-message" class="mt-4 text-sm font-medium"></p>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800">
+        <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+            <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                <div class="px-5 py-2"><a href="CourseandLesson.html" class="text-base text-gray-300 hover:text-white">Courses</a></div>
+                <div class="px-5 py-2"><a href="AccountProfile.html" class="text-base text-gray-300 hover:text-white">My Learning</a></div>
+                <div class="px-5 py-2"><a href="QuizzAndGrades.html" class="text-base text-gray-300 hover:text-white">Quiz & Grades</a></div>
+                <div class="px-5 py-2"><a href="Community.html" class="text-base text-gray-300 hover:text-white">Community</a></div>
+            </nav>
+            <p class="mt-8 text-center text-base text-gray-400">
+                &copy; 2025 CodeMaster. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
 <script>
-// Global variables to store all courses
+// Global variables
 let allCoursesData = [];
 let currentFilter = 'All';
-
-// Global token and user (necessary for API calls)
 const token = localStorage.getItem('token'); 
 const user = JSON.parse(localStorage.getItem('user'));
 
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // --- AUTH CHECK ---
+    // --- AUTH CHECK & UI SETUP ---
     if (!token || !user) {
         window.location.href = 'LoginPage.html';
         return;
     }
     
-    // --- UI/ELEMENT SETUP ---
-    const coursesGrid = document.getElementById('courses-grid');
-    const loadingSpinner = document.getElementById('loading-spinner');
-    const coursesPage = document.getElementById('courses-page');
-    const lessonPage = document.getElementById('lesson-page');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const categoryGalleryItems = document.querySelectorAll('.category-gallery-item');
-    const newsletterForm = document.getElementById('newsletter-form');
-    const newsletterMessage = document.getElementById('newsletter-message');
-
-    function getUserInitials(user) {
-        if (user && user.name) {
-            const parts = user.name.split(' ');
-            let initials = parts[0].charAt(0).toUpperCase();
-            if (parts.length > 1) {
-                initials += parts[parts.length - 1].charAt(0).toUpperCase();
-            }
-            return initials;
+    function getUserInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        let initials = parts[0].charAt(0).toUpperCase();
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].charAt(0).toUpperCase();
         }
-        return 'GS';
+        return initials;
     }
     
-    const userAvatar = document.getElementById('user-avatar');
-    if(userAvatar) userAvatar.textContent = getUserInitials(user);
-
-    document.getElementById('user-menu-button').addEventListener('click', () => {
-        window.location.href = 'ProfilePage.html'; 
-    });
-    
+    document.getElementById('user-avatar').textContent = getUserInitials(user.name);
+    document.getElementById('user-menu-button').addEventListener('click', () => window.location.href = 'ProfilePage.html');
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
         window.location.href = 'LoginPage.html';
     });
     
-    // --- CAROUSEL LOGIC ---
+    // --- ENHANCED CAROUSEL LOGIC ---
     const featuredBanner = document.getElementById('featured-banner');
+    const bannerContent = document.getElementById('banner-content');
     const carouselPaginationDots = document.getElementById('carousel-pagination-dots');
-
-    const bannerImages = [
-        'https://placehold.co/1200x300/1e3a8a/ffffff?text=MASTER+WEB+DEVELOPMENT+2025',
-        'https://placehold.co/1200x300/4f46e5/ffffff?text=ADVANCED+PYTHON+PROGRAMMING',
-        'https://placehold.co/1200x300/065f46/ffffff?text=DATA+SCIENCE+FUNDAMENTALS',
-        'https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png'
-    ]; // Replace with your actual image URLs
+    
+    const bannerData = [
+        { 
+            image: 'https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
+            tag: 'FULL STACK',
+            title: 'Master Web Development 2025',
+            subtitle: 'Trở thành Full Stack Developer chuyên nghiệp với React, Node.js, và cơ sở dữ liệu hiện đại.',
+            buttonText: 'Bắt đầu Khóa học →',
+            color: 'from-blue-600 to-indigo-700'
+        },
+        { 
+            image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
+            tag: 'DATA SCIENCE',
+            title: 'Data Science Fundamentals',
+            subtitle: 'Khám phá sức mạnh của dữ liệu với Python, Pandas, và các thuật toán Machine Learning.',
+            buttonText: 'Khám phá ngay →',
+            color: 'from-green-600 to-teal-600'
+        },
+        { 
+            image: 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
+            tag: 'DESIGN',
+            title: 'UI/UX Design Principles',
+            subtitle: 'Học cách tạo ra những giao diện người dùng đẹp mắt và hiệu quả với Figma.',
+            buttonText: 'Tìm hiểu thêm →',
+            color: 'from-purple-600 to-pink-600'
+        },
+        { 
+            image: 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png', 
+            tag: 'AI & MACHINE LEARNING',
+            title: 'Artificial Intelligence Mastery',
+            subtitle: 'Làm chủ AI và Machine Learning với TensorFlow, PyTorch và các thuật toán tiên tiến.',
+            buttonText: 'Khám phá AI →',
+            color: 'from-indigo-600 to-purple-600'
+        }
+    ];
     let currentImageIndex = 0;
     let carouselInterval;
 
     function updateBannerAndDots() {
-        featuredBanner.style.backgroundImage = `url('${bannerImages[currentImageIndex]}')`;
+        if (!featuredBanner) return;
+        const currentBanner = bannerData[currentImageIndex];
+        featuredBanner.style.backgroundImage = `url('${currentBanner.image}')`;
+        
+        bannerContent.innerHTML = `
+            <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-gradient-to-r ${currentBanner.color} rounded-full mb-3 inline-block">${currentBanner.tag}</span>
+            <h2 class="text-4xl font-extrabold mb-3">${currentBanner.title}</h2>
+            <p class="text-white/80 mb-6 max-w-lg">${currentBanner.subtitle}</p>
+            <a href="#" class="bg-white/20 backdrop-blur-sm text-white font-semibold py-3 px-6 rounded-lg hover:bg-white/30 transition-all duration-300 inline-flex items-center border border-white/30">
+                ${currentBanner.buttonText}
+            </a>`;
 
-        // Update pagination dots
-        carouselPaginationDots.innerHTML = ''; // Clear existing dots
-        bannerImages.forEach((_, index) => {
+        carouselPaginationDots.innerHTML = '';
+        bannerData.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.classList.add('pagination-dot');
-            if (index === currentImageIndex) {
-                dot.classList.add('active');
-            }
+            if (index === currentImageIndex) dot.classList.add('active');
             dot.addEventListener('click', () => {
                 currentImageIndex = index;
-                clearInterval(carouselInterval); // Stop current interval
+                clearInterval(carouselInterval);
                 updateBannerAndDots();
-                startCarousel(); // Restart carousel
+                startCarousel();
             });
             carouselPaginationDots.appendChild(dot);
         });
     }
 
     function startCarousel() {
+        clearInterval(carouselInterval);
         carouselInterval = setInterval(() => {
-            currentImageIndex = (currentImageIndex + 1) % bannerImages.length;
+            currentImageIndex = (currentImageIndex + 1) % bannerData.length;
             updateBannerAndDots();
-        }, 3000); // Change image every 3 seconds
+        }, 5000); // 5 seconds
+    }
+    // --- END ENHANCED CAROUSEL LOGIC ---
+
+    // --- ENHANCED NEWSLETTER SUBSCRIPTION WITH PERSISTENT HIDING ---
+    async function checkNewsletterSubscriptionStatus() {
+        const newsletterSection = document.getElementById('newsletter-section');
+        
+        // Check localStorage first for quick response
+        const isSubscribedLocal = localStorage.getItem('newsletter_subscribed');
+        if (isSubscribedLocal === 'true') {
+            newsletterSection.remove();
+            return;
+        }
+        
+        // Check with backend API for definitive status
+        try {
+            const response = await fetch('/api/marketing/subscription-status', {
+                method: 'GET',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.subscribed === true) {
+                    // User is already subscribed, hide newsletter section
+                    localStorage.setItem('newsletter_subscribed', 'true');
+                    newsletterSection.remove();
+                }
+            }
+        } catch (error) {
+            console.log('Could not check newsletter subscription status:', error);
+            // Continue showing newsletter section if API call fails
+        }
     }
 
-    // Initial banner load and start carousel
-    updateBannerAndDots();
-    startCarousel();
+    const newsletterForm = document.getElementById('newsletter-form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const emailInput = document.getElementById('email-address');
+            const submitBtn = document.getElementById('newsletter-submit-btn');
+            const newsletterMessage = document.getElementById('newsletter-message');
+            const newsletterSection = document.getElementById('newsletter-section');
 
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang xử lý...';
+            newsletterMessage.textContent = '';
 
-    // --- CORE LOGIC ---
+            try {
+                const response = await fetch('/api/marketing/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emailInput.value.trim() })
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    newsletterMessage.textContent = result.message || 'Đăng ký thành công!';
+                    newsletterMessage.className = 'mt-4 text-sm font-medium text-green-600';
+                    emailInput.value = ''; 
+                    
+                    // Mark as subscribed in localStorage for future sessions
+                    localStorage.setItem('newsletter_subscribed', 'true');
+                    
+                    // Success animation and hide
+                    setTimeout(() => {
+                        newsletterSection.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                        newsletterSection.style.transform = 'translateY(-20px)';
+                        newsletterSection.style.opacity = '0';
+                        setTimeout(() => {
+                            newsletterSection.style.maxHeight = '0px';
+                            newsletterSection.style.padding = '0';
+                            newsletterSection.style.margin = '0';
+                            setTimeout(() => newsletterSection.remove(), 300);
+                        }, 500);
+                    }, 2000);
+                } else {
+                    throw new Error(result.message || 'Đăng ký thất bại');
+                }
+            } catch (error) {
+                newsletterMessage.textContent = error.message;
+                newsletterMessage.className = 'mt-4 text-sm font-medium text-red-600';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Đăng ký';
+            }
+        });
+    }
 
+    // Check newsletter subscription status on page load
+    await checkNewsletterSubscriptionStatus();
+    // --- END ENHANCED NEWSLETTER ---
+
+    // --- PAGE ELEMENTS & NAVIGATION ---
+    const coursesPage = document.getElementById('courses-page');
+    const lessonPage = document.getElementById('lesson-page');
+    const coursesGrid = document.getElementById('courses-grid');
+    const loadingSpinner = document.getElementById('loading-spinner');
+
+    function showPage(pageName) {
+        coursesPage.classList.toggle('hidden', pageName !== 'courses');
+        lessonPage.classList.toggle('hidden', pageName !== 'lesson');
+    }
+
+    // --- ENHANCED COURSE LOGIC ---
     async function fetchAllCourses() {
         loadingSpinner.style.display = 'flex';
         coursesGrid.innerHTML = '';
@@ -383,19 +461,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) throw new Error('Failed to fetch courses.');
             allCoursesData = await response.json();
             renderCourses();
-            // Initialize history state for the Courses page
             history.replaceState({ page: 'courses' }, '', '#courses');
         } catch (error) {
-            console.error('Fetch Courses Error:', error);
             loadingSpinner.style.display = 'none';
-            coursesGrid.innerHTML = `<p class="col-span-3 text-center text-red-500">Error loading courses.</p>`;
+            coursesGrid.innerHTML = `<p class="col-span-3 text-center text-red-500">${error.message}</p>`;
         }
     }
 
+    // Enhanced course rendering with progress bars and better styling
     function renderCourses() {
         loadingSpinner.style.display = 'none';
         coursesGrid.innerHTML = '';
-        
         const searchTerm = document.getElementById('course-search').value.toLowerCase();
 
         const filteredCourses = allCoursesData.filter(course => {
@@ -403,12 +479,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const courseCategory = course.category ? course.category.toLowerCase() : '';
             const courseLevel = course.level ? course.level.toLowerCase() : '';
 
-            // Filter by Category/Level
             const categoryMatch = filterValue === 'all' || 
-                                  courseCategory.includes(filterValue) ||
-                                  courseLevel.includes(filterValue); 
+                                courseCategory.includes(filterValue) ||
+                                courseLevel.includes(filterValue); 
                                   
-            // Filter by Search Term
             const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
                                 (course.description && course.description.toLowerCase().includes(searchTerm));
                                 
@@ -423,7 +497,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         filteredCourses.forEach(course => {
             const totalLessons = course.lessons ? course.lessons.length : 0;
             const randomProgress = Math.floor(Math.random() * 100); 
-            const priceDisplay = course.price && course.price > 0 ? `$${course.price.toFixed(2)}` : 'FREE'; 
+            const priceDisplay = course.price && course.price > 0 ? `${course.price.toFixed(2)}` : 'FREE'; 
             
             const progressColor = course.level === 'Intermediate' ? 'purple' : course.level === 'Advanced' ? 'red' : 'blue';
             const bgColor = progressColor === 'purple' ? 'bg-purple-600' : progressColor === 'red' ? 'bg-red-600' : 'bg-blue-600';
@@ -481,87 +555,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             coursesGrid.appendChild(courseCard);
         });
 
-        document.querySelectorAll('.course-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const courseId = card.dataset.courseId;
-                showLessonPage(courseId);
-            });
+        coursesGrid.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('click', () => showLessonPage(card.dataset.courseId));
         });
     }
 
-    // --- NAVIGATION AND HISTORY MANAGEMENT ---
-    
-    function showCoursesPageOnly() {
-          lessonPage.classList.add('hidden');
-          coursesPage.classList.remove('hidden');
-    }
-
-    function showCoursesPage() {
-        lessonPage.classList.add('hidden');
-        lessonPage.innerHTML = '';
-        coursesPage.classList.remove('hidden');
-        history.replaceState({ page: 'courses' }, '', '#courses');
-    }
-
-    // Attach event listener for the Search input
-    document.getElementById('course-search').addEventListener('input', renderCourses);
-
-    // Handle Pill Filters
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            currentFilter = e.currentTarget.dataset.filter;
-            renderCourses();
-        });
-    });
-    
-    // Handle Gallery Filters (Uses data-filter of Pill buttons)
-    categoryGalleryItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            // Get filter name from data-category
-            const category = e.currentTarget.dataset.category;
-            
-            // Find and activate the corresponding Pill button
-            let targetButton = document.querySelector(`.filter-btn[data-filter='${category}']`);
-            if (!targetButton) {
-                // Special handling for "AI & ML" (maps to 'Advanced' level)
-                targetButton = document.querySelector(`.filter-btn[data-filter='Advanced']`);
-            }
-            
-            if (targetButton) {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                targetButton.classList.add('active');
-                currentFilter = targetButton.dataset.filter;
-                renderCourses();
-            }
-        });
-    });
-    
-    // FIX: Browser history management for Back/Forward buttons
-    window.addEventListener('popstate', (event) => {
-        if (event.state && event.state.page === 'courses') {
-            showCoursesPageOnly();
-            renderCourses(); // Ensure courses content is reloaded if needed
-        } else if (event.state && event.state.page === 'lesson' && event.state.courseId) {
-            // If the user navigates forward from the Courses page to a Lesson
-            showLessonPage(event.state.courseId, false); // false = don't push new state
-        } else {
-            // Case where navigating back beyond the Courses page
-            window.location.replace('CourseandLesson.html');
-        }
-    });
-    
-    // --- LESSON/QUIZ VIEW LOGIC ---
-
+    // Enhanced lesson page with better video support and progress tracking
     async function showLessonPage(courseId, pushState = true) {
-        coursesPage.classList.add('hidden');
+        showPage('lesson');
         lessonPage.innerHTML = `<div class="flex justify-center items-center h-64"><div class="loader"></div></div>`;
-        lessonPage.classList.remove('hidden');
         
         if (pushState) {
-              // Add Lesson state to history
-              history.pushState({ page: 'lesson', courseId: courseId }, '', `#lesson/${courseId}`);
+            history.pushState({ page: 'lesson', courseId }, '', `#lesson/${courseId}`);
         }
         
         try {
@@ -570,10 +575,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const courseDetails = await response.json();
             renderLessonPage(courseDetails);
         } catch (error) {
-            lessonPage.innerHTML = `<p class="text-center text-red-500">Error loading course details.</p>`;
+            lessonPage.innerHTML = `<p class="text-center text-red-500">${error.message}</p>`;
         }
     }
-
+    
+    // Enhanced lesson page rendering
     function renderLessonPage(course) {
         const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
         const quizzes = (course.quizzes || []).map(item => ({...item, contentType: 'quiz'}));
@@ -589,7 +595,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
                 
                 return `
-                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center" 
+                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200" 
                         data-id="${item.id}" 
                         data-type="${item.contentType}">
                         ${icon}
@@ -599,7 +605,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }).join('')
             : '<li><p class="text-sm text-gray-500 p-3">No content available for this course yet.</p></li>';
 
-        const lessonPageHTML = `
+        lessonPage.innerHTML = `
             <div class="mb-6">
                 <button id="back-to-courses-btn" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
                     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -632,36 +638,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>
         `;
-        lessonPage.innerHTML = lessonPageHTML;
-        document.getElementById('back-to-courses-btn').addEventListener('click', () => {
-            // When "Back to Courses" is clicked, use history.back()
-            history.back();
-        });
+        
+        document.getElementById('back-to-courses-btn').addEventListener('click', () => history.back());
 
-        document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(card => {
+        lessonPage.querySelectorAll('#content-list-sidebar .lesson-card').forEach(card => {
             card.addEventListener('click', async () => {
                 const id = card.dataset.id;
                 const type = card.dataset.type;
 
-                document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
+                lessonPage.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
                 card.classList.add('active-lesson');
                 
                 if (type === 'lesson') {
-                    await renderLessonContent(id);
+                    await renderLessonContent(id, course.id);
                 } else if (type === 'quiz') {
                     await renderQuizInterface(id);
                 }
             });
         });
         
-        // Load the content of the first lesson/quiz
+        // Load first content item
         if (allContent.length > 0) {
             const firstContent = allContent[0];
-            const firstCard = document.querySelector(`[data-id="${firstContent.id}"][data-type="${firstContent.contentType}"]`);
+            const firstCard = lessonPage.querySelector(`[data-id="${firstContent.id}"][data-type="${firstContent.contentType}"]`);
             if (firstCard) {
                 firstCard.classList.add('active-lesson');
                 if (firstContent.contentType === 'lesson') {
-                    renderLessonContent(firstContent.id); 
+                    renderLessonContent(firstContent.id, course.id); 
                 } else {
                     renderQuizInterface(firstContent.id);
                 }
@@ -669,8 +672,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // FIX: Render Lesson Content function with Vimeo and Google Drive support
-    async function renderLessonContent(lessonId) {
+    // Enhanced lesson content rendering with better video support and progress tracking
+    async function renderLessonContent(lessonId, courseId) {
         const contentArea = document.getElementById('content-main');
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
         try {
@@ -710,7 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (embedUrl) {
                     videoHTML = `
-                        <div class="aspect-video bg-black rounded-lg mb-6">
+                        <div class="aspect-video bg-black rounded-lg mb-6 shadow-xl">
                             <iframe class="w-full h-full rounded-lg" src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                         </div>`;
                 }
@@ -720,17 +723,70 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                     ${videoHTML}
                     <div class="p-8">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">${lesson.title}</h2>
+                        <div class="flex justify-between items-start gap-4 mb-6">
+                            <h2 class="text-3xl font-bold text-gray-800">${lesson.title}</h2>
+                            <button id="mark-complete-btn" data-lesson-id="${lesson.id}" data-course-id="${courseId}"
+                                    class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors flex-shrink-0 flex items-center">
+                                <i class="fas fa-check mr-2"></i> Mark as Complete
+                            </button>
+                        </div>
                         <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
                     </div>
                 </div>`;
             contentArea.innerHTML = contentHTML;
+            
+            const markCompleteBtn = document.getElementById('mark-complete-btn');
+            if (markCompleteBtn) {
+                markCompleteBtn.addEventListener('click', handleMarkAsComplete);
+            }
         } catch (error) {
             contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content: ${error.message}</p></div>`;
         }
     }
 
-    // Function to render Quiz Interface
+    // Enhanced progress tracking
+    async function handleMarkAsComplete(event) {
+        const button = event.currentTarget;
+        const { lessonId, courseId } = button.dataset;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+        
+        try {
+            const response = await fetch('/api/progress/complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ 
+                    user_id: user.id,
+                    lesson_id: lessonId,
+                    course_id: courseId 
+                })
+            });
+            
+            if (!response.ok) throw new Error('Failed to save progress.');
+            
+            button.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Completed!';
+            button.className = 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center';
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            successMsg.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Progress saved successfully!';
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => successMsg.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                successMsg.style.transform = 'translateX(full)';
+                setTimeout(() => successMsg.remove(), 300);
+            }, 3000);
+            
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+            button.innerHTML = '<i class="fas fa-check mr-2"></i> Mark as Complete';
+            button.disabled = false;
+        }
+    }
+
+    // Enhanced quiz interface
     async function renderQuizInterface(quizId) {
         const contentArea = document.getElementById('content-main');
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
@@ -749,13 +805,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let questionsHTML = questions.map((q, index) => {
                 const optionsHTML = (q.options || []).map((option, i) => `
-                    <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
+                    <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer transition-colors">
                         <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
                         <span>${option}</span>
                     </label>
                 `).join('');
                 return `
-                    <div class="question-block mb-6 pb-6 border-b">
+                    <div class="question-block mb-6 pb-6 border-b last:border-b-0">
                         <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
                         <div class="space-y-2">${optionsHTML}</div>
                     </div>
@@ -764,10 +820,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             contentArea.innerHTML = `
                 <div class="bg-white rounded-xl shadow-lg p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">${quiz.title}</h2>
-                    <p class="text-gray-600 mb-8">${quiz.description || ''}</p>
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">${quiz.title}</h2>
+                        <p class="text-gray-600">${quiz.description || ''}</p>
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <div class="flex items-center justify-between text-sm text-blue-800">
+                                <span><i class="fas fa-question-circle mr-2"></i>${questions.length} Questions</span>
+                                <span><i class="fas fa-clock mr-2"></i>No time limit</span>
+                            </div>
+                        </div>
+                    </div>
                     <form id="quiz-form">${questionsHTML}
-                        <button type="submit" class="w-full mt-4 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">Submit Quiz</button>
+                        <button type="submit" class="w-full mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
+                        </button>
                     </form>
                 </div>
             `;
@@ -778,13 +844,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Function to handle Quiz Submission
+    // Enhanced quiz submission handling
     async function handleQuizSubmission(event, quizId, questions) {
         event.preventDefault();
         const form = event.target;
         const submitButton = form.querySelector('button[type="submit"]');
         submitButton.disabled = true;
-        submitButton.innerHTML = `<span class="loader" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></span> Grading...`;
+        submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Grading...`;
         
         const userAnswers = [];
         let score = 0;
@@ -799,7 +865,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     score++;
                 }
             } else {
-                userAnswers[index] = -1; // Mark as unanswered
+                userAnswers[index] = -1;
                 unanswered = true;
             }
         });
@@ -807,14 +873,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (unanswered) {
             alert('Please answer all questions before submitting.');
             submitButton.disabled = false;
-            submitButton.textContent = 'Submit Quiz';
+            submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Submit Quiz';
             return;
         }
 
         const percentage = Math.round((score / questions.length) * 100);
 
         try {
-            // Send grade to API
             await fetch('/api/grades', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -828,105 +893,113 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Failed to save grade:", error);
         }
 
-        displayQuizResults(score, questions, userAnswers);
+        displayQuizResults(score, questions, userAnswers, percentage);
     }
     
-    // Function to display Quiz Results
-    function displayQuizResults(score, questions, userAnswers) {
+    // Enhanced quiz results display
+    function displayQuizResults(score, questions, userAnswers, percentage) {
         const contentArea = document.getElementById('content-main');
-        const percentage = Math.round((score / questions.length) * 100);
 
         let feedbackHTML = questions.map((q, index) => {
             const optionsHTML = (q.options || []).map((option, i) => {
-                let classes = 'block p-3 border rounded-md';
+                let classes = 'block p-3 border rounded-md transition-colors';
                 if (i === q.correct_answer_index) {
                     classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
                 }
                 if (i === userAnswers[index] && i !== q.correct_answer_index) {
-                    classes += ' bg-red-100 border-red-300 text-red-800 line-through';
+                    classes += ' bg-red-100 border-red-300 text-red-800';
                 }
                 return `<div class="${classes}">${option}</div>`;
             }).join('');
             
+            const isCorrect = userAnswers[index] === q.correct_answer_index;
             return `
-                <div class="question-block mb-6 pb-6 border-b">
-                    <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
-                    <div class="space-y-2">${optionsHTML}</div>
-                    <p class="text-sm mt-2 ${userAnswers[index] === q.correct_answer_index ? 'text-green-600' : 'text-red-600'}">
-                        ${userAnswers[index] === q.correct_answer_index ? 'Correct answer.' : `Your answer was incorrect. The correct answer is: ${q.options[q.correct_answer_index]}`}
-                    </p>
+                <div class="question-block mb-6 pb-6 border-b last:border-b-0">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${isCorrect ? 'bg-green-500' : 'bg-red-500'}">
+                            <i class="fas fa-${isCorrect ? 'check' : 'times'} text-white text-sm"></i>
+                        </div>
+                        <p class="font-semibold text-gray-800">${index + 1}. ${q.question_text}</p>
+                    </div>
+                    <div class="space-y-2 ml-9">${optionsHTML}</div>
+                    <div class="ml-9 mt-3">
+                        <p class="text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'} font-medium">
+                            ${isCorrect ? 'Correct!' : `Incorrect. The correct answer is: ${q.options[q.correct_answer_index]}`}
+                        </p>
+                    </div>
                 </div>
             `;
         }).join('');
 
+        const passStatus = percentage >= 70;
         contentArea.innerHTML = `
             <div class="bg-white rounded-xl shadow-lg p-8">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
-                    <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">${percentage}%</p>
-                    <p class="text-gray-600 mt-2">You answered ${score} out of ${questions.length} questions correctly.</p>
+                    <div class="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-4 ${passStatus ? 'bg-green-100' : 'bg-red-100'}">
+                        <i class="fas fa-${passStatus ? 'trophy' : 'times'} text-3xl ${passStatus ? 'text-green-600' : 'text-red-600'}"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Results</h2>
+                    <p class="text-6xl font-bold mt-4 mb-2 ${passStatus ? 'text-green-600' : 'text-red-600'}">${percentage}%</p>
+                    <p class="text-gray-600">You answered ${score} out of ${questions.length} questions correctly.</p>
+                    <div class="mt-4 inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${passStatus ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                        <i class="fas fa-${passStatus ? 'check-circle' : 'exclamation-triangle'} mr-2"></i>
+                        ${passStatus ? 'Passed' : 'Failed'} (${passStatus ? '70%+ required' : 'Need 70%+ to pass'})
+                    </div>
                 </div>
-                <h3 class="text-xl font-semibold mb-4 border-t pt-4">Review Your Answers</h3>
-                ${feedbackHTML}
+                <div class="border-t pt-6">
+                    <h3 class="text-xl font-semibold mb-4">Review Your Answers</h3>
+                    ${feedbackHTML}
+                </div>
             </div>
         `;
     }
 
-    // --- NEWSLETTER SUBSCRIPTION LOGIC ---
+    // --- EVENT LISTENERS FOR FILTERS ---
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentFilter = e.currentTarget.dataset.filter;
+            renderCourses();
+        });
+    });
     
-    async function handleNewsletterSubscription(event) {
-        event.preventDefault();
-        const emailInput = document.getElementById('email-address');
-        const submitBtn = document.getElementById('newsletter-submit-btn');
-        const newsletterMessage = document.getElementById('newsletter-message'); 
+    document.querySelectorAll('.category-gallery-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const category = e.currentTarget.dataset.category;
+            const targetButton = document.querySelector(`.filter-btn[data-filter='${category}']`) || 
+                                 document.querySelector(`.filter-btn[data-filter='Advanced']`);
+            if (targetButton) targetButton.click();
+        });
+    });
+    
+    document.getElementById('course-search').addEventListener('input', renderCourses);
 
-        newsletterMessage.textContent = 'Đang xử lý...';
-        newsletterMessage.classList.remove('text-green-600', 'text-red-600');
-        newsletterMessage.classList.add('text-gray-600');
-        submitBtn.disabled = true;
-
-        const email = emailInput.value.trim();
-
-        try {
-            const response = await fetch('/api/marketing/subscribe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
-
-            const result = await response.json();
-            
-            if (response.ok || response.status === 200) {
-                // Success or already subscribed (201 or 200)
-                newsletterMessage.textContent = result.message;
-                newsletterMessage.classList.remove('text-gray-600', 'text-red-600');
-                newsletterMessage.classList.add('text-green-600');
-                emailInput.value = ''; // Clear email after successful subscription
-            } else {
-                // Server error (400, 500)
-                newsletterMessage.textContent = result.message;
-                newsletterMessage.classList.remove('text-gray-600', 'text-green-600');
-                newsletterMessage.classList.add('text-red-600');
-            }
-        } catch (error) {
-            console.error("Subscription failed:", error);
-            newsletterMessage.textContent = 'Lỗi kết nối. Vui lòng thử lại sau.';
-            newsletterMessage.classList.remove('text-gray-600', 'text-green-600');
-            newsletterMessage.classList.add('text-red-600');
-        } finally {
-            submitBtn.disabled = false;
+    // --- HISTORY MANAGEMENT ---
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.page === 'courses') {
+            showPage('courses');
+        } else if (event.state && event.state.page === 'lesson' && event.state.courseId) {
+            showLessonPage(event.state.courseId, false);
+        } else {
+            showPage('courses');
         }
-    }
-    
-    // Attach event listener for the Newsletter form
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', handleNewsletterSubscription);
-    }
+    });
 
     // --- INITIALIZATION ---
+    updateBannerAndDots();
+    startCarousel();
     await fetchAllCourses();
+    
+    // Check URL hash on page load
+    if (window.location.hash.startsWith('#lesson/')) {
+        const courseId = window.location.hash.split('/')[1];
+        if (courseId) {
+            showLessonPage(courseId);
+        }
+    } else {
+        history.replaceState({ page: 'courses' }, '', '#courses');
+    }
 });
 </script>
 </body>
