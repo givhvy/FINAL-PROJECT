@@ -112,7 +112,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                    <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center">
                         <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                         <span class="ml-2 text-xl font-bold text-gray-800">UniLearn</span>
                     </a>
@@ -602,6 +602,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // NEW: Function to show quiz directly from URL params
+    async function showQuizDirectly(quizId, courseId) {
+        console.log('showQuizDirectly called with:', { quizId, courseId });
+
+        try {
+            // First show the lesson page for the course
+            await showLessonPage(courseId, false);
+
+            // Then automatically navigate to the specific quiz
+            setTimeout(() => {
+                const quizCard = document.querySelector(`[data-id="${quizId}"][data-type="quiz"]`);
+                if (quizCard) {
+                    quizCard.click();
+                    console.log('Auto-clicked quiz:', quizId);
+                } else {
+                    console.error('Quiz card not found:', quizId);
+                    throw new Error(`Quiz ${quizId} not found in course ${courseId}`);
+                }
+            }, 1000); // Wait 1 second for lesson page to render
+
+        } catch (error) {
+            console.error('Error in showQuizDirectly:', error);
+            throw error;
+        }
+    }
+
     // Enhanced lesson page with better video support and progress tracking
     async function showLessonPage(courseId, pushState = true) {
         showPage('lesson');
@@ -616,11 +642,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             await autoEnrollUser(courseId);
 
             const response = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Failed to fetch course details.');
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`Course with ID ${courseId} not found`);
+                }
+                throw new Error('Failed to fetch course details.');
+            }
             const courseDetails = await response.json();
             renderLessonPage(courseDetails);
         } catch (error) {
+            console.error('showLessonPage error:', error);
             lessonPage.innerHTML = `<p class="text-center text-red-500">${error.message}</p>`;
+            // Re-throw the error so the caller can handle it
+            throw error;
         }
     }
     
@@ -1037,13 +1071,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- INITIALIZATION ---
     updateBannerAndDots();
     startCarousel();
+
+    // Check URL hash AND query params BEFORE fetching courses to avoid race condition
+    const shouldShowLesson = window.location.hash.startsWith('#lesson/');
+    const courseId = shouldShowLesson ? window.location.hash.split('/')[1] : null;
+
+    // Check for quiz parameters in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const quizId = urlParams.get('quizId');
+    const quizCourseId = urlParams.get('courseId');
+
     await fetchAllCourses();
-    
-    // Check URL hash on page load
-    if (window.location.hash.startsWith('#lesson/')) {
-        const courseId = window.location.hash.split('/')[1];
-        if (courseId) {
-            showLessonPage(courseId);
+
+    // Handle quiz access first (higher priority)
+    if (quizId && quizCourseId) {
+        console.log('Attempting to show quiz:', quizId, 'in course:', quizCourseId);
+        try {
+            await showQuizDirectly(quizId, quizCourseId);
+        } catch (error) {
+            console.error('Error showing quiz:', error);
+            // If quiz doesn't exist, redirect to courses
+            history.replaceState({ page: 'courses' }, '', '#courses');
+        }
+    }
+    // Handle lesson access
+    else if (shouldShowLesson && courseId) {
+        console.log('Attempting to show lesson page for course ID:', courseId);
+        try {
+            await showLessonPage(courseId);
+        } catch (error) {
+            console.error('Error showing lesson page:', error);
+            // If course doesn't exist, redirect to courses
+            history.replaceState({ page: 'courses' }, '', '#courses');
         }
     } else {
         history.replaceState({ page: 'courses' }, '', '#courses');

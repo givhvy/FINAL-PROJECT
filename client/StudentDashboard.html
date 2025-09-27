@@ -246,7 +246,7 @@
                                                         <span class="ml-2 font-medium">CSS Flexbox & Grid</span>
                                                     </div>
                                                     <div class="mt-4 flex">
-                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueWebDevCourse()">
                                                             Continue Learning
                                                         </button>
                                                     </div>
@@ -287,7 +287,7 @@
                                                         <span class="ml-2 font-medium">Statistical Analysis</span>
                                                     </div>
                                                     <div class="mt-4 flex">
-                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueDataScienceCourse()">
                                                             Continue Learning
                                                         </button>
                                                     </div>
@@ -328,7 +328,7 @@
                                                         <span class="ml-2 font-medium">Presentation Skills</span>
                                                     </div>
                                                     <div class="mt-4 flex">
-                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueBusinessCommCourse()">
                                                             Continue Learning
                                                         </button>
                                                     </div>
@@ -554,6 +554,22 @@
                 }
             }
         });
+
+        // Continue Learning functions
+        function continueWebDevCourse() {
+            // Redirect to Web Development course - assuming courseId = 1
+            window.location.href = 'CourseandLesson.html#lesson/1';
+        }
+
+        function continueDataScienceCourse() {
+            // Redirect to Data Science course - assuming courseId = 2
+            window.location.href = 'CourseandLesson.html#lesson/2';
+        }
+
+        function continueBusinessCommCourse() {
+            // Redirect to Business Communication course - assuming courseId = 3
+            window.location.href = 'CourseandLesson.html#lesson/3';
+        }
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94ee1b0fe5de472e',t:'MTc0OTc4MTE5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
