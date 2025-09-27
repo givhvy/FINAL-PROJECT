@@ -33,7 +33,7 @@ exports.getCertificates = async (req, res) => {
 
             if (certData.course_id) {
                 const courseSnap = await db.collection('courses').doc(certData.course_id).get();
-                if (courseSnap.exists()) {
+                if (courseSnap.exists) {
                     courseData = { id: courseSnap.id, ...courseSnap.data() };
                 }
             }

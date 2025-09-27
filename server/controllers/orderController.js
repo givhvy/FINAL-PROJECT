@@ -33,7 +33,7 @@ exports.getOrders = async (req, res) => {
 
             if (orderData.course_id) {
                 const courseSnap = await db.collection('courses').doc(orderData.course_id).get();
-                if (courseSnap.exists()) {
+                if (courseSnap.exists) {
                     courseData = { id: courseSnap.id, ...courseSnap.data() };
                 }
             }
@@ -57,7 +57,7 @@ exports.getOrderById = async (req, res) => {
         const orderRef = db.collection('orders').doc(req.params.id);
         const orderSnap = await orderRef.get();
 
-        if (!orderSnap.exists()) {
+        if (!orderSnap.exists) {
             return res.status(404).json({ error: 'Order not found' });
         }
 
@@ -67,7 +67,7 @@ exports.getOrderById = async (req, res) => {
 
         if (orderData.user_id) {
             const userSnap = await db.collection('users').doc(orderData.user_id).get();
-            if (userSnap.exists()) {
+            if (userSnap.exists) {
                 userData = { id: userSnap.id, ...userSnap.data() };
                 delete userData.password;
             }
@@ -75,7 +75,7 @@ exports.getOrderById = async (req, res) => {
         
         if (orderData.course_id) {
             const courseSnap = await db.collection('courses').doc(orderData.course_id).get();
-            if (courseSnap.exists()) {
+            if (courseSnap.exists) {
                 courseData = { id: courseSnap.id, ...courseSnap.data() };
             }
         }
