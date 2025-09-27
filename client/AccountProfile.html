@@ -53,7 +53,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center">
                             <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
                             <span class="ml-2 text-xl font-bold text-gray-800">UniLearn</span>
                         </a>
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <p class="text-sm text-gray-500">Instructor: ${course.teacher ? course.teacher.name : 'N/A'}</p>
                             </div>
                         </div>
-                        <a href="CourseandLesson.html?courseId=${course.id}" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
+                        <a href="CourseandLesson.html#lesson/${course.id}" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
                             Continue
                         </a>
                     </div>
