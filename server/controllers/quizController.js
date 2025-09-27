@@ -76,22 +76,36 @@ exports.getQuizzes = async (req, res) => {
 exports.getQuizById = async (req, res) => {
     try {
         const db = getFirestore();
-        const quizRef = db.collection('quizzes').doc(req.params.id);
+        const quizId = req.params.id;
+        const quizRef = db.collection('quizzes').doc(quizId);
         const quizSnap = await quizRef.get();
 
-        // SỬA LẠI: .exists là một thuộc tính, không phải hàm
         if (!quizSnap.exists) {
             return res.status(404).json({ error: 'Quiz not found' });
         }
         
-        res.status(200).json({ id: quizSnap.id, ...quizSnap.data() });
+        let quizData = { id: quizSnap.id, ...quizSnap.data() };
+        
+        // --- BỔ SUNG: Lấy tất cả câu hỏi liên quan ---
+        const questionsRef = db.collection('questions');
+        const questionsQuery = questionsRef.where('quiz_id', '==', quizId).get();
+        
+        const questionsSnapshot = await questionsQuery;
+        const questions = [];
+        questionsSnapshot.forEach(qDoc => {
+            questions.push({ id: qDoc.id, ...qDoc.data() });
+        });
+        
+        // Đính kèm mảng questions vào dữ liệu Quiz
+        quizData.questions = questions;
+
+        res.status(200).json(quizData);
 
     } catch (err) {
         console.error("Get Quiz By ID Error:", err);
         res.status(500).json({ error: err.message });
     }
 };
-
 // Update quiz
 exports.updateQuiz = async (req, res) => {
     try {

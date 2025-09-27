@@ -10,28 +10,77 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .course-card { min-height: 380px; } 
         .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
         .lesson-card:hover { background-color: #f0f9ff; }
         .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
         .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Progress Bar Styles for Cards */
+        /* Progress Bar Styles */
         .progress-bar-container { height: 6px; border-radius: 3px; background-color: #e5e7eb; overflow: hidden; }
         .progress-fill-blue { background-color: #3b82f6; }
         .progress-fill-purple { background-color: #8b5cf6; }
-        .progress-fill-green { background-color: #10b981; }
+        .progress-fill-red { background-color: #ef4444; }
         
-        /* FIX: CSS để tự động cắt chuỗi sau 2 dòng */
+        /* CSS cho 2 dòng mô tả */
         .two-line-ellipsis {
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
-            line-clamp: 2; /* Thuộc tính chuẩn CSS */
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             white-space: normal;
+            min-height: 2.5rem;
         }
 
+        /* BANNER STYLES */
+        .featured-banner {
+            height: 300px;
+            background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 3rem;
+            overflow: hidden;
+        }
+        .featured-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 100%);
+            z-index: 1;
+        }
+        .banner-content {
+            z-index: 2; 
+            color: white;
+            max-width: 600px;
+        }
+
+        /* CATEGORIES BAR (TWITCH Inspired) */
+        .category-item {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* Pill shape */
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+            color: #4b5563; 
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .category-item:hover:not(.active) {
+             background-color: #e5e7eb; /* gray-200 for subtle hover */
+        }
+        .category-item.active {
+            background-color: #4f46e5; /* Indigo-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+        
         /* Lesson and Content Styles */
         .lesson-html-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .lesson-html-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
@@ -77,15 +126,35 @@
     </nav>
 
     <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- COURSES PAGE -->
         <div id="courses-page" class="courses-container">
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
-                <div class="relative">
-                    <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <i class="fas fa-search text-gray-400 absolute left-3 top-3"></i>
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">Courses</h1>
+            
+            <div class="featured-banner rounded-xl shadow-2xl mb-10">
+                <div class="banner-content">
+                    <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-yellow-400/80 rounded-full mb-3 inline-block">FULL STACK</span>
+                    <h2 class="text-4xl font-extrabold mb-3">Master Web Development 2025</h2>
+                    <p class="text-white/80 mb-6 max-w-lg">Become a professional Full Stack Developer with React, Node.js, and modern databases.</p>
+                    <a href="#" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors inline-flex items-center">
+                        Start Now →
+                    </a>
                 </div>
             </div>
+
+            <div class="mb-8 flex space-x-4 items-center overflow-x-auto pb-2 border-b border-gray-200">
+                <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Khám phá:</div>
+                <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
+                    <button data-filter="All" class="filter-btn category-item active">Tất cả</button>
+                    <button data-filter="Development" class="filter-btn category-item">💻 Development</button>
+                    <button data-filter="Design" class="filter-btn category-item">🎨 Design</button>
+                    <button data-filter="Data Science" class="filter-btn category-item">📈 Data Science</button>
+                    <button data-filter="Marketing" class="filter-btn category-item">📢 Marketing</button>
+                </div>
+                <div class="relative ml-auto flex-shrink-0">
+                    <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
+                </div>
+            </div>
+
             <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
                     <div class="loader"></div>
@@ -93,90 +162,128 @@
             </div>
         </div>
         
-        <!-- LESSON PAGE (Nội dung Lesson/Quiz) -->
         <div id="lesson-page" class="lesson-container hidden"></div>
     </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-    
-    function getUserInitials(user) {
-        if (user && user.name) {
-            const parts = user.name.split(' ');
-            let initials = parts[0].charAt(0).toUpperCase();
-            if (parts.length > 1) {
-                initials += parts[parts.length - 1].charAt(0).toUpperCase();
+    // Biến toàn cục để lưu trữ tất cả khóa học
+    let allCoursesData = [];
+    let currentFilter = 'All';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // --- UTILITY FUNCTIONS ---
+        function getUserInitials(user) {
+            if (user && user.name) {
+                const parts = user.name.split(' ');
+                let initials = parts[0].charAt(0).toUpperCase();
+                if (parts.length > 1) {
+                    initials += parts[parts.length - 1].charAt(0).toUpperCase();
+                }
+                return initials;
             }
-            return initials;
+            return 'GS';
         }
-        return 'GS';
-    }
 
-    if (!token || !user) {
-        window.location.href = 'LoginPage.html';
-        return;
-    }
-    
-    const userAvatar = document.getElementById('user-avatar');
-    if(userAvatar) userAvatar.textContent = getUserInitials(user);
+        // --- AUTH AND NAVIGATION SETUP ---
+        if (!token || !user) {
+            window.location.href = 'LoginPage.html';
+            return;
+        }
+        
+        const userAvatar = document.getElementById('user-avatar');
+        if(userAvatar) userAvatar.textContent = getUserInitials(user);
 
-    // FIX: Nút Avatar điều hướng đến Profile Page
-    document.getElementById('user-menu-button').addEventListener('click', () => {
-        window.location.href = 'ProfilePage.html'; 
-    });
-    
-    document.getElementById('logout-button').addEventListener('click', () => {
-        localStorage.clear();
-        window.location.href = 'LoginPage.html';
-    });
+        document.getElementById('user-menu-button').addEventListener('click', () => {
+            window.location.href = 'ProfilePage.html'; 
+        });
+        
+        document.getElementById('logout-button').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'LoginPage.html';
+        });
 
-    const coursesGrid = document.getElementById('courses-grid');
-    const loadingSpinner = document.getElementById('loading-spinner');
-    const coursesPage = document.getElementById('courses-page');
-    const lessonPage = document.getElementById('lesson-page');
+        const coursesGrid = document.getElementById('courses-grid');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const coursesPage = document.getElementById('courses-page');
+        const lessonPage = document.getElementById('lesson-page');
 
-    async function fetchAndRenderCourses() {
-        showCoursesPage();
-        loadingSpinner.style.display = 'flex';
-        coursesGrid.innerHTML = ''; 
-        try {
-            const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Failed to fetch courses.');
-            const courses = await response.json();
-            
+        // --- MAIN FETCHING LOGIC ---
+        async function fetchAllCourses() {
+            loadingSpinner.style.display = 'flex';
+            coursesGrid.innerHTML = '';
+            try {
+                const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch courses.');
+                allCoursesData = await response.json();
+                renderCourses();
+                // Khởi tạo trạng thái lịch sử cho trang Courses
+                history.replaceState({ page: 'courses' }, '', '#courses');
+            } catch (error) {
+                console.error('Fetch Courses Error:', error);
+                loadingSpinner.style.display = 'none';
+                coursesGrid.innerHTML = `<p class="col-span-3 text-center text-red-500">Error loading courses.</p>`;
+            }
+        }
+
+
+        // --- COURSE RENDERING ---
+        function renderCourses() {
             loadingSpinner.style.display = 'none';
-            if (courses.length === 0) {
-                coursesGrid.innerHTML = `<p class="col-span-3 text-center text-gray-500">No courses available yet.</p>`;
+            coursesGrid.innerHTML = '';
+            
+            const searchTerm = document.getElementById('course-search').value.toLowerCase();
+
+            const filteredCourses = allCoursesData.filter(course => {
+                // Logic lọc theo Category/Level
+                const filterValue = currentFilter.toLowerCase();
+                const categoryMatch = currentFilter === 'All' || 
+                                      (course.category && course.category.toLowerCase().includes(filterValue)) ||
+                                      (course.level && course.level.toLowerCase().includes(filterValue)); 
+                                      
+                // Lọc theo Search Term
+                const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
+                                    (course.description && course.description.toLowerCase().includes(searchTerm));
+                                    
+                return categoryMatch && searchMatch;
+            });
+
+            if (filteredCourses.length === 0) {
+                coursesGrid.innerHTML = `<p class="col-span-3 text-center text-gray-500">No courses found for the selected filter or search term.</p>`;
                 return;
             }
-            
-            courses.forEach(course => {
-                // Giả định: Dữ liệu thực tế cần có trường 'progress' (từ API) và 'lessons' (array)
+
+            filteredCourses.forEach(course => {
                 const totalLessons = course.lessons ? course.lessons.length : 0;
-                // Giả định tiến trình là 25% nếu không có dữ liệu thực tế
                 const randomProgress = Math.floor(Math.random() * 100); 
+                const priceDisplay = course.price && course.price > 0 ? `$${course.price.toFixed(2)}` : 'FREE'; 
+                
                 const progressColor = course.level === 'Intermediate' ? 'purple' : course.level === 'Advanced' ? 'red' : 'blue';
                 const bgColor = progressColor === 'purple' ? 'bg-purple-600' : progressColor === 'red' ? 'bg-red-600' : 'bg-blue-600';
+                
+                // Icon mapping (simplified for levels/categories)
                 const iconMap = {
                     'Beginner': 'fa-code',
                     'Intermediate': 'fa-database',
                     'Advanced': 'fa-microchip',
-                    'All Levels': 'fa-balance-scale'
+                    'Development': 'fa-code', 
+                    'Design': 'fa-paint-brush', 
+                    'Data Science': 'fa-chart-bar',
+                    'Marketing': 'fa-bullhorn',
+                    'Business': 'fa-chart-line'
                 };
-                const iconClass = iconMap[course.level] || 'fa-graduation-cap';
+                const iconClass = iconMap[course.category || course.level] || 'fa-graduation-cap';
                 const descriptionText = course.description || 'No description provided.';
-
-
+                
                 const courseCard = document.createElement('div');
                 courseCard.className = 'course-card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 cursor-pointer flex flex-col';
                 courseCard.dataset.courseId = course.id;
                 
-                // Cấu trúc thẻ khóa học mới (theo Hình 1)
                 courseCard.innerHTML = `
                     <div class="h-40 ${bgColor} relative flex items-center justify-center">
-                         <i class="fas ${iconClass} text-white text-6xl opacity-80"></i>
+                        <i class="fas ${iconClass} text-white text-6xl opacity-80"></i>
                     </div>
                     <div class="p-5 flex-grow flex flex-col">
                         <div class="flex justify-between items-center mb-2">
@@ -184,17 +291,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <span class="text-sm text-gray-500">${totalLessons} lessons</span>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">${course.title}</h3>
-                        <!-- FIX: Sử dụng CSS Ellipsis -->
                         <p class="text-gray-600 text-sm mb-4 two-line-ellipsis">${descriptionText}</p>
                         
-                        <!-- Progress Bar -->
-                        <div class="mt-auto">
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-gray-600">Progress</span>
-                                <span class="text-${progressColor}-600 font-medium">${randomProgress}%</span>
+                        <div class="mt-auto border-t pt-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-lg font-bold text-indigo-600">${priceDisplay}</span>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span>4.7</span>
+                                </div>
                             </div>
-                            <div class="progress-bar-container">
-                                <div class="h-full progress-fill-${progressColor}" style="width: ${randomProgress}%"></div>
+                            
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600">Progress</span>
+                                    <span class="text-${progressColor}-600 font-medium">${randomProgress}%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="h-full progress-fill-${progressColor}" style="width: ${randomProgress}%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,295 +317,391 @@ document.addEventListener('DOMContentLoaded', async () => {
                 coursesGrid.appendChild(courseCard);
             });
 
+            // Đính kèm sự kiện click
             document.querySelectorAll('.course-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const courseId = card.dataset.courseId;
                     showLessonPage(courseId);
                 });
             });
-        } catch (error) {
-            console.error('Fetch Courses Error:', error);
-            loadingSpinner.style.display = 'none';
-            coursesGrid.innerHTML = `<p class="col-span-3 text-center text-red-500">Error loading courses.</p>`;
         }
-    }
 
-    function showCoursesPage() {
-        lessonPage.classList.add('hidden');
-        lessonPage.innerHTML = '';
-        coursesPage.classList.remove('hidden');
-    }
-
-    async function showLessonPage(courseId) {
-        coursesPage.classList.add('hidden');
-        lessonPage.innerHTML = `<div class="flex justify-center items-center h-64"><div class="loader"></div></div>`;
-        lessonPage.classList.remove('hidden');
-        try {
-            const response = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Failed to fetch course details.');
-            const courseDetails = await response.json();
-            renderLessonPage(courseDetails);
-        } catch (error) {
-            lessonPage.innerHTML = `<p class="text-center text-red-500">Error loading course details.</p>`;
-        }
-    }
-
-    function renderLessonPage(course) {
-        const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
-        const quizzes = (course.quizzes || []).map(item => ({...item, contentType: 'quiz'}));
+        // --- NAVIGATION AND FILTER LOGIC ---
         
-        const allContent = [...lessons, ...quizzes];
-        allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        // *Chức năng mới: Chỉ hiển thị trang Courses (Dùng cho Popstate)
+        function showCoursesPageOnly() {
+             lessonPage.classList.add('hidden');
+             coursesPage.classList.remove('hidden');
+        }
 
-        const contentListHTML = allContent.length > 0
-            ? allContent.map((item, index) => {
-                const isQuiz = item.contentType === 'quiz';
-                const icon = isQuiz 
-                    ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>` 
-                    : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
+        function showCoursesPage() {
+            lessonPage.classList.add('hidden');
+            lessonPage.innerHTML = '';
+            coursesPage.classList.remove('hidden');
+            // Cập nhật lịch sử để tránh quay lại Login
+            history.replaceState({ page: 'courses' }, '', '#courses');
+        }
+
+        // Xử lý Search Input
+        document.getElementById('course-search').addEventListener('input', renderCourses);
+
+        // Xử lý Bộ lọc Category
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
                 
-                return `
-                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center" 
-                        data-id="${item.id}" 
-                        data-type="${item.contentType}">
-                        ${icon}
-                        <span class="text-sm font-medium pointer-events-none">${index + 1}. ${item.title}</span>
-                    </li>
-                `;
-            }).join('')
-            : '<li><p class="text-sm text-gray-500 p-3">No content available for this course yet.</p></li>';
+                e.currentTarget.classList.add('active');
+                currentFilter = e.currentTarget.dataset.filter;
+                renderCourses(); 
+            });
+        });
+        
+        // --- QUẢN LÝ LỊCH SỬ TRÌNH DUYỆT (FIX LỖI QUAY LẠI LOGIN) ---
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page === 'courses') {
+                showCoursesPageOnly();
+            } else if (event.state && event.state.page === 'lesson' && event.state.courseId) {
+                // Nếu người dùng nhấn forward từ trang Courses về Lesson
+                showLessonPage(event.state.courseId, false); 
+            } else {
+                 // Nếu người dùng cố gắng quay lại trước cả trang Courses (có thể là Login)
+                 // Đẩy họ về trang Courses để giữ session
+                 window.location.replace('CourseandLesson.html');
+            }
+        });
+        
+        // --- LESSON/QUIZ VIEW LOGIC ---
 
-        const lessonPageHTML = `
-            <div class="mb-6">
-                <button id="back-to-courses-btn" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Courses
-                </button>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24">
-                        <div class="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-                            <h2 class="text-xl font-bold mb-2">${course.title}</h2>
-                            <p class="text-sm font-medium">By ${course.teacher ? course.teacher.name : 'N/A'}</p>
-                        </div>
-                        <div class="p-5">
-                            <h3 class="font-semibold text-gray-800 mb-3">Course Content</h3>
-                            <ul id="content-list-sidebar" class="space-y-1">${contentListHTML}</ul>
+        // Thêm tham số skipPushState để kiểm soát lịch sử khi nhấn nút Back/Forward của trình duyệt
+        async function showLessonPage(courseId, pushState = true) {
+            coursesPage.classList.add('hidden');
+            lessonPage.innerHTML = `<div class="flex justify-center items-center h-64"><div class="loader"></div></div>`;
+            lessonPage.classList.remove('hidden');
+            
+            if (pushState) {
+                 // Thêm trạng thái Lesson vào lịch sử
+                 history.pushState({ page: 'lesson', courseId: courseId }, '', `#lesson/${courseId}`);
+            }
+            
+            try {
+                const response = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch course details.');
+                const courseDetails = await response.json();
+                renderLessonPage(courseDetails);
+            } catch (error) {
+                lessonPage.innerHTML = `<p class="text-center text-red-500">Error loading course details.</p>`;
+            }
+        }
+
+        function renderLessonPage(course) {
+            const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
+            const quizzes = (course.quizzes || []).map(item => ({...item, contentType: 'quiz'}));
+            
+            const allContent = [...lessons, ...quizzes];
+            allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+            const contentListHTML = allContent.length > 0
+                ? allContent.map((item, index) => {
+                    const isQuiz = item.contentType === 'quiz';
+                    const icon = isQuiz 
+                        ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>` 
+                        : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
+                    
+                    return `
+                        <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center" 
+                            data-id="${item.id}" 
+                            data-type="${item.contentType}">
+                            ${icon}
+                            <span class="text-sm font-medium pointer-events-none">${index + 1}. ${item.title}</span>
+                        </li>
+                    `;
+                }).join('')
+                : '<li><p class="text-sm text-gray-500 p-3">No content available for this course yet.</p></li>';
+
+            const lessonPageHTML = `
+                <div class="mb-6">
+                    <button id="back-to-courses-btn" class="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Courses
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24">
+                            <div class="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+                                <h2 class="text-xl font-bold mb-2">${course.title}</h2>
+                                <p class="text-sm font-medium">By ${course.teacher ? course.teacher.name : 'N/A'}</p>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-semibold text-gray-800 mb-3">Course Content</h3>
+                                <ul id="content-list-sidebar" class="space-y-1">${contentListHTML}</ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="content-main" class="lg:col-span-3">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden min-h-[40rem]">
-                        <div id="content-area" class="p-8">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to ${course.title}!</h2>
-                            <p class="text-gray-700">${course.description}</p>
-                            <div class="mt-6 border-t pt-6">
-                                <h3 class="text-lg font-semibold text-gray-800">Select a lesson or quiz from the left to begin.</h3>
+                    <div id="content-main" class="lg:col-span-3">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden min-h-[40rem]">
+                            <div id="content-area" class="p-8">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to ${course.title}!</h2>
+                                <p class="text-gray-700">${course.description}</p>
+                                <div class="mt-6 border-t pt-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Select a lesson or quiz from the left to begin.</h3>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
-        lessonPage.innerHTML = lessonPageHTML;
-        document.getElementById('back-to-courses-btn').addEventListener('click', fetchAndRenderCourses);
-
-        document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(card => {
-            card.addEventListener('click', async () => {
-                const id = card.dataset.id;
-                const type = card.dataset.type;
-
-                document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
-                card.classList.add('active-lesson');
-                
-                if (type === 'lesson') {
-                    await renderLessonContent(id);
-                } else if (type === 'quiz') {
-                    await renderQuizInterface(id);
-                }
+            `;
+            lessonPage.innerHTML = lessonPageHTML;
+            document.getElementById('back-to-courses-btn').addEventListener('click', () => {
+                // Khi nhấn nút "Back to Courses", sử dụng history.back() để kích hoạt popstate và chuyển trang
+                history.back();
             });
-        });
-    }
 
-    async function renderLessonContent(lessonId) {
-        const contentArea = document.getElementById('content-main');
-        contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
-        try {
-            const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error('Could not fetch lesson content.');
-            const lesson = await res.json();
-            
-            let videoHTML = '';
-            if (lesson.content_type === 'video' && lesson.content_data) {
-                // Chuyển URL YouTube sang định dạng nhúng
-                const embedUrl = lesson.content_data.includes('watch?v=') 
-                    ? lesson.content_data.replace('watch?v=', 'embed/') 
-                    : lesson.content_data;
+            document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(card => {
+                card.addEventListener('click', async () => {
+                    const id = card.dataset.id;
+                    const type = card.dataset.type;
+
+                    document.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
+                    card.classList.add('active-lesson');
                     
+                    if (type === 'lesson') {
+                        await renderLessonContent(id);
+                    } else if (type === 'quiz') {
+                        await renderQuizInterface(id);
+                    }
+                });
+            });
+            
+            // Tải nội dung của bài học/quiz đầu tiên
+            if (allContent.length > 0) {
+                const firstContent = allContent[0];
+                const firstCard = document.querySelector(`[data-id="${firstContent.id}"][data-type="${firstContent.contentType}"]`);
+                if (firstCard) {
+                    firstCard.classList.add('active-lesson');
+                    if (firstContent.contentType === 'lesson') {
+                        renderLessonContent(firstContent.id); 
+                    } else {
+                        renderQuizInterface(firstContent.id);
+                    }
+                }
+            }
+        }
+
+        // Hàm render Lesson Content (Đã FIX lỗi embed video/drive)
+       async function renderLessonContent(lessonId) {
+    const contentArea = document.getElementById('content-main');
+    contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
+    try {
+        // FIXED: Loại bỏ backslash trước backtick và dấu $
+        const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Could not fetch lesson content.');
+        const lesson = await res.json();
+        
+        let videoHTML = '';
+        if (lesson.content_type === 'video' && lesson.content_data) {
+            const data = lesson.content_data;
+            let embedUrl = '';
+            
+            if (data.includes('youtube.com') || data.includes('youtu.be')) {
+                // Xử lý YouTube
+                embedUrl = data.includes('watch?v=') 
+                    ? data.replace('watch?v=', 'embed/') 
+                    : data.replace('youtu.be/', 'youtube.com/embed/');
+                    
+            } else if (data.includes('drive.google.com/embed')) {
+                // Xử lý Google Drive (Đã ở dạng embed)
+                embedUrl = data; 
+                
+            } else if (data.includes('drive.google.com/file/d/')) {
+                // Xử lý link chia sẻ Drive thông thường
+                const match = data.match(/file\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    // FIXED: Loại bỏ backslash
+                    embedUrl = `https://drive.google.com/embed?id=${match[1]}`;
+                }
+            } else if (data.includes('vimeo.com')) {
+                // NEW: XỬ LÝ VIMEO
+                const vimeoMatch = data.match(/(?:vimeo\.com\/(?:video\/)?|player\.vimeo\.com\/video\/)([0-9]+)/);
+                if (vimeoMatch && vimeoMatch[1]) {
+                    const videoId = vimeoMatch[1];
+                    // FIXED: Loại bỏ backslash
+                    embedUrl = `https://player.vimeo.com/video/${videoId}`;
+                }
+            }
+
+            if (embedUrl) {
+                // FIXED: Loại bỏ backslash
                 videoHTML = `
                     <div class="aspect-video bg-black rounded-lg mb-6">
-                        <iframe class="w-full h-full rounded-lg" src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="w-full h-full rounded-lg" src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                     </div>`;
             }
-            
-            const contentHTML = `
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    ${videoHTML}
-                    <div class="p-8">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">${lesson.title}</h2>
-                        <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
-                    </div>
-                </div>`;
-            contentArea.innerHTML = contentHTML;
-        } catch (error) {
-            contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content: ${error.message}</p></div>`;
         }
+        
+        // FIXED: Loại bỏ backslash
+        const contentHTML = `
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                ${videoHTML}
+                <div class="p-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">${lesson.title}</h2>
+                    <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
+                </div>
+            </div>`;
+        contentArea.innerHTML = contentHTML;
+    } catch (error) {
+        // FIXED: Loại bỏ backslash
+        contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg p-8"><p class="text-red-500">Error loading lesson content: ${error.message}</p></div>`;
     }
+}
 
-    async function renderQuizInterface(quizId) {
-        const contentArea = document.getElementById('content-main');
-        contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
+        // Hàm render Quiz Interface
+        async function renderQuizInterface(quizId) {
+            const contentArea = document.getElementById('content-main');
+            contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
 
-        try {
-            // Sử dụng endpoint quizById để lấy tất cả thông tin, bao gồm cả questions
-            const quizRes = await fetch(`/api/quizzes/${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!quizRes.ok) throw new Error('Could not fetch quiz details.');
-            const quiz = await quizRes.json();
+            try {
+                const quizRes = await fetch(`/api/quizzes/${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!quizRes.ok) throw new Error('Could not fetch quiz details.');
+                const quiz = await quizRes.json();
+                
+                const questions = quiz.questions || [];
+                
+                if(questions.length === 0) {
+                    contentArea.innerHTML = `<div class="p-8 text-center bg-white rounded-xl shadow-lg"><h2 class="text-2xl font-bold">${quiz.title}</h2><p class="mt-4 text-gray-600">This quiz has no questions yet.</p></div>`;
+                    return;
+                }
+
+                let questionsHTML = questions.map((q, index) => {
+                    const optionsHTML = (q.options || []).map((option, i) => `
+                        <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
+                            <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
+                            <span>${option}</span>
+                        </label>
+                    `).join('');
+                    return `
+                        <div class="question-block mb-6 pb-6 border-b">
+                            <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
+                            <div class="space-y-2">${optionsHTML}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                contentArea.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">${quiz.title}</h2>
+                        <p class="text-gray-600 mb-8">${quiz.description || ''}</p>
+                        <form id="quiz-form">${questionsHTML}
+                            <button type="submit" class="w-full mt-4 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">Submit Quiz</button>
+                        </form>
+                    </div>
+                `;
+
+                document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions));
+            } catch (error) {
+                contentArea.innerHTML = `<div class="p-8 text-red-500 bg-white rounded-xl shadow-lg">Error loading quiz: ${error.message}</div>`;
+            }
+        }
+
+        // Hàm xử lý Quiz Submission
+        async function handleQuizSubmission(event, quizId, questions) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="loader" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></span> Grading...`;
             
-            const questions = quiz.questions || [];
-            
-            if(questions.length === 0) {
-                 contentArea.innerHTML = `<div class="p-8 text-center bg-white rounded-xl shadow-lg"><h2 class="text-2xl font-bold">${quiz.title}</h2><p class="mt-4 text-gray-600">This quiz has no questions yet.</p></div>`;
-                 return;
+            const userAnswers = [];
+            let score = 0;
+            let unanswered = false;
+
+            questions.forEach((q, index) => {
+                const selectedOption = form.querySelector(`input[name="question-${index}"]:checked`);
+                if (selectedOption) {
+                    const answerIndex = parseInt(selectedOption.value, 10);
+                    userAnswers[index] = answerIndex;
+                    if (answerIndex === q.correct_answer_index) {
+                        score++;
+                    }
+                } else {
+                    userAnswers[index] = -1; // Mark as unanswered
+                    unanswered = true;
+                }
+            });
+
+            if (unanswered) {
+                alert('Please answer all questions before submitting.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Quiz';
+                return;
             }
 
-            let questionsHTML = questions.map((q, index) => {
-                const optionsHTML = (q.options || []).map((option, i) => `
-                    <label class="block p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
-                        <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
-                        <span>${option}</span>
-                    </label>
-                `).join('');
+            const percentage = Math.round((score / questions.length) * 100);
+
+            try {
+                // Gửi điểm lên API
+                await fetch('/api/grades', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        quiz_id: quizId,
+                        score: percentage
+                    })
+                });
+            } catch (error) {
+                console.error("Failed to save grade:", error);
+            }
+
+            displayQuizResults(score, questions, userAnswers);
+        }
+        
+        // Hàm hiển thị Quiz Results
+        function displayQuizResults(score, questions, userAnswers) {
+            const contentArea = document.getElementById('content-main');
+            const percentage = Math.round((score / questions.length) * 100);
+
+            let feedbackHTML = questions.map((q, index) => {
+                const optionsHTML = (q.options || []).map((option, i) => {
+                    let classes = 'block p-3 border rounded-md';
+                    if (i === q.correct_answer_index) {
+                        classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
+                    }
+                    if (i === userAnswers[index] && i !== q.correct_answer_index) {
+                        classes += ' bg-red-100 border-red-300 text-red-800 line-through';
+                    }
+                    return `<div class="${classes}">${option}</div>`;
+                }).join('');
+                
                 return `
                     <div class="question-block mb-6 pb-6 border-b">
                         <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
                         <div class="space-y-2">${optionsHTML}</div>
+                        <p class="text-sm mt-2 ${userAnswers[index] === q.correct_answer_index ? 'text-green-600' : 'text-red-600'}">
+                            ${userAnswers[index] === q.correct_answer_index ? 'Correct answer.' : `Your answer was incorrect. The correct answer is: ${q.options[q.correct_answer_index]}`}
+                        </p>
                     </div>
                 `;
             }).join('');
 
             contentArea.innerHTML = `
                 <div class="bg-white rounded-xl shadow-lg p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">${quiz.title}</h2>
-                    <p class="text-gray-600 mb-8">${quiz.description || ''}</p>
-                    <form id="quiz-form">${questionsHTML}
-                        <button type="submit" class="w-full mt-4 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">Submit Quiz</button>
-                    </form>
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
+                        <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">${percentage}%</p>
+                        <p class="text-gray-600 mt-2">You answered ${score} out of ${questions.length} questions correctly.</p>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 border-t pt-4">Review Your Answers</h3>
+                    ${feedbackHTML}
                 </div>
             `;
-
-            document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions));
-        } catch (error) {
-            contentArea.innerHTML = `<div class="p-8 text-red-500 bg-white rounded-xl shadow-lg">Error loading quiz: ${error.message}</div>`;
-        }
-    }
-
-    async function handleQuizSubmission(event, quizId, questions) {
-        event.preventDefault();
-        const form = event.target;
-        const submitButton = form.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.innerHTML = `<span class="loader" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></span> Grading...`;
-        
-        const userAnswers = [];
-        let score = 0;
-        let unanswered = false;
-
-        questions.forEach((q, index) => {
-            const selectedOption = form.querySelector(`input[name="question-${index}"]:checked`);
-            if (selectedOption) {
-                const answerIndex = parseInt(selectedOption.value, 10);
-                userAnswers[index] = answerIndex;
-                if (answerIndex === q.correct_answer_index) {
-                    score++;
-                }
-            } else {
-                userAnswers[index] = -1; // Mark as unanswered
-                unanswered = true;
-            }
-        });
-
-        if (unanswered) {
-            alert('Please answer all questions before submitting.');
-            submitButton.disabled = false;
-            submitButton.textContent = 'Submit Quiz';
-            return;
         }
 
-        const percentage = Math.round((score / questions.length) * 100);
-
-        try {
-            // Gửi điểm lên API
-            await fetch('/api/grades', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({
-                    user_id: user.id,
-                    quiz_id: quizId,
-                    score: percentage
-                })
-            });
-        } catch (error) {
-            console.error("Failed to save grade:", error);
-        }
-
-        displayQuizResults(score, questions, userAnswers);
-    }
-    
-    function displayQuizResults(score, questions, userAnswers) {
-        const contentArea = document.getElementById('content-main');
-        const percentage = Math.round((score / questions.length) * 100);
-
-        let feedbackHTML = questions.map((q, index) => {
-            const optionsHTML = (q.options || []).map((option, i) => {
-                let classes = 'block p-3 border rounded-md';
-                if (i === q.correct_answer_index) {
-                    classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
-                }
-                if (i === userAnswers[index] && i !== q.correct_answer_index) {
-                    classes += ' bg-red-100 border-red-300 text-red-800 line-through';
-                }
-                return `<div class="${classes}">${option}</div>`;
-            }).join('');
-            
-            return `
-                <div class="question-block mb-6 pb-6 border-b">
-                    <p class="font-semibold mb-3 text-gray-800">${index + 1}. ${q.question_text}</p>
-                    <div class="space-y-2">${optionsHTML}</div>
-                    <p class="text-sm mt-2 ${userAnswers[index] === q.correct_answer_index ? 'text-green-600' : 'text-red-600'}">
-                        ${userAnswers[index] === q.correct_answer_index ? 'Correct answer.' : `Your answer was incorrect. The correct answer is: ${q.options[q.correct_answer_index]}`}
-                    </p>
-                </div>
-            `;
-        }).join('');
-
-        contentArea.innerHTML = `
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
-                    <p class="text-5xl font-bold mt-4 ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">${percentage}%</p>
-                    <p class="text-gray-600 mt-2">You answered ${score} out of ${questions.length} questions correctly.</p>
-                </div>
-                <h3 class="text-xl font-semibold mb-4 border-t pt-4">Review Your Answers</h3>
-                ${feedbackHTML}
-            </div>
-        `;
-    }
-
-    // --- INITIALIZATION ---
-    fetchAndRenderCourses();
-});
+        // --- INITIALIZATION ---
+        fetchAllCourses();
+    });
 </script>
 </body>
 </html>
