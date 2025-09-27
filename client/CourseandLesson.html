@@ -10,7 +10,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        .course-card { min-height: 380px; } 
+        .course-card { min-height: 380px; }
         .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
         .lesson-card:hover { background-color: #f0f9ff; }
         .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
@@ -23,7 +23,7 @@
         .progress-fill-purple { background-color: #8b5cf6; }
         .progress-fill-red { background-color: #ef4444; }
         
-        /* CSS cho 2 dòng mô tả */
+        /* CSS for 2-line description ellipsis */
         .two-line-ellipsis {
             overflow: hidden;
             display: -webkit-box;
@@ -34,10 +34,9 @@
             min-height: 2.5rem;
         }
 
-        /* BANNER STYLES */
+        /* BANNER STYLES - MODIFIED FOR CAROUSEL */
         .featured-banner {
             height: 300px;
-            background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');
             background-size: cover;
             background-position: center;
             position: relative;
@@ -45,6 +44,7 @@
             align-items: center;
             padding: 3rem;
             overflow: hidden;
+            transition: background-image 1s ease-in-out; /* Smooth background transition */
         }
         .featured-banner::after {
             content: '';
@@ -61,18 +61,18 @@
         /* CATEGORIES BAR (PILL FILTER) */
         .filter-btn {
             padding: 0.5rem 1rem;
-            border-radius: 9999px; /* Pill shape */
+            border-radius: 9999px; 
             transition: all 0.2s;
             cursor: pointer;
             font-weight: 500;
             color: #4b5563; 
-            background-color: #f3f4f6; /* gray-100 */
+            background-color: #f3f4f6; 
         }
         .filter-btn:hover:not(.active) {
              background-color: #e5e7eb; 
         }
         .filter-btn.active {
-            background-color: #4f46e5; /* Indigo-600 */
+            background-color: #4f46e5; 
             color: white;
             box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
         }
@@ -95,6 +95,28 @@
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
         .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+
+        /* Carousel Pagination Dots */
+        .carousel-pagination {
+            position: absolute;
+            bottom: 1.5rem; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3; /* Above the overlay */
+            display: flex;
+            gap: 0.5rem;
+        }
+        .pagination-dot {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .pagination-dot.active {
+            background-color: rgba(255, 255, 255, 1);
+        }
     </style>
 </head>
 <body>
@@ -132,7 +154,7 @@
         <div id="courses-page" class="courses-container">
             <h1 class="text-3xl font-bold text-gray-900 mb-6">Courses</h1>
             
-            <div class="featured-banner rounded-xl shadow-2xl mb-10">
+            <div id="featured-banner" class="featured-banner rounded-xl shadow-2xl mb-10">
                 <div class="banner-content">
                     <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-yellow-400/80 rounded-full mb-3 inline-block">FULL STACK</span>
                     <h2 class="text-4xl font-extrabold mb-3">Master Web Development 2025</h2>
@@ -141,17 +163,18 @@
                         Bắt đầu Khóa học →
                     </a>
                 </div>
+                <div id="carousel-pagination-dots" class="carousel-pagination"></div>
             </div>
 
             <div class="mb-8 flex space-x-4 items-center overflow-x-auto pb-2 border-b border-gray-200">
                 <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Khám phá:</div>
                 <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                    <button data-filter="All" class="filter-btn category-item active">Tất cả</button>
-                    <button data-filter="Development" class="filter-btn category-item">💻 Development</button>
-                    <button data-filter="Design" class="filter-btn category-item">🎨 Design</button>
-                    <button data-filter="Data Science" class="filter-btn category-item">📈 Data Science</button>
-                    <button data-filter="Marketing" class="filter-btn category-item">📢 Marketing</button>
-                    <button data-filter="Business" class="filter-btn category-item">💼 Business</button>
+                    <button data-filter="All" class="filter-btn active">Tất cả</button>
+                    <button data-filter="Development" class="filter-btn">💻 Development</button>
+                    <button data-filter="Design" class="filter-btn">🎨 Design</button>
+                    <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
+                    <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                    <button data-filter="Business" class="filter-btn">💼 Business</button>
                 </div>
                 <div class="relative ml-auto flex-shrink-0">
                     <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
@@ -168,32 +191,32 @@
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Khám phá các Chủ đề</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Development\']').click()" style="background-image: url('https://placehold.co/400x225/3b82f6/ffffff?text=Development');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Development" onclick="document.querySelector('[data-filter=\'Development\']').click()" style="background-image: url('https://placehold.co/400x225/3b82f6/ffffff?text=Development');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">Development</h3>
                         </div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Design\']').click()" style="background-image: url('https://placehold.co/400x225/8b5cf6/ffffff?text=Design');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Design" onclick="document.querySelector('[data-filter=\'Design\']').click()" style="background-image: url('https://placehold.co/400x225/8b5cf6/ffffff?text=Design');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">Design</h3>
                         </div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Data Science\']').click()" style="background-image: url('https://placehold.co/400x225/10b981/ffffff?text=Data+Science');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Data Science" onclick="document.querySelector('[data-filter=\'Data Science\']').click()" style="background-image: url('https://placehold.co/400x225/10b981/ffffff?text=Data+Science');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">Data Science</h3>
                         </div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Marketing\']').click()" style="background-image: url('https://placehold.co/400x225/f97316/ffffff?text=Marketing');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Marketing" onclick="document.querySelector('[data-filter=\'Marketing\']').click()" style="background-image: url('https://placehold.co/400x225/f97316/ffffff?text=Marketing');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">Marketing</h3>
                         </div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Advanced\']').click()" style="background-image: url('https://placehold.co/400x225/6366f1/ffffff?text=AI+%26+ML');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Advanced" onclick="document.querySelector('[data-filter=\'Advanced\']').click()" style="background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">AI & ML</h3>
                         </div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" onclick="document.querySelector('[data-filter=\'Business\']').click()" style="background-image: url('https://placehold.co/400x225/475569/ffffff?text=Business');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Business" onclick="document.querySelector('[data-filter=\'Business\']').click()" style="background-image: url('https://placehold.co/400x225/475569/ffffff?text=Business');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10">
                             <h3 class="text-xl font-bold text-white">Business</h3>
                         </div>
@@ -203,14 +226,62 @@
         </div>
         
         <div id="lesson-page" class="lesson-container hidden"></div>
+
+        <section class="bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Đăng ký nhận Email Thông báo
+                </h2>
+                <p class="mt-4 text-xl text-gray-600">
+                    Nhận các ưu đãi mới nhất, khóa học miễn phí và tin tức công nghệ hàng tuần từ Codemaster.
+                </p>
+                <form id="newsletter-form" class="mt-8 sm:flex sm:max-w-lg sm:mx-auto">
+                    <label for="email-address" class="sr-only">Email address</label>
+                    <input id="email-address" name="email" type="email" autocomplete="email" required
+                        class="w-full px-5 py-3 border border-gray-300 shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                        placeholder="Nhập địa chỉ email của bạn"
+                    >
+                    <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+                        <button type="submit" id="newsletter-submit-btn"
+                            class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Đăng ký
+                        </button>
+                    </div>
+                </form>
+                <p id="newsletter-message" class="mt-4 text-sm font-medium"></p>
+            </div>
+        </section>
+
+        <footer class="bg-gray-800">
+            <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+                <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                    <div class="px-5 py-2">
+                        <a href="CourseandLesson.html" class="text-base text-gray-300 hover:text-white">Courses</a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="AccountProfile.html" class="text-base text-gray-300 hover:text-white">My Learning</a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="QuizzAndGrades.html" class="text-base text-gray-300 hover:text-white">Quiz & Grades</a>
+                    </div>
+                    <div class="px-5 py-2">
+                        <a href="Community.html" class="text-base text-gray-300 hover:text-white">Community</a>
+                    </div>
+                </nav>
+                <p class="mt-8 text-center text-base text-gray-400">
+                    &copy; 2025 CodeMaster. All rights reserved.
+                </p>
+            </div>
+        </footer>
     </div>
 
 <script>
-// Biến toàn cục để lưu trữ tất cả khóa học
+// Global variables to store all courses
 let allCoursesData = [];
 let currentFilter = 'All';
 
-// Global token và user (cần thiết cho các hàm API)
+// Global token and user (necessary for API calls)
 const token = localStorage.getItem('token'); 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -229,6 +300,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lessonPage = document.getElementById('lesson-page');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const categoryGalleryItems = document.querySelectorAll('.category-gallery-item');
+    const newsletterForm = document.getElementById('newsletter-form');
+    const newsletterMessage = document.getElementById('newsletter-message');
 
     function getUserInitials(user) {
         if (user && user.name) {
@@ -254,6 +327,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'LoginPage.html';
     });
     
+    // --- CAROUSEL LOGIC ---
+    const featuredBanner = document.getElementById('featured-banner');
+    const carouselPaginationDots = document.getElementById('carousel-pagination-dots');
+
+    const bannerImages = [
+        'https://placehold.co/1200x300/1e3a8a/ffffff?text=MASTER+WEB+DEVELOPMENT+2025',
+        'https://placehold.co/1200x300/4f46e5/ffffff?text=ADVANCED+PYTHON+PROGRAMMING',
+        'https://placehold.co/1200x300/065f46/ffffff?text=DATA+SCIENCE+FUNDAMENTALS',
+        'https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png'
+    ]; // Replace with your actual image URLs
+    let currentImageIndex = 0;
+    let carouselInterval;
+
+    function updateBannerAndDots() {
+        featuredBanner.style.backgroundImage = `url('${bannerImages[currentImageIndex]}')`;
+
+        // Update pagination dots
+        carouselPaginationDots.innerHTML = ''; // Clear existing dots
+        bannerImages.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('pagination-dot');
+            if (index === currentImageIndex) {
+                dot.classList.add('active');
+            }
+            dot.addEventListener('click', () => {
+                currentImageIndex = index;
+                clearInterval(carouselInterval); // Stop current interval
+                updateBannerAndDots();
+                startCarousel(); // Restart carousel
+            });
+            carouselPaginationDots.appendChild(dot);
+        });
+    }
+
+    function startCarousel() {
+        carouselInterval = setInterval(() => {
+            currentImageIndex = (currentImageIndex + 1) % bannerImages.length;
+            updateBannerAndDots();
+        }, 3000); // Change image every 3 seconds
+    }
+
+    // Initial banner load and start carousel
+    updateBannerAndDots();
+    startCarousel();
+
+
     // --- CORE LOGIC ---
 
     async function fetchAllCourses() {
@@ -264,7 +383,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) throw new Error('Failed to fetch courses.');
             allCoursesData = await response.json();
             renderCourses();
-            // Khởi tạo trạng thái lịch sử cho trang Courses (FIX: Quay lại Login)
+            // Initialize history state for the Courses page
             history.replaceState({ page: 'courses' }, '', '#courses');
         } catch (error) {
             console.error('Fetch Courses Error:', error);
@@ -284,12 +403,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const courseCategory = course.category ? course.category.toLowerCase() : '';
             const courseLevel = course.level ? course.level.toLowerCase() : '';
 
-            // Lọc theo Category/Level
+            // Filter by Category/Level
             const categoryMatch = filterValue === 'all' || 
                                   courseCategory.includes(filterValue) ||
                                   courseLevel.includes(filterValue); 
                                   
-            // Lọc theo Search Term
+            // Filter by Search Term
             const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
                                 (course.description && course.description.toLowerCase().includes(searchTerm));
                                 
@@ -373,8 +492,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- NAVIGATION AND HISTORY MANAGEMENT ---
     
     function showCoursesPageOnly() {
-         lessonPage.classList.add('hidden');
-         coursesPage.classList.remove('hidden');
+          lessonPage.classList.add('hidden');
+          coursesPage.classList.remove('hidden');
     }
 
     function showCoursesPage() {
@@ -384,10 +503,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         history.replaceState({ page: 'courses' }, '', '#courses');
     }
 
-    // Gắn sự kiện cho nút Search
+    // Attach event listener for the Search input
     document.getElementById('course-search').addEventListener('input', renderCourses);
 
-    // Xử lý Bộ lọc Pill
+    // Handle Pill Filters
     filterButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             filterButtons.forEach(b => b.classList.remove('active'));
@@ -397,17 +516,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
     
-    // Xử lý Bộ lọc Gallery (Sử dụng data-filter của các nút Pill)
+    // Handle Gallery Filters (Uses data-filter of Pill buttons)
     categoryGalleryItems.forEach(item => {
         item.addEventListener('click', (e) => {
-            // Lấy tên filter từ h3 trong Gallery item
-            const categoryName = e.currentTarget.querySelector('h3').textContent.trim().split(' ')[0];
+            // Get filter name from data-category
+            const category = e.currentTarget.dataset.category;
             
-            // Tìm và kích hoạt nút Pill tương ứng
-            let targetButton = document.querySelector(`.filter-btn[data-filter='${categoryName}']`);
+            // Find and activate the corresponding Pill button
+            let targetButton = document.querySelector(`.filter-btn[data-filter='${category}']`);
             if (!targetButton) {
-                 // Xử lý trường hợp đặc biệt như "AI & ML" (cần khớp với filter 'Advanced')
-                 targetButton = document.querySelector(`.filter-btn[data-filter='Advanced']`);
+                // Special handling for "AI & ML" (maps to 'Advanced' level)
+                targetButton = document.querySelector(`.filter-btn[data-filter='Advanced']`);
             }
             
             if (targetButton) {
@@ -419,17 +538,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
     
-    // FIX: Quản lý lịch sử trình duyệt khi nhấn Back/Forward
+    // FIX: Browser history management for Back/Forward buttons
     window.addEventListener('popstate', (event) => {
         if (event.state && event.state.page === 'courses') {
             showCoursesPageOnly();
-            renderCourses(); // Đảm bảo nội dung Courses được tải lại nếu cần
+            renderCourses(); // Ensure courses content is reloaded if needed
         } else if (event.state && event.state.page === 'lesson' && event.state.courseId) {
-            // Nếu người dùng nhấn forward từ trang Courses về Lesson
-            showLessonPage(event.state.courseId, false); // false = không push thêm state
+            // If the user navigates forward from the Courses page to a Lesson
+            showLessonPage(event.state.courseId, false); // false = don't push new state
         } else {
-             // Trường hợp quay lại quá khứ (trước cả trang Courses)
-             window.location.replace('CourseandLesson.html');
+            // Case where navigating back beyond the Courses page
+            window.location.replace('CourseandLesson.html');
         }
     });
     
@@ -441,8 +560,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         lessonPage.classList.remove('hidden');
         
         if (pushState) {
-             // Thêm trạng thái Lesson vào lịch sử
-             history.pushState({ page: 'lesson', courseId: courseId }, '', `#lesson/${courseId}`);
+              // Add Lesson state to history
+              history.pushState({ page: 'lesson', courseId: courseId }, '', `#lesson/${courseId}`);
         }
         
         try {
@@ -515,7 +634,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         lessonPage.innerHTML = lessonPageHTML;
         document.getElementById('back-to-courses-btn').addEventListener('click', () => {
-            // Khi nhấn nút "Back to Courses", sử dụng history.back()
+            // When "Back to Courses" is clicked, use history.back()
             history.back();
         });
 
@@ -535,7 +654,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
         
-        // Tải nội dung của bài học/quiz đầu tiên
+        // Load the content of the first lesson/quiz
         if (allContent.length > 0) {
             const firstContent = allContent[0];
             const firstCard = document.querySelector(`[data-id="${firstContent.id}"][data-type="${firstContent.contentType}"]`);
@@ -550,7 +669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // FIX: Hàm render Lesson Content với hỗ trợ Vimeo và Google Drive
+    // FIX: Render Lesson Content function with Vimeo and Google Drive support
     async function renderLessonContent(lessonId) {
         const contentArea = document.getElementById('content-main');
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
@@ -565,23 +684,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let embedUrl = '';
                 
                 if (data.includes('youtube.com') || data.includes('youtu.be')) {
-                    // Xử lý YouTube
+                    // Handle YouTube
                     embedUrl = data.includes('watch?v=') 
                         ? data.replace('watch?v=', 'embed/') 
                         : data.replace('youtu.be/', 'youtube.com/embed/');
                         
                 } else if (data.includes('drive.google.com/embed')) {
-                    // Xử lý Google Drive (Đã ở dạng embed)
+                    // Handle Google Drive (already embeddable)
                     embedUrl = data; 
                     
                 } else if (data.includes('drive.google.com/file/d/')) {
-                    // Xử lý link chia sẻ Drive thông thường
+                    // Handle regular Drive share links
                     const match = data.match(/file\/d\/([a-zA-Z0-9_-]+)/);
                     if (match && match[1]) {
                         embedUrl = `https://drive.google.com/embed?id=${match[1]}`;
                     }
                 } else if (data.includes('vimeo.com')) {
-                    // XỬ LÝ VIMEO
+                    // Handle Vimeo
                     const vimeoMatch = data.match(/(?:vimeo\.com\/(?:video\/)?|player\.vimeo\.com\/video\/)([0-9]+)/);
                     if (vimeoMatch && vimeoMatch[1]) {
                         const videoId = vimeoMatch[1];
@@ -611,7 +730,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Hàm render Quiz Interface
+    // Function to render Quiz Interface
     async function renderQuizInterface(quizId) {
         const contentArea = document.getElementById('content-main');
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
@@ -659,7 +778,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Hàm xử lý Quiz Submission
+    // Function to handle Quiz Submission
     async function handleQuizSubmission(event, quizId, questions) {
         event.preventDefault();
         const form = event.target;
@@ -695,7 +814,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const percentage = Math.round((score / questions.length) * 100);
 
         try {
-            // Gửi điểm lên API
+            // Send grade to API
             await fetch('/api/grades', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -712,7 +831,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayQuizResults(score, questions, userAnswers);
     }
     
-    // Hàm hiển thị Quiz Results
+    // Function to display Quiz Results
     function displayQuizResults(score, questions, userAnswers) {
         const contentArea = document.getElementById('content-main');
         const percentage = Math.round((score / questions.length) * 100);
@@ -753,8 +872,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     }
 
+    // --- NEWSLETTER SUBSCRIPTION LOGIC ---
+    
+    async function handleNewsletterSubscription(event) {
+        event.preventDefault();
+        const emailInput = document.getElementById('email-address');
+        const submitBtn = document.getElementById('newsletter-submit-btn');
+        const newsletterMessage = document.getElementById('newsletter-message'); 
+
+        newsletterMessage.textContent = 'Đang xử lý...';
+        newsletterMessage.classList.remove('text-green-600', 'text-red-600');
+        newsletterMessage.classList.add('text-gray-600');
+        submitBtn.disabled = true;
+
+        const email = emailInput.value.trim();
+
+        try {
+            const response = await fetch('/api/marketing/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const result = await response.json();
+            
+            if (response.ok || response.status === 200) {
+                // Success or already subscribed (201 or 200)
+                newsletterMessage.textContent = result.message;
+                newsletterMessage.classList.remove('text-gray-600', 'text-red-600');
+                newsletterMessage.classList.add('text-green-600');
+                emailInput.value = ''; // Clear email after successful subscription
+            } else {
+                // Server error (400, 500)
+                newsletterMessage.textContent = result.message;
+                newsletterMessage.classList.remove('text-gray-600', 'text-green-600');
+                newsletterMessage.classList.add('text-red-600');
+            }
+        } catch (error) {
+            console.error("Subscription failed:", error);
+            newsletterMessage.textContent = 'Lỗi kết nối. Vui lòng thử lại sau.';
+            newsletterMessage.classList.remove('text-gray-600', 'text-green-600');
+            newsletterMessage.classList.add('text-red-600');
+        } finally {
+            submitBtn.disabled = false;
+        }
+    }
+    
+    // Attach event listener for the Newsletter form
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', handleNewsletterSubscription);
+    }
+
     // --- INITIALIZATION ---
-    fetchAllCourses();
+    await fetchAllCourses();
 });
 </script>
 </body>

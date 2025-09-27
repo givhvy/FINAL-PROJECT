@@ -19,6 +19,8 @@ const orderRoutes = require('./server/routes/orderRoutes');
 const paymentRoutes = require('./server/routes/paymentRoutes');
 const certificateRoutes = require('./server/routes/certificateRoutes');
 const subscriptionRoutes = require('./server/routes/subscriptionRoutes');
+const marketingRoutes = require('./server/routes/marketingRoutes');
+
 // BỔ SUNG ROUTE MỚI
 const communityRoutes = require('./server/routes/communityRoutes'); 
 
@@ -60,6 +62,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/marketing', marketingRoutes); 
 // ĐĂNG KÝ COMMUNITY ROUTES
 app.use('/api/community', communityRoutes); 
 

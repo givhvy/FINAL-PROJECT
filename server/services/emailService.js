@@ -52,6 +52,7 @@ exports.sendWelcomeEmail = async (userEmail, userName) => {
     }
 };
 
+
 // 3. Hàm gửi Mã Đặt lại Mật khẩu
 exports.sendResetPasswordEmail = async (userEmail, resetCode) => {
     if (!SENDER_EMAIL) {
@@ -76,6 +77,40 @@ exports.sendResetPasswordEmail = async (userEmail, resetCode) => {
         `
     };
 
+// NEW: 3. Hàm gửi Email Xác nhận Join Mail List
+exports.sendMailListConfirmation = async (userEmail) => {
+    // Giả định SENDER_EMAIL đã được khai báo ở trên
+    if (!process.env.EMAIL_USER) {
+        console.error("[Email Error] EMAIL_USER not configured. Skipping mail list confirmation.");
+        return;
+    }
+    
+    const mailOptions = {
+        from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
+        to: userEmail,
+        subject: '✅ Chúc mừng! Bạn đã đăng ký nhận tin thành công!',
+        html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #10b981;">Chào mừng bạn gia nhập!</h2>
+                <p>Cảm ơn bạn đã đăng ký nhận thông báo từ Codemaster. Kể từ bây giờ, bạn sẽ là người đầu tiên nhận được các thông tin sau:</p>
+                <ul>
+                    <li>Thông báo về các khóa học mới.</li>
+                    <li>Ưu đãi độc quyền.</li>
+                    <li>Tin tức công nghệ và lập trình hàng tuần.</li>
+                </ul>
+                <p style="margin-top: 20px;">Trân trọng,<br>Đội ngũ CodeMaster.</p>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`[Email] Sent MAILLIST CONFIRMATION to: ${userEmail}`);
+    } catch (error) {
+        console.error(`[Email Error] Failed to send MAILLIST confirmation to ${userEmail}:`, error);
+        // Không throw lỗi 500 ở đây vì nó không phải lỗi ứng dụng chính
+    }
+};
     try {
         await transporter.sendMail(mailOptions);
         console.log(`[Email] Sent RESET CODE email to: ${userEmail}. Code: ${resetCode}`);

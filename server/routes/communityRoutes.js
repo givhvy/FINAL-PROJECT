@@ -12,3 +12,4 @@ router.get('/leaderboard', communityController.getLeaderboard);
 router.get('/friends', communityController.getFriendsStatus);
 
 module.exports = router;
+
