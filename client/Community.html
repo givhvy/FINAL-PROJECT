@@ -67,17 +67,48 @@
                 </div>
 
                 <div class="bg-white rounded-xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800">Quick Actions</h3>
-                    <div class="space-y-3">
-                        <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors quick-action-btn">
-                            Start Study Session
-                        </button>
-                        <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors quick-action-btn">
-                            Create Study Group
-                        </button>
-                        <button class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors quick-action-btn">
-                            Find Study Buddy
-                        </button>
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Pomodoro Timer</h3>
+                    <div class="text-center">
+                        <div class="relative mb-6">
+                            <div class="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center relative overflow-hidden">
+                                <!-- Timer Circle Progress -->
+                                <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                                    <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                    <circle id="timer-progress" cx="64" cy="64" r="56" stroke="#3b82f6" stroke-width="8"
+                                            fill="none" stroke-dasharray="351.86" stroke-dashoffset="351.86"
+                                            style="transition: stroke-dashoffset 1s linear"/>
+                                </svg>
+                                <div class="relative z-10 text-center">
+                                    <div id="timer-display" class="text-2xl font-bold text-gray-800">25:00</div>
+                                    <div id="timer-mode" class="text-xs text-gray-500">Work</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex space-x-2">
+                                <button id="start-timer" class="flex-1 bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                                    Start
+                                </button>
+                                <button id="pause-timer" class="flex-1 bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors text-sm">
+                                    Pause
+                                </button>
+                                <button id="reset-timer" class="flex-1 bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 transition-colors text-sm">
+                                    Reset
+                                </button>
+                            </div>
+
+                            <div class="text-xs text-gray-500">
+                                <div class="flex justify-between">
+                                    <span>Work: 25min</span>
+                                    <span>Break: 5min</span>
+                                </div>
+                            </div>
+
+                            <div id="timer-stats" class="text-sm text-gray-600">
+                                Sessions completed today: <span id="sessions-count">0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -103,50 +134,51 @@
                 <div class="bg-white rounded-xl p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-gray-800">📚 My Study Groups</h3>
-                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors group-action-btn">
+                        <button id="join-new-group-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
                             Join New Group
                         </button>
                     </div>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="border rounded-lg p-4 card-hover">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="font-semibold text-gray-800">JavaScript Masters</h4>
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Active</span>
-                            </div>
-                            <div class="flex items-center space-x-2 mb-3">
-                                <div class="flex -space-x-2">
-                                    <div class="w-6 h-6 bg-blue-500 rounded-full border-2 border-white"></div>
-                                    <div class="w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
-                                    <div class="w-6 h-6 bg-purple-500 rounded-full border-2 border-white"></div>
-                                    <div class="w-6 h-6 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-xs text-white">+5</div>
-                                </div>
-                                <span class="text-sm text-gray-600">8 members</span>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-3">Next session: Today 7:00 PM</div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors group-action-btn">Join Session</button>
-                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors group-action-btn">💬</button>
-                            </div>
+                    <div id="my-study-groups-container" class="grid md:grid-cols-2 gap-4">
+                        <div class="text-center py-8 col-span-full">
+                            <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl"></i>
+                            <p class="text-sm text-gray-500 mt-2">Loading your study groups...</p>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="border rounded-lg p-4 card-hover">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="font-semibold text-gray-800">Data Science Squad</h4>
-                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Studying</span>
-                            </div>
-                            <div class="flex items-center space-x-2 mb-3">
-                                <div class="flex -space-x-2">
-                                    <div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white"></div>
-                                    <div class="w-6 h-6 bg-yellow-500 rounded-full border-2 border-white"></div>
-                                    <div class="w-6 h-6 bg-indigo-500 rounded-full border-2 border-white"></div>
-                                </div>
-                                <span class="text-sm text-gray-600">6 members</span>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-3">Next session: Tomorrow 2:00 PM</div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-green-500 text-white py-2 px-3 rounded text-sm hover:bg-green-600 transition-colors group-action-btn">View Progress</button>
-                                <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors group-action-btn">💬</button>
-                            </div>
+                <!-- Available Study Groups Modal -->
+                <div id="available-groups-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-2xl w-full max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Available Study Groups</h3>
+                            <button id="close-groups-modal" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="available-groups-container" class="space-y-4">
+                            <!-- Available groups will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Forum Modal -->
+                <div id="group-forum-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-3xl w-full max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 id="forum-group-title" class="text-lg font-bold text-gray-800">Group Forum</h3>
+                            <button id="close-forum-modal" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="forum-messages-container" class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                        <div class="flex space-x-2">
+                            <input id="new-message-input" type="text" placeholder="Type your message..."
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="send-message-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                Send
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -218,7 +250,7 @@
 
     <script>
         // --- AUTH & SETUP ---
-        const API_BASE = '/api/community'; 
+        const API_BASE = 'http://localhost:5001/api/community'; 
         const user = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
         
@@ -238,6 +270,239 @@
             return 'AC';
         }
 
+        // --- STUDY GROUPS AND FORUM FUNCTIONALITY ---
+
+        let currentGroupId = null;
+
+        // Render My Study Groups
+        async function renderMyStudyGroups() {
+            const container = document.getElementById('my-study-groups-container');
+            try {
+                const response = await fetch(`${API_BASE}/users/${user.id}/groups`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch study groups');
+                const groups = await response.json();
+
+                if (groups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 col-span-full">
+                            <i class="fas fa-users text-gray-400 text-4xl mb-4"></i>
+                            <p class="text-gray-500">You haven't joined any study groups yet.</p>
+                            <p class="text-sm text-gray-400">Click "Join New Group" to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = groups.map(group => `
+                    <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-800">${group.name}</h4>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">${group.status}</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-3">${group.description}</div>
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="text-sm text-gray-600">📚 ${group.subject || 'General'}</span>
+                            <span class="text-sm text-gray-600">👥 ${group.member_count || 0} members</span>
+                        </div>
+                        ${group.teacher ? `
+                            <div class="text-xs text-gray-500 mb-3">
+                                Teacher: ${group.teacher.name || group.teacher.email}
+                            </div>
+                        ` : ''}
+                        <div class="flex space-x-2">
+                            <button onclick="openGroupForum('${group.id}', '${group.name}')"
+                                    class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors">
+                                💬 Forum
+                            </button>
+                            <button onclick="viewGroupDetails('${group.id}')"
+                                    class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors">
+                                📋 Details
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching study groups:', error);
+                container.innerHTML = `
+                    <div class="text-center py-8 col-span-full text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p>Failed to load study groups</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show available groups modal
+        async function showAvailableGroups() {
+            const modal = document.getElementById('available-groups-modal');
+            const container = document.getElementById('available-groups-container');
+
+            modal.classList.remove('hidden');
+            container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/groups`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch available groups');
+                const groups = await response.json();
+
+                if (groups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-users text-4xl mb-4"></i>
+                            <p>No study groups available yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = groups.map(group => `
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-gray-800">${group.name}</h4>
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">${group.member_count || 0} members</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${group.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">📚 ${group.subject || 'General'}</span>
+                            <button onclick="joinStudyGroup('${group.id}')"
+                                    class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                                Join Group
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching available groups:', error);
+                container.innerHTML = '<div class="text-center py-4 text-red-500">Failed to load groups</div>';
+            }
+        }
+
+        // Join a study group
+        async function joinStudyGroup(groupId) {
+            try {
+                const response = await fetch(`${API_BASE}/groups/${groupId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ user_id: user.id })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to join group');
+                }
+
+                alert('Successfully joined the study group!');
+                document.getElementById('available-groups-modal').classList.add('hidden');
+                await renderMyStudyGroups(); // Refresh the groups list
+
+            } catch (error) {
+                console.error('Error joining study group:', error);
+                alert('Failed to join group: ' + error.message);
+            }
+        }
+
+        // Open group forum
+        async function openGroupForum(groupId, groupName) {
+            currentGroupId = groupId;
+            const modal = document.getElementById('group-forum-modal');
+            const titleElement = document.getElementById('forum-group-title');
+            const messagesContainer = document.getElementById('forum-messages-container');
+
+            titleElement.textContent = `${groupName} - Forum`;
+            modal.classList.remove('hidden');
+
+            await loadForumMessages(groupId);
+        }
+
+        // Load forum messages
+        async function loadForumMessages(groupId) {
+            const container = document.getElementById('forum-messages-container');
+            container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/groups/${groupId}/messages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch messages');
+                const messages = await response.json();
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-gray-500">No messages yet. Start the conversation!</div>';
+                    return;
+                }
+
+                container.innerHTML = messages.map(message => `
+                    <div class="flex space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                            ${(message.user?.name || message.user?.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-sm">${message.user?.name || message.user?.email || 'Unknown User'}</span>
+                                <span class="text-xs text-gray-500">${new Date(message.created_at).toLocaleString()}</span>
+                            </div>
+                            <p class="text-sm text-gray-700">${message.message}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Scroll to bottom
+                container.scrollTop = container.scrollHeight;
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                container.innerHTML = '<div class="text-center py-4 text-red-500">Failed to load messages</div>';
+            }
+        }
+
+        // Send message to forum
+        async function sendForumMessage() {
+            const input = document.getElementById('new-message-input');
+            const message = input.value.trim();
+
+            if (!message || !currentGroupId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/groups/${currentGroupId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        message: message
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to send message');
+
+                input.value = '';
+                await loadForumMessages(currentGroupId); // Refresh messages
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message. Please try again.');
+            }
+        }
+
+        // View group details (placeholder)
+        function viewGroupDetails(groupId) {
+            alert(`Group details functionality will be implemented soon.\nGroup ID: ${groupId}`);
+        }
+
         // --- RENDER FUNCTIONS ---
 
         // Render My Progress Today (API: /progress)
@@ -245,7 +510,12 @@
             const container = document.getElementById('progress-data-container');
             try {
                 // SỬ DỤNG API_BASE TỪ BIẾN TOÀN CỤC
-                const response = await fetch(`${API_BASE}/progress`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const response = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'user-id': user.id
+                    }
+                });
                 if (!response.ok) throw new Error('Failed to fetch progress.');
                 const data = await response.json();
 
@@ -400,17 +670,127 @@
                 window.location.href = 'ProfilePage.html';
             });
             
-            // Add click handlers for all hardcoded buttons (simulations)
-            document.querySelectorAll('.quick-action-btn, .group-action-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    alert(`Action triggered: ${e.currentTarget.textContent.trim()}`);
-                });
+            // Study Groups Event Listeners
+            document.getElementById('join-new-group-btn').addEventListener('click', showAvailableGroups);
+            document.getElementById('close-groups-modal').addEventListener('click', () => {
+                document.getElementById('available-groups-modal').classList.add('hidden');
             });
+            document.getElementById('close-forum-modal').addEventListener('click', () => {
+                document.getElementById('group-forum-modal').classList.add('hidden');
+            });
+            document.getElementById('send-message-btn').addEventListener('click', sendForumMessage);
+            document.getElementById('new-message-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendForumMessage();
+                }
+            });
+
+            // --- POMODORO TIMER FUNCTIONALITY ---
+
+            let timerInterval;
+            let timeLeft = 25 * 60; // 25 minutes in seconds
+            let isRunning = false;
+            let isWorkSession = true;
+            let sessionsCompleted = parseInt(localStorage.getItem('pomodoroSessions') || '0');
+
+            const WORK_TIME = 25 * 60; // 25 minutes
+            const BREAK_TIME = 5 * 60; // 5 minutes
+            const CIRCLE_CIRCUMFERENCE = 351.86; // 2 * π * 56
+
+            // Update sessions count display
+            document.getElementById('sessions-count').textContent = sessionsCompleted;
+
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer-display').textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Update progress circle
+                const totalTime = isWorkSession ? WORK_TIME : BREAK_TIME;
+                const progress = (totalTime - timeLeft) / totalTime;
+                const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
+                document.getElementById('timer-progress').style.strokeDashoffset = offset;
+
+                // Update timer mode display
+                document.getElementById('timer-mode').textContent = isWorkSession ? 'Work' : 'Break';
+
+                // Update progress circle color
+                const progressCircle = document.getElementById('timer-progress');
+                progressCircle.style.stroke = isWorkSession ? '#3b82f6' : '#10b981';
+            }
+
+            function startTimer() {
+                if (isRunning) return;
+
+                isRunning = true;
+                document.getElementById('start-timer').textContent = 'Running...';
+                document.getElementById('start-timer').disabled = true;
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        document.getElementById('start-timer').textContent = 'Start';
+                        document.getElementById('start-timer').disabled = false;
+
+                        if (isWorkSession) {
+                            // Work session completed
+                            sessionsCompleted++;
+                            localStorage.setItem('pomodoroSessions', sessionsCompleted.toString());
+                            document.getElementById('sessions-count').textContent = sessionsCompleted;
+
+                            // Switch to break
+                            isWorkSession = false;
+                            timeLeft = BREAK_TIME;
+                            alert('Work session completed! Time for a 5-minute break.');
+                        } else {
+                            // Break completed
+                            isWorkSession = true;
+                            timeLeft = WORK_TIME;
+                            alert('Break completed! Ready for another work session?');
+                        }
+
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+
+            function pauseTimer() {
+                if (!isRunning) return;
+
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('start-timer').textContent = 'Resume';
+                document.getElementById('start-timer').disabled = false;
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                isRunning = false;
+                isWorkSession = true;
+                timeLeft = WORK_TIME;
+                document.getElementById('start-timer').textContent = 'Start';
+                document.getElementById('start-timer').disabled = false;
+                updateTimerDisplay();
+            }
+
+            // Timer event listeners
+            document.getElementById('start-timer').addEventListener('click', startTimer);
+            document.getElementById('pause-timer').addEventListener('click', pauseTimer);
+            document.getElementById('reset-timer').addEventListener('click', resetTimer);
+
+            // Initialize timer display
+            updateTimerDisplay();
 
             // Run data fetching functions
             renderUserProgress();
             renderLeaderboard();
             renderFriendsStatus();
+            renderMyStudyGroups();
         });
 
     </script>

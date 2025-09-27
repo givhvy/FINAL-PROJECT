@@ -560,16 +560,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Auto-enrollment function to ensure user is enrolled when accessing a course
+    async function autoEnrollUser(courseId) {
+        try {
+            // Check if user is already enrolled
+            const checkResponse = await fetch(`/api/users/${user.id}/progress`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (checkResponse.ok) {
+                const progressData = await checkResponse.json();
+                const isEnrolled = progressData.some(progress => progress.courseId === courseId);
+                if (isEnrolled) {
+                    return; // Already enrolled
+                }
+            }
+
+            // Auto-enroll by creating a completed order
+            const enrollResponse = await fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    course_id: courseId,
+                    amount: 0, // Free auto-enrollment
+                    status: 'completed',
+                    order_date: new Date().toISOString()
+                })
+            });
+
+            if (!enrollResponse.ok) {
+                console.warn('Auto-enrollment failed, but continuing with course access');
+            } else {
+                console.log('User auto-enrolled in course:', courseId);
+            }
+        } catch (error) {
+            console.warn('Auto-enrollment error:', error);
+            // Don't block course access if enrollment fails
+        }
+    }
+
     // Enhanced lesson page with better video support and progress tracking
     async function showLessonPage(courseId, pushState = true) {
         showPage('lesson');
         lessonPage.innerHTML = `<div class="flex justify-center items-center h-64"><div class="loader"></div></div>`;
-        
+
         if (pushState) {
             history.pushState({ page: 'lesson', courseId }, '', `#lesson/${courseId}`);
         }
-        
+
         try {
+            // Auto-enroll user when they access a course
+            await autoEnrollUser(courseId);
+
             const response = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch course details.');
             const courseDetails = await response.json();
@@ -750,20 +795,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { lessonId, courseId } = button.dataset;
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
-        
+
         try {
+            // Ensure user is enrolled before marking lesson complete
+            await autoEnrollUser(courseId);
+
             const response = await fetch('/api/progress/complete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     user_id: user.id,
                     lesson_id: lessonId,
-                    course_id: courseId 
+                    course_id: courseId
                 })
             });
-            
+
             if (!response.ok) throw new Error('Failed to save progress.');
-            
+
             button.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Completed!';
             button.className = 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center';
             

@@ -62,6 +62,9 @@
                 <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="students-page">
                     <i class="fas fa-users w-5 mr-3"></i> Students
                 </a>
+                <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="groups-page">
+                    <i class="fas fa-comments w-5 mr-3"></i> Study Groups
+                </a>
                 <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="quizzes-page">
                     <i class="fas fa-puzzle-piece w-5 mr-3"></i> Quizzes
                 </a>
@@ -124,6 +127,29 @@
                                     <tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500">Loading students...</td></tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- STUDY GROUPS PAGE -->
+            <div id="groups-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
+                <header class="bg-white shadow-sm">
+                    <div class="flex items-center justify-between p-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Study Groups Management</h2>
+                        <button id="create-group-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-plus w-5 h-5 mr-2"></i> Create Study Group
+                        </button>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
+                    <div class="max-w-6xl mx-auto">
+                        <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Study groups will be rendered here -->
+                            <div class="text-center py-8 col-span-full">
+                                <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl mb-4"></i>
+                                <p class="text-gray-500">Loading study groups...</p>
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -246,6 +272,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (targetId === 'students-page') fetchAndRenderAllStudents();
         else if (targetId === 'quizzes-page') renderQuizManagementPage();
         else if (targetId === 'certificates-page') populateCertificateForm();
+        else if (targetId === 'groups-page') fetchStudyGroups();
     }
 
     // --- DATA FETCHING --- 
@@ -570,7 +597,137 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Generate Certificate button
     document.getElementById('generate-certificate').addEventListener('click', generateCertificatePreview);
 
-    // --- INITIALIZATION --- 
+    // --- STUDY GROUPS FUNCTIONALITY ---
+
+    // Fetch and display study groups
+    async function fetchStudyGroups() {
+        try {
+            const response = await fetch('http://localhost:5001/api/community/groups', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch study groups');
+            const groups = await response.json();
+
+            displayStudyGroups(groups.filter(group => group.teacher_id === user.id));
+        } catch (error) {
+            console.error('Error fetching study groups:', error);
+        }
+    }
+
+    // Display study groups in the UI
+    function displayStudyGroups(groups) {
+        const container = document.getElementById('groups-container');
+
+        if (groups.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <p>No study groups created yet.</p>
+                    <p>Click "Create Group" to get started!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = groups.map(group => `
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">${group.name}</h3>
+                        <p class="text-gray-600 mt-1">${group.description}</p>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                        ${group.member_count || 0} members
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div class="flex items-center space-x-4">
+                        <span>📚 ${group.subject || 'General'}</span>
+                        <span>📅 Created ${new Date(group.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="viewGroupDetails('${group.id}')"
+                                class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded">
+                            View Details
+                        </button>
+                        <button onclick="deleteGroup('${group.id}')"
+                                class="px-3 py-1 text-red-600 hover:bg-red-50 rounded">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Create new study group
+    async function createStudyGroup() {
+        const name = prompt('Enter study group name:');
+        if (!name) return;
+
+        const description = prompt('Enter group description:');
+        if (!description) return;
+
+        const subject = prompt('Enter subject/topic:') || 'General';
+
+        try {
+            const response = await fetch('http://localhost:5001/api/community/groups', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name,
+                    description,
+                    subject,
+                    teacher_id: user.id
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to create study group');
+
+            alert('Study group created successfully!');
+            await fetchStudyGroups(); // Refresh the list
+
+        } catch (error) {
+            console.error('Error creating study group:', error);
+            alert('Failed to create study group. Please try again.');
+        }
+    }
+
+    // View group details (placeholder for now)
+    function viewGroupDetails(groupId) {
+        alert(`Group details functionality will be implemented soon.\nGroup ID: ${groupId}`);
+    }
+
+    // Delete study group
+    async function deleteGroup(groupId) {
+        if (!confirm('Are you sure you want to delete this study group?')) return;
+
+        try {
+            // Note: We'll need to add a delete endpoint to the backend
+            const response = await fetch(`http://localhost:5001/api/community/groups/${groupId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to delete study group');
+
+            alert('Study group deleted successfully!');
+            await fetchStudyGroups(); // Refresh the list
+
+        } catch (error) {
+            console.error('Error deleting study group:', error);
+            alert('Failed to delete study group. Please try again.');
+        }
+    }
+
+    // Add event listener for create group button
+    document.getElementById('create-group-btn').addEventListener('click', createStudyGroup);
+
+    // --- INITIALIZATION ---
     fetchInitialData();
 });
 </script>

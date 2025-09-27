@@ -88,7 +88,7 @@ exports.getPayments = async (req, res) => {
 
             if (paymentData.order_id) {
                 const orderSnap = await db.collection('orders').doc(paymentData.order_id).get();
-                if (orderSnap.exists()) {
+                if (orderSnap.exists) {
                     orderData = { id: orderSnap.id, ...orderSnap.data() };
                 }
             }
@@ -111,7 +111,7 @@ exports.getPaymentById = async (req, res) => {
         const paymentRef = db.collection('payments').doc(req.params.id);
         const paymentSnap = await paymentRef.get();
 
-        if (!paymentSnap.exists()) {
+        if (!paymentSnap.exists) {
             return res.status(404).json({ error: 'Payment not found' });
         }
 
@@ -120,7 +120,7 @@ exports.getPaymentById = async (req, res) => {
 
         if (paymentData.order_id) {
             const orderSnap = await db.collection('orders').doc(paymentData.order_id).get();
-            if (orderSnap.exists()) {
+            if (orderSnap.exists) {
                 orderData = { id: orderSnap.id, ...orderSnap.data() };
             }
         }
