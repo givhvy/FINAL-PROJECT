@@ -13,26 +13,43 @@
         .course-image:hover { transform: scale(1.03); }
         .promo-applied { animation: pulse 1.5s; }
         @keyframes pulse { 0% { background-color: #d1fae5; } 50% { background-color: #a7f3d0; } 100% { background-color: #d1fae5; } }
+
+        /* Navigation styles */
+        .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
     </style>
 </head>
 <body>
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-indigo-700 text-white py-4 px-6 shadow-md">
-            <div class="container mx-auto flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <span class="text-xl font-bold">LearnHub</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="#" class="hover:text-indigo-200">Courses</a>
-                    <a href="#" class="hover:text-indigo-200">My Learning</a>
-                    <a href="#" class="hover:text-indigo-200">Help</a>
+        <nav class="bg-white shadow-md sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center">
+                            <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                            <span class="ml-2 text-xl font-bold text-gray-800">UniLearn</span>
+                        </a>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
+                            <a href="CourseandLesson.html" class="nav-link">Courses</a>
+                            <a href="AccountProfile.html" class="nav-link">My Learning</a>
+                            <a href="Community.html" class="nav-link">Community</a>
+                            <a href="Blog.html" class="nav-link">Blog</a>
+                            <a href="PaymentPage.html" class="nav-link active">Upgrade</a>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="ml-3 relative">
+                            <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
+                                <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
+                            </button>
+                        </div>
+                        <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
+                    </div>
                 </div>
             </div>
-        </header>
+        </nav>
 
         <!-- Main Content -->
         <main class="flex-grow container mx-auto py-8 px-4 md:px-6">
@@ -48,23 +65,24 @@
                     
                     <div class="flex flex-col md:flex-row gap-4 mb-6 items-start">
                         <div class="md:w-1/4 overflow-hidden rounded-lg">
-                            <div class="course-image bg-indigo-100 h-40 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-code text-indigo-500 text-6xl"></i>
+                            <div class="course-image bg-gradient-to-br from-indigo-500 to-purple-600 h-40 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-crown text-white text-6xl"></i>
                             </div>
                         </div>
                         <div class="md:w-3/4">
-                            <h3 id="course-name-summary" class="font-semibold text-lg text-gray-800">Advanced Web Development Masterclass</h3>
-                            <p class="text-gray-600 mb-2">Learn modern web development techniques with practical projects</p>
+                            <h3 id="course-name-summary" class="font-semibold text-lg text-gray-800">Subscription Plan</h3>
+                            <h4 id="plan-name" class="font-bold text-xl text-indigo-600 mb-2">Loading...</h4>
+                            <p id="plan-description" class="text-gray-600 mb-2">Access to premium features and content</p>
                             <div class="flex items-center mb-1 text-sm text-gray-600">
                                 <div class="flex text-yellow-400">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                 </div>
-                                <span class="ml-2">4.9 (2,546 reviews)</span>
+                                <span class="ml-2">Premium subscription service</span>
                             </div>
                             <div class="flex items-center text-sm text-gray-600">
-                                <i class="far fa-clock mr-1"></i><span>42 hours of content</span>
+                                <i class="far fa-calendar mr-1"></i><span id="billing-cycle">Loading...</span>
                                 <span class="mx-2">•</span>
-                                <i class="fas fa-folder-open mr-1"></i><span>12 projects</span>
+                                <i class="fas fa-infinity mr-1"></i><span>Unlimited access</span>
                             </div>
                         </div>
                     </div>
@@ -175,9 +193,16 @@
     </div>
 
     <script>
-        // Data giả định cho trang (Trong thực tế sẽ dùng URL params)
-        const INITIAL_PRICE = 99.99;
-        const COURSE_ID = 'dev-masterclass-01'; // ID giả định
+        // Load selected plan from localStorage
+        const selectedPlan = JSON.parse(localStorage.getItem('selectedPlan')) || {
+            id: 'basic-plan',
+            name: 'Basic Plan',
+            price: '99.99',
+            billing: 'Monthly'
+        };
+
+        const INITIAL_PRICE = parseFloat(selectedPlan.price);
+        const COURSE_ID = selectedPlan.id;
         let currentTotal = INITIAL_PRICE;
         let appliedDiscount = 0;
         
@@ -191,6 +216,14 @@
         // UI Update Functions
         function formatPrice(price) {
             return `$${price.toFixed(2)}`;
+        }
+
+        function updatePlanInfo() {
+            document.getElementById('plan-name').textContent = selectedPlan.name;
+            document.getElementById('billing-cycle').textContent = `Billed ${selectedPlan.billing}`;
+
+            // Update course name for payment
+            document.getElementById('course-name-summary').textContent = 'Subscription Plan';
         }
 
         function updateSummary() {
@@ -290,7 +323,28 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', updateSummary);
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePlanInfo();
+            updateSummary();
+
+            // Setup user avatar and navigation
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+                document.getElementById('user-avatar').textContent = initials;
+            }
+
+            // Logout functionality
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'LoginPage.html';
+            });
+
+            // User menu redirect
+            document.getElementById('user-menu-button').addEventListener('click', () => {
+                window.location.href = 'AccountProfile.html';
+            });
+        });
     </script>
 </body>
 </html>

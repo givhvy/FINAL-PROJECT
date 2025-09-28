@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch and display study groups
     async function fetchStudyGroups() {
         try {
-            const response = await fetch('http://localhost:5001/api/community/groups', {
+            const response = await fetch('http://localhost:5000/api/community/groups', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const subject = prompt('Enter subject/topic:') || 'General';
 
         try {
-            const response = await fetch('http://localhost:5001/api/community/groups', {
+            const response = await fetch('http://localhost:5000/api/community/groups', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -708,7 +708,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             // Note: We'll need to add a delete endpoint to the backend
-            const response = await fetch(`http://localhost:5001/api/community/groups/${groupId}`, {
+            const response = await fetch(`http://localhost:5000/api/community/groups/${groupId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
