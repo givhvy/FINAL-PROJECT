@@ -228,7 +228,7 @@
                 // Gộp first name và last name thành full name để gửi đi
                 const name = `${firstName} ${lastName}`;
 
-                const API_URL = '/api/auth/register';
+                const API_URL = 'http://localhost:5000/api/auth/register';
 
                 try {
                     const response = await fetch(API_URL, {

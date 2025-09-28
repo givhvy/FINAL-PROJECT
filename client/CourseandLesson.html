@@ -120,6 +120,7 @@
                         <a href="CourseandLesson.html" class="nav-link active">Courses</a>
                         <a href="AccountProfile.html" class="nav-link">My Learning</a>
                         <a href="Community.html" class="nav-link">Community</a>
+                         <a href="Blog.html" class="nav-link">Blog</a>
                         <a href="PaymentPage.html" class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
                             <i class="fas fa-star text-yellow-400"></i>
                             <span>Upgrade</span>
@@ -756,9 +757,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const contentArea = document.getElementById('content-main');
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
         try {
-            const res = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error('Could not fetch lesson content.');
+            console.log('Fetching lesson:', lessonId);
+            const res = await fetch(`http://localhost:5000/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            console.log('Response status:', res.status);
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.log('Error response:', errorText);
+                throw new Error('Could not fetch lesson content.');
+            }
             const lesson = await res.json();
+            console.log('Lesson data:', lesson);
             
             let videoHTML = '';
             if (lesson.content_type === 'video' && lesson.content_data) {
@@ -787,6 +795,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (vimeoMatch && vimeoMatch[1]) {
                         const videoId = vimeoMatch[1];
                         embedUrl = `https://player.vimeo.com/video/${videoId}`;
+                    }
+                } else if (data.includes('dropbox.com')) {
+                    // Handle Dropbox
+                    embedUrl = data.replace('dl=0', 'raw=1');
+                    // Ensure it has https:// protocol
+                    if (!embedUrl.startsWith('http://') && !embedUrl.startsWith('https://')) {
+                        embedUrl = 'https://' + embedUrl;
                     }
                 }
 
