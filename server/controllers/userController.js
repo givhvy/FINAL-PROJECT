@@ -267,3 +267,47 @@ exports.updateUserRole = async (req, res) => {
         res.status(500).json({ error: 'Failed to update user role. Please try again later.' });
     }
 };
+
+// Verify student status với educational email
+exports.verifyStudent = async (req, res) => {
+    try {
+        const { user_id, email } = req.body;
+
+        if (!user_id || !email) {
+            return res.status(400).json({ error: 'User ID and email are required' });
+        }
+
+        // Kiểm tra email có phải educational email không (.edu hoặc .ac)
+        const emailPattern = /^[^\s@]+@[^\s@]+\.(edu|ac\.[a-z]{2}|edu\.[a-z]{2})$/i;
+        if (!emailPattern.test(email)) {
+            return res.status(400).json({ error: 'Invalid educational email address' });
+        }
+
+        const db = getFirestore();
+        const userRef = db.collection('users').doc(user_id);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Cập nhật user với student status
+        await userRef.update({
+            isStudent: true,
+            studentEmail: email,
+            subscriptionType: 'student_free',
+            verifiedAt: new Date().toISOString()
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Student status verified successfully',
+            isStudent: true,
+            studentEmail: email
+        });
+
+    } catch (err) {
+        console.error("Verify Student Error:", err);
+        res.status(500).json({ error: 'Failed to verify student status. Please try again later.' });
+    }
+};

@@ -22,6 +22,9 @@
         .progress-fill-blue { background-color: #3b82f6; }
         .progress-fill-purple { background-color: #8b5cf6; }
         .progress-fill-red { background-color: #ef4444; }
+        .progress-fill-green { background-color: #10b981; }
+        .progress-fill-yellow { background-color: #f59e0b; }
+        .progress-fill-gray { background-color: #9ca3af; }
         
         /* CSS for 2-line description ellipsis */
         .two-line-ellipsis {
@@ -154,9 +157,9 @@
 
             <div class="mb-8 flex flex-wrap gap-4 items-center justify-between pb-2 border-b border-gray-200">
                 <div class="flex items-center space-x-3 overflow-x-auto">
-                    <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Khám phá:</div>
+                    <div class="text-lg font-semibold text-gray-800 flex-shrink-0">Explore:</div>
                     <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                        <button data-filter="All" class="filter-btn active">Tất cả</button>
+                        <button data-filter="All" class="filter-btn active">All</button>
                         <button data-filter="Development" class="filter-btn">💻 Development</button>
                         <button data-filter="Design" class="filter-btn">🎨 Design</button>
                         <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
@@ -177,7 +180,7 @@
             </div>
 
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Khám phá các Chủ đề</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Explore Topics</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Development" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Development</h3></div>
@@ -207,20 +210,20 @@
     <section id="newsletter-section" class="bg-gradient-to-br from-blue-50 to-indigo-100 py-16">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                Đăng ký nhận Email Thông báo
+                Subscribe to Email Notifications
             </h2>
             <p class="mt-4 text-xl text-gray-600">
-                Nhận các ưu đãi mới nhất, khóa học miễn phí và tin tức công nghệ hàng tuần từ UniLearn.
+                Receive the latest offers, free courses and weekly tech news from UniLearn.
             </p>
             <form id="newsletter-form" class="mt-8 sm:flex sm:max-w-lg sm:mx-auto">
                 <label for="email-address" class="sr-only">Email address</label>
                 <input id="email-address" name="email" type="email" autocomplete="email" required
                     class="w-full px-5 py-3 border border-gray-300 shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-md"
-                    placeholder="Nhập địa chỉ email của bạn">
+                    placeholder="Enter your email address">
                 <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
                     <button type="submit" id="newsletter-submit-btn"
                         class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Đăng ký
+                        Subscribe
                     </button>
                 </div>
             </form>
@@ -368,7 +371,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     document.getElementById('user-avatar').textContent = getUserInitials(user.name);
-    document.getElementById('user-menu-button').addEventListener('click', () => window.location.href = 'ProfilePage.html');
+    document.getElementById('user-menu-button').addEventListener('click', () => {
+        if (user.role === 'teacher') {
+            window.location.href = 'TeacherDashboard.html';
+        } else if (user.role === 'admin') {
+            window.location.href = 'AdminDashboard.html';
+        } else {
+            window.location.href = 'ProfilePage.html';
+        }
+    });
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
         window.location.href = 'LoginPage.html';
@@ -390,7 +401,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Add click event listener
         dashboardButton.addEventListener('click', () => {
-            window.location.href = 'AdminDashboard.html';
+            if (user.role === 'admin') {
+                window.location.href = 'AdminDashboard.html';
+            } else if (user.role === 'teacher') {
+                window.location.href = 'TeacherDashboard.html';
+            }
         });
     }
     
@@ -404,32 +419,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             image: 'https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
             tag: 'FULL STACK',
             title: 'Master Web Development 2025',
-            subtitle: 'Trở thành Full Stack Developer chuyên nghiệp với React, Node.js, và cơ sở dữ liệu hiện đại.',
-            buttonText: 'Bắt đầu →',
+            subtitle: 'Become a professional Full Stack Developer with React, Node.js, and modern databases.',
+            buttonText: 'Get Started →',
             color: 'from-blue-600 to-indigo-700'
         },
         { 
             image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
             tag: 'DATA SCIENCE',
             title: 'Data Science Fundamentals',
-            subtitle: 'Khám phá sức mạnh của dữ liệu với Python, Pandas, và các thuật toán Machine Learning.',
-            buttonText: 'Khám phá ngay →',
+            subtitle: 'Discover the power of data with Python, Pandas, and Machine Learning algorithms.',
+            buttonText: 'Explore Now →',
             color: 'from-green-600 to-teal-600'
         },
         { 
             image: 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
             tag: 'DESIGN',
             title: 'UI/UX Design Principles',
-            subtitle: 'Học cách tạo ra những giao diện người dùng đẹp mắt và hiệu quả với Figma.',
-            buttonText: 'Tìm hiểu thêm →',
+            subtitle: 'Learn to create beautiful and effective user interfaces with Figma.',
+            buttonText: 'Learn More →',
             color: 'from-purple-600 to-pink-600'
         },
         { 
             image: 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png', 
             tag: 'AI & MACHINE LEARNING',
             title: 'Artificial Intelligence Mastery',
-            subtitle: 'Làm chủ AI và Machine Learning với TensorFlow, PyTorch và các thuật toán tiên tiến.',
-            buttonText: 'Khám phá AI →',
+            subtitle: 'Master AI and Machine Learning with TensorFlow, PyTorch and advanced algorithms.',
+            buttonText: 'Explore AI →',
             color: 'from-indigo-600 to-purple-600'
         }
     ];
@@ -518,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const newsletterSection = document.getElementById('newsletter-section');
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang xử lý...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
             newsletterMessage.textContent = '';
 
             try {
@@ -530,7 +545,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const result = await response.json();
                 
                 if (response.ok) {
-                    newsletterMessage.textContent = result.message || 'Đăng ký thành công!';
+                    newsletterMessage.textContent = result.message || 'Successfully subscribed!';
                     newsletterMessage.className = 'mt-4 text-sm font-medium text-green-600';
                     emailInput.value = ''; 
                     
@@ -550,14 +565,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }, 500);
                     }, 2000);
                 } else {
-                    throw new Error(result.message || 'Đăng ký thất bại');
+                    throw new Error(result.message || 'Subscription failed');
                 }
             } catch (error) {
                 newsletterMessage.textContent = error.message;
                 newsletterMessage.className = 'mt-4 text-sm font-medium text-red-600';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Đăng ký';
+                submitBtn.innerHTML = 'Subscribe';
             }
         });
     }
@@ -577,14 +592,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         lessonPage.classList.toggle('hidden', pageName !== 'lesson');
     }
 
+    // Store user progress data
+    let userProgressData = {};
+
     // --- ENHANCED COURSE LOGIC ---
     async function fetchAllCourses() {
         loadingSpinner.style.display = 'flex';
         coursesGrid.innerHTML = '';
         try {
+            // Fetch courses
             const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch courses.');
             allCoursesData = await response.json();
+
+            // Fetch user progress
+            try {
+                const progressResponse = await fetch(`/api/users/${user.id}/progress`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (progressResponse.ok) {
+                    const progressArray = await progressResponse.json();
+                    // Convert array to object for easy lookup by courseId
+                    userProgressData = {};
+                    progressArray.forEach(progress => {
+                        userProgressData[progress.courseId] = progress;
+                    });
+                }
+            } catch (progressError) {
+                console.warn('Could not fetch user progress:', progressError);
+            }
+
             renderCourses();
             history.replaceState({ page: 'courses' }, '', '#courses');
         } catch (error) {
@@ -621,11 +658,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         filteredCourses.forEach(course => {
             const totalLessons = course.lessons ? course.lessons.length : 0;
-            const randomProgress = Math.floor(Math.random() * 100); 
-            const priceDisplay = course.price && course.price > 0 ? `${course.price.toFixed(2)}` : 'FREE'; 
-            
-            const progressColor = course.level === 'Intermediate' ? 'purple' : course.level === 'Advanced' ? 'red' : 'blue';
-            const bgColor = progressColor === 'purple' ? 'bg-purple-600' : progressColor === 'red' ? 'bg-red-600' : 'bg-blue-600';
+
+            // Get real progress from userProgressData
+            const courseProgress = userProgressData[course.id];
+            const actualProgress = courseProgress ? courseProgress.percentage : 0;
+
+            const priceDisplay = course.price && course.price > 0 ? `${course.price.toFixed(2)}` : 'FREE';
+
+            // Determine progress color based on completion percentage
+            const progressColor = actualProgress === 100 ? 'green' : actualProgress >= 50 ? 'blue' : actualProgress > 0 ? 'yellow' : 'gray';
+            const bgColor = progressColor === 'green' ? 'bg-green-600' : progressColor === 'blue' ? 'bg-blue-600' : progressColor === 'yellow' ? 'bg-yellow-600' : 'bg-gray-600';
             
             const iconMap = {
                 'Beginner': 'fa-code',
@@ -674,10 +716,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div>
                             <div class="flex justify-between text-sm mb-1">
                                 <span class="text-gray-600">Progress</span>
-                                <span class="text-${progressColor}-600 font-medium">${randomProgress}%</span>
+                                <span class="text-${progressColor}-600 font-medium">${actualProgress}%</span>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="h-full progress-fill-${progressColor}" style="width: ${randomProgress}%"></div>
+                                <div class="h-full progress-fill-${progressColor}" style="width: ${actualProgress}%"></div>
                             </div>
                         </div>
                     </div>
@@ -780,7 +822,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('Failed to fetch course details.');
             }
             const courseDetails = await response.json();
-            renderLessonPage(courseDetails);
+            await renderLessonPage(courseDetails);
         } catch (error) {
             console.error('showLessonPage error:', error);
             lessonPage.innerHTML = `<p class="text-center text-red-500">${error.message}</p>`;
@@ -790,30 +832,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     // Enhanced lesson page rendering
-    function renderLessonPage(course) {
+    async function renderLessonPage(course) {
         const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
         const quizzes = (course.quizzes || []).map(item => ({...item, contentType: 'quiz'}));
-        
+
         const allContent = [...lessons, ...quizzes];
         allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        // Fetch completed lessons for this course
+        let completedLessonIds = new Set();
+        try {
+            const progressRes = await fetch(`/api/progress/user/${user.id}/course/${course.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (progressRes.ok) {
+                const progressData = await progressRes.json();
+                completedLessonIds = new Set(progressData.map(p => p.lesson_id));
+            }
+        } catch (error) {
+            console.warn('Could not fetch completed lessons:', error);
+        }
 
         const contentListHTML = allContent.length > 0
             ? allContent.map((item, index) => {
                 const isQuiz = item.contentType === 'quiz';
-                const icon = isQuiz 
-                    ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>` 
+                const isCompleted = !isQuiz && completedLessonIds.has(item.id);
+                const icon = isQuiz
+                    ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>`
                     : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
-                
+                const checkmark = isCompleted
+                    ? `<i class="fas fa-check-circle text-green-500 ml-auto lesson-checkmark"></i>`
+                    : '';
+
                 return `
-                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200" 
-                        data-id="${item.id}" 
+                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200"
+                        data-id="${item.id}"
                         data-type="${item.contentType}">
                         ${icon}
                         <span class="text-sm font-medium pointer-events-none">${index + 1}. ${item.title}</span>
+                        ${checkmark}
                     </li>
                 `;
             }).join('')
             : '<li><p class="text-sm text-gray-500 p-3">No content available for this course yet.</p></li>';
+
+        // Calculate progress percentage
+        const totalLessons = lessons.length;
+        const completedLessons = completedLessonIds.size;
+        const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
         lessonPage.innerHTML = `
             <div class="mb-6">
@@ -827,7 +893,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24">
                         <div class="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
                             <h2 class="text-xl font-bold mb-2">${course.title}</h2>
-                            <p class="text-sm font-medium">By ${course.teacher ? course.teacher.name : 'N/A'}</p>
+                            <p class="text-sm font-medium mb-3">By ${course.teacher ? course.teacher.name : 'N/A'}</p>
+                            <div class="mt-3">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-xs font-medium">Progress</span>
+                                    <span class="text-xs font-bold progress-text">${progressPercentage}%</span>
+                                </div>
+                                <div class="w-full bg-white/30 rounded-full h-2">
+                                    <div class="progress-bar-fill bg-white h-2 rounded-full transition-all duration-500" style="width: ${progressPercentage}%"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="p-5">
                             <h3 class="font-semibold text-gray-800 mb-3">Course Content</h3>
@@ -897,6 +972,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const lesson = await res.json();
             console.log('Lesson data:', lesson);
+
+            // Check if lesson is already completed
+            const progressCheckRes = await fetch(`/api/progress/user/${user.id}/course/${courseId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            let isCompleted = false;
+            if (progressCheckRes.ok) {
+                const progressData = await progressCheckRes.json();
+                isCompleted = progressData.some(p => p.lesson_id === lessonId);
+            }
             
             let videoHTML = '';
             if (lesson.content_type === 'video' && lesson.content_data) {
@@ -943,6 +1028,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
             
+            // Button state based on completion status
+            const buttonClass = isCompleted
+                ? 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center'
+                : 'bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors flex-shrink-0 flex items-center';
+            const buttonText = isCompleted
+                ? '<i class="fas fa-check-circle mr-2"></i> Completed!'
+                : '<i class="fas fa-check mr-2"></i> Mark as Complete';
+
             const contentHTML = `
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                     ${videoHTML}
@@ -950,17 +1043,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="flex justify-between items-start gap-4 mb-6">
                             <h2 class="text-3xl font-bold text-gray-800">${lesson.title}</h2>
                             <button id="mark-complete-btn" data-lesson-id="${lesson.id}" data-course-id="${courseId}"
-                                    class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors flex-shrink-0 flex items-center">
-                                <i class="fas fa-check mr-2"></i> Mark as Complete
+                                    class="${buttonClass}" ${isCompleted ? 'disabled' : ''}>
+                                ${buttonText}
                             </button>
                         </div>
                         <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
                     </div>
                 </div>`;
             contentArea.innerHTML = contentHTML;
-            
+
             const markCompleteBtn = document.getElementById('mark-complete-btn');
-            if (markCompleteBtn) {
+            if (markCompleteBtn && !isCompleted) {
                 markCompleteBtn.addEventListener('click', handleMarkAsComplete);
             }
         } catch (error) {
@@ -993,23 +1086,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             button.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Completed!';
             button.className = 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center';
-            
+
+            // Add checkmark to sidebar lesson
+            const sidebarCard = document.querySelector(`#content-list-sidebar [data-id="${lessonId}"][data-type="lesson"]`);
+            if (sidebarCard && !sidebarCard.querySelector('.lesson-checkmark')) {
+                const checkmark = document.createElement('i');
+                checkmark.className = 'fas fa-check-circle text-green-500 ml-auto lesson-checkmark';
+                sidebarCard.appendChild(checkmark);
+            }
+
+            // Refresh progress bar - get updated progress
+            await updateCourseProgressBar(courseId);
+
             // Show success message
             const successMsg = document.createElement('div');
             successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
             successMsg.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Progress saved successfully!';
             document.body.appendChild(successMsg);
-            
+
             setTimeout(() => successMsg.style.transform = 'translateX(0)', 100);
             setTimeout(() => {
                 successMsg.style.transform = 'translateX(full)';
                 setTimeout(() => successMsg.remove(), 300);
             }, 3000);
-            
+
         } catch (error) {
             alert(`Error: ${error.message}`);
             button.innerHTML = '<i class="fas fa-check mr-2"></i> Mark as Complete';
             button.disabled = false;
+        }
+    }
+
+    // Function to update course progress bar
+    async function updateCourseProgressBar(courseId) {
+        try {
+            const progressResponse = await fetch(`/api/users/${user.id}/progress`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (progressResponse.ok) {
+                const progressArray = await progressResponse.json();
+                const courseProgress = progressArray.find(p => p.courseId === courseId);
+                if (courseProgress) {
+                    // Update progress display if exists on page
+                    const progressText = document.querySelector('.progress-text');
+                    const progressBar = document.querySelector('.progress-bar-fill');
+                    if (progressText) progressText.textContent = `${courseProgress.percentage}%`;
+                    if (progressBar) progressBar.style.width = `${courseProgress.percentage}%`;
+                }
+            }
+        } catch (error) {
+            console.error('Error updating progress bar:', error);
         }
     }
 

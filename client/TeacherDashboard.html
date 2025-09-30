@@ -47,12 +47,15 @@
                 <h1 class="text-xl font-bold">UniLearn Teacher</h1>
             </div>
             <div class="p-5 border-b border-blue-700">
-                <div class="flex items-center space-x-3">
-                    <img id="teacher-avatar-img" alt="Teacher profile" class="w-10 h-10 rounded-full">
-                    <div>
-                        <p id="teacher-name" class="font-semibold">Loading...</p>
-                        <p id="teacher-email" class="text-xs text-blue-200">Loading...</p>
+                <div class="flex items-center justify-between group cursor-pointer hover:bg-indigo-800 rounded-lg p-2 -m-2 transition-colors" id="profile-header">
+                    <div class="flex items-center space-x-3">
+                        <img id="teacher-avatar-img" alt="Teacher profile" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p id="teacher-name" class="font-semibold">Loading...</p>
+                            <p id="teacher-email" class="text-xs text-blue-200">Loading...</p>
+                        </div>
                     </div>
+                    <i class="fas fa-edit text-blue-200"></i>
                 </div>
             </div>
             <nav class="flex-1 overflow-y-auto py-4">
@@ -71,14 +74,73 @@
                 <a href="#" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors" data-target="certificates-page">
                     <i class="fas fa-certificate w-5 mr-3"></i> Certificates
                 </a>
-                <a href="CourseandLesson.html" class="sidebar-link flex items-center px-6 py-3 text-white transition-colors">
-                    <i class="fas fa-eye w-5 mr-3"></i> View Site as Student
-                </a>
             </nav>
             <div class="p-5 border-t border-blue-700">
                 <button id="logout-button" class="flex items-center text-white w-full hover:bg-indigo-800 p-2 rounded-md transition-colors">
                     <i class="fas fa-sign-out-alt w-5 mr-3"></i> Logout
                 </button>
+            </div>
+        </div>
+
+        <!-- EDIT PROFILE SIDE PANEL -->
+        <div id="edit-profile-panel" class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col">
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-6 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Edit Profile</h2>
+                <button id="close-profile-panel" class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6">
+                <form id="edit-profile-form" class="space-y-6">
+                    <!-- Avatar Section -->
+                    <div class="flex flex-col items-center">
+                        <div class="relative mb-4">
+                            <img id="edit-avatar-preview" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-indigo-200">
+                            <label for="avatar-file-input" class="absolute bottom-0 right-0 bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+                        </div>
+                        <div id="avatar-upload-progress" class="hidden w-full">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="avatar-progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 text-center">Uploading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Name -->
+                    <div>
+                        <label for="edit-name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="edit-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+
+                    <!-- Email (readonly) -->
+                    <div>
+                        <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="edit-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed" readonly>
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="edit-phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" id="edit-phone" placeholder="(555) 123-4567" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label for="edit-location" class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                        <input type="text" id="edit-location" placeholder="Ho Chi Minh City, Vietnam" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                            <i class="fas fa-save mr-2"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -88,9 +150,15 @@
                 <header class="bg-white shadow-sm">
                     <div class="flex items-center justify-between p-4">
                         <h2 id="welcome-message" class="text-xl font-semibold text-gray-800">My Dashboard</h2>
-                        <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
-                            <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Course
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <a href="CourseandLesson.html" class="flex items-center gap-2 px-4 py-2 text-indigo-600 bg-white border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-medium">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Student's View</span>
+                            </a>
+                            <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                                <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Course
+                            </button>
+                        </div>
                     </div>
                 </header>
                 <main class="flex-1 overflow-y-auto p-5 bg-gray-50">
@@ -102,7 +170,8 @@
                     </div>
                 </main>
             </div>
-            
+
+
             <!-- STUDENTS PAGE (NEW) -->
             <div id="students-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
                 <header class="bg-white shadow-sm">
@@ -274,7 +343,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set user info
     document.getElementById('teacher-name').textContent = user.name;
     document.getElementById('teacher-email').textContent = user.email;
-    document.getElementById('teacher-avatar-img').src = user.avatarUrl || 'https://i.pravatar.cc/100';
+
+    // Set avatar - use uploaded avatar or default avatar with user initials
+    const teacherAvatar = document.getElementById('teacher-avatar-img');
+    if (user.avatarUrl) {
+        teacherAvatar.src = user.avatarUrl;
+    } else {
+        // Create default avatar with initials
+        teacherAvatar.style.display = 'none';
+        const avatarContainer = teacherAvatar.parentElement;
+        const initialsDiv = document.createElement('div');
+        initialsDiv.id = 'teacher-avatar-initials';
+        initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm';
+        initialsDiv.textContent = getUserInitials(user.name);
+        avatarContainer.insertBefore(initialsDiv, teacherAvatar);
+    }
+
+    function getUserInitials(name) {
+        if (!name) return 'U';
+        const parts = name.trim().split(' ');
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
 
 
     // --- PAGE NAVIGATION --- 
@@ -291,6 +381,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Load data for the selected page
         if (targetId === 'dashboard-page') fetchAndRenderMyCourses();
+        else if (targetId === 'profile-page') loadProfileData();
         else if (targetId === 'students-page') fetchAndRenderAllStudents();
         else if (targetId === 'quizzes-page') renderQuizManagementPage();
         else if (targetId === 'certificates-page') populateCertificateForm();
@@ -830,6 +921,163 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Add event listener for create group button
     document.getElementById('create-group-btn').addEventListener('click', createStudyGroup);
+
+    // === EDIT PROFILE PANEL FUNCTIONS ===
+    let uploadedAvatarUrl = null;
+    const editProfilePanel = document.getElementById('edit-profile-panel');
+    const avatarFileInput = document.getElementById('avatar-file-input');
+    const avatarUploadProgress = document.getElementById('avatar-upload-progress');
+    const avatarProgressBar = document.getElementById('avatar-progress-bar');
+
+    // Open profile panel
+    function openProfilePanel() {
+        // Populate form with current user data
+        const editAvatarPreview = document.getElementById('edit-avatar-preview');
+        if (user.avatarUrl) {
+            editAvatarPreview.src = user.avatarUrl;
+        } else {
+            // Use default gradient avatar
+            editAvatarPreview.src = 'data:image/svg+xml,' + encodeURIComponent(`
+                <svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="75" cy="75" r="75" fill="url(#grad)"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="60" font-weight="600" fill="white">${getUserInitials(user.name)}</text>
+                </svg>
+            `);
+        }
+        document.getElementById('edit-name').value = user.name || '';
+        document.getElementById('edit-email').value = user.email || '';
+        document.getElementById('edit-phone').value = user.phone || '';
+        document.getElementById('edit-location').value = user.location || '';
+
+        // Show panel with animation
+        editProfilePanel.classList.remove('translate-x-full');
+    }
+
+    // Close profile panel
+    function closeProfilePanel() {
+        editProfilePanel.classList.add('translate-x-full');
+        uploadedAvatarUrl = null;
+        avatarUploadProgress.classList.add('hidden');
+    }
+
+    // Handle avatar upload
+    avatarFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('edit-avatar-preview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to server
+        try {
+            avatarUploadProgress.classList.remove('hidden');
+            avatarProgressBar.style.width = '0%';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/upload/image', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            uploadedAvatarUrl = data.url;
+            avatarProgressBar.style.width = '100%';
+
+            setTimeout(() => {
+                avatarUploadProgress.classList.add('hidden');
+            }, 500);
+
+        } catch (error) {
+            console.error('Avatar upload error:', error);
+            alert('Failed to upload avatar: ' + error.message);
+            avatarUploadProgress.classList.add('hidden');
+        }
+    });
+
+    // Handle profile form submission
+    document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const updatedProfile = {
+            name: document.getElementById('edit-name').value,
+            phone: document.getElementById('edit-phone').value,
+            location: document.getElementById('edit-location').value
+        };
+
+        if (uploadedAvatarUrl) {
+            updatedProfile.avatarUrl = uploadedAvatarUrl;
+        }
+
+        try {
+            const response = await fetch(`/api/users/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedProfile)
+            });
+
+            if (!response.ok) throw new Error('Failed to update profile');
+
+            const updatedUser = await response.json();
+
+            // Update local storage and user object
+            Object.assign(user, updatedUser);
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // Update UI
+            document.getElementById('teacher-name').textContent = user.name;
+
+            // Update avatar
+            const teacherAvatar = document.getElementById('teacher-avatar-img');
+            const initialsAvatar = document.getElementById('teacher-avatar-initials');
+
+            if (user.avatarUrl) {
+                teacherAvatar.src = user.avatarUrl;
+                teacherAvatar.style.display = 'block';
+                if (initialsAvatar) initialsAvatar.remove();
+            } else {
+                teacherAvatar.style.display = 'none';
+                if (!initialsAvatar) {
+                    const avatarContainer = teacherAvatar.parentElement;
+                    const initialsDiv = document.createElement('div');
+                    initialsDiv.id = 'teacher-avatar-initials';
+                    initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm';
+                    initialsDiv.textContent = getUserInitials(user.name);
+                    avatarContainer.insertBefore(initialsDiv, teacherAvatar);
+                } else {
+                    initialsAvatar.textContent = getUserInitials(user.name);
+                }
+            }
+
+            alert('Profile updated successfully!');
+            closeProfilePanel();
+
+        } catch (error) {
+            console.error('Profile update error:', error);
+            alert('Failed to update profile: ' + error.message);
+        }
+    });
+
+    // Event listeners for panel
+    document.getElementById('profile-header').addEventListener('click', openProfilePanel);
+    document.getElementById('close-profile-panel').addEventListener('click', closeProfilePanel);
 
     // --- INITIALIZATION ---
     fetchInitialData();

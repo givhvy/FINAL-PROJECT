@@ -4,5 +4,6 @@ const progressController = require('../controllers/progressController');
 
 router.post('/complete', progressController.markLessonComplete);
 router.get('/:userId/:courseId', progressController.getUserProgress);
+router.get('/user/:userId/course/:courseId', progressController.getUserProgress);
 
 module.exports = router;

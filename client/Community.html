@@ -104,8 +104,8 @@
                                 <p id="rank-name" class="text-xl font-bold text-gray-800">Beginner</p>
                                 <p id="rank-description" class="text-xs text-gray-600 mt-1">Complete courses to rank up!</p>
                             </div>
-                            <div class="flex-shrink-0 ml-3">
-                                <img id="rank-badge" src="" alt="Rank Badge" class="w-16 h-16 object-contain">
+                            <div id="rank-badge" class="flex-shrink-0 ml-3 w-16 h-16">
+                                <!-- SVG Badge will be inserted here -->
                             </div>
                         </div>
                     </div>
@@ -587,40 +587,127 @@
             }
         }
 
+        // SVG Badge Templates
+        const RANK_BADGES = {
+            ruby: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" class="w-full h-full">
+                <defs>
+                    <linearGradient id="miniRed" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#ff6b6b"/>
+                        <stop offset="100%" stop-color="#b82a2a"/>
+                    </linearGradient>
+                    <filter id="miniDrop">
+                        <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.28"/>
+                    </filter>
+                </defs>
+                <g filter="url(#miniDrop)">
+                    <path d="M110 12 L180 50 L180 110 C180 150 140 178 110 198 C80 178 40 150 40 110 L40 50 Z"
+                        fill="url(#miniRed)" stroke="#ffd6d6" stroke-width="3"/>
+                </g>
+            </svg>`,
+
+            bronze: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#ff7b6b"/>
+                        <stop offset="50%" stop-color="#e6452b"/>
+                        <stop offset="100%" stop-color="#8f1f17"/>
+                    </linearGradient>
+                    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.35"/>
+                    </filter>
+                </defs>
+                <g filter="url(#softShadow)">
+                    <polygon points="256,36 420,120 420,292 256,376 92,292 92,120"
+                            fill="url(#redGrad)" stroke="#ffb2aa" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            silver: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="silverGrad" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#f4f7fb"/>
+                        <stop offset="50%" stop-color="#c9d3dc"/>
+                        <stop offset="100%" stop-color="#9aa6b2"/>
+                    </linearGradient>
+                    <filter id="shadowSmall">
+                        <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.25"/>
+                    </filter>
+                </defs>
+                <g filter="url(#shadowSmall)">
+                    <polygon points="256,34 410,120 410,292 256,378 102,292 102,120"
+                            fill="url(#silverGrad)" stroke="#f0f4f8" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            gold: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#ffe57f"/>
+                        <stop offset="50%" stop-color="#ffb84d"/>
+                        <stop offset="100%" stop-color="#c37a12"/>
+                    </linearGradient>
+                    <filter id="goldShadow">
+                        <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.28"/>
+                    </filter>
+                </defs>
+                <g filter="url(#goldShadow)">
+                    <polygon points="256,36 420,120 420,292 256,376 92,292 92,120"
+                            fill="url(#goldGrad)" stroke="#fff0c4" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            sapphire: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" class="w-full h-full">
+                <defs>
+                    <linearGradient id="purpleGrad" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#b38cff"/>
+                        <stop offset="50%" stop-color="#8b4dff"/>
+                        <stop offset="100%" stop-color="#5a1fb6"/>
+                    </linearGradient>
+                    <filter id="bigShadow">
+                        <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.32"/>
+                    </filter>
+                </defs>
+                <g filter="url(#bigShadow)">
+                    <polygon points="280,30 460,140 460,340 280,450 100,340 100,140"
+                            fill="url(#purpleGrad)" stroke="#e6d5ff" stroke-width="8"/>
+                </g>
+            </svg>`
+        };
+
         // Rank/Badge System
         function updateRankBadge(points) {
             let rankName, rankColor, rankBadge, rankDesc;
 
             if (points >= 1500) {
-                rankName = 'Platinum';
-                rankColor = 'from-gray-300 to-gray-100';
-                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_5_y1v3wz.png';
+                rankName = 'Sapphire';
+                rankColor = 'from-purple-200 to-purple-100';
+                rankBadge = RANK_BADGES.sapphire;
                 rankDesc = 'Elite learner! You\'ve mastered 15+ courses!';
             } else if (points >= 1000) {
                 rankName = 'Gold';
                 rankColor = 'from-yellow-300 to-yellow-100';
-                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_3_uoofxm.png';
-                rankDesc = `${1500 - points} points to Platinum`;
+                rankBadge = RANK_BADGES.gold;
+                rankDesc = `${1500 - points} points to Sapphire`;
             } else if (points >= 500) {
                 rankName = 'Silver';
                 rankColor = 'from-gray-300 to-gray-200';
-                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_4_juvxzm.png';
+                rankBadge = RANK_BADGES.silver;
                 rankDesc = `${1000 - points} points to Gold`;
             } else if (points >= 100) {
                 rankName = 'Bronze';
                 rankColor = 'from-orange-300 to-orange-200';
-                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_2_uhdmr4.png';
+                rankBadge = RANK_BADGES.bronze;
                 rankDesc = `${500 - points} points to Silver`;
             } else {
-                rankName = 'Beginner';
-                rankColor = 'from-blue-200 to-blue-100';
-                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_1_fpmkdo.png';
+                rankName = 'Ruby';
+                rankColor = 'from-red-200 to-red-100';
+                rankBadge = RANK_BADGES.ruby;
                 rankDesc = `${100 - points} points to Bronze`;
             }
 
             document.getElementById('rank-name').textContent = rankName;
             document.getElementById('rank-description').textContent = rankDesc;
-            document.getElementById('rank-badge').src = rankBadge;
+            document.getElementById('rank-badge').innerHTML = rankBadge;
 
             // Update rank container background
             const rankContainer = document.getElementById('rank-container');
