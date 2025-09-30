@@ -4,7 +4,7 @@ const { getFirestore } = require('firebase-admin/firestore');
 exports.getUserProgress = async (req, res) => {
     try {
         const db = getFirestore();
-        const userId = req.user?.id || req.body.user_id || req.headers['user-id'];
+        const userId = req.headers['user-id'] || req.user?.id || req.body?.user_id;
 
         if (!userId) {
             return res.status(400).json({ error: 'User ID required' });
@@ -41,6 +41,17 @@ exports.getUserProgress = async (req, res) => {
         for (const orderDoc of userOrders.docs) {
             const orderData = orderDoc.data();
             const courseId = orderData.course_id;
+
+            if (!courseId) continue;
+
+            // Check if course exists
+            const courseRef = db.collection('courses').doc(courseId);
+            const courseSnap = await courseRef.get();
+
+            if (!courseSnap.exists) {
+                console.warn(`Course ${courseId} not found for user ${userId}`);
+                continue;
+            }
 
             // Get total lessons in this course
             const lessonsQuery = db.collection('lessons').where('course_id', '==', courseId);

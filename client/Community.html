@@ -59,10 +59,54 @@
             <div class="lg:col-span-1 space-y-6">
                 <div id="progress-card" class="bg-white rounded-xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold mb-4 text-gray-800">My Progress Today</h3>
-                    <div id="progress-data-container">
-                        <div class="text-center py-6">
-                            <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl"></i>
-                            <p class="text-sm text-gray-500 mt-2">Loading data...</p>
+
+                    <!-- Course Completed Section -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Course Completed</span>
+                            <span id="course-completed-count" class="text-sm font-bold text-green-600">0/0</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="course-completed-bar" class="bg-green-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Goal Section -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Weekly Goal</span>
+                            <div class="flex items-center gap-2">
+                                <span id="weekly-goal-count" class="text-sm font-bold text-indigo-600">0/3 courses</span>
+                                <button id="adjust-goal-btn" class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="weekly-goal-bar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Study Points Section -->
+                    <div class="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-700">Study Points</span>
+                            <span id="study-points" class="text-2xl font-bold text-purple-600">0</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">100 points per completed course</p>
+                    </div>
+
+                    <!-- Rank/Badge Section -->
+                    <div id="rank-container" class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-xs font-medium text-gray-600 mb-1">Current Rank</p>
+                                <p id="rank-name" class="text-xl font-bold text-gray-800">Beginner</p>
+                                <p id="rank-description" class="text-xs text-gray-600 mt-1">Complete courses to rank up!</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <img id="rank-badge" src="" alt="Rank Badge" class="w-16 h-16 object-contain">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -499,64 +543,98 @@
 
         // --- RENDER FUNCTIONS ---
 
-        // Render My Progress Today (API: /progress)
+        // Render My Progress Today - Updated to track completed courses
         async function renderUserProgress() {
-            const container = document.getElementById('progress-data-container');
-            try {
-                // SỬ DỤNG API_BASE TỪ BIẾN TOÀN CỤC
-                const response = await fetch(`${API_BASE}/progress`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'user-id': user.id
-                    }
-                });
-                if (!response.ok) throw new Error('Failed to fetch progress.');
-                const data = await response.json();
+            const userId = user.id;
 
-                const studyTimePercent = (data.studyTime.current / data.studyTime.goal) * 100;
-                const coursesPercent = (data.coursesCompleted.current / data.coursesCompleted.goal) * 100;
-                const weeklyPercent = (data.weeklyGoal.current / data.weeklyGoal.goal) * 100;
-                
-                container.innerHTML = `
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Study Time</span>
-                                <span class="font-semibold">${data.studyTime.current.toFixed(1)}${data.studyTime.unit} / ${data.studyTime.goal}${data.studyTime.unit}</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: ${studyTimePercent}%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Courses Completed</span>
-                                <span class="font-semibold">${data.coursesCompleted.current} / ${data.coursesCompleted.goal}</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: ${coursesPercent}%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Weekly Goal</span>
-                                <span class="font-semibold">${data.weeklyGoal.current}${data.weeklyGoal.unit} / ${data.weeklyGoal.goal}${data.weeklyGoal.unit}</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: ${weeklyPercent}%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">${data.studyPoints.toLocaleString()}</div>
-                            <div class="text-sm text-gray-600">Study Points</div>
-                        </div>
-                    </div>
-                `;
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${userId}/progress`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch progress details.');
+
+                const progressData = await response.json();
+
+                // Calculate completed courses
+                const completedCourses = progressData.filter(item => item.isCompleted).length;
+                const totalCourses = progressData.length;
+                const completedPercentage = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0;
+
+                // Update Course Completed
+                document.getElementById('course-completed-count').textContent = `${completedCourses}/${totalCourses}`;
+                document.getElementById('course-completed-bar').style.width = `${completedPercentage}%`;
+
+                // Weekly Goal (get from localStorage or default to 3)
+                const weeklyGoal = parseInt(localStorage.getItem('weeklyGoal') || '3');
+                const weeklyProgress = Math.min(completedCourses, weeklyGoal);
+                const weeklyPercentage = weeklyGoal > 0 ? (weeklyProgress / weeklyGoal) * 100 : 0;
+
+                document.getElementById('weekly-goal-count').textContent = `${weeklyProgress}/${weeklyGoal} courses`;
+                document.getElementById('weekly-goal-bar').style.width = `${weeklyPercentage}%`;
+
+                // Calculate Study Points (100 points per completed course)
+                const studyPoints = completedCourses * 100;
+                document.getElementById('study-points').textContent = studyPoints;
+
+                // Determine Rank based on points
+                updateRankBadge(studyPoints);
+
             } catch (error) {
-                console.error("Progress fetch error:", error);
-                container.innerHTML = `<p class="text-sm text-red-500">Error loading progress.</p>`;
+                console.error('Progress Fetch Error:', error);
+                document.getElementById('course-completed-count').textContent = '0/0';
+                document.getElementById('study-points').textContent = '0';
+            }
+        }
+
+        // Rank/Badge System
+        function updateRankBadge(points) {
+            let rankName, rankColor, rankBadge, rankDesc;
+
+            if (points >= 1500) {
+                rankName = 'Platinum';
+                rankColor = 'from-gray-300 to-gray-100';
+                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_5_y1v3wz.png';
+                rankDesc = 'Elite learner! You\'ve mastered 15+ courses!';
+            } else if (points >= 1000) {
+                rankName = 'Gold';
+                rankColor = 'from-yellow-300 to-yellow-100';
+                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_3_uoofxm.png';
+                rankDesc = `${1500 - points} points to Platinum`;
+            } else if (points >= 500) {
+                rankName = 'Silver';
+                rankColor = 'from-gray-300 to-gray-200';
+                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_4_juvxzm.png';
+                rankDesc = `${1000 - points} points to Gold`;
+            } else if (points >= 100) {
+                rankName = 'Bronze';
+                rankColor = 'from-orange-300 to-orange-200';
+                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_2_uhdmr4.png';
+                rankDesc = `${500 - points} points to Silver`;
+            } else {
+                rankName = 'Beginner';
+                rankColor = 'from-blue-200 to-blue-100';
+                rankBadge = 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1735611382/achievement-svgrepo-com_1_fpmkdo.png';
+                rankDesc = `${100 - points} points to Bronze`;
+            }
+
+            document.getElementById('rank-name').textContent = rankName;
+            document.getElementById('rank-description').textContent = rankDesc;
+            document.getElementById('rank-badge').src = rankBadge;
+
+            // Update rank container background
+            const rankContainer = document.getElementById('rank-container');
+            rankContainer.className = `p-4 bg-gradient-to-br ${rankColor} rounded-lg border-2 border-yellow-200`;
+        }
+
+        // Weekly Goal Adjustment
+        function showWeeklyGoalDialog() {
+            const currentGoal = parseInt(localStorage.getItem('weeklyGoal') || '3');
+            const newGoal = prompt(`Set your weekly course completion goal (current: ${currentGoal} courses):`, currentGoal);
+
+            if (newGoal !== null && !isNaN(newGoal) && newGoal > 0) {
+                localStorage.setItem('weeklyGoal', newGoal);
+                renderUserProgress(); // Refresh display
             }
         }
 
@@ -732,6 +810,9 @@
                     sendForumMessage();
                 }
             });
+
+            // Weekly Goal Adjustment Button
+            document.getElementById('adjust-goal-btn').addEventListener('click', showWeeklyGoalDialog);
 
             // --- POMODORO TIMER FUNCTIONALITY ---
 
