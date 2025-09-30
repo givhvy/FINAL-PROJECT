@@ -85,6 +85,42 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Unlock your potential with our flexible subscription plans designed to fit your learning style and goals.</p>
             </div>
 
+            <!-- Student Verification Section -->
+            <div class="max-w-2xl mx-auto mb-12">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-indigo-200 rounded-2xl p-8 shadow-lg">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
+                            <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Student Discount - 100% FREE!</h3>
+                        <p class="text-gray-600">Are you a student? Verify your educational email to get full access for free!</p>
+                    </div>
+
+                    <form id="student-verification-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Educational Email Address</label>
+                            <div class="relative">
+                                <input type="email" id="student-email" required
+                                    placeholder="your.name@university.edu"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Must be a valid .edu or .ac email address</p>
+                        </div>
+
+                        <button type="submit" id="verify-student-btn"
+                            class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Verify Student Status
+                        </button>
+                    </form>
+
+                    <div id="verification-result" class="mt-4 hidden"></div>
+                </div>
+            </div>
+
             <!-- Billing Toggle -->
             <div class="flex justify-center mb-12">
                 <div class="bg-gray-100 p-1 rounded-full inline-flex items-center">
@@ -119,6 +155,9 @@
             const plansContainer = document.getElementById('plans-container');
             const monthlyBtn = document.getElementById('monthly-btn');
             const annualBtn = document.getElementById('annual-btn');
+            const studentForm = document.getElementById('student-verification-form');
+            const studentEmailInput = document.getElementById('student-email');
+            const verificationResult = document.getElementById('verification-result');
             let isAnnual = false;
             let allPlans = [];
 
@@ -131,6 +170,101 @@
                     return initials;
                 }
                 return 'GS';
+            }
+
+            // Kiểm tra email education (kết thúc bằng .edu hoặc .ac)
+            function isEducationalEmail(email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.(edu|ac\.[a-z]{2}|edu\.[a-z]{2})$/i;
+                return emailPattern.test(email);
+            }
+
+            // Xử lý student verification
+            async function handleStudentVerification(e) {
+                e.preventDefault();
+                const email = studentEmailInput.value.trim();
+                const verifyBtn = document.getElementById('verify-student-btn');
+
+                // Validate educational email
+                if (!isEducationalEmail(email)) {
+                    verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                    verificationResult.innerHTML = `
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <span>Invalid educational email. Please use a valid .edu or .ac email address.</span>
+                        </div>
+                    `;
+                    verificationResult.classList.remove('hidden');
+                    return;
+                }
+
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+
+                try {
+                    const response = await fetch('/api/users/verify-student', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            user_id: user.id,
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        verificationResult.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
+                        verificationResult.innerHTML = `
+                            <div class="flex items-center text-green-700 mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                <span class="font-semibold">Verification Successful!</span>
+                            </div>
+                            <p class="text-green-600 text-sm">Your student status has been verified. You now have FREE access to all courses and features!</p>
+                            <button onclick="window.location.href='CourseandLesson.html'" class="mt-3 w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                                Start Learning Now
+                            </button>
+                        `;
+                        verificationResult.classList.remove('hidden');
+
+                        // Update user in localStorage
+                        user.isStudent = true;
+                        user.studentEmail = email;
+                        localStorage.setItem('user', JSON.stringify(user));
+
+                        // Hide plans section sau 2 giây
+                        setTimeout(() => {
+                            document.getElementById('plans-container').style.display = 'none';
+                            document.querySelector('.flex.justify-center.mb-12').style.display = 'none';
+                        }, 2000);
+
+                    } else {
+                        verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                        verificationResult.innerHTML = `
+                            <div class="flex items-center text-red-700">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                <span>${data.error || 'Verification failed. Please try again.'}</span>
+                            </div>
+                        `;
+                        verificationResult.classList.remove('hidden');
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify Student Status';
+                    }
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                    verificationResult.innerHTML = `
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <span>An error occurred. Please try again later.</span>
+                        </div>
+                    `;
+                    verificationResult.classList.remove('hidden');
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify Student Status';
+                }
             }
 
             function renderPlans() {
@@ -219,6 +353,9 @@
                 monthlyBtn.classList.add('text-gray-700');
                 renderPlans();
             });
+
+            // Student verification form
+            studentForm.addEventListener('submit', handleStudentVerification);
 
             // --- INITIALIZATION ---
             fetchPlans();

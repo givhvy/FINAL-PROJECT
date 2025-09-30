@@ -176,13 +176,13 @@
                         <span class="gradient-text">UniLearn Blog</span>
                     </h1>
                     <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                        Khám phá những xu hướng công nghệ mới nhất, từ AI đến phát triển web
+                        Explore the latest technology trends, from AI to web development
                     </p>
                     
                     <!-- Search Bar -->
                     <div class="max-w-2xl mx-auto mb-12">
                         <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Tìm kiếm bài viết..." class="w-full px-6 py-4 bg-gray-800 border border-gray-700 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 search-glow transition-all duration-300">
+                            <input type="text" id="searchInput" placeholder="Search articles..." class="w-full px-6 py-4 bg-gray-800 border border-gray-700 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 search-glow transition-all duration-300">
                             <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
@@ -198,7 +198,7 @@
         <section class="py-12 bg-gray-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-wrap justify-center gap-4">
-                    <button class="category-btn category-active px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" data-category="all">Tất cả</button>
+                    <button class="category-btn category-active px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" data-category="all">All</button>
                     <button class="category-btn bg-gray-700 text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-gray-600 hover:text-white transition-all duration-300 hover:scale-105" data-category="ai">AI & Machine Learning</button>
                     <button class="category-btn bg-gray-700 text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-gray-600 hover:text-white transition-all duration-300 hover:scale-105" data-category="web">Web Development</button>
                     <button class="category-btn bg-gray-700 text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-gray-600 hover:text-white transition-all duration-300 hover:scale-105" data-category="mobile">Mobile</button>
@@ -216,7 +216,7 @@
                 
                 <div class="text-center mt-16">
                     <button id="loadMoreBtn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl">
-                        Xem thêm bài viết
+                        Load More Articles
                     </button>
                 </div>
             </div>
@@ -231,7 +231,7 @@
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
                 </svg>
-                Quay lại danh sách bài viết
+                Back to article list
             </button>
             
             <!-- Article Content -->
@@ -241,7 +241,7 @@
             
             <!-- Related Articles -->
             <section class="mt-16 pt-12 border-t border-gray-700">
-                <h3 class="text-2xl font-bold text-white mb-8">Bài viết liên quan</h3>
+                <h3 class="text-2xl font-bold text-white mb-8">Related Articles</h3>
                 <div id="relatedArticles" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Related articles will be populated by JavaScript -->
                 </div>
@@ -261,7 +261,7 @@
                         </div>
                         <span class="text-2xl font-bold gradient-text">UniLearn</span>
                     </div>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-6">Blog công nghệ hàng đầu Việt Nam, chia sẻ những kiến thức và xu hướng mới nhất trong thế giới tech.</p>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">Vietnam's leading technology blog, sharing the latest knowledge and trends in the tech world.</p>
                     <div class="flex space-x-4">
                         <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors border border-gray-700 hover:border-blue-500">
                             <span class="text-lg">📘</span>
@@ -275,27 +275,27 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-6 gradient-text">Chủ đề</h3>
+                    <h3 class="text-xl font-bold mb-6 gradient-text">Topics</h3>
                     <ul class="space-y-3 text-gray-400">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Trí tuệ nhân tạo</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Phát triển Web</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">An ninh mạng</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Ứng dụng di động</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Artificial Intelligence</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Web Development</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Cybersecurity</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Mobile Applications</a></li>
                         <li><a href="#" class="hover:text-blue-400 transition-colors">Blockchain</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-6 gradient-text">Liên hệ</h3>
+                    <h3 class="text-xl font-bold mb-6 gradient-text">Contact</h3>
                     <ul class="space-y-3 text-gray-400">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Về chúng tôi</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Liên hệ</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Chính sách bảo mật</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Điều khoản sử dụng</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-                <p class="text-gray-400 text-lg">&copy; 2024 UniLearn. Tất cả quyền được bảo lưu.</p>
+                <p class="text-gray-400 text-lg">&copy; 2024 UniLearn. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -340,7 +340,7 @@
                 author: "Nguyễn Văn A",
                 authorInitials: "NVA",
                 date: "15 Tháng 12, 2024",
-                readTime: "8 phút đọc",
+                readTime: "8 min read",
                 emoji: "🤖",
                 gradient: "from-blue-500 to-purple-600",
                 content: `
@@ -349,7 +349,7 @@
                         <span class="bg-blue-600/20 text-blue-300 text-sm font-semibold px-3 py-1 rounded-full border border-blue-500/30 mr-4">AI & Machine Learning</span>
                         <span class="mr-4">15 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">8 phút đọc</span>
+                        <span class="mr-4">8 min read</span>
                         <span>•</span>
                         <span class="ml-4">Nguyễn Văn A</span>
                     </div>
@@ -400,7 +400,7 @@
                 author: "Trần Thị B",
                 authorInitials: "TTB",
                 date: "12 Tháng 12, 2024",
-                readTime: "12 phút đọc",
+                readTime: "12 min read",
                 emoji: "💻",
                 gradient: "from-green-500 to-blue-600",
                 content: `
@@ -409,7 +409,7 @@
                         <span class="bg-green-600/20 text-green-300 text-sm font-semibold px-3 py-1 rounded-full border border-green-500/30 mr-4">Web Development</span>
                         <span class="mr-4">12 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">12 phút đọc</span>
+                        <span class="mr-4">12 min read</span>
                         <span>•</span>
                         <span class="ml-4">Trần Thị B</span>
                     </div>
@@ -483,7 +483,7 @@
                 author: "Lê Văn C",
                 authorInitials: "LVC",
                 date: "10 Tháng 12, 2024",
-                readTime: "10 phút đọc",
+                readTime: "10 min read",
                 emoji: "🔒",
                 gradient: "from-red-500 to-pink-600",
                 content: `
@@ -492,7 +492,7 @@
                         <span class="bg-red-600/20 text-red-300 text-sm font-semibold px-3 py-1 rounded-full border border-red-500/30 mr-4">Cybersecurity</span>
                         <span class="mr-4">10 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">10 phút đọc</span>
+                        <span class="mr-4">10 min read</span>
                         <span>•</span>
                         <span class="ml-4">Lê Văn C</span>
                     </div>
@@ -577,7 +577,7 @@
                 author: "Phạm Thị D",
                 authorInitials: "PTD",
                 date: "8 Tháng 12, 2024",
-                readTime: "15 phút đọc",
+                readTime: "15 min read",
                 emoji: "📱",
                 gradient: "from-purple-500 to-indigo-600",
                 content: `
@@ -586,7 +586,7 @@
                         <span class="bg-purple-600/20 text-purple-300 text-sm font-semibold px-3 py-1 rounded-full border border-purple-500/30 mr-4">Mobile Development</span>
                         <span class="mr-4">8 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">15 phút đọc</span>
+                        <span class="mr-4">15 min read</span>
                         <span>•</span>
                         <span class="ml-4">Phạm Thị D</span>
                     </div>
@@ -717,7 +717,7 @@
                 author: "Hoàng Văn E",
                 authorInitials: "HVE",
                 date: "5 Tháng 12, 2024",
-                readTime: "20 phút đọc",
+                readTime: "20 min read",
                 emoji: "🧠",
                 gradient: "from-cyan-500 to-blue-600",
                 content: `
@@ -726,7 +726,7 @@
                         <span class="bg-cyan-600/20 text-cyan-300 text-sm font-semibold px-3 py-1 rounded-full border border-cyan-500/30 mr-4">AI & Machine Learning</span>
                         <span class="mr-4">5 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">20 phút đọc</span>
+                        <span class="mr-4">20 min read</span>
                         <span>•</span>
                         <span class="ml-4">Hoàng Văn E</span>
                     </div>
@@ -897,7 +897,7 @@
                 author: "Vũ Thị F",
                 authorInitials: "VTF",
                 date: "3 Tháng 12, 2024",
-                readTime: "18 phút đọc",
+                readTime: "18 min read",
                 emoji: "⛓️",
                 gradient: "from-yellow-500 to-orange-600",
                 content: `
@@ -906,7 +906,7 @@
                         <span class="bg-yellow-600/20 text-yellow-300 text-sm font-semibold px-3 py-1 rounded-full border border-yellow-500/30 mr-4">Blockchain</span>
                         <span class="mr-4">3 Tháng 12, 2024</span>
                         <span class="mr-4">•</span>
-                        <span class="mr-4">18 phút đọc</span>
+                        <span class="mr-4">18 min read</span>
                         <span>•</span>
                         <span class="ml-4">Vũ Thị F</span>
                     </div>
@@ -1107,7 +1107,7 @@
                         author: post.author_name || 'Anonymous',
                         authorInitials: (post.author_name || 'A').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
                         date: post.created_at ? (post.created_at.seconds ? new Date(post.created_at.seconds * 1000).toLocaleDateString('vi-VN') : new Date(post.created_at).toLocaleDateString('vi-VN')) : new Date().toLocaleDateString('vi-VN'),
-                        readTime: Math.ceil((post.content?.length || 1000) / 200) + ' phút đọc',
+                        readTime: Math.ceil((post.content?.length || 1000) / 200) + ' min read',
                         emoji: getEmojiByCategory(post.tags && post.tags.length > 0 ? post.tags[0].toLowerCase() : 'general'),
                         gradient: getGradientByCategory(post.tags && post.tags.length > 0 ? post.tags[0].toLowerCase() : 'general'),
                         content: post.content || '',
@@ -1226,7 +1226,7 @@
                         author: apiPost.author_name || 'Anonymous',
                         authorInitials: (apiPost.author_name || 'A').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
                         date: apiPost.created_at ? (apiPost.created_at.seconds ? new Date(apiPost.created_at.seconds * 1000).toLocaleDateString('vi-VN') : new Date(apiPost.created_at).toLocaleDateString('vi-VN')) : new Date().toLocaleDateString('vi-VN'),
-                        readTime: Math.ceil((apiPost.content?.length || 1000) / 200) + ' phút đọc',
+                        readTime: Math.ceil((apiPost.content?.length || 1000) / 200) + ' min read',
                         emoji: getEmojiByCategory(apiPost.tags && apiPost.tags.length > 0 ? apiPost.tags[0].toLowerCase() : 'general'),
                         gradient: getGradientByCategory(apiPost.tags && apiPost.tags.length > 0 ? apiPost.tags[0].toLowerCase() : 'general'),
                         content: apiPost.content || '',
