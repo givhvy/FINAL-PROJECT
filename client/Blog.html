@@ -148,6 +148,12 @@
                         <a href="#" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800">Categories</a>
                         <a href="#" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800">About</a>
                         <a href="#" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800">Contact</a>
+                        <!-- Dashboard Button for Admin/Teacher -->
+                        <button id="dashboard-button-blog" class="hidden bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl mr-4">
+                            <i class="fas fa-tachometer-alt mr-2"></i>
+                            <span id="dashboard-text-blog">Dashboard</span>
+                        </button>
+
                         <a href="CourseandLesson.html" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl inline-block">
                             Back to Home
                         </a>
@@ -167,7 +173,7 @@
             <div class="max-w-7xl mx-auto text-center">
                 <div class="fade-in-up">
                     <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                        <span class="gradient-text">Tech Blog</span>
+                        <span class="gradient-text">UniLearn Blog</span>
                     </h1>
                     <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
                         Khám phá những xu hướng công nghệ mới nhất, từ AI đến phát triển web
@@ -295,6 +301,32 @@
     </footer>
 
     <script>
+        // Authentication check and dashboard button setup
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // Show dashboard button for admin/teacher
+        if (user.role === 'admin' || user.role === 'teacher') {
+            const dashboardButton = document.getElementById('dashboard-button-blog');
+            const dashboardText = document.getElementById('dashboard-text-blog');
+
+            if (dashboardButton) {
+                dashboardButton.classList.remove('hidden');
+
+                // Set appropriate text
+                if (user.role === 'admin') {
+                    dashboardText.textContent = 'Admin Dashboard';
+                } else if (user.role === 'teacher') {
+                    dashboardText.textContent = 'Teacher Dashboard';
+                }
+
+                // Add click event listener
+                dashboardButton.addEventListener('click', () => {
+                    window.location.href = 'AdminDashboard.html';
+                });
+            }
+        }
+
         // Blog articles will be loaded from API
         let articles = [];
         // Blog articles data (fallback static data)

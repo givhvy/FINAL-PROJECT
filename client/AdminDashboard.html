@@ -51,6 +51,7 @@
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="challenges"> <i class="fas fa-trophy mr-3"></i> <span>Challenges</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="blog"> <i class="fas fa-blog mr-3"></i> <span>Blog</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="user-roles" id="user-roles-nav"> <i class="fas fa-user-shield mr-3"></i> <span>User Roles</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="reports"> <i class="fas fa-chart-bar mr-3"></i> <span>Reports</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
@@ -74,6 +75,18 @@
                         <h1 class="text-xl font-semibold text-gray-800" id="pageTitle">Dashboard</h1>
                     </div>
                     <div class="flex items-center space-x-4">
+                        <!-- Teacher View Button for Admin -->
+                        <button id="teacher-view-button" class="hidden px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Teacher View</span>
+                        </button>
+
+                        <!-- Student View Button for Admin -->
+                        <button id="student-view-button" class="hidden px-4 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Student View</span>
+                        </button>
+
                         <div class="relative">
                             <button id="userMenuBtn" class="flex items-center space-x-2">
                                 <div id="header-avatar" class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white"></div>
@@ -317,6 +330,82 @@
                     </div>
                 </section>
 
+                <!-- USER ROLES MANAGEMENT SECTION -->
+                <section id="user-roles" class="page-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">User Role Management</h2>
+                        <p class="text-gray-600 mt-2">Manage user permissions and assign roles (Admin/Teacher/Student)</p>
+                    </div>
+
+                    <!-- Role Assignment Form -->
+                    <div class="bg-white rounded-lg shadow-md mb-6 p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Assign Role</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="user-select" class="block text-sm font-medium text-gray-700 mb-2">Select User</label>
+                                <select id="user-select" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Loading users...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="role-select" class="block text-sm font-medium text-gray-700 mb-2">Select Role</label>
+                                <select id="role-select" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select Role</option>
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button id="assign-role-btn" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    Assign Role
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Table with Roles -->
+                    <div class="bg-white rounded-lg shadow-md">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">All Users and Their Roles</h3>
+                            <div class="flex space-x-3">
+                                <select id="role-filter" class="border rounded-lg px-3 py-2 text-sm">
+                                    <option value="">All Roles</option>
+                                    <option value="student">Students</option>
+                                    <option value="teacher">Teachers</option>
+                                    <option value="admin">Admins</option>
+                                </select>
+                                <div class="relative">
+                                    <input type="text" id="user-search" placeholder="Search users..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">User</th>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Current Role</th>
+                                        <th class="px-4 py-3">Join Date</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-roles-table-body" class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-8 text-gray-500">
+                                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                                            <p>Loading users...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+
                 <section id="reports" class="page-content hidden"><p>Reports Coming Soon</p></section>
                 <section id="settings" class="page-content hidden"><p>Settings Coming Soon</p></section>
             </main>
@@ -436,6 +525,8 @@
                 populateCertificateForm();
             } else if (targetId === 'blog') {
                 fetchAndRenderBlogPosts();
+            } else if (targetId === 'user-roles') {
+                renderUserRolesPage();
             }
         }
 
@@ -1060,6 +1151,230 @@
             }
         }
 
+        // --- USER ROLES MANAGEMENT FUNCTIONS ---
+
+        // Global variables for user roles management
+        let filteredUsersForRoles = [];
+
+        // Render user roles management page
+        function renderUserRolesPage() {
+            populateUserSelect();
+            renderUserRolesTable();
+        }
+
+        // Populate user select dropdown
+        function populateUserSelect() {
+            const userSelect = document.getElementById('user-select');
+            if (!userSelect) return;
+
+            userSelect.innerHTML = '<option value="">Select a user...</option>';
+
+            allUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.name || 'Unknown'} (${user.email})`;
+                userSelect.appendChild(option);
+            });
+        }
+
+        // Render users table with roles
+        function renderUserRolesTable() {
+            const tableBody = document.getElementById('user-roles-table-body');
+            if (!tableBody) return;
+
+            filteredUsersForRoles = [...allUsers];
+            displayUsersTable(filteredUsersForRoles);
+        }
+
+        // Display users in table
+        function displayUsersTable(users) {
+            const tableBody = document.getElementById('user-roles-table-body');
+            if (!tableBody) return;
+
+            if (users.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-500">
+                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                            <p>No users found.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = users.map(user => {
+                const parts = user.name ? user.name.split(' ') : [];
+                const initials = parts.length > 1 ?
+                    parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() :
+                    (user.name ? user.name.charAt(0).toUpperCase() : '??');
+
+                const roleColors = {
+                    'admin': 'bg-red-100 text-red-800',
+                    'teacher': 'bg-blue-100 text-blue-800',
+                    'student': 'bg-green-100 text-green-800'
+                };
+
+                const roleColor = roleColors[user.role] || 'bg-gray-100 text-gray-800';
+                const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US') : 'N/A';
+
+                return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold mr-3">
+                                    <span>${initials}</span>
+                                </div>
+                                <span>${user.name || 'Unknown'}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">${user.email || 'N/A'}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full ${roleColor}">
+                                ${(user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1)}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">${joinDate}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex space-x-2">
+                                <button onclick="quickRoleChange('${user.id}', '${user.role}')"
+                                        class="text-blue-600 hover:bg-blue-50 p-1 rounded text-xs"
+                                        title="Quick role change">
+                                    <i class="fas fa-user-cog"></i>
+                                </button>
+                                <button onclick="viewUserDetails('${user.id}')"
+                                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs"
+                                        title="View details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Assign role to user
+        async function assignRole() {
+            const userId = document.getElementById('user-select').value;
+            const newRole = document.getElementById('role-select').value;
+
+            if (!userId || !newRole) {
+                alert('Please select both a user and a role.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to update user role');
+                }
+
+                const result = await response.json();
+
+                // Update local data
+                const userIndex = allUsers.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].role = newRole;
+                }
+
+                // Reset form
+                document.getElementById('user-select').value = '';
+                document.getElementById('role-select').value = '';
+
+                // Refresh display
+                renderUserRolesTable();
+
+                alert(`Role updated successfully! User is now a ${newRole}.`);
+
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Quick role change function
+        async function quickRoleChange(userId, currentRole) {
+            const roles = ['student', 'teacher', 'admin'];
+            const roleOptions = roles.map(role =>
+                `<option value="${role}" ${role === currentRole ? 'selected' : ''}>
+                    ${role.charAt(0).toUpperCase() + role.slice(1)}
+                </option>`
+            ).join('');
+
+            const newRole = prompt(`Select new role for user:\n\nCurrent role: ${currentRole}\n\nEnter new role (student/teacher/admin):`, currentRole);
+
+            if (!newRole || newRole === currentRole || !roles.includes(newRole.toLowerCase())) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole.toLowerCase() })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to update user role');
+                }
+
+                // Update local data
+                const userIndex = allUsers.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].role = newRole.toLowerCase();
+                }
+
+                // Refresh display
+                renderUserRolesTable();
+
+                alert(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
+
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // View user details (placeholder)
+        function viewUserDetails(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (user) {
+                alert(`User Details:\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email}\nRole: ${user.role || 'student'}\nJoin Date: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}`);
+            }
+        }
+
+        // Filter users by role
+        function filterUsersByRole() {
+            const roleFilter = document.getElementById('role-filter').value;
+            const searchTerm = document.getElementById('user-search').value.toLowerCase();
+
+            filteredUsersForRoles = allUsers.filter(user => {
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesSearch = !searchTerm ||
+                    (user.name || '').toLowerCase().includes(searchTerm) ||
+                    (user.email || '').toLowerCase().includes(searchTerm);
+
+                return matchesRole && matchesSearch;
+            });
+
+            displayUsersTable(filteredUsersForRoles);
+        }
+
+
         // --- CERTIFICATE & OTHER FUNCTIONS ---
         function populateCertificateForm() { /* Placeholder */ }
         function renderQuizManagementPage() { /* Placeholder */ }
@@ -1082,12 +1397,69 @@
         const userName = user.name || 'Admin';
         const userEmail = user.email || 'admin@UniLearn.com';
         const userInitials = userName.split(' ').map(n=>n[0]).join('').toUpperCase() || userName.charAt(0).toUpperCase();
-        
+
         document.getElementById('admin-user-name').textContent = userName;
         document.getElementById('admin-user-email').textContent = userEmail;
         document.getElementById('admin-avatar').textContent = userInitials;
         document.getElementById('header-user-name').textContent = userName;
         document.getElementById('header-avatar').textContent = userInitials;
+
+        // Hide admin-only features for non-admin users
+        if (user.role !== 'admin') {
+            const userRolesNav = document.getElementById('user-roles-nav');
+            if (userRolesNav) {
+                userRolesNav.style.display = 'none';
+            }
+        }
+
+        // Show Teacher View and Student View buttons for Admin
+        if (user.role === 'admin') {
+            const teacherViewButton = document.getElementById('teacher-view-button');
+            const studentViewButton = document.getElementById('student-view-button');
+
+            if (teacherViewButton) {
+                teacherViewButton.classList.remove('hidden');
+                // Temporarily store admin role, switch to teacher role, then redirect
+                teacherViewButton.addEventListener('click', () => {
+                    // Save current role
+                    localStorage.setItem('original_role', user.role);
+
+                    // Temporarily switch to teacher role
+                    const tempUser = { ...user, role: 'teacher' };
+                    localStorage.setItem('user', JSON.stringify(tempUser));
+
+                    // Redirect to admin dashboard (will now show as teacher view)
+                    window.location.reload();
+                });
+            }
+
+            if (studentViewButton) {
+                studentViewButton.classList.remove('hidden');
+                studentViewButton.addEventListener('click', () => {
+                    window.location.href = 'CourseandLesson.html';
+                });
+            }
+        }
+
+        // Check if we need to restore admin role
+        const originalRole = localStorage.getItem('original_role');
+        if (originalRole === 'admin' && user.role === 'teacher') {
+            // Add a "Back to Admin" button
+            const headerElement = document.querySelector('.flex.items-center.space-x-4');
+            if (headerElement) {
+                const backToAdminBtn = document.createElement('button');
+                backToAdminBtn.className = 'px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center space-x-2';
+                backToAdminBtn.innerHTML = '<i class="fas fa-shield-alt"></i><span>Back to Admin</span>';
+                backToAdminBtn.addEventListener('click', () => {
+                    // Restore admin role
+                    const adminUser = { ...user, role: 'admin' };
+                    localStorage.setItem('user', JSON.stringify(adminUser));
+                    localStorage.removeItem('original_role');
+                    window.location.reload();
+                });
+                headerElement.insertBefore(backToAdminBtn, headerElement.firstChild);
+            }
+        }
 
         document.querySelectorAll('.sidebar-item').forEach(item => {
             item.addEventListener('click', (e) => showPage(e.currentTarget.getAttribute('data-target')));
@@ -1116,6 +1488,12 @@
         blogForm.addEventListener('submit', handleBlogFormSubmit);
         document.getElementById('blog-status-filter').addEventListener('change', filterBlogPosts);
         document.getElementById('blog-search').addEventListener('input', filterBlogPosts);
+
+        // Event listeners for User Roles Management
+        document.getElementById('assign-role-btn').addEventListener('click', assignRole);
+        document.getElementById('role-filter').addEventListener('change', filterUsersByRole);
+        document.getElementById('user-search').addEventListener('input', filterUsersByRole);
+
 
         // Initial calls
         await fetchAllData();

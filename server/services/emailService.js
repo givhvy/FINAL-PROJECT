@@ -26,19 +26,19 @@ exports.sendWelcomeEmail = async (userEmail, userName) => {
     }
 
     const mailOptions = {
-        from: `"CodeMaster" <${SENDER_EMAIL}>`, // Địa chỉ gửi đi là email của bạn
+        from: `"UniLearn" <${SENDER_EMAIL}>`, // Địa chỉ gửi đi là email của bạn
         to: userEmail,
-        subject: '🎉 Chào mừng đến với CodeMaster! Hãy bắt đầu hành trình học tập của bạn.',
+        subject: '🎉 Chào mừng đến với UniLearn! Hãy bắt đầu hành trình học tập của bạn.',
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                 <h2 style="color: #4f46e5;">Xin chào, ${userName}!</h2>
-                <p>Cảm ơn bạn đã đăng ký tài khoản tại CodeMaster. Chúng tôi rất vui được đồng hành cùng bạn trên hành trình chinh phục lập trình.</p>
+                <p>Cảm ơn bạn đã đăng ký tài khoản tại UniLearn. Chúng tôi rất vui được đồng hành cùng bạn trên hành trình chinh phục lập trình.</p>
                 <p>Bạn có thể đăng nhập ngay và khám phá hàng trăm khóa học chất lượng cao:</p>
                 <a href="http://localhost:5000/LoginPage.html" 
                    style="display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
                    Đăng nhập ngay
                 </a>
-                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Trân trọng,<br>Đội ngũ CodeMaster.</p>
+                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Trân trọng,<br>Đội ngũ UniLearn.</p>
             </div>
         `
     };
@@ -61,9 +61,9 @@ exports.sendResetPasswordEmail = async (userEmail, resetCode) => {
     }
     
     const mailOptions = {
-        from: `"CodeMaster Security" <${SENDER_EMAIL}>`,
+        from: `"UniLearn Security" <${SENDER_EMAIL}>`,
         to: userEmail,
-        subject: '🔐 Yêu cầu Đặt lại Mật khẩu của CodeMaster',
+        subject: '🔐 Yêu cầu Đặt lại Mật khẩu của UniLearn',
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                 <h2 style="color: #ef4444;">Đặt lại mật khẩu</h2>
@@ -72,7 +72,7 @@ exports.sendResetPasswordEmail = async (userEmail, resetCode) => {
                     ${resetCode}
                 </div>
                 <p>Mã này sẽ hết hạn sau 10 phút. Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
-                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Trân trọng,<br>Đội ngũ CodeMaster.</p>
+                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Trân trọng,<br>Đội ngũ UniLearn.</p>
             </div>
         `
     };
@@ -86,19 +86,19 @@ exports.sendMailListConfirmation = async (userEmail) => {
     }
     
     const mailOptions = {
-        from: `"CodeMaster" <${process.env.EMAIL_USER}>`,
+        from: `"UniLearn" <${process.env.EMAIL_USER}>`,
         to: userEmail,
         subject: '✅ Chúc mừng! Bạn đã đăng ký nhận tin thành công!',
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px;">
                 <h2 style="color: #10b981;">Chào mừng bạn gia nhập!</h2>
-                <p>Cảm ơn bạn đã đăng ký nhận thông báo từ Codemaster. Kể từ bây giờ, bạn sẽ là người đầu tiên nhận được các thông tin sau:</p>
+                <p>Cảm ơn bạn đã đăng ký nhận thông báo từ UniLearn. Kể từ bây giờ, bạn sẽ là người đầu tiên nhận được các thông tin sau:</p>
                 <ul>
                     <li>Thông báo về các khóa học mới.</li>
                     <li>Ưu đãi độc quyền.</li>
                     <li>Tin tức công nghệ và lập trình hàng tuần.</li>
                 </ul>
-                <p style="margin-top: 20px;">Trân trọng,<br>Đội ngũ CodeMaster.</p>
+                <p style="margin-top: 20px;">Trân trọng,<br>Đội ngũ UniLearn.</p>
             </div>
         `
     };
