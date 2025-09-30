@@ -210,3 +210,60 @@ exports.getUserProgressDetails = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve user progress. Please try again later.' });
     }
 };
+
+// NEW: Update user role (Admin/Teacher phân quyền)
+exports.updateUserRole = async (req, res) => {
+    try {
+        const db = getFirestore();
+        const userId = req.params.id;
+        const { role } = req.body;
+
+        // Check if requesting user has admin privileges
+        // This assumes the JWT middleware has set req.user
+        if (req.user && req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Access denied. Only admins can update user roles.' });
+        }
+
+        // Validate input
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({ error: 'Invalid user ID provided.' });
+        }
+
+        if (!role || !['student', 'teacher', 'admin'].includes(role)) {
+            return res.status(400).json({ error: 'Invalid role. Must be: student, teacher, or admin.' });
+        }
+
+        // Check if user exists
+        const userRef = db.collection('users').doc(userId);
+        const userSnap = await userRef.get();
+
+        if (!userSnap.exists) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const userData = userSnap.data();
+
+        // Update only the role field
+        await userRef.update({
+            role: role,
+            updatedAt: new Date()
+        });
+
+        // Return success response
+        res.status(200).json({
+            message: `User role updated successfully to ${role}.`,
+            userId: userId,
+            newRole: role,
+            user: {
+                id: userId,
+                name: userData.name,
+                email: userData.email,
+                role: role
+            }
+        });
+
+    } catch (err) {
+        console.error("Update User Role Error:", err);
+        res.status(500).json({ error: 'Failed to update user role. Please try again later.' });
+    }
+};

@@ -219,8 +219,23 @@
                         </select>
                     </div>
                     <div>
-                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
-                        <input type="text" id="imageUrl" placeholder="e.g., https://example.com/image.png" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Course Image</label>
+                        <div class="mt-1 space-y-2">
+                            <input type="file" id="imageFile" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-gray-500">or</span>
+                                <input type="text" id="imageUrl" placeholder="Enter image URL" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div id="image-preview" class="hidden mt-2">
+                                <img id="preview-img" class="h-32 w-full object-cover rounded-md border" alt="Preview">
+                            </div>
+                            <div id="upload-progress" class="hidden">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Uploading...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-3">
@@ -244,10 +259,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     let allCourses = [];
     let allStudents = [];
     let currentEditingCourseId = null;
+    let uploadedImageUrl = null;
 
     // --- ELEMENTS ---
     const courseModal = document.getElementById('course-modal');
     const courseForm = document.getElementById('course-form');
+    const imageFileInput = document.getElementById('imageFile');
+    const imageUrlInput = document.getElementById('imageUrl');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const uploadProgress = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('progress-bar');
     
     // Set user info
     document.getElementById('teacher-name').textContent = user.name;
@@ -337,6 +359,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function openCourseModal(course = null) {
         courseForm.reset();
+        uploadedImageUrl = null;
+        imagePreview.classList.add('hidden');
+        uploadProgress.classList.add('hidden');
+
         if (course) { // Editing mode
             document.getElementById('modal-title').textContent = 'Edit Course';
             document.getElementById('title').value = course.title;
@@ -345,12 +371,90 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('level').value = course.level;
             document.getElementById('imageUrl').value = course.imageUrl || '';
             currentEditingCourseId = course.id;
+
+            // Show preview if editing and has image
+            if (course.imageUrl) {
+                previewImg.src = course.imageUrl;
+                imagePreview.classList.remove('hidden');
+            }
         } else { // Adding mode
             document.getElementById('modal-title').textContent = 'Add New Course';
             currentEditingCourseId = null;
         }
         courseModal.classList.remove('hidden');
     }
+
+    // === UPLOAD FUNCTIONS ===
+    async function uploadImageToCloudinary(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            uploadProgress.classList.remove('hidden');
+            progressBar.style.width = '0%';
+
+            const response = await fetch('/api/upload/image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Upload failed');
+            }
+
+            const data = await response.json();
+            progressBar.style.width = '100%';
+
+            setTimeout(() => {
+                uploadProgress.classList.add('hidden');
+            }, 500);
+
+            return data.url;
+        } catch (error) {
+            uploadProgress.classList.add('hidden');
+            throw error;
+        }
+    }
+
+    // Handle file input change
+    imageFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            imagePreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to Cloudinary
+        try {
+            uploadedImageUrl = await uploadImageToCloudinary(file);
+            imageUrlInput.value = uploadedImageUrl;
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Failed to upload image: ' + error.message);
+            imagePreview.classList.add('hidden');
+        }
+    });
+
+    // Handle URL input change
+    imageUrlInput.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        if (url) {
+            previewImg.src = url;
+            imagePreview.classList.remove('hidden');
+            uploadedImageUrl = url;
+        } else {
+            imagePreview.classList.add('hidden');
+        }
+    });
 
     // === STUDENT MANAGEMENT FUNCTIONS (NEW) === 
     function getInitials(name) {
@@ -533,7 +637,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             price: parseFloat(document.getElementById('price').value),
             level: document.getElementById('level').value,
             teacher_id: user.id,
-            imageUrl: document.getElementById('imageUrl').value
+            imageUrl: uploadedImageUrl || document.getElementById('imageUrl').value
         };
 
         const isEditing = !!currentEditingCourseId;

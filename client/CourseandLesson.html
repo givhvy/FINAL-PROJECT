@@ -127,7 +127,13 @@
                         </a>
                     </div>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center space-x-3">
+                    <!-- Dashboard Button for Admin/Teacher -->
+                    <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors flex items-center space-x-2">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span id="dashboard-text">Dashboard</span>
+                    </button>
+
                     <div class="ml-3 relative">
                         <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
                             <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
@@ -367,6 +373,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.clear();
         window.location.href = 'LoginPage.html';
     });
+
+    // Show Dashboard button for Admin/Teacher
+    const dashboardButton = document.getElementById('dashboard-button');
+    const dashboardText = document.getElementById('dashboard-text');
+
+    if (user.role === 'admin' || user.role === 'teacher') {
+        dashboardButton.classList.remove('hidden');
+
+        // Set appropriate text and destination
+        if (user.role === 'admin') {
+            dashboardText.textContent = 'Admin Dashboard';
+        } else if (user.role === 'teacher') {
+            dashboardText.textContent = 'Teacher Dashboard';
+        }
+
+        // Add click event listener
+        dashboardButton.addEventListener('click', () => {
+            window.location.href = 'AdminDashboard.html';
+        });
+    }
     
     // --- ENHANCED CAROUSEL LOGIC ---
     const featuredBanner = document.getElementById('featured-banner');
@@ -680,7 +706,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // Auto-enroll by creating a completed order
+            // Auto-enroll by creating a completed order of Enrollment
             const enrollResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: {
