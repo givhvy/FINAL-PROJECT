@@ -164,6 +164,7 @@
                         <button data-filter="Design" class="filter-btn">🎨 Design</button>
                         <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
                         <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                        <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
                         <button data-filter="Business" class="filter-btn">💼 Business</button>
                     </div>
                 </div>
@@ -194,7 +195,7 @@
                     <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Marketing" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">Marketing</h3></div>
                     </div>
-                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Advanced" style="background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');">
+                    <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="AI & ML" style="background-image: url('https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png');">
                         <div class="absolute inset-0 bg-black/30 flex items-end p-3 z-10"><h3 class="text-xl font-bold text-white">AI & ML</h3></div>
                     </div>
                     <div class="category-gallery-item rounded-lg shadow-lg overflow-hidden" data-category="Business" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=400');">
@@ -1320,8 +1321,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.category-gallery-item').forEach(item => {
         item.addEventListener('click', (e) => {
             const category = e.currentTarget.dataset.category;
-            const targetButton = document.querySelector(`.filter-btn[data-filter='${category}']`) || 
-                                 document.querySelector(`.filter-btn[data-filter='Advanced']`);
+            const targetButton = document.querySelector(`.filter-btn[data-filter='${category}']`);
             if (targetButton) targetButton.click();
         });
     });
