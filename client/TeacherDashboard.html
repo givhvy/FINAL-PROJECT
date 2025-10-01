@@ -280,6 +280,18 @@
                         <input type="number" id="price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="category" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">-- Select Category --</option>
+                            <option value="Development">💻 Development</option>
+                            <option value="Design">🎨 Design</option>
+                            <option value="Data Science">📈 Data Science</option>
+                            <option value="Marketing">📢 Marketing</option>
+                            <option value="AI & ML">🤖 AI & ML</option>
+                            <option value="Business">💼 Business</option>
+                        </select>
+                    </div>
+                    <div>
                         <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
                         <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option>Beginner</option>
@@ -459,6 +471,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('title').value = course.title;
             document.getElementById('description').value = course.description;
             document.getElementById('price').value = course.price;
+            document.getElementById('category').value = course.category || '';
             document.getElementById('level').value = course.level;
             document.getElementById('imageUrl').value = course.imageUrl || '';
             currentEditingCourseId = course.id;
@@ -721,11 +734,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Course form submission (Add/Edit)
     courseForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const courseData = {
             title: document.getElementById('title').value,
             description: document.getElementById('description').value,
             price: parseFloat(document.getElementById('price').value),
+            category: document.getElementById('category').value,
             level: document.getElementById('level').value,
             teacher_id: user.id,
             imageUrl: uploadedImageUrl || document.getElementById('imageUrl').value
