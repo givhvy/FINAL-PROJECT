@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses | CodeMaster</title>
+    <title>Courses | UniLearn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -96,6 +96,8 @@
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
         .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        /* Custom Logo Style */
+        .header-logo { color: #4f46e5; font-weight: 800; }
 
         /* Progress indicator animation */
         .progress-indicator {
@@ -115,9 +117,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center">
+                    <a href="CourseandLesson.html" class="flex-shrink-0 flex items-center space-x-1">
                         <svg class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                        <span class="ml-2 text-xl font-bold text-gray-800">UniLearn</span>
+                        <div class="text-2xl font-bold header-logo">UniLearn</div>
                     </a>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
                         <a href="CourseandLesson.html" class="nav-link active">Courses</a>

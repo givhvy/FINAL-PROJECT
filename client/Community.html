@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community | CodeMaster</title>
+    <title>Community | UniLearn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -468,6 +468,8 @@
             const container = document.getElementById('forum-messages-container');
             container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
 
+            console.log('Loading messages for group:', groupId);
+
             try {
                 const response = await fetch(`${API_BASE}/groups/${groupId}/messages`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -475,6 +477,8 @@
 
                 if (!response.ok) throw new Error('Failed to fetch messages');
                 const messages = await response.json();
+
+                console.log('Received messages:', messages);
 
                 if (messages.length === 0) {
                     container.innerHTML = '<div class="text-center py-4 text-gray-500">No messages yet. Start the conversation!</div>';
@@ -512,6 +516,8 @@
 
             if (!message || !currentGroupId) return;
 
+            console.log('Sending message:', message, 'to group:', currentGroupId, 'by user:', user.id);
+
             try {
                 const response = await fetch(`${API_BASE}/groups/${currentGroupId}/messages`, {
                     method: 'POST',
@@ -526,6 +532,9 @@
                 });
 
                 if (!response.ok) throw new Error('Failed to send message');
+
+                const result = await response.json();
+                console.log('Message sent successfully:', result);
 
                 input.value = '';
                 await loadForumMessages(currentGroupId); // Refresh messages
@@ -888,9 +897,25 @@
             document.getElementById('close-groups-modal').addEventListener('click', () => {
                 document.getElementById('available-groups-modal').classList.add('hidden');
             });
+
+            // Close available groups modal when clicking outside
+            document.getElementById('available-groups-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'available-groups-modal') {
+                    document.getElementById('available-groups-modal').classList.add('hidden');
+                }
+            });
+
             document.getElementById('close-forum-modal').addEventListener('click', () => {
                 document.getElementById('group-forum-modal').classList.add('hidden');
             });
+
+            // Close forum modal when clicking outside
+            document.getElementById('group-forum-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'group-forum-modal') {
+                    document.getElementById('group-forum-modal').classList.add('hidden');
+                }
+            });
+
             document.getElementById('send-message-btn').addEventListener('click', sendForumMessage);
             document.getElementById('new-message-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
