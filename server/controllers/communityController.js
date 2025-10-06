@@ -423,9 +423,9 @@ exports.getGroupMessages = async (req, res) => {
         const db = getFirestore();
         const { groupId } = req.params;
 
+        // Query without orderBy to avoid index requirement
         const messagesQuery = db.collection('group_messages')
             .where('group_id', '==', groupId)
-            .orderBy('created_at', 'asc')
             .limit(50);
 
         const messagesSnapshot = await messagesQuery.get();
@@ -450,6 +450,13 @@ exports.getGroupMessages = async (req, res) => {
                 user: userData
             };
         }));
+
+        // Sort messages by created_at in JavaScript instead of Firestore
+        messages.sort((a, b) => {
+            const dateA = new Date(a.created_at || 0);
+            const dateB = new Date(b.created_at || 0);
+            return dateA - dateB;
+        });
 
         res.status(200).json(messages);
     } catch (err) {
