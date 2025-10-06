@@ -34,6 +34,12 @@ router.post('/challenges', communityController.createChallenge);
 // GET /api/community/challenges -> Get all active challenges
 router.get('/challenges', communityController.getActiveChallenges);
 
+// GET /api/community/challenges/:challengeId -> Get single challenge by ID
+router.get('/challenges/:challengeId', communityController.getChallengeById);
+
+// PUT /api/community/challenges/:challengeId -> Update challenge (Admin only)
+router.put('/challenges/:challengeId', communityController.updateChallenge);
+
 // DELETE /api/community/challenges/:challengeId -> Delete challenge (Admin only)
 router.delete('/challenges/:challengeId', communityController.deleteChallenge);
 

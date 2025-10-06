@@ -3,11 +3,14 @@ const admin = require('firebase-admin');
 // Tạo blog post mới (chỉ admin/teacher)
 const createBlogPost = async (req, res) => {
     try {
-        const { title, content, excerpt, featured_image, tags, status = 'published' } = req.body;
+        const { title, content, excerpt, featured_image, tags, status = 'draft' } = req.body;
         const { user } = req; // Từ middleware xác thực
+
+        console.log('Create blog post request:', { title, hasContent: !!content, user: user?.email });
 
         // Kiểm tra quyền (chỉ admin hoặc teacher)
         if (!user || (user.role !== 'admin' && user.role !== 'teacher')) {
+            console.error('Access denied:', { user: user?.email, role: user?.role });
             return res.status(403).json({
                 error: 'Access denied. Only admins and teachers can create blog posts.'
             });
@@ -15,6 +18,7 @@ const createBlogPost = async (req, res) => {
 
         // Validate required fields
         if (!title || !content) {
+            console.error('Missing required fields:', { hasTitle: !!title, hasContent: !!content });
             return res.status(400).json({
                 error: 'Title and content are required.'
             });
