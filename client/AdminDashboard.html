@@ -429,8 +429,9 @@
                     </div>
 
                     <div>
-                        <label for="blog-content" class="block text-sm font-medium text-gray-700">Content *</label>
-                        <textarea id="blog-content" rows="15" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Write your blog post content here..."></textarea>
+                        <label for="blog-content" class="block text-sm font-medium text-gray-700 mb-2">Content *</label>
+                        <div id="blog-content-editor" style="height: 400px; background: white;"></div>
+                        <input type="hidden" id="blog-content" required>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -478,7 +479,50 @@
         </div>
     </div>
 
+    <!-- Challenge Modal -->
+    <div id="challenge-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-2xl w-full">
+            <h2 id="challenge-modal-title" class="text-2xl font-bold mb-6">Create New Challenge</h2>
+            <form id="challenge-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="challenge-title" class="block text-sm font-medium text-gray-700">Title *</label>
+                        <input type="text" id="challenge-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter challenge title">
+                    </div>
+                    <div>
+                        <label for="challenge-description" class="block text-sm font-medium text-gray-700">Description *</label>
+                        <textarea id="challenge-description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Describe the challenge..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="challenge-end-date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                            <input type="date" id="challenge-end-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="challenge-reward-type" class="block text-sm font-medium text-gray-700">Reward Type</label>
+                            <input type="text" id="challenge-reward-type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Badge, Points">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="challenge-status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="challenge-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-challenge-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Challenge</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const token = localStorage.getItem('token');
@@ -781,11 +825,40 @@
         // Global blog data
         let allBlogPosts = [];
         let currentEditingBlogId = null;
+        let blogEditor = null;
 
         // Blog modal elements
         const blogModal = document.getElementById('blog-modal');
         const blogForm = document.getElementById('blog-form');
         const blogModalTitle = document.getElementById('blog-modal-title');
+
+        // Initialize Quill editor for blog content
+        function initBlogEditor() {
+            if (typeof Quill !== 'undefined') {
+                const toolbarOptions = [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ];
+
+                blogEditor = new Quill('#blog-content-editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: toolbarOptions
+                    },
+                    placeholder: 'Write your blog post content here... (You can paste from Google Docs and formatting will be preserved)'
+                });
+            }
+        }
 
         // Fetch and render blog posts
         async function fetchAndRenderBlogPosts() {
@@ -852,15 +925,15 @@
                         <td class="px-4 py-3">${createdDate}</td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
-                                <button onclick="editBlogPost('${post.id}')" class="text-blue-600 hover:bg-blue-50 p-1 rounded" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                                <button data-blog-id="${post.id}" data-action="edit" class="blog-action-btn text-blue-600 hover:bg-blue-50 p-1 rounded" title="Edit">
+                                    <i class="fas fa-edit pointer-events-none"></i>
                                 </button>
-                                <button onclick="deleteBlogPost('${post.id}')" class="text-red-600 hover:bg-red-50 p-1 rounded" title="Delete">
-                                    <i class="fas fa-trash"></i>
+                                <button data-blog-id="${post.id}" data-action="delete" class="blog-action-btn text-red-600 hover:bg-red-50 p-1 rounded" title="Delete">
+                                    <i class="fas fa-trash pointer-events-none"></i>
                                 </button>
                                 ${post.status === 'published' ? `
-                                    <button onclick="viewBlogPost('${post.slug || post.id}')" class="text-green-600 hover:bg-green-50 p-1 rounded" title="View">
-                                        <i class="fas fa-eye"></i>
+                                    <button data-blog-slug="${post.slug || post.id}" data-action="view" class="blog-action-btn text-green-600 hover:bg-green-50 p-1 rounded" title="View">
+                                        <i class="fas fa-eye pointer-events-none"></i>
                                     </button>
                                 ` : ''}
                             </div>
@@ -881,13 +954,24 @@
                 if (post) {
                     document.getElementById('blog-title').value = post.title || '';
                     document.getElementById('blog-excerpt').value = post.excerpt || '';
-                    document.getElementById('blog-content').value = post.content || '';
+
+                    // Set content to Quill editor
+                    if (blogEditor) {
+                        // Use clipboard to properly parse HTML content
+                        const delta = blogEditor.clipboard.convert(post.content || '');
+                        blogEditor.setContents(delta, 'silent');
+                    }
+
                     document.getElementById('blog-featured-image').value = post.featured_image || '';
                     document.getElementById('blog-status').value = post.status || 'draft';
                     document.getElementById('blog-tags').value = (post.tags || []).join(', ');
                 }
             } else {
                 blogModalTitle.textContent = 'Create New Blog Post';
+                // Clear editor content for new post
+                if (blogEditor) {
+                    blogEditor.setText('');
+                }
             }
 
             blogModal.classList.remove('hidden');
@@ -935,10 +1019,24 @@
         async function handleBlogFormSubmit(e) {
             e.preventDefault();
 
+            // Get HTML content from Quill editor
+            let content = '';
+            if (blogEditor) {
+                content = blogEditor.root.innerHTML;
+                // Set to hidden input for form validation
+                document.getElementById('blog-content').value = content;
+            }
+
+            // Validate content is not empty
+            if (!content || content === '<p><br></p>') {
+                alert('Please add content to your blog post.');
+                return;
+            }
+
             const blogData = {
                 title: document.getElementById('blog-title').value,
                 excerpt: document.getElementById('blog-excerpt').value,
-                content: document.getElementById('blog-content').value,
+                content: content,
                 featured_image: document.getElementById('blog-featured-image').value,
                 status: document.getElementById('blog-status').value,
                 tags: document.getElementById('blog-tags').value
@@ -951,6 +1049,10 @@
             const url = currentEditingBlogId ? `/api/blog/${currentEditingBlogId}` : '/api/blog';
 
             try {
+                console.log('Sending blog post data:', blogData);
+                console.log('Request URL:', url);
+                console.log('Method:', method);
+
                 const response = await fetch(url, {
                     method,
                     headers: {
@@ -960,16 +1062,23 @@
                     body: JSON.stringify(blogData)
                 });
 
+                console.log('Response status:', response.status);
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to save blog post');
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.error || `Failed to save blog post (${response.status})`);
                 }
+
+                const result = await response.json();
+                console.log('Success response:', result);
 
                 alert(`Blog post ${currentEditingBlogId ? 'updated' : 'created'} successfully!`);
                 closeBlogModal();
                 await fetchAndRenderBlogPosts();
             } catch (error) {
                 console.error('Error saving blog post:', error);
+                console.error('Error stack:', error.stack);
                 alert(`Error: ${error.message}`);
             }
         }
@@ -994,6 +1103,15 @@
 
         // --- CHALLENGES MANAGEMENT FUNCTIONS ---
 
+        // Global challenges data
+        let allChallenges = [];
+        let currentEditingChallengeId = null;
+
+        // Challenge modal elements
+        const challengeModal = document.getElementById('challenge-modal');
+        const challengeForm = document.getElementById('challenge-form');
+        const challengeModalTitle = document.getElementById('challenge-modal-title');
+
         // Fetch and display challenges
         async function fetchAndRenderChallenges() {
             try {
@@ -1002,9 +1120,9 @@
                 });
 
                 if (!response.ok) throw new Error('Failed to fetch challenges');
-                const challenges = await response.json();
+                allChallenges = await response.json();
 
-                displayChallenges(challenges);
+                displayChallenges(allChallenges);
             } catch (error) {
                 console.error('Error fetching challenges:', error);
                 document.getElementById('challenges-container').innerHTML = `
@@ -1071,13 +1189,17 @@
                         </div>
 
                         <div class="flex justify-end space-x-2">
-                            <button onclick="viewChallengeDetails('${challenge.id}')"
-                                    class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm">
-                                View Details
+                            <button data-challenge-id="${challenge.id}" data-action="view"
+                                    class="challenge-action-btn px-3 py-1 text-green-600 hover:bg-green-50 rounded text-sm" title="View Details">
+                                <i class="fas fa-eye pointer-events-none"></i>
                             </button>
-                            <button onclick="deleteChallenge('${challenge.id}')"
-                                    class="px-3 py-1 text-red-600 hover:bg-red-50 rounded text-sm">
-                                Delete
+                            <button data-challenge-id="${challenge.id}" data-action="edit"
+                                    class="challenge-action-btn px-3 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm" title="Edit">
+                                <i class="fas fa-edit pointer-events-none"></i>
+                            </button>
+                            <button data-challenge-id="${challenge.id}" data-action="delete"
+                                    class="challenge-action-btn px-3 py-1 text-red-600 hover:bg-red-50 rounded text-sm" title="Delete">
+                                <i class="fas fa-trash pointer-events-none"></i>
                             </button>
                         </div>
                     </div>
@@ -1085,49 +1207,112 @@
             }).join('');
         }
 
-        // Create new challenge
-        async function createChallenge() {
-            const title = prompt('Enter challenge title:');
-            if (!title) return;
+        // Open challenge modal for create/edit
+        function openChallengeModal(challengeId = null) {
+            currentEditingChallengeId = challengeId;
+            challengeForm.reset();
 
-            const description = prompt('Enter challenge description:');
-            if (!description) return;
+            if (challengeId) {
+                challengeModalTitle.textContent = 'Edit Challenge';
+                const challenge = allChallenges.find(c => c.id === challengeId);
+                if (challenge) {
+                    document.getElementById('challenge-title').value = challenge.title || '';
+                    document.getElementById('challenge-description').value = challenge.description || '';
 
-            const endDate = prompt('Enter end date (YYYY-MM-DD):');
-            if (!endDate) return;
+                    // Format date for input type="date"
+                    if (challenge.end_date) {
+                        const endDate = new Date(challenge.end_date);
+                        const formattedDate = endDate.toISOString().split('T')[0];
+                        document.getElementById('challenge-end-date').value = formattedDate;
+                    }
 
-            const rewardType = prompt('Enter reward type (optional):') || '';
+                    document.getElementById('challenge-reward-type').value = challenge.reward_type || '';
+                    document.getElementById('challenge-status').value = challenge.status || 'active';
+                }
+            } else {
+                challengeModalTitle.textContent = 'Create New Challenge';
+                // Set default end date to 30 days from now
+                const defaultEndDate = new Date();
+                defaultEndDate.setDate(defaultEndDate.getDate() + 30);
+                document.getElementById('challenge-end-date').value = defaultEndDate.toISOString().split('T')[0];
+            }
+
+            challengeModal.classList.remove('hidden');
+        }
+
+        // Close challenge modal
+        function closeChallengeModal() {
+            challengeModal.classList.add('hidden');
+        }
+
+        // Handle challenge form submission
+        async function handleChallengeFormSubmit(e) {
+            e.preventDefault();
+
+            const challengeData = {
+                title: document.getElementById('challenge-title').value,
+                description: document.getElementById('challenge-description').value,
+                end_date: document.getElementById('challenge-end-date').value,
+                reward_type: document.getElementById('challenge-reward-type').value,
+                status: document.getElementById('challenge-status').value
+            };
+
+            if (!currentEditingChallengeId) {
+                challengeData.created_by = user.id;
+            }
+
+            const method = currentEditingChallengeId ? 'PUT' : 'POST';
+            const url = currentEditingChallengeId
+                ? `http://localhost:5000/api/community/challenges/${currentEditingChallengeId}`
+                : 'http://localhost:5000/api/community/challenges';
 
             try {
-                const response = await fetch('http://localhost:5000/api/community/challenges', {
-                    method: 'POST',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        title,
-                        description,
-                        end_date: endDate,
-                        reward_type: rewardType,
-                        created_by: user.id
-                    })
+                    body: JSON.stringify(challengeData)
                 });
 
-                if (!response.ok) throw new Error('Failed to create challenge');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to save challenge');
+                }
 
-                alert('Challenge created successfully!');
-                await fetchAndRenderChallenges(); // Refresh the list
-
+                alert(`Challenge ${currentEditingChallengeId ? 'updated' : 'created'} successfully!`);
+                closeChallengeModal();
+                await fetchAndRenderChallenges();
             } catch (error) {
-                console.error('Error creating challenge:', error);
-                alert('Failed to create challenge. Please try again.');
+                console.error('Error saving challenge:', error);
+                alert(`Error: ${error.message}`);
             }
         }
 
-        // View challenge details (placeholder for now)
-        function viewChallengeDetails(challengeId) {
-            alert(`Challenge details functionality will be implemented soon.\nChallenge ID: ${challengeId}`);
+        // Edit challenge
+        function editChallenge(challengeId) {
+            openChallengeModal(challengeId);
+        }
+
+        // View challenge details
+        async function viewChallengeDetails(challengeId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/community/challenges/${challengeId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch challenge details');
+
+                const challenge = await response.json();
+                const endDate = new Date(challenge.end_date).toLocaleDateString();
+                const createdDate = challenge.created_at ? new Date(challenge.created_at).toLocaleDateString() : 'N/A';
+
+                alert(`Challenge Details:\n\nTitle: ${challenge.title}\nDescription: ${challenge.description}\nEnd Date: ${endDate}\nStatus: ${challenge.status}\nParticipants: ${challenge.participants_count || 0}\nReward: ${challenge.reward_type || 'None'}\nCreated: ${createdDate}`);
+            } catch (error) {
+                console.error('Error fetching challenge details:', error);
+                alert('Failed to load challenge details.');
+            }
         }
 
         // Delete challenge
@@ -1479,8 +1664,26 @@
         document.getElementById('cancel-subscription-btn').addEventListener('click', closeSubscriptionModal);
         subscriptionForm.addEventListener('submit', handleSubscriptionFormSubmit);
 
-        // Event listener for Create Challenge button
-        document.getElementById('create-challenge-btn').addEventListener('click', createChallenge);
+        // Event listeners for Challenge Management
+        document.getElementById('create-challenge-btn').addEventListener('click', () => openChallengeModal());
+        document.getElementById('cancel-challenge-btn').addEventListener('click', closeChallengeModal);
+        challengeForm.addEventListener('submit', handleChallengeFormSubmit);
+
+        // Event delegation for challenge action buttons
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('challenge-action-btn')) {
+                const challengeId = e.target.dataset.challengeId;
+                const action = e.target.dataset.action;
+
+                if (action === 'view') {
+                    await viewChallengeDetails(challengeId);
+                } else if (action === 'edit') {
+                    editChallenge(challengeId);
+                } else if (action === 'delete') {
+                    await deleteChallenge(challengeId);
+                }
+            }
+        });
 
         // Event listeners for Blog Management
         document.getElementById('create-blog-btn').addEventListener('click', () => openBlogModal());
@@ -1489,11 +1692,32 @@
         document.getElementById('blog-status-filter').addEventListener('change', filterBlogPosts);
         document.getElementById('blog-search').addEventListener('input', filterBlogPosts);
 
+        // Event delegation for blog action buttons
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('blog-action-btn')) {
+                const action = e.target.dataset.action;
+
+                if (action === 'edit') {
+                    const blogId = e.target.dataset.blogId;
+                    editBlogPost(blogId);
+                } else if (action === 'delete') {
+                    const blogId = e.target.dataset.blogId;
+                    await deleteBlogPost(blogId);
+                } else if (action === 'view') {
+                    const blogSlug = e.target.dataset.blogSlug;
+                    viewBlogPost(blogSlug);
+                }
+            }
+        });
+
         // Event listeners for User Roles Management
         document.getElementById('assign-role-btn').addEventListener('click', assignRole);
         document.getElementById('role-filter').addEventListener('change', filterUsersByRole);
         document.getElementById('user-search').addEventListener('input', filterUsersByRole);
 
+
+        // Initialize TinyMCE editor on page load
+        initBlogEditor();
 
         // Initial calls
         await fetchAllData();

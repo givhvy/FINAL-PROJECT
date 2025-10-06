@@ -382,15 +382,89 @@ exports.getActiveChallenges = async (req, res) => {
             .where('status', '==', 'active')
             .get();
 
-        const challenges = challengesSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const challenges = await Promise.all(challengesSnapshot.docs.map(async (doc) => {
+            const challengeData = doc.data();
+
+            // Get participants count
+            const participantsQuery = db.collection('challenge_participants')
+                .where('challenge_id', '==', doc.id);
+            const participantsSnapshot = await participantsQuery.get();
+
+            return {
+                id: doc.id,
+                ...challengeData,
+                participants_count: participantsSnapshot.size
+            };
         }));
 
         res.status(200).json(challenges);
     } catch (err) {
         console.error('Get Active Challenges Error:', err);
         res.status(500).json({ error: 'Failed to fetch active challenges.' });
+    }
+};
+
+// Get single challenge by ID
+exports.getChallengeById = async (req, res) => {
+    try {
+        const db = getFirestore();
+        const { challengeId } = req.params;
+
+        const challengeRef = db.collection('challenges').doc(challengeId);
+        const challengeSnap = await challengeRef.get();
+
+        if (!challengeSnap.exists) {
+            return res.status(404).json({ error: 'Challenge not found.' });
+        }
+
+        const challengeData = challengeSnap.data();
+
+        // Get participants count
+        const participantsQuery = db.collection('challenge_participants')
+            .where('challenge_id', '==', challengeId);
+        const participantsSnapshot = await participantsQuery.get();
+
+        res.status(200).json({
+            id: challengeSnap.id,
+            ...challengeData,
+            participants_count: participantsSnapshot.size
+        });
+    } catch (err) {
+        console.error('Get Challenge By ID Error:', err);
+        res.status(500).json({ error: 'Failed to fetch challenge.' });
+    }
+};
+
+// Update a challenge (Admin only)
+exports.updateChallenge = async (req, res) => {
+    try {
+        const db = getFirestore();
+        const { challengeId } = req.params;
+
+        const challengeRef = db.collection('challenges').doc(challengeId);
+        const challengeSnap = await challengeRef.get();
+
+        if (!challengeSnap.exists) {
+            return res.status(404).json({ error: 'Challenge not found.' });
+        }
+
+        const updateData = {
+            ...req.body,
+            updated_at: new Date().toISOString()
+        };
+
+        // Remove fields that shouldn't be updated via this endpoint
+        delete updateData.created_at;
+        delete updateData.created_by;
+        delete updateData.participants_count;
+
+        await challengeRef.update(updateData);
+
+        const updatedSnap = await challengeRef.get();
+        res.status(200).json({ id: updatedSnap.id, ...updatedSnap.data() });
+    } catch (err) {
+        console.error('Update Challenge Error:', err);
+        res.status(500).json({ error: 'Failed to update challenge.' });
     }
 };
 
