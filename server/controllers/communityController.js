@@ -494,18 +494,22 @@ exports.deleteChallenge = async (req, res) => {
 // Get forum messages for a study group
 exports.getGroupMessages = async (req, res) => {
     try {
+        console.log('Getting messages for group:', req.params.groupId);
         const db = getFirestore();
         const { groupId } = req.params;
 
-        // Query without orderBy to avoid index requirement
-        const messagesQuery = db.collection('group_messages')
-            .where('group_id', '==', groupId)
-            .limit(50);
+        // Get all messages and filter in JavaScript to avoid index requirement
+        const messagesSnapshot = await db.collection('group_messages').get();
 
-        const messagesSnapshot = await messagesQuery.get();
+        console.log('Found total messages:', messagesSnapshot.size);
 
-        const messages = await Promise.all(messagesSnapshot.docs.map(async (messageDoc) => {
+        // Filter messages for this group
+        const groupMessages = messagesSnapshot.docs.filter(doc => doc.data().group_id === groupId);
+        console.log('Messages for this group:', groupMessages.length);
+
+        const messages = await Promise.all(groupMessages.map(async (messageDoc) => {
             const messageData = messageDoc.data();
+            console.log('Processing message:', messageDoc.id, messageData);
 
             // Get user information
             let userData = null;
@@ -532,9 +536,11 @@ exports.getGroupMessages = async (req, res) => {
             return dateA - dateB;
         });
 
+        console.log('Returning messages:', messages.length);
         res.status(200).json(messages);
     } catch (err) {
         console.error('Get Group Messages Error:', err);
+        console.error('Error stack:', err.stack);
         res.status(500).json({ error: 'Failed to fetch group messages.' });
     }
 };
