@@ -99,6 +99,10 @@
         /* Custom Logo Style */
         .header-logo { color: #4f46e5; font-weight: 800; }
 
+        /* Mobile Menu Styles */
+        .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .mobile-menu.active { max-height: 500px; }
+
         /* Progress indicator animation */
         .progress-indicator {
             background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ef4444, #10b981);
@@ -133,18 +137,42 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
+                    <!-- Mobile menu button -->
+                    <button type="button" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none" id="mobile-menu-button">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
                     <!-- Dashboard Button for Admin/Teacher -->
-                    <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors flex items-center space-x-2">
+                    <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors sm:flex items-center space-x-2">
                         <i class="fas fa-tachometer-alt"></i>
                         <span id="dashboard-text">Dashboard</span>
                     </button>
 
-                    <div class="ml-3 relative">
+                    <div class="ml-3 relative hidden sm:block">
                         <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
                             <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
                         </button>
                     </div>
-                    <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
+                    <button id="logout-button" class="ml-4 hidden sm:block text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="mobile-menu sm:hidden bg-white border-t border-gray-200" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="/courses" class="block px-3 py-2 rounded-md text-base font-medium text-blue-600 bg-blue-50">Courses</a>
+                    <a href="/account" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">My Learning</a>
+                    <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Community</a>
+                    <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Blog</a>
+                    <a href="/payment" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 bg-indigo-50">
+                        <i class="fas fa-star text-yellow-400 mr-2"></i>Upgrade
+                    </a>
+                    <button id="mobile-profile-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-user mr-2"></i>Profile
+                    </button>
+                    <button id="mobile-logout-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
                 </div>
             </div>
         </div>
@@ -387,6 +415,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.clear();
         window.location.href = '/login';
     });
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            const icon = mobileMenuButton.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Mobile profile button
+        document.getElementById('mobile-profile-button').addEventListener('click', () => {
+            if (user.role === 'teacher') {
+                window.location.href = '/teacher';
+            } else if (user.role === 'admin') {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/profile';
+            }
+        });
+
+        // Mobile logout button
+        document.getElementById('mobile-logout-button').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
 
     // Show Dashboard button for Admin/Teacher
     const dashboardButton = document.getElementById('dashboard-button');
