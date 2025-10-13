@@ -293,7 +293,7 @@
         const token = localStorage.getItem('token');
         
         if (!token || !user) {
-            window.location.href = 'LoginPage.html';
+            window.location.href = '/login';
         }
 
         function getUserInitials() {
@@ -884,12 +884,12 @@
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear();
-                window.location.href = 'LoginPage.html';
+                window.location.href = '/login';
             });
 
             // Redirect user profile click (Header avatar)
             document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = 'ProfilePage.html';
+                window.location.href = '/profile';
             });
             
             // Study Groups Event Listeners

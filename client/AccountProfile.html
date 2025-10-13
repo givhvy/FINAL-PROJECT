@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!token || !user) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <p class="text-sm text-gray-500">Instructor: ${course.teacher ? course.teacher.name : 'N/A'}</p>
                             </div>
                         </div>
-                        <a href="CourseandLesson.html#lesson/${course.id}" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
+                        <a href="/courses#lesson/${course.id}" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
                             Continue
                         </a>
                     </div>
@@ -355,12 +355,12 @@ async function fetchAndRenderLearningProgress() {
     document.getElementById('user-avatar').textContent = getUserInitials(user.name);
     
     document.getElementById('user-menu-button').addEventListener('click', () => {
-        window.location.href = 'ProfilePage.html';
+        window.location.href = '/profile';
     });
     
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
     });
 
     // Main Tab Switching

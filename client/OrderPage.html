@@ -281,8 +281,8 @@
             try {
                 // Prepare URLs for Stripe redirection
                 // NOTE: {CHECKOUT_SESSION_ID} là biến Stripe sẽ thay thế trong quá trình chuyển hướng
-                const successUrl = `${window.location.origin}/SuccessPage.html?session_id={CHECKOUT_SESSION_ID}`;
-                const cancelUrl = `${window.location.origin}/CancelPage.html`;
+                const successUrl = `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`;
+                const cancelUrl = `${window.location.origin}/cancel`;
 
                 const response = await fetch('/api/payments/create-checkout-session', {
                     method: 'POST',
@@ -329,12 +329,12 @@
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear();
-                window.location.href = 'LoginPage.html';
+                window.location.href = '/login';
             });
 
             // User menu redirect
             document.getElementById('user-menu-button').addEventListener('click', () => {
-                window.location.href = 'AccountProfile.html';
+                window.location.href = '/account';
             });
         });
     </script>
