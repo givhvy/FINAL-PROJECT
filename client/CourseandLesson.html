@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentArea.innerHTML = `<div class="bg-white rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
         try {
             console.log('Fetching lesson:', lessonId);
-            const res = await fetch(`http://localhost:5000/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             console.log('Response status:', res.status);
             if (!res.ok) {
                 const errorText = await res.text();
