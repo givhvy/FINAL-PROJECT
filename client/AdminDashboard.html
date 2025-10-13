@@ -1115,7 +1115,7 @@
         // Fetch and display challenges
         async function fetchAndRenderChallenges() {
             try {
-                const response = await fetch('http://localhost:5000/api/community/challenges', {
+                const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community/challenges', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -1298,7 +1298,7 @@
         // View challenge details
         async function viewChallengeDetails(challengeId) {
             try {
-                const response = await fetch(`http://localhost:5000/api/community/challenges/${challengeId}`, {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/community/challenges/${challengeId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -1320,7 +1320,7 @@
             if (!confirm('Are you sure you want to delete this challenge?')) return;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/community/challenges/${challengeId}`, {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/community/challenges/${challengeId}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
