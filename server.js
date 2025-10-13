@@ -5,7 +5,33 @@ require('dotenv').config();
 const admin = require('firebase-admin');
 
 // Import khóa dịch vụ của Firebase
-const serviceAccount = require('./serviceAccountKey.json');
+// Hỗ trợ đọc từ biến môi trường cho Vercel deployment
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+  // Nếu có biến môi trường JSON string (dùng cho Vercel)
+  try {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+  } catch (error) {
+    console.error('Error parsing FIREBASE_SERVICE_ACCOUNT_KEY:', error);
+    process.exit(1);
+  }
+} else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+  // Hoặc đọc từ các biến môi trường riêng lẻ
+  serviceAccount = {
+    type: "service_account",
+    project_id: process.env.FIREBASE_PROJECT_ID,
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  };
+} else {
+  // Fallback cho local development
+  try {
+    serviceAccount = require('./serviceAccountKey.json');
+  } catch (error) {
+    console.error('Error: Firebase credentials not found. Please set environment variables or add serviceAccountKey.json');
+    process.exit(1);
+  }
+}
 
 // ====== 2. IMPORT CÁC ROUTE ======
 const authRoutes = require('./server/routes/authRoutes');
