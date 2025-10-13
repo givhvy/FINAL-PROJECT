@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // --- AUTH CHECK & UI SETUP ---
     if (!token || !user) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
     
@@ -376,16 +376,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('user-avatar').textContent = getUserInitials(user.name);
     document.getElementById('user-menu-button').addEventListener('click', () => {
         if (user.role === 'teacher') {
-            window.location.href = 'TeacherDashboard.html';
+            window.location.href = '/teacher';
         } else if (user.role === 'admin') {
-            window.location.href = 'AdminDashboard.html';
+            window.location.href = '/admin';
         } else {
-            window.location.href = 'ProfilePage.html';
+            window.location.href = '/profile';
         }
     });
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
     });
 
     // Show Dashboard button for Admin/Teacher
@@ -405,9 +405,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Add click event listener
         dashboardButton.addEventListener('click', () => {
             if (user.role === 'admin') {
-                window.location.href = 'AdminDashboard.html';
+                window.location.href = '/admin';
             } else if (user.role === 'teacher') {
-                window.location.href = 'TeacherDashboard.html';
+                window.location.href = '/teacher';
             }
         });
     }

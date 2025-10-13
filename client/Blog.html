@@ -395,7 +395,7 @@
 
                 // Add click event listener
                 dashboardButton.addEventListener('click', () => {
-                    window.location.href = 'AdminDashboard.html';
+                    window.location.href = '/admin';
                 });
             }
         }
@@ -1454,13 +1454,13 @@
 
             // Redirect user profile click
             document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = 'ProfilePage.html';
+                window.location.href = '/profile';
             });
 
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear();
-                window.location.href = 'LoginPage.html';
+                window.location.href = '/login';
             });
         }
 
