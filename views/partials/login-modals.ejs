@@ -1,0 +1,49 @@
+<!-- Forgot Password Modal -->
+<div id="forgot-password-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full flex items-center justify-center z-40">
+    <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-sm w-full">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Reset Password</h2>
+        <p class="text-sm text-gray-600 mb-6" id="reset-modal-text">Enter your email address and we'll send you a secure link or code to reset your password.</p>
+
+        <form id="forgot-password-form" class="space-y-4">
+            <div>
+                <label for="reset-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="reset-email" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" placeholder="your@email.com" required>
+            </div>
+            <div id="reset-message-1" class="hidden text-sm p-3 rounded-lg"></div>
+
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" id="cancel-reset-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancel</button>
+                <button type="submit" id="send-reset-email-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold">Send Link</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Verify Reset Modal -->
+<div id="verify-reset-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full flex items-center justify-center z-40">
+    <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-sm w-full">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Verify & Reset</h2>
+        <p class="text-sm text-gray-600 mb-6">Enter the 6-digit code sent to your email and set a new password.</p>
+
+        <form id="reset-password-form" class="space-y-4">
+            <input type="hidden" id="reset-user-id">
+            <input type="hidden" id="reset-email-field">
+
+            <div>
+                <label for="verification-code" class="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+                <input type="text" id="verification-code" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 text-center text-xl font-mono tracking-widest focus:outline-none transition-all" maxlength="6" required>
+            </div>
+            <div>
+                <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <input type="password" id="new-password" class="input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none transition-all" required>
+            </div>
+
+            <div id="reset-message-2" class="hidden text-sm p-3 rounded-lg"></div>
+
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" id="back-to-login-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Back to Login</button>
+                <button type="submit" id="verify-and-reset-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">Reset Password</button>
+            </div>
+        </form>
+    </div>
+</div>

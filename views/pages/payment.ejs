@@ -1,0 +1,497 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Plan | UniLearn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        .plan-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+        }
+        .nav-link {
+            padding: 0.25rem 0.5rem;
+            color: #4b5563;
+            transition: color 0.2s, border-color 0.2s;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: #1f2937;
+            border-bottom-color: #6366f1;
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        .faq-icon.rotate-180 {
+             transform: rotate(180deg);
+        }
+    </style>
+    <script src="/js/darkmode.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="/css/darkmode-improved.css">
+</head>
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header đồng bộ -->
+        <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+
+                    <!-- Dark Mode Toggle -->
+                    <label class="relative inline-flex items-center cursor-pointer mr-3">
+                        <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                        </span>
+                    </label>
+                        <a href="/" class="flex-shrink-0 flex items-center">
+                            <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
+                            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-gray-200">UniLearn</span>
+                        </a>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
+                            <a href="/courses" class="nav-link">Courses</a>
+                            <a href="/account" class="nav-link">My Learning</a>
+                            <a href="/quiz" class="nav-link">Quizz</a>
+                            <a href="/community" class="nav-link">Community</a>
+                            <a href="/payment" class="nav-link active text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span>Upgrade</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="ml-3 relative">
+                            <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
+                                 <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
+                            </button>
+                        </div>
+                        <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800 dark:text-gray-200">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-12 flex-grow">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-200 mb-4">Choose Your Learning Journey</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Unlock your potential with our flexible subscription plans designed to fit your learning style and goals.</p>
+            </div>
+
+            <!-- Student Verification Section -->
+            <div class="max-w-2xl mx-auto mb-12">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-indigo-200 rounded-2xl p-8 shadow-lg">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
+                            <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">Student Discount - 100% FREE!</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Are you a student? Verify your educational email to get full access for free!</p>
+                    </div>
+
+                    <form id="student-verification-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Educational Email Address</label>
+                            <div class="relative">
+                                <input type="email" id="student-email" required
+                                    placeholder="your.name@university.edu"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Must be a valid .edu or .ac email address</p>
+                        </div>
+
+                        <button type="submit" id="verify-student-btn"
+                            class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Verify Student Status
+                        </button>
+                    </form>
+
+                    <div id="verification-result" class="mt-4 hidden"></div>
+                </div>
+            </div>
+
+            <!-- Billing Toggle -->
+            <div class="flex justify-center mb-12">
+                <div class="bg-gray-100 dark:bg-gray-700 p-1 rounded-full inline-flex items-center">
+                    <button id="monthly-btn" class="px-6 py-2 rounded-full bg-indigo-600 text-white font-medium">Monthly</button>
+                    <button id="annual-btn" class="px-6 py-2 rounded-full text-gray-700 dark:text-gray-300 font-medium">Annual (Save 20%)</button>
+                </div>
+            </div>
+
+            <!-- Subscription Plans -->
+            <div id="plans-container" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Các gói subscription sẽ được tải vào đây bằng JavaScript -->
+                 <div class="col-span-3 text-center text-gray-500">Loading plans...</div>
+            </div>
+            
+            <!-- FAQ Section -->
+            <div class="mt-20 max-w-3xl mx-auto">
+                <!-- FAQ content giữ nguyên -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!token || !user) {
+                window.location.href = 'LoginPage.html';
+                return;
+            }
+
+            // --- UI ELEMENTS ---
+            const plansContainer = document.getElementById('plans-container');
+            const monthlyBtn = document.getElementById('monthly-btn');
+            const annualBtn = document.getElementById('annual-btn');
+            const studentForm = document.getElementById('student-verification-form');
+            const studentEmailInput = document.getElementById('student-email');
+            const verificationResult = document.getElementById('verification-result');
+            let isAnnual = false;
+            let allPlans = [];
+
+            // --- FUNCTIONS ---
+            function getUserInitials(user) {
+                if (user && user.name) {
+                    const parts = user.name.split(' ');
+                    let initials = parts[0].charAt(0).toUpperCase();
+                    if (parts.length > 1) initials += parts[parts.length - 1].charAt(0).toUpperCase();
+                    return initials;
+                }
+                return 'GS';
+            }
+
+            // Kiểm tra email education (kết thúc bằng .edu hoặc .ac)
+            function isEducationalEmail(email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.(edu|ac\.[a-z]{2}|edu\.[a-z]{2})$/i;
+                return emailPattern.test(email);
+            }
+
+            // Xử lý student verification
+            async function handleStudentVerification(e) {
+                e.preventDefault();
+                const email = studentEmailInput.value.trim();
+                const verifyBtn = document.getElementById('verify-student-btn');
+
+                // Validate educational email
+                if (!isEducationalEmail(email)) {
+                    verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                    verificationResult.innerHTML = `
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <span>Invalid educational email. Please use a valid .edu or .ac email address.</span>
+                        </div>
+                    `;
+                    verificationResult.classList.remove('hidden');
+                    return;
+                }
+
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+
+                try {
+                    const response = await fetch('/api/users/verify-student', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            user_id: user.id,
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        verificationResult.className = 'mt-4 p-4 bg-green-50 border border-green-200 rounded-lg';
+                        verificationResult.innerHTML = `
+                            <div class="flex items-center text-green-700 mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                <span class="font-semibold">Verification Successful!</span>
+                            </div>
+                            <p class="text-green-600 text-sm">Your student status has been verified. You now have FREE access to all courses and features!</p>
+                            <button onclick="window.location.href='CourseandLesson.html'" class="mt-3 w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                                Start Learning Now
+                            </button>
+                        `;
+                        verificationResult.classList.remove('hidden');
+
+                        // Update user in localStorage
+                        user.isStudent = true;
+                        user.studentEmail = email;
+                        localStorage.setItem('user', JSON.stringify(user));
+
+                        // Hide plans section sau 2 giây
+                        setTimeout(() => {
+                            document.getElementById('plans-container').style.display = 'none';
+                            document.querySelector('.flex.justify-center.mb-12').style.display = 'none';
+                        }, 2000);
+
+                    } else {
+                        verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                        verificationResult.innerHTML = `
+                            <div class="flex items-center text-red-700">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                <span>${data.error || 'Verification failed. Please try again.'}</span>
+                            </div>
+                        `;
+                        verificationResult.classList.remove('hidden');
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify Student Status';
+                    }
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    verificationResult.className = 'mt-4 p-4 bg-red-50 border border-red-200 rounded-lg';
+                    verificationResult.innerHTML = `
+                        <div class="flex items-center text-red-700">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <span>An error occurred. Please try again later.</span>
+                        </div>
+                    `;
+                    verificationResult.classList.remove('hidden');
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify Student Status';
+                }
+            }
+
+            function renderPlans() {
+                if (allPlans.length === 0) {
+                    plansContainer.innerHTML = `<p class="col-span-3 text-center text-gray-500">No subscription plans are available at the moment.</p>`;
+                    return;
+                }
+                
+                plansContainer.innerHTML = '';
+                allPlans.forEach((plan, index) => {
+                    const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+                    const billingPeriod = isAnnual ? '/year' : '/month';
+                    const isPopular = index === 1; // Giả sử plan thứ 2 là popular nhất
+
+                    const featuresHTML = plan.features.map(f => `<li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>${f}</li>`).join('');
+
+                    const planCard = document.createElement('div');
+                    planCard.className = `plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative ${isPopular ? 'border-2 border-indigo-600 transform scale-105' : ''}`;
+                    planCard.innerHTML = `
+                        ${isPopular ? '<div class="badge bg-indigo-600 text-white px-4 py-1 rounded-full font-medium text-sm">Most Popular</div>' : ''}
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">${plan.name}</h3>
+                            <div class="flex items-end mb-6">
+                                <span class="text-4xl font-bold ${isPopular ? 'text-indigo-600' : 'text-gray-800 dark:text-gray-200'}">$${price.toFixed(2)}</span>
+                                <span class="text-gray-500 ml-2">${billingPeriod}</span>
+                            </div>
+                            <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">${featuresHTML}</ul>
+                        </div>
+                        <div class="px-8 pb-8">
+                            <button data-plan-id="${plan.id}" data-plan-name="${plan.name}" data-plan-price="${price}" class="select-plan-btn w-full py-3 px-4 ${isPopular ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-gray-200'} font-medium rounded-lg transition-colors">
+                                Select Plan
+                            </button>
+                        </div>
+                    `;
+                    plansContainer.appendChild(planCard);
+                });
+
+                // Gán lại sự kiện cho các nút "Select Plan"
+                document.querySelectorAll('.select-plan-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const plan = {
+                            id: e.target.dataset.planId,
+                            name: e.target.dataset.planName,
+                            price: parseFloat(e.target.dataset.planPrice).toFixed(2),
+                            billing: isAnnual ? 'Annually' : 'Monthly'
+                        };
+                        localStorage.setItem('selectedPlan', JSON.stringify(plan));
+                        window.location.href = 'OrderPage.html';
+                    });
+                });
+            }
+
+            async function fetchPlans() {
+                try {
+                    const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
+                    if (!response.ok) throw new Error('Failed to fetch subscription plans.');
+                    allPlans = await response.json();
+                    renderPlans();
+                } catch (error) {
+                    console.error('Fetch Plans Error:', error);
+                    plansContainer.innerHTML = `<p class="col-span-3 text-center text-red-500">${error.message}</p>`;
+                }
+            }
+            
+            // --- EVENT LISTENERS ---
+            const userAvatar = document.getElementById('user-avatar');
+            if (userAvatar) userAvatar.textContent = getUserInitials(user);
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.clear(); window.location.href = 'LoginPage.html';
+            });
+            
+            monthlyBtn.addEventListener('click', () => {
+                isAnnual = false;
+                monthlyBtn.classList.add('bg-indigo-600', 'text-white');
+                monthlyBtn.classList.remove('text-gray-700 dark:text-gray-300');
+                annualBtn.classList.remove('bg-indigo-600', 'text-white');
+                annualBtn.classList.add('text-gray-700 dark:text-gray-300');
+                renderPlans();
+            });
+
+            annualBtn.addEventListener('click', () => {
+                isAnnual = true;
+                annualBtn.classList.add('bg-indigo-600', 'text-white');
+                annualBtn.classList.remove('text-gray-700 dark:text-gray-300');
+                monthlyBtn.classList.remove('bg-indigo-600', 'text-white');
+                monthlyBtn.classList.add('text-gray-700 dark:text-gray-300');
+                renderPlans();
+            });
+
+            // Student verification form
+            studentForm.addEventListener('submit', handleStudentVerification);
+
+            // --- INITIALIZATION ---
+            fetchPlans();
+        });
+    </script>
+
+    <footer class="bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+            <!-- Back to top button -->
+            <div class="text-center mb-12">
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:text-gray-200 font-medium transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    Back to top
+                </button>
+            </div>
+
+            <!-- Footer content with white background and border -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                    <!-- Learning -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase mb-4">Learning</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/courses" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Browse Courses</a></li>
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Categories</a></li>
+                            <li><a href="/community" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Learning Paths</a></li>
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Free Courses</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Features -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase mb-4">Features</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/quiz" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Quizzes</a></li>
+                            <li><a href="/quiz" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Certificates</a></li>
+                            <li><a href="/account" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Progress Tracking</a></li>
+                            <li><a href="/community" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Discussion Forums</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Account -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase mb-4">Account</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/payment" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Become Instructor</a></li>
+                            <li><a href="/payment" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Premium Plans</a></li>
+                            <li><a href="/account" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">My Dashboard</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Support -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase mb-4">Support</h3>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Help Center</a></li>
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Contact Us</a></li>
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Student Guide</a></li>
+                            <li><a href="/blog" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">UniLearn Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase mb-4">Legal</h3>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Terms of Service</a></li>
+                            <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-colors">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social media and bottom section -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Social media icons -->
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.624 5.367 11.99 11.988 11.99s11.99-5.366 11.99-11.99C24.007 5.367 18.641.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.328-1.297l-.061-.053-.349-.264c-.615-.491-1.016-1.239-1.016-2.086v-2.555c0-.847.401-1.595 1.016-2.086l.349-.264.061-.053c.88-.807 2.031-1.297 3.328-1.297h7.098c1.297 0 2.448.49 3.328 1.297l.061.053.349.264c.615.491 1.016 1.239 1.016 2.086v2.555c0 .847-.401 1.595-1.016 2.086l-.349.264-.061.053c-.88.807-2.031 1.297-3.328 1.297H8.449z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
+                        <span class="sr-only">YouTube</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
+                        <span class="sr-only">LinkedIn</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Logo and copyright -->
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex items-center mb-4">
+                        <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
+                        <span class="ml-2 text-xl font-bold text-gray-600 dark:text-gray-400">UniLearn</span>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                        © 2025 UniLearn Inc. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

@@ -1,0 +1,1729 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniLearn Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
+        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
+        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; text-align: center; margin: 1.5rem 0; padding: 0 1rem; }
+        .seal { position: absolute; bottom: 30px; right: 40px; width: 120px; height: 120px; }
+        .sidebar { transition: all 0.3s ease; }
+        .sidebar-item:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .sidebar-item.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid #ffffff; }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .chart-container { height: 300px; position: relative; }
+
+        /* === MERGED FROM FILE 1: CSS FOR MODAL === */
+        .modal { transition: opacity 0.3s ease; }
+        .modal.hidden { pointer-events: none; opacity: 0; }
+        .modal-content { transition: transform 0.3s ease; }
+        .modal.hidden .modal-content { transform: translateY(-20px); }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <div id="sidebar" class="sidebar bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
+            <div class="flex items-center justify-between px-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-graduation-cap text-2xl"></i>
+                    <span class="text-xl font-bold">UniLearn Admin</span>
+                </div>
+                <button id="closeSidebar" class="md:hidden"> <i class="fas fa-times"></i> </button>
+            </div>
+            <nav class="mt-10">
+                <div class="sidebar-item active flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="dashboard"> <i class="fas fa-tachometer-alt mr-3"></i> <span>Dashboard</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="courses"> <i class="fas fa-book mr-3"></i> <span>Courses</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="students"> <i class="fas fa-users mr-3"></i> <span>Students</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="quizzes"> <i class="fas fa-puzzle-piece mr-3"></i> <span>Quizzes</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="subscriptions"> <i class="fas fa-tags mr-3"></i> <span>Subscriptions</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="instructors"> <i class="fas fa-chalkboard-teacher mr-3"></i> <span>Instructors</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="assignments"> <i class="fas fa-tasks mr-3"></i> <span>Assignments</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="challenges"> <i class="fas fa-trophy mr-3"></i> <span>Challenges</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="blog"> <i class="fas fa-blog mr-3"></i> <span>Blog</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="user-roles" id="user-roles-nav"> <i class="fas fa-user-shield mr-3"></i> <span>User Roles</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="reports"> <i class="fas fa-chart-bar mr-3"></i> <span>Reports</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
+            </nav>
+            <div class="px-4 absolute bottom-4 left-0 right-0">
+                <div class="flex items-center space-x-3 border-t border-indigo-700 pt-4">
+                    <div id="admin-avatar" class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-lg"></div>
+                    <div>
+                        <p id="admin-user-name" class="text-sm font-semibold">Admin User</p>
+                        <p id="admin-user-email" class="text-xs text-indigo-300">admin@UniLearn.com</p>
+                    </div>
+                    <button id="logout-button-sidebar" class="ml-auto text-indigo-300 hover:text-white" title="Logout"><i class="fas fa-sign-out-alt text-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm z-10">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center">
+                        <button id="openSidebar" class="md:hidden mr-4 text-gray-600"> <i class="fas fa-bars"></i> </button>
+                        <h1 class="text-xl font-semibold text-gray-800" id="pageTitle">Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Teacher View Button for Admin -->
+                        <button id="teacher-view-button" class="hidden px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Teacher View</span>
+                        </button>
+
+                        <!-- Student View Button for Admin -->
+                        <button id="student-view-button" class="hidden px-4 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Student View</span>
+                        </button>
+
+                        <div class="relative">
+                            <button id="userMenuBtn" class="flex items-center space-x-2">
+                                <div id="header-avatar" class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white"></div>
+                                <span id="header-user-name" class="hidden md:inline text-gray-700">Admin User</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            </button>
+                            <div id="userMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 hidden">
+                                <a href="/account" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile (Student View)</a>
+                                <button id="logout-button-header" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <section id="dashboard" class="page-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 class="text-2xl font-bold">1,245</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Active Courses</p> <h3 class="text-2xl font-bold">42</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Revenue</p> <h3 class="text-2xl font-bold">$24,500</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-dollar-sign text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Completion Rate</p> <h3 class="text-2xl font-bold">78%</h3> <p class="text-xs mt-1"><span class="text-red-300">↓ 3%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-chart-pie text-xl"></i> </div> </div> </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="card bg-white rounded-lg shadow-md col-span-2">
+                            <div class="p-4 border-b"> <h3 class="font-semibold text-gray-700">Enrollment Statistics</h3> </div>
+                            <div class="p-4"> <div class="chart-container" id="enrollmentChart"> <canvas id="enrollmentCanvas"></canvas> </div> </div>
+                        </div>
+                        <div class="card bg-white rounded-lg shadow-md">
+                            <div class="p-4 border-b"> <h3 class="font-semibold text-gray-700">Course Categories</h3> </div>
+                            <div class="p-4"> <div class="chart-container" id="categoriesChart"> <canvas id="categoriesCanvas"></canvas> </div> </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="students" class="page-content hidden">
+                    <div class="bg-white rounded-lg shadow-md mb-6">
+                        <div class="p-4 border-b flex flex-col md:flex-row md:items-center md:justify-between">
+                            <h2 class="text-lg font-semibold text-gray-800 mb-2 md:mb-0">Student Management</h2>
+                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                                <div class="relative">
+                                    <input type="text" placeholder="Search students..." class="border rounded-lg px-3 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                                </div>
+                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center">
+                                    <i class="fas fa-plus mr-2"></i> Add New Student
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">Student</th>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Enrolled Courses</th>
+                                        <th class="px-4 py-3">Progress</th>
+                                        <th class="px-4 py-3">Join Date</th>
+                                        <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body" class="divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quizzes" class="page-content hidden"><p>Quizzes Management Coming Soon</p></section>
+
+                <section id="subscriptions" class="page-content hidden">
+                    <div id="subscriptions-container">
+                        </div>
+                </section>
+
+                <section id="certificates" class="page-content hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Certificate Generator</h1>
+                            <div class="mb-6">
+                                <label for="cert-user" class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
+                                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="">-- Loading Students --</option>
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="cert-course" class="block text-sm font-medium text-gray-700 mb-2">Select Completed Course</label>
+                                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="">-- Loading Courses --</option>
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="cert-date" class="block text-sm font-medium text-gray-700 mb-2">Date of Completion</label>
+                                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                                Generate Certificate
+                            </button>
+                        </div>
+                        <div id="certificate-preview-container" class="w-full mt-8 hidden">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Certificate Preview</h2>
+                            <div class="flex justify-end mb-4">
+                                <button id="download-certificate" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition">Download Certificate</button>
+                            </div>
+                            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
+                                <div class="text-center z-10 px-6">
+                                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion from UniLearn</h2>
+                                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
+                                    <p class="text-gray-600 mb-2">This certifies that</p>
+                                    <h2 id="preview-student-name" class="certificate-name">STUDENT NAME</h2>
+                                    <p class="text-gray-600 mb-6">has successfully completed the course</p>
+                                    <h3 id="preview-course-name" class="text-2xl font-semibold text-blue-800 mb-6">COURSE NAME</h3>
+                                    <p id="preview-issue-date" class="text-gray-600 mb-8">Date</p>
+                                </div>
+                                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/> <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/> <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/> <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text> <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text> </svg>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="courses" class="page-content hidden">
+    <div class="bg-white rounded-lg shadow-md mb-6">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-800">Course Management</h2>
+            <!-- Nút "Add New Course" có thể được thêm ở đây nếu cần -->
+        </div>
+        <div class="p-4 overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-4 py-3">Course Title</th>
+                        <th class="px-4 py-3">Instructor</th>
+                        <th class="px-4 py-3">Price</th>
+                        <th class="px-4 py-3">Date Created</th>
+                        <th class="px-4 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="courses-table-body" class="divide-y divide-gray-200">
+                    <!-- Dữ liệu khóa học sẽ được render ở đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+               <section id="instructors" class="page-content hidden">
+    <div class="bg-white rounded-lg shadow-md mb-6">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-800">Instructor Management</h2>
+        </div>
+        <div class="p-4 overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-4 py-3">Instructor</th>
+                        <th class="px-4 py-3">Email</th>
+                        <th class="px-4 py-3">Courses Taught</th>
+                        <th class="px-4 py-3">Join Date</th>
+                        <th class="px-4 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="instructors-table-body" class="divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+                <section id="assignments" class="page-content hidden"><p>Assignment Management Coming Soon</p></section>
+
+                <!-- CHALLENGES MANAGEMENT SECTION -->
+                <section id="challenges" class="page-content hidden">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-2xl font-bold text-gray-800">Active Challenges Management</h2>
+                            <button id="create-challenge-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                                <i class="fas fa-plus w-5 h-5 mr-2"></i> Create Challenge
+                            </button>
+                        </div>
+                        <p class="text-gray-600 mt-2">Manage community challenges to engage students and promote learning</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="challenges-container">
+                        <!-- Challenges will be rendered here -->
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <i class="fas fa-trophy text-4xl mb-4"></i>
+                            <p>Loading challenges...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BLOG MANAGEMENT SECTION -->
+                <section id="blog" class="page-content hidden">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-2xl font-bold text-gray-800">Blog Management</h2>
+                            <button id="create-blog-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                                <i class="fas fa-plus w-5 h-5 mr-2"></i> Create New Post
+                            </button>
+                        </div>
+                        <p class="text-gray-600 mt-2">Manage blog posts to share knowledge and engage with the community</p>
+                    </div>
+
+                    <!-- Blog Posts Table -->
+                    <div class="bg-white rounded-lg shadow-md">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Blog Posts</h3>
+                            <div class="flex space-x-3">
+                                <select id="blog-status-filter" class="border rounded-lg px-3 py-2 text-sm">
+                                    <option value="">All Status</option>
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                                <div class="relative">
+                                    <input type="text" id="blog-search" placeholder="Search posts..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">Title</th>
+                                        <th class="px-4 py-3">Author</th>
+                                        <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Views</th>
+                                        <th class="px-4 py-3">Created</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blog-posts-table-body" class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-8 text-gray-500">
+                                            <i class="fas fa-blog text-4xl mb-4"></i>
+                                            <p>Loading blog posts...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- USER ROLES MANAGEMENT SECTION -->
+                <section id="user-roles" class="page-content hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">User Role Management</h2>
+                        <p class="text-gray-600 mt-2">Manage user permissions and assign roles (Admin/Teacher/Student)</p>
+                    </div>
+
+                    <!-- Role Assignment Form -->
+                    <div class="bg-white rounded-lg shadow-md mb-6 p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Assign Role</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="user-select" class="block text-sm font-medium text-gray-700 mb-2">Select User</label>
+                                <select id="user-select" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Loading users...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="role-select" class="block text-sm font-medium text-gray-700 mb-2">Select Role</label>
+                                <select id="role-select" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select Role</option>
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button id="assign-role-btn" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    Assign Role
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Table with Roles -->
+                    <div class="bg-white rounded-lg shadow-md">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">All Users and Their Roles</h3>
+                            <div class="flex space-x-3">
+                                <select id="role-filter" class="border rounded-lg px-3 py-2 text-sm">
+                                    <option value="">All Roles</option>
+                                    <option value="student">Students</option>
+                                    <option value="teacher">Teachers</option>
+                                    <option value="admin">Admins</option>
+                                </select>
+                                <div class="relative">
+                                    <input type="text" id="user-search" placeholder="Search users..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">User</th>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Current Role</th>
+                                        <th class="px-4 py-3">Join Date</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-roles-table-body" class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-8 text-gray-500">
+                                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                                            <p>Loading users...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="reports" class="page-content hidden"><p>Reports Coming Soon</p></section>
+                <section id="settings" class="page-content hidden"><p>Settings Coming Soon</p></section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Blog Post Modal -->
+    <div id="blog-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 id="blog-modal-title" class="text-2xl font-bold mb-6">Create New Blog Post</h2>
+            <form id="blog-form">
+                <div class="space-y-6">
+                    <div>
+                        <label for="blog-title" class="block text-sm font-medium text-gray-700">Title *</label>
+                        <input type="text" id="blog-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter blog post title">
+                    </div>
+
+                    <div>
+                        <label for="blog-excerpt" class="block text-sm font-medium text-gray-700">Excerpt</label>
+                        <textarea id="blog-excerpt" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Brief description (optional, will be auto-generated from content if empty)"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="blog-content" class="block text-sm font-medium text-gray-700 mb-2">Content *</label>
+                        <div id="blog-content-editor" style="height: 400px; background: white;"></div>
+                        <input type="hidden" id="blog-content" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="blog-featured-image" class="block text-sm font-medium text-gray-700">Featured Image URL</label>
+                            <input type="url" id="blog-featured-image" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://example.com/image.jpg">
+                        </div>
+
+                        <div>
+                            <label for="blog-status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="blog-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="blog-tags" class="block text-sm font-medium text-gray-700">Tags</label>
+                        <input type="text" id="blog-tags" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., programming, tutorial, javascript (comma separated)">
+                        <p class="text-xs text-gray-500 mt-1">Separate tags with commas</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end space-x-3">
+                    <button type="button" id="cancel-blog-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="subscription-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-lg w-full">
+            <h2 id="subscription-modal-title" class="text-2xl font-bold mb-6">Add New Plan</h2>
+            <form id="subscription-form">
+                <div class="space-y-4">
+                    <div><label for="plan-name" class="block text-sm font-medium text-gray-700">Plan Name</label><input type="text" id="plan-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Pro"></div>
+                    <div><label for="plan-monthly-price" class="block text-sm font-medium text-gray-700">Monthly Price ($)</label><input type="number" id="plan-monthly-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="19.99"></div>
+                    <div><label for="plan-annual-price" class="block text-sm font-medium text-gray-700">Annual Price ($)</label><input type="number" id="plan-annual-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="199.99"></div>
+                    <div><label for="plan-features" class="block text-sm font-medium text-gray-700">Features (one per line)</label><textarea id="plan-features" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Access to all courses&#10;Priority support"></textarea></div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-subscription-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Plan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Challenge Modal -->
+    <div id="challenge-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-2xl w-full">
+            <h2 id="challenge-modal-title" class="text-2xl font-bold mb-6">Create New Challenge</h2>
+            <form id="challenge-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="challenge-title" class="block text-sm font-medium text-gray-700">Title *</label>
+                        <input type="text" id="challenge-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter challenge title">
+                    </div>
+                    <div>
+                        <label for="challenge-description" class="block text-sm font-medium text-gray-700">Description *</label>
+                        <textarea id="challenge-description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Describe the challenge..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="challenge-end-date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                            <input type="date" id="challenge-end-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="challenge-reward-type" class="block text-sm font-medium text-gray-700">Reward Type</label>
+                            <input type="text" id="challenge-reward-type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Badge, Points">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="challenge-status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="challenge-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-challenge-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Challenge</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
+            window.location.href = 'LoginPage.html';
+            return;
+        }
+
+        // Global data stores
+        let allCourses = [];
+        let allUsers = [];
+
+        // === MERGED FROM FILE 1: VARIABLES FOR SUBSCRIPTION MODAL ===
+        const subscriptionModal = document.getElementById('subscription-modal');
+        const subscriptionForm = document.getElementById('subscription-form');
+        const subscriptionModalTitle = document.getElementById('subscription-modal-title');
+        let currentEditingPlanId = null;
+
+        // --- MERGED & REFINED UTILITY FUNCTIONS ---
+        function showPage(targetId) {
+            document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) targetElement.classList.remove('hidden');
+            
+            document.getElementById('pageTitle').textContent = targetId.charAt(0).toUpperCase() + targetId.slice(1);
+
+            document.querySelectorAll('.sidebar-item').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.target === targetId) link.classList.add('active');
+            });
+            // Call appropriate render function for the page
+            if (targetId === 'courses') {
+                renderCourseManagementPage();
+            } else if (targetId === 'students') {
+                fetchAndRenderStudents();
+            } else if (targetId === 'subscriptions') {
+                renderSubscriptionManagementPage();
+            } else if (targetId === 'instructors') {
+                renderInstructorManagementPage();
+            } else if (targetId === 'challenges') {
+                fetchAndRenderChallenges();
+            } else if (targetId === 'certificates') {
+                populateCertificateForm();
+            } else if (targetId === 'blog') {
+                fetchAndRenderBlogPosts();
+            } else if (targetId === 'user-roles') {
+                renderUserRolesPage();
+            }
+        }
+
+        async function fetchAllData() {
+            try {
+                const [usersRes, coursesRes] = await Promise.all([
+                    fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+                if (!usersRes.ok || !coursesRes.ok) throw new Error("Failed to fetch core data.");
+                allUsers = await usersRes.json();
+                allCourses = await coursesRes.json();
+            } catch (error) {
+                console.error('Core Data Fetch Error:', error);
+                alert('Error loading essential data: ' + error.message);
+            }
+        }
+        
+        // --- STUDENT MANAGEMENT (from File 2 - More Advanced) ---
+        async function fetchAndRenderStudents() {
+            const container = document.getElementById('students-table-body');
+            if(!container) return;
+
+            const students = allUsers.filter(u => u.role === 'student');
+            let studentRows = students.map(student => {
+                const parts = student.name ? student.name.split(' ') : [];
+                let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (student.name ? student.name.charAt(0).toUpperCase() : '??');
+                const progress = student.overall_progress || 0;
+
+                return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                        <td class="px-4 py-3"><div class="flex items-center"><div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-semibold mr-3"><span>${initials}</span></div><span>${student.name || 'N/A'}</span></div></td>
+                        <td class="px-4 py-3">${student.email || 'N/A'}</td>
+                        <td class="px-4 py-3 text-center">${student.enrolled_courses?.length || 0}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2 mr-2"><div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div></div>
+                                <span class="text-xs text-gray-500">${progress}%</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">${student.createdAt ? new Date(student.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span></td>
+                        <td class="px-4 py-3"><div class="flex space-x-3"><button class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button><button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button></div></td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = students.length > 0 ? studentRows : '<tr><td colspan="7" class="text-center py-4 text-gray-500">No students found.</td></tr>';
+        }
+
+        // === MERGED FROM FILE 1: COMPLETE SUBSCRIPTION MANAGEMENT LOGIC ===
+        async function renderSubscriptionManagementPage() {
+            const container = document.getElementById('subscriptions-container');
+            container.innerHTML = `<p class="text-gray-500 p-4">Loading subscription plans...</p>`;
+            try {
+                const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch plans');
+                const plans = await response.json();
+                
+                let plansHTML = plans.map(plan => `
+                    <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-lg">${plan.name}</p>
+                            <p class="text-sm text-gray-600">$${plan.monthlyPrice}/month - $${plan.annualPrice}/year</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button data-plan-id="${plan.id}" class="edit-plan-btn text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                            <button data-plan-id="${plan.id}" class="delete-plan-btn text-red-600 hover:text-red-800 font-medium">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Subscription Plans</h2>
+                        <button id="add-plan-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add New Plan</button>
+                    </div>
+                    <div class="space-y-4">${plans.length > 0 ? plansHTML : '<p class="text-center py-4 text-gray-500">No subscription plans created yet.</p>'}</div>
+                `;
+
+                document.getElementById('add-plan-btn').addEventListener('click', () => openSubscriptionModal());
+                container.querySelectorAll('.edit-plan-btn').forEach(btn => btn.addEventListener('click', (e) => openSubscriptionModal(e.target.dataset.planId)));
+                container.querySelectorAll('.delete-plan-btn').forEach(btn => btn.addEventListener('click', handleDeletePlan));
+            } catch (error) {
+                container.innerHTML = `<p class="text-red-500 p-4">${error.message}</p>`;
+            }
+        }
+
+        // --- COURSE MANAGEMENT FUNCTIONS ---
+        function renderCourseManagementPage() {
+            const tableBody = document.querySelector('#courses-table-body');
+            if (!tableBody) return;
+
+            if (allCourses.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No courses found.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = allCourses.map(course => `
+                <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <div class="font-medium">${course.title}</div>
+                        <div class="text-xs text-gray-500">${(course.description || '').substring(0, 50)}...</div>
+                    </td>
+                    <td class="px-4 py-3">${course.teacher?.name || 'N/A'}</td>
+                    <td class="px-4 py-3">$${course.price}</td>
+                    <td class="px-4 py-3">${new Date(course.createdAt).toLocaleDateString('en-US')}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex space-x-3">
+                            <button data-course-id="${course.id}" class="delete-course-btn text-red-600 hover:text-red-800" title="Delete Course">
+                                <i class="fas fa-trash pointer-events-none"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Gán sự kiện cho các nút xóa mới được tạo
+            tableBody.querySelectorAll('.delete-course-btn').forEach(button => {
+                button.addEventListener('click', handleDeleteCourse);
+            });
+        }
+        
+        // --- INSTRUCTOR MANAGEMENT FUNCTIONS ---
+        function renderInstructorManagementPage() {
+            const tableBody = document.getElementById('instructors-table-body');
+            if (!tableBody) return;
+            
+            // Lọc ra chỉ những user có vai trò là 'teacher' từ biến allUsers đã có
+            const instructors = allUsers.filter(user => user.role === 'teacher');
+
+            if (instructors.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No instructors found.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = instructors.map(instructor => {
+                 const parts = instructor.name ? instructor.name.split(' ') : [];
+                 let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (instructor.name ? instructor.name.charAt(0).toUpperCase() : '??');
+                 
+                 // Đếm số khóa học mà giáo viên này dạy từ biến allCourses đã có
+                 const coursesTaught = allCourses.filter(course => course.teacher_id === instructor.id).length;
+
+                 return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                         <td class="px-4 py-3">
+                             <div class="flex items-center">
+                                 <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-semibold mr-3">
+                                     <span>${initials}</span>
+                                 </div>
+                                 <span>${instructor.name || 'N/A'}</span>
+                             </div>
+                         </td>
+                         <td class="px-4 py-3">${instructor.email || 'N/A'}</td>
+                         <td class="px-4 py-3 text-center">${coursesTaught}</td>
+                         <td class="px-4 py-3">${instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
+                         <td class="px-4 py-3">
+                             <div class="flex space-x-3">
+                                 <button title="View Details" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
+                                 <button title="Delete User" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                             </div>
+                         </td>
+                    </tr>
+                 `;
+            }).join('');
+        }
+        async function handleDeleteCourse(event) {
+            const courseId = event.currentTarget.dataset.courseId;
+            if (!confirm('Are you sure you want to delete this course and all its content (lessons, quizzes)? This action cannot be undone.')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/courses/${courseId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete course.');
+                alert('Course deleted successfully!');
+                
+                // Tải lại toàn bộ dữ liệu và render lại trang
+                await fetchAllData();
+                renderCourseManagementPage();
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+        async function openSubscriptionModal(planId = null) {
+            currentEditingPlanId = planId;
+            subscriptionForm.reset();
+            if (planId) {
+                subscriptionModalTitle.textContent = 'Edit Plan';
+                try {
+                    const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const plans = await response.json();
+                    const plan = plans.find(p => p.id === planId);
+                    if (plan) {
+                        document.getElementById('plan-name').value = plan.name;
+                        document.getElementById('plan-monthly-price').value = plan.monthlyPrice;
+                        document.getElementById('plan-annual-price').value = plan.annualPrice;
+                        document.getElementById('plan-features').value = plan.features.join('\n');
+                    }
+                } catch (error) {
+                    alert('Could not load plan details.');
+                    return;
+                }
+            } else {
+                subscriptionModalTitle.textContent = 'Add New Plan';
+            }
+            subscriptionModal.classList.remove('hidden');
+        }
+
+        function closeSubscriptionModal() {
+            subscriptionModal.classList.add('hidden');
+        }
+
+        async function handleSubscriptionFormSubmit(e) {
+            e.preventDefault();
+            const planData = {
+                name: document.getElementById('plan-name').value,
+                monthlyPrice: parseFloat(document.getElementById('plan-monthly-price').value),
+                annualPrice: parseFloat(document.getElementById('plan-annual-price').value),
+                features: document.getElementById('plan-features').value.split('\n').filter(f => f.trim() !== '')
+            };
+            const method = currentEditingPlanId ? 'PUT' : 'POST';
+            const url = currentEditingPlanId ? `/api/subscriptions/${currentEditingPlanId}` : '/api/subscriptions';
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(planData)
+                });
+                if (!response.ok) throw new Error('Failed to save plan.');
+                closeSubscriptionModal();
+                renderSubscriptionManagementPage();
+            } catch (error) { alert(`Error: ${error.message}`); }
+        }
+        
+        async function handleDeletePlan(e) {
+            const planId = e.target.dataset.planId;
+            if (confirm('Are you sure you want to delete this plan?')) {
+                try {
+                    const response = await fetch(`/api/subscriptions/${planId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+                    if (!response.ok) throw new Error('Failed to delete plan.');
+                    renderSubscriptionManagementPage();
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+
+        // --- BLOG MANAGEMENT FUNCTIONS ---
+
+        // Global blog data
+        let allBlogPosts = [];
+        let currentEditingBlogId = null;
+        let blogEditor = null;
+
+        // Blog modal elements
+        const blogModal = document.getElementById('blog-modal');
+        const blogForm = document.getElementById('blog-form');
+        const blogModalTitle = document.getElementById('blog-modal-title');
+
+        // Initialize Quill editor for blog content
+        function initBlogEditor() {
+            if (typeof Quill !== 'undefined') {
+                const toolbarOptions = [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ];
+
+                blogEditor = new Quill('#blog-content-editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: toolbarOptions
+                    },
+                    placeholder: 'Write your blog post content here... (You can paste from Google Docs and formatting will be preserved)'
+                });
+            }
+        }
+
+        // Fetch and render blog posts
+        async function fetchAndRenderBlogPosts() {
+            try {
+                const response = await fetch('/api/blog', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch blog posts');
+
+                const data = await response.json();
+                allBlogPosts = data.posts || [];
+
+                displayBlogPosts(allBlogPosts);
+            } catch (error) {
+                console.error('Error fetching blog posts:', error);
+                const tableBody = document.getElementById('blog-posts-table-body');
+                if (tableBody) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-red-500">
+                                <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                                <p>Failed to load blog posts: ${error.message}</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // Display blog posts in table
+        function displayBlogPosts(posts) {
+            const tableBody = document.getElementById('blog-posts-table-body');
+            if (!tableBody) return;
+
+            if (posts.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-gray-500">
+                            <i class="fas fa-blog text-4xl mb-4"></i>
+                            <p>No blog posts found.</p>
+                            <p>Click "Create New Post" to get started!</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = posts.map(post => {
+                const createdDate = post.created_at && post.created_at.toDate ? new Date(post.created_at.toDate()).toLocaleDateString() : 'N/A';
+                const statusBadge = post.status === 'published'
+                    ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>'
+                    : '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Draft</span>';
+
+                return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                            <div class="font-medium">${post.title}</div>
+                            <div class="text-xs text-gray-500">${(post.excerpt || '').substring(0, 60)}${post.excerpt && post.excerpt.length > 60 ? '...' : ''}</div>
+                        </td>
+                        <td class="px-4 py-3">${post.author_name || 'Unknown'}</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3">${post.view_count || 0}</td>
+                        <td class="px-4 py-3">${createdDate}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex space-x-2">
+                                <button data-blog-id="${post.id}" data-action="edit" class="blog-action-btn text-blue-600 hover:bg-blue-50 p-1 rounded" title="Edit">
+                                    <i class="fas fa-edit pointer-events-none"></i>
+                                </button>
+                                <button data-blog-id="${post.id}" data-action="delete" class="blog-action-btn text-red-600 hover:bg-red-50 p-1 rounded" title="Delete">
+                                    <i class="fas fa-trash pointer-events-none"></i>
+                                </button>
+                                ${post.status === 'published' ? `
+                                    <button data-blog-slug="${post.slug || post.id}" data-action="view" class="blog-action-btn text-green-600 hover:bg-green-50 p-1 rounded" title="View">
+                                        <i class="fas fa-eye pointer-events-none"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Open blog modal for create/edit
+        function openBlogModal(postId = null) {
+            currentEditingBlogId = postId;
+            blogForm.reset();
+
+            if (postId) {
+                blogModalTitle.textContent = 'Edit Blog Post';
+                const post = allBlogPosts.find(p => p.id === postId);
+                if (post) {
+                    document.getElementById('blog-title').value = post.title || '';
+                    document.getElementById('blog-excerpt').value = post.excerpt || '';
+
+                    // Set content to Quill editor
+                    if (blogEditor) {
+                        // Use clipboard to properly parse HTML content
+                        const delta = blogEditor.clipboard.convert(post.content || '');
+                        blogEditor.setContents(delta, 'silent');
+                    }
+
+                    document.getElementById('blog-featured-image').value = post.featured_image || '';
+                    document.getElementById('blog-status').value = post.status || 'draft';
+                    document.getElementById('blog-tags').value = (post.tags || []).join(', ');
+                }
+            } else {
+                blogModalTitle.textContent = 'Create New Blog Post';
+                // Clear editor content for new post
+                if (blogEditor) {
+                    blogEditor.setText('');
+                }
+            }
+
+            blogModal.classList.remove('hidden');
+        }
+
+        // Close blog modal
+        function closeBlogModal() {
+            blogModal.classList.add('hidden');
+        }
+
+        // Edit blog post
+        function editBlogPost(postId) {
+            openBlogModal(postId);
+        }
+
+        // Delete blog post
+        async function deleteBlogPost(postId) {
+            if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/blog/${postId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete blog post');
+
+                alert('Blog post deleted successfully!');
+                await fetchAndRenderBlogPosts();
+            } catch (error) {
+                console.error('Error deleting blog post:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // View blog post (placeholder)
+        function viewBlogPost(slug) {
+            // TODO: Implement view functionality or redirect to blog page
+            alert(`View functionality will redirect to blog post: ${slug}`);
+        }
+
+        // Handle blog form submission
+        async function handleBlogFormSubmit(e) {
+            e.preventDefault();
+
+            // Get HTML content from Quill editor
+            let content = '';
+            if (blogEditor) {
+                content = blogEditor.root.innerHTML;
+                // Set to hidden input for form validation
+                document.getElementById('blog-content').value = content;
+            }
+
+            // Validate content is not empty
+            if (!content || content === '<p><br></p>') {
+                alert('Please add content to your blog post.');
+                return;
+            }
+
+            const blogData = {
+                title: document.getElementById('blog-title').value,
+                excerpt: document.getElementById('blog-excerpt').value,
+                content: content,
+                featured_image: document.getElementById('blog-featured-image').value,
+                status: document.getElementById('blog-status').value,
+                tags: document.getElementById('blog-tags').value
+                    .split(',')
+                    .map(tag => tag.trim())
+                    .filter(tag => tag !== '')
+            };
+
+            const method = currentEditingBlogId ? 'PUT' : 'POST';
+            const url = currentEditingBlogId ? `/api/blog/${currentEditingBlogId}` : '/api/blog';
+
+            try {
+                console.log('Sending blog post data:', blogData);
+                console.log('Request URL:', url);
+                console.log('Method:', method);
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(blogData)
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.error || `Failed to save blog post (${response.status})`);
+                }
+
+                const result = await response.json();
+                console.log('Success response:', result);
+
+                alert(`Blog post ${currentEditingBlogId ? 'updated' : 'created'} successfully!`);
+                closeBlogModal();
+                await fetchAndRenderBlogPosts();
+            } catch (error) {
+                console.error('Error saving blog post:', error);
+                console.error('Error stack:', error.stack);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Filter blog posts
+        function filterBlogPosts() {
+            const statusFilter = document.getElementById('blog-status-filter').value;
+            const searchTerm = document.getElementById('blog-search').value.toLowerCase();
+
+            const filteredPosts = allBlogPosts.filter(post => {
+                const matchesStatus = !statusFilter || post.status === statusFilter;
+                const matchesSearch = !searchTerm ||
+                    post.title.toLowerCase().includes(searchTerm) ||
+                    (post.excerpt || '').toLowerCase().includes(searchTerm) ||
+                    (post.author_name || '').toLowerCase().includes(searchTerm);
+
+                return matchesStatus && matchesSearch;
+            });
+
+            displayBlogPosts(filteredPosts);
+        }
+
+        // --- CHALLENGES MANAGEMENT FUNCTIONS ---
+
+        // Global challenges data
+        let allChallenges = [];
+        let currentEditingChallengeId = null;
+
+        // Challenge modal elements
+        const challengeModal = document.getElementById('challenge-modal');
+        const challengeForm = document.getElementById('challenge-form');
+        const challengeModalTitle = document.getElementById('challenge-modal-title');
+
+        // Fetch and display challenges
+        async function fetchAndRenderChallenges() {
+            try {
+                const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/community/challenges', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch challenges');
+                allChallenges = await response.json();
+
+                displayChallenges(allChallenges);
+            } catch (error) {
+                console.error('Error fetching challenges:', error);
+                document.getElementById('challenges-container').innerHTML = `
+                    <div class="col-span-full text-center py-8 text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p>Failed to load challenges</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display challenges in the UI
+        function displayChallenges(challenges) {
+            const container = document.getElementById('challenges-container');
+
+            if (challenges.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4"></i>
+                        <p>No active challenges found.</p>
+                        <p>Click "Create Challenge" to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = challenges.map(challenge => {
+                const endDate = new Date(challenge.end_date);
+                const now = new Date();
+                const isExpired = endDate < now;
+                const timeLeft = isExpired ? 'Expired' : `${Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))} days left`;
+
+                return `
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 ${isExpired ? 'opacity-75' : ''}">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">${challenge.title}</h3>
+                                <p class="text-gray-600 mt-1">${challenge.description}</p>
+                            </div>
+                            <span class="px-3 py-1 text-xs font-medium ${isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'} rounded-full">
+                                ${challenge.status}
+                            </span>
+                        </div>
+
+                        <div class="space-y-2 text-sm text-gray-600 mb-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-alt w-4 h-4 mr-2"></i>
+                                <span>Ends: ${endDate.toLocaleDateString()}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock w-4 h-4 mr-2"></i>
+                                <span>${timeLeft}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-users w-4 h-4 mr-2"></i>
+                                <span>${challenge.participants_count || 0} participants</span>
+                            </div>
+                            ${challenge.reward_type ? `
+                                <div class="flex items-center">
+                                    <i class="fas fa-gift w-4 h-4 mr-2"></i>
+                                    <span>Reward: ${challenge.reward_type}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button data-challenge-id="${challenge.id}" data-action="view"
+                                    class="challenge-action-btn px-3 py-1 text-green-600 hover:bg-green-50 rounded text-sm" title="View Details">
+                                <i class="fas fa-eye pointer-events-none"></i>
+                            </button>
+                            <button data-challenge-id="${challenge.id}" data-action="edit"
+                                    class="challenge-action-btn px-3 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm" title="Edit">
+                                <i class="fas fa-edit pointer-events-none"></i>
+                            </button>
+                            <button data-challenge-id="${challenge.id}" data-action="delete"
+                                    class="challenge-action-btn px-3 py-1 text-red-600 hover:bg-red-50 rounded text-sm" title="Delete">
+                                <i class="fas fa-trash pointer-events-none"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open challenge modal for create/edit
+        function openChallengeModal(challengeId = null) {
+            currentEditingChallengeId = challengeId;
+            challengeForm.reset();
+
+            if (challengeId) {
+                challengeModalTitle.textContent = 'Edit Challenge';
+                const challenge = allChallenges.find(c => c.id === challengeId);
+                if (challenge) {
+                    document.getElementById('challenge-title').value = challenge.title || '';
+                    document.getElementById('challenge-description').value = challenge.description || '';
+
+                    // Format date for input type="date"
+                    if (challenge.end_date) {
+                        const endDate = new Date(challenge.end_date);
+                        const formattedDate = endDate.toISOString().split('T')[0];
+                        document.getElementById('challenge-end-date').value = formattedDate;
+                    }
+
+                    document.getElementById('challenge-reward-type').value = challenge.reward_type || '';
+                    document.getElementById('challenge-status').value = challenge.status || 'active';
+                }
+            } else {
+                challengeModalTitle.textContent = 'Create New Challenge';
+                // Set default end date to 30 days from now
+                const defaultEndDate = new Date();
+                defaultEndDate.setDate(defaultEndDate.getDate() + 30);
+                document.getElementById('challenge-end-date').value = defaultEndDate.toISOString().split('T')[0];
+            }
+
+            challengeModal.classList.remove('hidden');
+        }
+
+        // Close challenge modal
+        function closeChallengeModal() {
+            challengeModal.classList.add('hidden');
+        }
+
+        // Handle challenge form submission
+        async function handleChallengeFormSubmit(e) {
+            e.preventDefault();
+
+            const challengeData = {
+                title: document.getElementById('challenge-title').value,
+                description: document.getElementById('challenge-description').value,
+                end_date: document.getElementById('challenge-end-date').value,
+                reward_type: document.getElementById('challenge-reward-type').value,
+                status: document.getElementById('challenge-status').value
+            };
+
+            if (!currentEditingChallengeId) {
+                challengeData.created_by = user.id;
+            }
+
+            const method = currentEditingChallengeId ? 'PUT' : 'POST';
+            const url = currentEditingChallengeId
+                ? `http://localhost:7000/api/community/challenges/${currentEditingChallengeId}`
+                : 'http://localhost:7000/api/community/challenges';
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(challengeData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to save challenge');
+                }
+
+                alert(`Challenge ${currentEditingChallengeId ? 'updated' : 'created'} successfully!`);
+                closeChallengeModal();
+                await fetchAndRenderChallenges();
+            } catch (error) {
+                console.error('Error saving challenge:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Edit challenge
+        function editChallenge(challengeId) {
+            openChallengeModal(challengeId);
+        }
+
+        // View challenge details
+        async function viewChallengeDetails(challengeId) {
+            try {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/community/challenges/${challengeId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch challenge details');
+
+                const challenge = await response.json();
+                const endDate = new Date(challenge.end_date).toLocaleDateString();
+                const createdDate = challenge.created_at ? new Date(challenge.created_at).toLocaleDateString() : 'N/A';
+
+                alert(`Challenge Details:\n\nTitle: ${challenge.title}\nDescription: ${challenge.description}\nEnd Date: ${endDate}\nStatus: ${challenge.status}\nParticipants: ${challenge.participants_count || 0}\nReward: ${challenge.reward_type || 'None'}\nCreated: ${createdDate}`);
+            } catch (error) {
+                console.error('Error fetching challenge details:', error);
+                alert('Failed to load challenge details.');
+            }
+        }
+
+        // Delete challenge
+        async function deleteChallenge(challengeId) {
+            if (!confirm('Are you sure you want to delete this challenge?')) return;
+
+            try {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/community/challenges/${challengeId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete challenge');
+
+                alert('Challenge deleted successfully!');
+                await fetchAndRenderChallenges(); // Refresh the list
+
+            } catch (error) {
+                console.error('Error deleting challenge:', error);
+                alert('Failed to delete challenge. Please try again.');
+            }
+        }
+
+        // --- USER ROLES MANAGEMENT FUNCTIONS ---
+
+        // Global variables for user roles management
+        let filteredUsersForRoles = [];
+
+        // Render user roles management page
+        function renderUserRolesPage() {
+            populateUserSelect();
+            renderUserRolesTable();
+        }
+
+        // Populate user select dropdown
+        function populateUserSelect() {
+            const userSelect = document.getElementById('user-select');
+            if (!userSelect) return;
+
+            userSelect.innerHTML = '<option value="">Select a user...</option>';
+
+            allUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.name || 'Unknown'} (${user.email})`;
+                userSelect.appendChild(option);
+            });
+        }
+
+        // Render users table with roles
+        function renderUserRolesTable() {
+            const tableBody = document.getElementById('user-roles-table-body');
+            if (!tableBody) return;
+
+            filteredUsersForRoles = [...allUsers];
+            displayUsersTable(filteredUsersForRoles);
+        }
+
+        // Display users in table
+        function displayUsersTable(users) {
+            const tableBody = document.getElementById('user-roles-table-body');
+            if (!tableBody) return;
+
+            if (users.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-500">
+                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                            <p>No users found.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = users.map(user => {
+                const parts = user.name ? user.name.split(' ') : [];
+                const initials = parts.length > 1 ?
+                    parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() :
+                    (user.name ? user.name.charAt(0).toUpperCase() : '??');
+
+                const roleColors = {
+                    'admin': 'bg-red-100 text-red-800',
+                    'teacher': 'bg-blue-100 text-blue-800',
+                    'student': 'bg-green-100 text-green-800'
+                };
+
+                const roleColor = roleColors[user.role] || 'bg-gray-100 text-gray-800';
+                const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US') : 'N/A';
+
+                return `
+                    <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold mr-3">
+                                    <span>${initials}</span>
+                                </div>
+                                <span>${user.name || 'Unknown'}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">${user.email || 'N/A'}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full ${roleColor}">
+                                ${(user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1)}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">${joinDate}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex space-x-2">
+                                <button onclick="quickRoleChange('${user.id}', '${user.role}')"
+                                        class="text-blue-600 hover:bg-blue-50 p-1 rounded text-xs"
+                                        title="Quick role change">
+                                    <i class="fas fa-user-cog"></i>
+                                </button>
+                                <button onclick="viewUserDetails('${user.id}')"
+                                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs"
+                                        title="View details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Assign role to user
+        async function assignRole() {
+            const userId = document.getElementById('user-select').value;
+            const newRole = document.getElementById('role-select').value;
+
+            if (!userId || !newRole) {
+                alert('Please select both a user and a role.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to update user role');
+                }
+
+                const result = await response.json();
+
+                // Update local data
+                const userIndex = allUsers.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].role = newRole;
+                }
+
+                // Reset form
+                document.getElementById('user-select').value = '';
+                document.getElementById('role-select').value = '';
+
+                // Refresh display
+                renderUserRolesTable();
+
+                alert(`Role updated successfully! User is now a ${newRole}.`);
+
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Quick role change function
+        async function quickRoleChange(userId, currentRole) {
+            const roles = ['student', 'teacher', 'admin'];
+            const roleOptions = roles.map(role =>
+                `<option value="${role}" ${role === currentRole ? 'selected' : ''}>
+                    ${role.charAt(0).toUpperCase() + role.slice(1)}
+                </option>`
+            ).join('');
+
+            const newRole = prompt(`Select new role for user:\n\nCurrent role: ${currentRole}\n\nEnter new role (student/teacher/admin):`, currentRole);
+
+            if (!newRole || newRole === currentRole || !roles.includes(newRole.toLowerCase())) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole.toLowerCase() })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to update user role');
+                }
+
+                // Update local data
+                const userIndex = allUsers.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].role = newRole.toLowerCase();
+                }
+
+                // Refresh display
+                renderUserRolesTable();
+
+                alert(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
+
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // View user details (placeholder)
+        function viewUserDetails(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (user) {
+                alert(`User Details:\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email}\nRole: ${user.role || 'student'}\nJoin Date: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}`);
+            }
+        }
+
+        // Filter users by role
+        function filterUsersByRole() {
+            const roleFilter = document.getElementById('role-filter').value;
+            const searchTerm = document.getElementById('user-search').value.toLowerCase();
+
+            filteredUsersForRoles = allUsers.filter(user => {
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesSearch = !searchTerm ||
+                    (user.name || '').toLowerCase().includes(searchTerm) ||
+                    (user.email || '').toLowerCase().includes(searchTerm);
+
+                return matchesRole && matchesSearch;
+            });
+
+            displayUsersTable(filteredUsersForRoles);
+        }
+
+
+        // --- CERTIFICATE & OTHER FUNCTIONS ---
+        function populateCertificateForm() { /* Placeholder */ }
+        function renderQuizManagementPage() { /* Placeholder */ }
+
+        // --- CHARTS FUNCTIONS (from File 2) ---
+        const setupCharts = () => {
+            const enrollmentCtx = document.getElementById('enrollmentCanvas').getContext('2d');
+            new Chart(enrollmentCtx, {
+                type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'New Enrollments', data: [65, 78, 90, 85, 110, 142], borderColor: 'rgb(79, 70, 229)', backgroundColor: 'rgba(79, 70, 229, 0.1)', tension: 0.3, fill: true }] },
+                options: { maintainAspectRatio: false, responsive: true }
+            });
+            const categoriesCtx = document.getElementById('categoriesCanvas').getContext('2d');
+            new Chart(categoriesCtx, {
+                type: 'doughnut', data: { labels: ['Development', 'Design', 'Business', 'Marketing', 'IT & Software', 'Other'], datasets: [{ data: [35, 20, 15, 12, 10, 8], backgroundColor: ['#3B82F6', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B', '#6B7280'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, responsive: true }
+            });
+        };
+        
+        // --- EVENT LISTENERS & INITIALIZATION ---
+        const userName = user.name || 'Admin';
+        const userEmail = user.email || 'admin@UniLearn.com';
+        const userInitials = userName.split(' ').map(n=>n[0]).join('').toUpperCase() || userName.charAt(0).toUpperCase();
+
+        document.getElementById('admin-user-name').textContent = userName;
+        document.getElementById('admin-user-email').textContent = userEmail;
+        document.getElementById('admin-avatar').textContent = userInitials;
+        document.getElementById('header-user-name').textContent = userName;
+        document.getElementById('header-avatar').textContent = userInitials;
+
+        // Hide admin-only features for non-admin users
+        if (user.role !== 'admin') {
+            const userRolesNav = document.getElementById('user-roles-nav');
+            if (userRolesNav) {
+                userRolesNav.style.display = 'none';
+            }
+        }
+
+        // Show Teacher View and Student View buttons for Admin
+        if (user.role === 'admin') {
+            const teacherViewButton = document.getElementById('teacher-view-button');
+            const studentViewButton = document.getElementById('student-view-button');
+
+            if (teacherViewButton) {
+                teacherViewButton.classList.remove('hidden');
+                // Temporarily store admin role, switch to teacher role, then redirect
+                teacherViewButton.addEventListener('click', () => {
+                    // Save current role
+                    localStorage.setItem('original_role', user.role);
+
+                    // Temporarily switch to teacher role
+                    const tempUser = { ...user, role: 'teacher' };
+                    localStorage.setItem('user', JSON.stringify(tempUser));
+
+                    // Redirect to admin dashboard (will now show as teacher view)
+                    window.location.reload();
+                });
+            }
+
+            if (studentViewButton) {
+                studentViewButton.classList.remove('hidden');
+                studentViewButton.addEventListener('click', () => {
+                    window.location.href = 'CourseandLesson.html';
+                });
+            }
+        }
+
+        // Check if we need to restore admin role
+        const originalRole = localStorage.getItem('original_role');
+        if (originalRole === 'admin' && user.role === 'teacher') {
+            // Add a "Back to Admin" button
+            const headerElement = document.querySelector('.flex.items-center.space-x-4');
+            if (headerElement) {
+                const backToAdminBtn = document.createElement('button');
+                backToAdminBtn.className = 'px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center space-x-2';
+                backToAdminBtn.innerHTML = '<i class="fas fa-shield-alt"></i><span>Back to Admin</span>';
+                backToAdminBtn.addEventListener('click', () => {
+                    // Restore admin role
+                    const adminUser = { ...user, role: 'admin' };
+                    localStorage.setItem('user', JSON.stringify(adminUser));
+                    localStorage.removeItem('original_role');
+                    window.location.reload();
+                });
+                headerElement.insertBefore(backToAdminBtn, headerElement.firstChild);
+            }
+        }
+
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', (e) => showPage(e.currentTarget.getAttribute('data-target')));
+        });
+
+        [document.getElementById('logout-button-sidebar'), document.getElementById('logout-button-header')]
+            .forEach(btn => btn.addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'LoginPage.html';
+            }));
+        
+        document.getElementById('openSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.remove('-translate-x-full'));
+        document.getElementById('closeSidebar').addEventListener('click', () => document.getElementById('sidebar').classList.add('-translate-x-full'));
+        document.getElementById('userMenuBtn').addEventListener('click', () => document.getElementById('userMenu').classList.toggle('hidden'));
+        
+        // Event listeners for Subscription Modal (from File 1)
+        document.getElementById('cancel-subscription-btn').addEventListener('click', closeSubscriptionModal);
+        subscriptionForm.addEventListener('submit', handleSubscriptionFormSubmit);
+
+        // Event listeners for Challenge Management
+        document.getElementById('create-challenge-btn').addEventListener('click', () => openChallengeModal());
+        document.getElementById('cancel-challenge-btn').addEventListener('click', closeChallengeModal);
+        challengeForm.addEventListener('submit', handleChallengeFormSubmit);
+
+        // Event delegation for challenge action buttons
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('challenge-action-btn')) {
+                const challengeId = e.target.dataset.challengeId;
+                const action = e.target.dataset.action;
+
+                if (action === 'view') {
+                    await viewChallengeDetails(challengeId);
+                } else if (action === 'edit') {
+                    editChallenge(challengeId);
+                } else if (action === 'delete') {
+                    await deleteChallenge(challengeId);
+                }
+            }
+        });
+
+        // Event listeners for Blog Management
+        document.getElementById('create-blog-btn').addEventListener('click', () => openBlogModal());
+        document.getElementById('cancel-blog-btn').addEventListener('click', closeBlogModal);
+        blogForm.addEventListener('submit', handleBlogFormSubmit);
+        document.getElementById('blog-status-filter').addEventListener('change', filterBlogPosts);
+        document.getElementById('blog-search').addEventListener('input', filterBlogPosts);
+
+        // Event delegation for blog action buttons
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('blog-action-btn')) {
+                const action = e.target.dataset.action;
+
+                if (action === 'edit') {
+                    const blogId = e.target.dataset.blogId;
+                    editBlogPost(blogId);
+                } else if (action === 'delete') {
+                    const blogId = e.target.dataset.blogId;
+                    await deleteBlogPost(blogId);
+                } else if (action === 'view') {
+                    const blogSlug = e.target.dataset.blogSlug;
+                    viewBlogPost(blogSlug);
+                }
+            }
+        });
+
+        // Event listeners for User Roles Management
+        document.getElementById('assign-role-btn').addEventListener('click', assignRole);
+        document.getElementById('role-filter').addEventListener('change', filterUsersByRole);
+        document.getElementById('user-search').addEventListener('input', filterUsersByRole);
+
+
+        // Initialize TinyMCE editor on page load
+        initBlogEditor();
+
+        // Initial calls
+        await fetchAllData();
+        showPage('dashboard');
+        setupCharts();
+    });
+    </script>
+</body>
+</html>

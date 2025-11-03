@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Management | CodeMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
+        .two-column-layout { min-height: calc(100vh - 64px); }
+        .sidebar-content { max-height: 100%; overflow-y: auto; }
+        .lesson-item { cursor: pointer; transition: background-color 0.1s; }
+        .lesson-item:hover { background-color: #f0f4f8; }
+        .lesson-item.active { border-left: 3px solid #3b82f6; background-color: #eef2ff; }
+        .form-toggle-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+    <script src="/js/darkmode.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="/css/darkmode-improved.css">
+</head>
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Content Management</h1>
+                    <a href="/teacher" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl mx-auto w-full flex border-t border-gray-200 dark:border-gray-700">
+            
+            <div class="w-full lg:w-1/3 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-100 p-6 flex flex-col sidebar-content">
+                
+                <div class="bg-indigo-50 border-l-4 border-indigo-300 p-4 rounded-lg mb-6 flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Course: <span id="course-title">Loading...</span></h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" id="course-description">Loading course details...</p>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex-shrink-0">Existing Content</h3>
+
+                <div class="flex-grow overflow-y-auto pr-2">
+                    <ul id="content-list" class="space-y-3">
+                        <li><p class="text-gray-500">Loading content...</p></li>
+                        </ul>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-gray-50 dark:bg-gray-700 p-6 overflow-y-auto">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                    
+                    <div class="flex space-x-4 mb-6 border-b pb-4">
+                        <button id="show-lesson-form-btn" class="form-toggle-btn px-5 py-2 rounded-lg font-medium active">
+                            <i class="fas fa-book-open mr-2"></i> Add New Lesson
+                        </button>
+                        <button id="show-quiz-form-btn" class="form-toggle-btn px-5 py-2 rounded-lg font-medium text-gray-700 dark:text-gray-300 bg-gray-200 hover:bg-gray-300">
+                            <i class="fas fa-puzzle-piece mr-2"></i> Add New Quiz
+                        </button>
+                    </div>
+
+                    <form id="lesson-form" class="space-y-4">
+                        <h3 id="lesson-form-title" class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Add a New Lesson</h3>
+                        
+                        <input type="hidden" id="form-course-id">
+
+                        <div>
+                            <label for="lesson-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lesson Title</label>
+                            <input type="text" id="lesson-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="lesson-video-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Video URL (Optional)</label>
+                            <input type="text" id="lesson-video-url" placeholder="YouTube, Dropbox, Vimeo URL (e.g., https://www.dropbox.com/s/...)" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lesson Content (Notes, Code...)</label>
+                            <div id="editor-container" class="mt-1 border border-gray-300 dark:border-gray-600 rounded-md"></div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end space-x-3 pt-4">
+                            <button type="button" id="cancel-lesson-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
+                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">Save Lesson</button>
+                        </div>
+                    </form>
+
+                    <form id="quiz-form" class="hidden space-y-4">
+                        <h3 id="quiz-form-title" class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Add a New Quiz</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="quiz-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quiz Title</label>
+                                <input type="text" id="quiz-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="quiz-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                                <textarea id="quiz-description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-8 mb-4 border-t pt-6">Questions</h3>
+                        <div id="questions-container" class="space-y-6"></div>
+                        
+                        <div class="mt-6 flex items-center justify-between pt-4">
+                            <button type="button" id="add-question-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center font-semibold">
+                                <i class="fas fa-plus mr-2"></i> Add Question
+                            </button>
+                            <div>
+                                <button type="button" id="cancel-quiz-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
+                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 ml-2 font-semibold">Save Quiz</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    const quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: { toolbar: [['bold', 'italic', 'underline'], ['link', 'code-block']] }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // --- INITIAL SETUP ---
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
+            window.location.href = 'LoginPage.html';
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        
+        // SỬA LỖI 1: Thay vì báo lỗi và chuyển hướng, hãy kiểm tra và cảnh báo
+        if (!courseId) {
+             console.error("Initialization Error: No courseId found in URL.");
+             document.getElementById('course-title').textContent = "ERROR";
+             document.getElementById('course-description').textContent = "Course ID missing from URL. Please return to Dashboard.";
+             alert('No course selected.');
+             // Dừng lại mà không chuyển hướng để người dùng có thể debug
+             return; 
+        }
+
+        // --- ELEMENTS ---
+        const contentListUl = document.getElementById('content-list');
+        const lessonForm = document.getElementById('lesson-form');
+        const quizForm = document.getElementById('quiz-form');
+        const lessonFormTitle = document.getElementById('lesson-form-title');
+        const quizFormTitle = document.getElementById('quiz-form-title');
+        const questionsContainer = document.getElementById('questions-container');
+        
+        let currentEditingContentId = null;
+
+        // --- CORE UI FUNCTIONS ---
+        function setActiveForm(formId) {
+            const isLesson = formId === 'lesson';
+            
+            // Toggle form visibility
+            lessonForm.classList.toggle('hidden', !isLesson);
+            quizForm.classList.toggle('hidden', isLesson);
+
+            // Toggle button active state
+            document.getElementById('show-lesson-form-btn').classList.toggle('active', isLesson);
+            document.getElementById('show-lesson-form-btn').classList.toggle('bg-gray-200', !isLesson);
+            document.getElementById('show-lesson-form-btn').classList.toggle('text-gray-700 dark:text-gray-300', !isLesson);
+
+            document.getElementById('show-quiz-form-btn').classList.toggle('active', !isLesson);
+            document.getElementById('show-quiz-form-btn').classList.toggle('bg-gray-200', isLesson);
+            document.getElementById('show-quiz-form-btn').classList.toggle('text-gray-700 dark:text-gray-300', isLesson);
+
+            // Reset forms and state
+            if (isLesson) {
+                lessonForm.reset();
+                quill.setText('');
+                lessonFormTitle.textContent = 'Add a New Lesson';
+                lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
+                currentEditingContentId = null;
+            } else {
+                quizForm.reset();
+                questionsContainer.innerHTML = '';
+                quizFormTitle.textContent = 'Add a New Quiz';
+                quizForm.querySelector('button[type="submit"]').textContent = 'Save Quiz';
+                currentEditingContentId = null;
+                addQuestionField();
+            }
+        }
+
+        // --- FETCH AND RENDER ---
+        async function fetchAndRenderCourseDetails() {
+            contentListUl.innerHTML = `<li><p class="text-gray-500">Loading course content...</p></li>`;
+            
+            try {
+                // 1. Fetch Course Details (bộ điều khiển courses đã trả về lessons và quizzes)
+                const courseResponse = await fetch(`/api/courses/${courseId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!courseResponse.ok) throw new Error('Could not fetch course details');
+                const course = await courseResponse.json();
+
+                document.getElementById('course-title').textContent = course.title;
+                document.getElementById('course-description').textContent = course.description;
+                document.getElementById('form-course-id').value = course.id;
+
+                const lessons = course.lessons || [];
+                const quizzes = course.quizzes || [];
+
+                // 2. Combine and Sort Content
+                const allContent = [
+                    ...lessons.map(l => ({...l, type: 'lesson'})), 
+                    ...quizzes.map(q => ({...q, type: 'quiz'}))
+                ];
+                allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // Sort theo thời gian tạo
+
+                if (allContent.length === 0) {
+                    contentListUl.innerHTML = `<li><p class="text-gray-500">No lessons or quizzes have been added to this course yet.</p></li>`;
+                    return;
+                }
+
+                // 3. Render Content List
+                contentListUl.innerHTML = '';
+                allContent.forEach(item => {
+                    const listItem = document.createElement('li');
+                    const itemType = item.type;
+                    const iconClass = itemType === 'quiz' ? 'fa-puzzle-piece text-purple-600' : 'fa-book-open text-blue-600';
+                    const listClass = itemType === 'quiz' ? 'bg-purple-50' : 'bg-blue-50';
+
+                    listItem.className = `lesson-item p-3 border rounded-md flex justify-between items-center ${listClass}`;
+                    
+                    listItem.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fas ${iconClass} mr-3"></i>
+                            <span class="font-medium text-gray-800 dark:text-gray-200">${item.title}</span>
+                        </div>
+                        <div class="space-x-3">
+                            <button data-id="${item.id}" data-type="${itemType}" class="edit-content-btn text-sm font-medium text-indigo-600 hover:text-indigo-800">Edit</button>
+                            <button data-id="${item.id}" data-type="${itemType}" class="delete-content-btn text-sm font-medium text-red-600 hover:text-red-800">Delete</button>
+                        </div>
+                    `;
+                    contentListUl.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error("Fetch Content Error:", error);
+                contentListUl.innerHTML = `<li><p class="text-red-500">Failed to load content: ${error.message}</p></li>`;
+            }
+        }
+
+        // --- QUIZ MANAGEMENT FUNCTIONS ---
+        function addQuestionField(question = {}) {
+            const questionIndex = questionsContainer.children.length;
+            const field = document.createElement('div');
+            field.className = 'question-field bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-700 p-4 rounded-lg';
+            field.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200">Question ${questionIndex + 1}</h4>
+                    <button type="button" class="remove-question-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove</button>
+                </div>
+                <textarea class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2" rows="2" placeholder="Enter question text..." name="question_text" required>${question.question_text || ''}</textarea>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    ${Array(4).fill(0).map((_, i) => `
+                        <input type="text" name="option_${i}" placeholder="Option ${i + 1}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md" value="${question.options ? question.options[i] || '' : ''}" required>
+                    `).join('')}
+                </div>
+                <div class="mt-3">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Correct Answer</label>
+                    <select name="correct_answer_index" class="w-full md:w-1/2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md">
+                        <option value="0">Option 1</option> <option value="1">Option 2</option>
+                        <option value="2">Option 3</option> <option value="3">Option 4</option>
+                    </select>
+                </div>
+            `;
+            
+            // Set correct answer if editing
+            if (question.correct_answer_index !== undefined) {
+                 field.querySelector('select[name="correct_answer_index"]').value = question.correct_answer_index;
+            }
+
+            questionsContainer.appendChild(field);
+            field.querySelector('.remove-question-btn').addEventListener('click', (e) => {
+                e.target.closest('.question-field').remove();
+                // Re-index question titles
+                questionsContainer.querySelectorAll('.question-field h4').forEach((h4, idx) => {
+                    h4.textContent = `Question ${idx + 1}`;
+                });
+            });
+        }
+        document.getElementById('add-question-btn').addEventListener('click', () => addQuestionField());
+
+        // --- EVENT HANDLERS ---
+        document.getElementById('show-lesson-form-btn').addEventListener('click', () => setActiveForm('lesson'));
+        document.getElementById('show-quiz-form-btn').addEventListener('click', () => setActiveForm('quiz'));
+        document.getElementById('cancel-lesson-edit-btn').addEventListener('click', () => setActiveForm('lesson'));
+        document.getElementById('cancel-quiz-edit-btn').addEventListener('click', () => setActiveForm('quiz'));
+
+        // Lesson Form Submission (Create/Update)
+        lessonForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = lessonForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+
+            let videoUrl = document.getElementById('lesson-video-url').value;
+
+            // Auto-fix URL if missing protocol
+            if (videoUrl && !videoUrl.startsWith('http://') && !videoUrl.startsWith('https://')) {
+                videoUrl = 'https://' + videoUrl;
+            }
+
+            const lessonData = {
+                title: document.getElementById('lesson-title').value,
+                content_type: videoUrl ? 'video' : 'text',
+                content_data: videoUrl, // URL
+                content_data_html: quill.root.innerHTML, // HTML content from Quill
+                course_id: courseId
+            };
+            
+            const isEditing = !!currentEditingContentId;
+            const apiUrl = isEditing ? `/api/lessons/${currentEditingContentId}` : '/api/lessons';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(lessonData)
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'An unknown error occurred.';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || errorMessage;
+                    } catch {
+                        errorMessage = await response.text();
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                alert(`Lesson ${isEditing ? 'updated' : 'added'} successfully!`);
+                setActiveForm('lesson'); // Reset form
+                fetchAndRenderCourseDetails(); // Refresh list
+            } catch (error) {
+                console.error("Lesson Save Error:", error);
+                alert(`Error: Failed to ${isEditing ? 'update' : 'add'} lesson.\nDetails: ${error.message}`);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Save Lesson';
+            }
+        });
+
+      
+        // QUIZ Form Submission (Create and Update)
+        quizForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const isEditing = !!currentEditingContentId; // Kiểm tra xem đang ở chế độ chỉnh sửa hay không
+
+            const submitButton = quizForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = isEditing ? 'Updating...' : 'Saving...';
+            
+            const questions = [];
+            let isValid = true;
+            
+            // Lấy dữ liệu từ các question fields
+            questionsContainer.querySelectorAll('.question-field').forEach(field => {
+                const options = [];
+                field.querySelectorAll('input[type="text"]').forEach(input => {
+                    if (input.value.trim() === '') isValid = false;
+                    options.push(input.value);
+                });
+
+                if (field.querySelector('textarea[name="question_text"]').value.trim() === '') isValid = false;
+
+                questions.push({
+                    question_text: field.querySelector('textarea[name="question_text"]').value,
+                    options: options,
+                    correct_answer_index: parseInt(field.querySelector('select[name="correct_answer_index"]').value, 10)
+                });
+            });
+
+            if (!isValid) {
+                 alert('Please fill out all question text and all four options for every question.');
+                 submitButton.disabled = false;
+                 submitButton.textContent = isEditing ? 'Update Quiz' : 'Save Quiz';
+                 return;
+            }
+            if (questions.length === 0) {
+                 alert('Please add at least one question.');
+                 submitButton.disabled = false;
+                 submitButton.textContent = isEditing ? 'Update Quiz' : 'Save Quiz';
+                 return;
+            }
+
+            const quizPayload = {
+                title: document.getElementById('quiz-title').value,
+                description: document.getElementById('quiz-description').value,
+                course_id: courseId,
+                questions: questions,
+                type: 'quiz', 
+            };
+            
+            // XÁC ĐỊNH API ENDPOINT VÀ METHOD
+            const apiUrl = isEditing ? `/api/quizzes/${currentEditingContentId}` : '/api/quizzes';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(quizPayload)
+                });
+                
+                if (!response.ok) {
+                    let errorMessage = 'An unknown error occurred.';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || errorMessage;
+                    } catch {
+                        errorMessage = await response.text();
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                alert(`Quiz ${isEditing ? 'updated' : 'created'} successfully!`);
+                setActiveForm('lesson'); // Chuyển về Add Lesson/Reset form
+                fetchAndRenderCourseDetails(); // Refresh list
+            } catch (error) {
+                console.error("Quiz Save Error:", error);
+                alert(`Error: Failed to ${isEditing ? 'update' : 'create'} quiz.\nDetails: ${error.message}`);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = isEditing ? 'Update Quiz' : 'Save Quiz';
+            }
+        });
+
+        // Content List Event Delegation (Edit/Delete)
+        contentListUl.addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+            const id = target.dataset.id;
+            const type = target.dataset.type;
+            if (!id || !type) return;
+
+            if (target.classList.contains('edit-content-btn')) {
+                if (type === 'lesson') {
+                    setActiveForm('lesson');
+                    lessonFormTitle.textContent = 'Edit Lesson';
+                    lessonForm.querySelector('button[type="submit"]').textContent = 'Update Lesson';
+                    currentEditingContentId = id;
+                    try {
+                        const res = await fetch(`/api/lessons/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if (!res.ok) throw new Error('Could not fetch lesson details.');
+                        const lesson = await res.json();
+                        document.getElementById('lesson-title').value = lesson.title;
+                        document.getElementById('lesson-video-url').value = lesson.content_data || '';
+                        quill.root.innerHTML = lesson.content_data_html || ''; // Load content into editor
+                    } catch (error) {
+                        alert('Error fetching lesson: ' + error.message);
+                    }
+                } else if (type === 'quiz') {
+                    // Quiz editing logic
+                    setActiveForm('quiz');
+                    quizFormTitle.textContent = 'Edit Quiz';
+                    quizForm.querySelector('button[type="submit"]').textContent = 'Update Quiz (Not fully supported)';
+                    currentEditingContentId = id;
+                     try {
+                        const res = await fetch(`/api/quizzes/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                        if (!res.ok) throw new Error('Could not fetch quiz details.');
+                        const quiz = await res.json();
+                        
+                        document.getElementById('quiz-title').value = quiz.title;
+                        document.getElementById('quiz-description').value = quiz.description;
+                        questionsContainer.innerHTML = ''; // Clear previous questions
+                        
+                        // Populate questions
+                        (quiz.questions || []).forEach(q => addQuestionField(q));
+                        alert('Editing Quizzes is not fully supported yet. Changes may not save correctly. Use Delete and Re-Create for complex updates.');
+                    } catch (error) {
+                        alert('Error fetching quiz: ' + error.message);
+                    }
+                }
+            }
+            
+            if (target.classList.contains('delete-content-btn')) {
+                const itemTitle = target.closest('li').querySelector('span.font-medium').textContent;
+                if (confirm(`Are you sure you want to delete "${itemTitle}" (${type})?`)) {
+                    try {
+                        const apiUrl = type === 'lesson' ? `/api/lessons/${id}` : `/api/quizzes/${id}`;
+                        const response = await fetch(apiUrl, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        
+                        if (!response.ok) {
+                            let errorMessage = `Failed to delete ${type}.`;
+                            try {
+                                const errorData = await response.json();
+                                errorMessage = errorData.error || errorData.message || errorMessage;
+                            } catch {}
+                            throw new Error(errorMessage);
+                        }
+                        
+                        alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+                        fetchAndRenderCourseDetails();
+                    } catch (error) {
+                        console.error("Delete Error:", error);
+                        alert('Error: ' + error.message);
+                    }
+                }
+            }
+        });
+
+        // --- INITIALIZATION ---
+        fetchAndRenderCourseDetails();
+        setActiveForm('lesson'); // Mặc định hiển thị form Add Lesson
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | CodeMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .nav-link {
+            padding: 0.25rem 0.5rem;
+            color: #4b5563;
+            transition: color 0.2s, border-color 0.2s;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: #1f2937;
+            border-bottom-color: #6366f1;
+        }
+        .modal { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .modal.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <nav class="bg-white shadow-md sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="/" class="flex-shrink-0 flex items-center">
+                            <img src="/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
+                            <span class="ml-2 text-xl font-bold text-gray-800">CodeMaster</span>
+                        </a>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
+                            <a href="/courses" class="nav-link">Courses</a>
+                            <a href="/account" class="nav-link">My Learning</a> 
+                            <a href="/quiz" class="nav-link">Quizz</a>
+                            <a href="/community" class="nav-link">Community</a>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="ml-3 relative">
+                            <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
+                                 <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">HP</div>
+                            </button>
+                        </div>
+                        <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow py-8">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+                    <button id="edit-profile-button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Edit Profile</button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-xl p-8 mb-6">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/4 flex justify-center mb-4 md:mb-0">
+                            <div id="main-avatar" class="h-32 w-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-5xl font-bold">HP</div>
+                        </div>
+                        <div class="md:w-3/4 md:pl-8">
+                            <h2 id="profile-name" class="text-2xl font-bold text-gray-800 mb-1">Loading...</h2>
+                            <p id="profile-role" class="text-gray-600 mb-4">Loading Role...</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-500">Email</p>
+                                    <p id="profile-email">N/A</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Phone</p>
+                                    <p id="profile-phone">(555) 123-4567</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Location</p>
+                                    <p id="profile-location">Ho Chi Minh City, Vietnam</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Member Since</p>
+                                    <p id="profile-created-date">N/A</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<div id="profile-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+    <div class="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-md w-full">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit Your Profile</h2>
+        <form id="edit-profile-form" class="space-y-4">
+            <input type="hidden" id="edit-user-id">
+            
+            <div class="flex items-center space-x-4 mb-6">
+                <div id="edit-avatar-display" class="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-2xl font-bold">HP</div>
+                <div>
+                    <label for="edit-avatar-url" class="block text-sm font-medium text-gray-700">Avatar Image URL</label>
+                    <input type="url" id="edit-avatar-url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://i.pravatar.cc/150">
+                </div>
+            </div>
+
+            <div>
+                <label for="edit-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="edit-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="edit-email" class="block text-sm font-medium text-gray-700">Email (Cannot be changed)</label>
+                <input type="email" id="edit-email" disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed">
+            </div>
+
+            <div>
+                <label for="edit-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input type="text" id="edit-phone" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3 pt-4">
+                <button type="button" id="cancel-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    // --- AUTH, USER INFO, & GLOBAL VARS ---
+    let user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    
+    if (!token || !user) {
+        window.location.href = 'LoginPage.html';
+        return;
+    }
+
+    // --- ELEMENTS ---
+    const profileModal = document.getElementById('profile-modal');
+    const editForm = document.getElementById('edit-profile-form');
+    const editAvatarInput = document.getElementById('edit-avatar-url');
+
+    function getUserInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        let initials = parts[0].charAt(0).toUpperCase();
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].charAt(0).toUpperCase();
+        }
+        return initials;
+    }
+
+    function renderProfile(userData) {
+        const initials = getUserInitials(userData.name);
+        const avatarContainer = document.getElementById('main-avatar');
+        
+        // Cập nhật Header Avatar
+        const headerAvatar = document.getElementById('user-avatar');
+        if (headerAvatar) headerAvatar.textContent = initials;
+        
+        // Xử lý Main Profile Avatar
+        const avatarImg = userData.avatarUrl || null;
+        if (avatarImg) {
+            avatarContainer.innerHTML = `<img src="${avatarImg}" alt="Avatar" class="h-32 w-32 rounded-full object-cover">`;
+        } else {
+             avatarContainer.innerHTML = initials;
+             avatarContainer.className = 'h-32 w-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-5xl font-bold';
+        }
+
+        // Cập nhật các trường thông tin
+        document.getElementById('profile-name').textContent = userData.name || 'Student';
+        document.getElementById('profile-role').textContent = (userData.role || 'student').charAt(0).toUpperCase() + (userData.role || 'student').slice(1);
+        document.getElementById('profile-email').textContent = userData.email || 'N/A';
+        document.getElementById('profile-phone').textContent = userData.phone || '(555) 123-4567';
+        document.getElementById('profile-created-date').textContent = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A';
+        
+        // Cập nhật localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+        user = userData; // Cập nhật biến global
+    }
+
+    function openEditModal() {
+        // Điền dữ liệu hiện tại vào form
+        document.getElementById('edit-user-id').value = user.id;
+        document.getElementById('edit-name').value = user.name || '';
+        document.getElementById('edit-email').value = user.email || '';
+        // Sử dụng giá trị phone hiện tại hoặc giá trị mặc định
+        document.getElementById('edit-phone').value = user.phone || '(555) 123-4567'; 
+        
+        const currentAvatarUrl = user.avatarUrl || '';
+        document.getElementById('edit-avatar-url').value = currentAvatarUrl;
+        
+        // Cập nhật preview avatar trong modal
+        const display = document.getElementById('edit-avatar-display');
+        if (currentAvatarUrl) {
+             display.innerHTML = `<img src="${currentAvatarUrl}" alt="Avatar" class="h-16 w-16 rounded-full object-cover">`;
+        } else {
+             display.innerHTML = getUserInitials(user.name);
+             display.className = 'h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-2xl font-bold';
+        }
+
+        profileModal.classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+        profileModal.classList.add('hidden');
+    }
+
+    // --- Cập nhật Avatar Preview khi gõ URL ---
+    editAvatarInput.addEventListener('input', () => {
+        const url = editAvatarInput.value.trim();
+        const display = document.getElementById('edit-avatar-display');
+        
+        // Thử hiển thị ảnh
+        if (url) {
+            display.innerHTML = `<img src="${url}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2240%22%20fill%3D%22%236366f1%22%3E${getUserInitials(document.getElementById('edit-name').value)}%3C%2Ftext%3E%3C%2Fsvg%3E'" alt="Avatar" class="h-16 w-16 rounded-full object-cover">`;
+        } else {
+             // Quay lại initials nếu URL trống
+             display.innerHTML = getUserInitials(document.getElementById('edit-name').value || user.name);
+             display.className = 'h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-2xl font-bold';
+        }
+    });
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('edit-profile-button').addEventListener('click', openEditModal);
+    document.getElementById('cancel-edit-btn').addEventListener('click', closeEditModal);
+
+    // 3. Xử lý Submit Form
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = editForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+
+        const updatedData = {
+            name: document.getElementById('edit-name').value.trim(),
+            // Lấy phone nếu có, nếu không thì gửi null/chuỗi rỗng, API sẽ xử lý
+            phone: document.getElementById('edit-phone').value.trim() || null, 
+            // Lấy avatarUrl nếu có, nếu không thì gửi null
+            avatarUrl: document.getElementById('edit-avatar-url').value.trim() || null, 
+        };
+
+        const userId = user.id;
+
+        try {
+            const response = await fetch(`/api/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (!response.ok) {
+                let errorMsg = "Failed to save profile changes.";
+                try {
+                    const errorJson = await response.json();
+                    errorMsg = errorJson.error || errorJson.message || errorMsg;
+                } catch {
+                    errorMsg = await response.text();
+                }
+                throw new Error(errorMsg);
+            }
+            
+            // Lấy profile mới, nhưng thường API PUT sẽ trả về dữ liệu gửi đi
+            // Nên ta tự cập nhật profile cục bộ
+            const newUserProfile = { ...user, ...updatedData };
+
+            renderProfile(newUserProfile); // Cập nhật UI và localStorage
+            closeEditModal();
+            alert('Profile updated successfully! 🎉');
+
+        } catch (error) {
+            console.error("Profile Update Error:", error);
+            alert('Error updating profile: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save Changes';
+        }
+    });
+    
+    // 4. Logout (Giữ nguyên)
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = 'LoginPage.html';
+    });
+
+    // --- INITIALIZATION ---
+    renderProfile(user); // Khởi tạo giao diện với dữ liệu hiện tại
+});
+</script>

@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getFirestore } = require('firebase-admin/firestore');
 // BỔ SUNG: Import cả sendWelcomeEmail
-const { sendResetPasswordEmail, sendWelcomeEmail } = require('../services/emailService'); 
+const { sendResetPasswordEmail, sendWelcomeEmail } = require('../services/emailService');
+// Import User Model
+const User = require('../models/User');
 
 // Hàm tạo mã ngẫu nhiên 6 chữ số (giữ nguyên)
 const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -10,63 +12,51 @@ const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toSt
 // Hàm đăng ký người dùng mới
 exports.register = async (req, res) => {
     try {
-        const db = getFirestore();
         const { name, email, password, role } = req.body;
 
-        const usersRef = db.collection('users');
-        const q = usersRef.where('email', '==', email);
-        const snapshot = await q.get();
-
-        if (!snapshot.empty) {
-            return res.status(400).json({ error: 'Email already in use' });
-        }
-       
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUserRef = await db.collection('users').add({
+        // Sử dụng User Model để tạo người dùng mới
+        const newUser = await User.create({
             name,
             email,
-            password: hashedPassword,
-            role: role || 'student',
-            createdAt: new Date().toISOString()
+            password,
+            role: role || 'student'
         });
-        
+
         // --- KÍCH HOẠT: Gửi email chào mừng ---
         // Không dùng await để quá trình đăng ký không bị chậm lại
-        sendWelcomeEmail(email, name); 
+        sendWelcomeEmail(email, name);
 
-        res.status(201).json({ message: 'User registered successfully', userId: newUserRef.id });
+        res.status(201).json({ message: 'User registered successfully', userId: newUser.id });
 
     } catch (err) {
         console.error('Register Error:', err);
+        if (err.message === 'Email already in use') {
+            return res.status(400).json({ error: err.message });
+        }
         res.status(500).json({ error: 'Something went wrong during registration' });
     }
 };
 
-// Hàm đăng nhập (Giữ nguyên)
+// Hàm đăng nhập
 exports.login = async (req, res) => {
     try {
-        const db = getFirestore();
         const { email, password } = req.body;
 
-        const usersRef = db.collection('users');
-        const q = usersRef.where('email', '==', email);
-        const snapshot = await q.get();
+        // Sử dụng User Model để tìm người dùng theo email
+        const user = await User.findByEmail(email);
 
-        if (snapshot.empty) {
+        if (!user) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
-       
-        const userDoc = snapshot.docs[0];
-        const userData = userDoc.data();
 
-        const isMatch = await bcrypt.compare(password, userData.password);
+        // So sánh password sử dụng method của User model
+        const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
         const token = jwt.sign(
-            { userId: userDoc.id, role: userData.role },
+            { userId: user.id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
@@ -74,10 +64,10 @@ exports.login = async (req, res) => {
         res.json({
             token,
             user: {
-                id: userDoc.id,
-                name: userData.name,
-                email: userData.email,
-                role: userData.role
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
             }
         });
 
@@ -93,32 +83,32 @@ exports.forgotPassword = async (req, res) => {
         const db = getFirestore();
         const { email } = req.body;
 
-        const usersRef = db.collection('users');
-        const q = usersRef.where('email', '==', email);
-        const snapshot = await q.get();
+        // Sử dụng User Model để tìm người dùng
+        const user = await User.findByEmail(email);
 
-        if (snapshot.empty) {
+        if (!user) {
             return res.status(200).json({ message: 'If the email is registered, a password reset email has been sent.' });
         }
 
-        const userDoc = snapshot.docs[0];
-        const userId = userDoc.id;
         const resetCode = generateResetCode();
+        const expiryTime = new Date(Date.now() + 10 * 60000); // 10 minutes expiry
 
-        const expiryTime = new Date(Date.now() + 10 * 60000).toISOString(); // 10 minutes expiry
+        // Lưu mã reset vào user model
+        await user.saveResetCode(resetCode, expiryTime);
 
-        await db.collection('password_resets').doc(userId).set({
-            userId: userId,
+        // Cũng lưu vào collection password_resets để dễ quản lý
+        await db.collection('password_resets').doc(user.id).set({
+            userId: user.id,
             code: resetCode,
-            expiresAt: expiryTime,
+            expiresAt: expiryTime.toISOString(),
             createdAt: new Date().toISOString()
         });
 
         await sendResetPasswordEmail(email, resetCode);
-        
-        res.status(200).json({ 
+
+        res.status(200).json({
             message: 'A verification code has been sent to your email address.',
-            userId: userId,
+            userId: user.id,
         });
 
     } catch (err) {
@@ -127,7 +117,7 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-// Hàm Đặt lại Mật khẩu (Giữ nguyên)
+// Hàm Đặt lại Mật khẩu
 exports.resetPassword = async (req, res) => {
     try {
         const db = getFirestore();
@@ -149,12 +139,14 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ error: 'Invalid or expired verification code.' });
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        const userRef = db.collection('users').doc(userId);
+        // Sử dụng User Model để cập nhật password
+        await User.update(userId, { password: newPassword });
 
-        await userRef.update({
-            password: hashedPassword 
-        });
+        // Xóa mã reset từ user
+        const user = await User.findById(userId);
+        if (user) {
+            await user.clearResetCode();
+        }
 
         await resetDocRef.delete();
 

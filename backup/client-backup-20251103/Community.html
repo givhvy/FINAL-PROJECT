@@ -1,0 +1,1155 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community | UniLearn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
+    <style>
+        body { font-family: 'Poppins', sans-serif; box-sizing: border-box; background-color: #f0f4f8; }
+        .progress-bar { transition: width 0.5s ease-in-out; }
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .online-indicator { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        /* Navigation Styles */
+        .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
+        /* Custom Logo Style */
+        .header-logo { color: #4f46e5; font-weight: 800; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow-sm border-b sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <a href="/courses" class="flex-shrink-0 flex items-center space-x-1">
+                    <img src="/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
+                    <div class="text-2xl font-bold header-logo">UniLearn</div>
+                </a>
+                <nav class="hidden sm:flex space-x-4 lg:space-x-8 h-full items-center">
+                    <a href="/courses" class="nav-link">Courses</a>
+                    <a href="/account" class="nav-link">My Learning</a>
+                    <a href="/community" class="nav-link active">Community</a>
+                     <a href="/blog" class="nav-link">Blog</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden sm:block">
+                    <input type="text" placeholder="Search friends or groups..." class="pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                    <span class="absolute left-3 top-2.5 text-gray-400"><i class="fas fa-search"></i></span>
+                </div>
+                <div id="user-profile-btn" class="flex items-center cursor-pointer space-x-2">
+                    <div id="user-avatar" class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold"></div>
+                    <span id="user-name" class="text-sm font-medium hidden sm:block">Loading...</span>
+                </div>
+                <button id="logout-button" class="text-sm font-medium text-gray-500 hover:text-gray-800 hidden sm:block">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid lg:grid-cols-4 gap-6">
+            
+            <div class="lg:col-span-1 space-y-6">
+                <div id="progress-card" class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">My Progress Today</h3>
+
+                    <!-- Course Completed Section -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Course Completed</span>
+                            <span id="course-completed-count" class="text-sm font-bold text-green-600">0/0</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="course-completed-bar" class="bg-green-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Goal Section -->
+                    <div class="mb-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Weekly Goal</span>
+                            <div class="flex items-center gap-2">
+                                <span id="weekly-goal-count" class="text-sm font-bold text-indigo-600">0/3 courses</span>
+                                <button id="adjust-goal-btn" class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="weekly-goal-bar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Study Points Section -->
+                    <div class="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-700">Study Points</span>
+                            <span id="study-points" class="text-2xl font-bold text-purple-600">0</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">100 points per completed course</p>
+                    </div>
+
+                    <!-- Rank/Badge Section -->
+                    <div id="rank-container" class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-xs font-medium text-gray-600 mb-1">Current Rank</p>
+                                <p id="rank-name" class="text-xl font-bold text-gray-800">Beginner</p>
+                                <p id="rank-description" class="text-xs text-gray-600 mt-1">Complete courses to rank up!</p>
+                            </div>
+                            <div id="rank-badge" class="flex-shrink-0 ml-3 w-16 h-16">
+                                <!-- SVG Badge will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">Pomodoro Timer</h3>
+                    <div class="text-center">
+                        <div class="relative mb-6">
+                            <div class="w-32 h-32 mx-auto bg-gray-200 rounded-full flex items-center justify-center relative overflow-hidden">
+                                <!-- Timer Circle Progress -->
+                                <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                                    <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                    <circle id="timer-progress" cx="64" cy="64" r="56" stroke="#3b82f6" stroke-width="8"
+                                            fill="none" stroke-dasharray="351.86" stroke-dashoffset="351.86"
+                                            style="transition: stroke-dashoffset 1s linear"/>
+                                </svg>
+                                <div class="relative z-10 text-center">
+                                    <div id="timer-display" class="text-2xl font-bold text-gray-800">25:00</div>
+                                    <div id="timer-mode" class="text-xs text-gray-500">Work</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex space-x-2">
+                                <button id="start-timer" class="flex-1 bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                                    Start
+                                </button>
+                                <button id="pause-timer" class="flex-1 bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors text-sm">
+                                    Pause
+                                </button>
+                                <button id="reset-timer" class="flex-1 bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 transition-colors text-sm">
+                                    Reset
+                                </button>
+                            </div>
+
+                            <div class="text-xs text-gray-500">
+                                <div class="flex justify-between">
+                                    <span>Work: 25min</span>
+                                    <span>Break: 5min</span>
+                                </div>
+                            </div>
+
+                            <div id="timer-stats" class="text-sm text-gray-600">
+                                Sessions completed today: <span id="sessions-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">🏆 Weekly Leaderboard</h3>
+                        <select class="border rounded-lg px-3 py-1 text-sm">
+                            <option>This Week</option>
+                            <option>This Month</option>
+                            <option>All Time</option>
+                        </select>
+                    </div>
+                    <div id="leaderboard-container">
+                        <div class="text-center py-6">
+                            <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl"></i>
+                            <p class="text-sm text-gray-500 mt-2">Loading leaderboard...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">📚 My Study Groups</h3>
+                        <button id="join-new-group-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
+                            Join New Group
+                        </button>
+                    </div>
+                    <div id="my-study-groups-container" class="grid md:grid-cols-2 gap-4">
+                        <div class="text-center py-8 col-span-full">
+                            <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl"></i>
+                            <p class="text-sm text-gray-500 mt-2">Loading your study groups...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Study Groups Modal -->
+                <div id="available-groups-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-2xl w-full max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Available Study Groups</h3>
+                            <button id="close-groups-modal" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="available-groups-container" class="space-y-4">
+                            <!-- Available groups will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Forum Modal -->
+                <div id="group-forum-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-3xl w-full max-h-96 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 id="forum-group-title" class="text-lg font-bold text-gray-800">Group Forum</h3>
+                            <button id="close-forum-modal" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="forum-messages-container" class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                        <div class="flex space-x-2">
+                            <input id="new-message-input" type="text" placeholder="Type your message..."
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="send-message-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">📈 Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">SM</div>
+                            <div class="flex-1">
+                                <div class="text-sm">
+                                    <span class="font-semibold">Sarah Martinez</span> completed 
+                                    <span class="font-medium text-blue-600">Advanced React Patterns</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">2 hours ago • +150 points</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">DK</div>
+                            <div class="flex-1">
+                                <div class="text-sm">
+                                    <span class="font-semibold">David Kim</span> started a new study streak! 
+                                    <span class="font-medium text-green-600">7 days in a row</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">4 hours ago • +200 bonus points</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">👥 Friends Online</h3>
+                        <span id="friends-online-count" class="text-sm text-gray-500">Loading...</span>
+                    </div>
+                    <div id="friends-online-container" class="space-y-3">
+                        <div class="text-center py-3">
+                            <i class="fas fa-spinner fa-spin text-indigo-500"></i>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-blue-500 hover:text-blue-600 text-sm font-medium">
+                        View All Friends
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">🎯 Active Challenges</h3>
+                    <div id="active-challenges-container" class="space-y-4">
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Loading challenges...
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-blue-500 hover:text-blue-600 text-sm font-medium">
+                        See More Suggestions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- AUTH & SETUP ---
+        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/community'; 
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        
+        if (!token || !user) {
+            window.location.href = 'LoginPage.html';
+        }
+
+        function getUserInitials() {
+            if (user && user.name) {
+                const parts = user.name.split(' ');
+                let initials = parts[0].charAt(0).toUpperCase();
+                if (parts.length > 1) {
+                    initials += parts.pop().charAt(0).toUpperCase();
+                }
+                return initials;
+            }
+            return 'AC';
+        }
+
+        // --- STUDY GROUPS AND FORUM FUNCTIONALITY ---
+
+        let currentGroupId = null;
+
+        // Render My Study Groups
+        async function renderMyStudyGroups() {
+            const container = document.getElementById('my-study-groups-container');
+            try {
+                const response = await fetch(`${API_BASE}/users/${user.id}/groups`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch study groups');
+                const groups = await response.json();
+
+                if (groups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 col-span-full">
+                            <i class="fas fa-users text-gray-400 text-4xl mb-4"></i>
+                            <p class="text-gray-500">You haven't joined any study groups yet.</p>
+                            <p class="text-sm text-gray-400">Click "Join New Group" to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = groups.map(group => `
+                    <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-800">${group.name}</h4>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">${group.status}</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mb-3">${group.description}</div>
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="text-sm text-gray-600">📚 ${group.subject || 'General'}</span>
+                            <span class="text-sm text-gray-600">👥 ${group.member_count || 0} members</span>
+                        </div>
+                        ${group.teacher ? `
+                            <div class="text-xs text-gray-500 mb-3">
+                                Teacher: ${group.teacher.name || group.teacher.email}
+                            </div>
+                        ` : ''}
+                        <div class="flex space-x-2">
+                            <button onclick="openGroupForum('${group.id}', '${group.name}')"
+                                    class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors">
+                                💬 Forum
+                            </button>
+                            <button onclick="viewGroupDetails('${group.id}')"
+                                    class="px-3 py-2 border rounded text-sm hover:bg-gray-50 transition-colors">
+                                📋 Details
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching study groups:', error);
+                container.innerHTML = `
+                    <div class="text-center py-8 col-span-full text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p>Failed to load study groups</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show available groups modal
+        async function showAvailableGroups() {
+            const modal = document.getElementById('available-groups-modal');
+            const container = document.getElementById('available-groups-container');
+
+            modal.classList.remove('hidden');
+            container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/groups`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch available groups');
+                const groups = await response.json();
+
+                if (groups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-users text-4xl mb-4"></i>
+                            <p>No study groups available yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = groups.map(group => `
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-gray-800">${group.name}</h4>
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">${group.member_count || 0} members</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${group.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">📚 ${group.subject || 'General'}</span>
+                            <button onclick="joinStudyGroup('${group.id}')"
+                                    class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                                Join Group
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching available groups:', error);
+                container.innerHTML = '<div class="text-center py-4 text-red-500">Failed to load groups</div>';
+            }
+        }
+
+        // Join a study group
+        async function joinStudyGroup(groupId) {
+            try {
+                const response = await fetch(`${API_BASE}/groups/${groupId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ user_id: user.id })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to join group');
+                }
+
+                alert('Successfully joined the study group!');
+                document.getElementById('available-groups-modal').classList.add('hidden');
+                await renderMyStudyGroups(); // Refresh the groups list
+
+            } catch (error) {
+                console.error('Error joining study group:', error);
+                alert('Failed to join group: ' + error.message);
+            }
+        }
+
+        // Open group forum
+        async function openGroupForum(groupId, groupName) {
+            currentGroupId = groupId;
+            const modal = document.getElementById('group-forum-modal');
+            const titleElement = document.getElementById('forum-group-title');
+            const messagesContainer = document.getElementById('forum-messages-container');
+
+            titleElement.textContent = `${groupName} - Forum`;
+            modal.classList.remove('hidden');
+
+            await loadForumMessages(groupId);
+        }
+
+        // Load forum messages
+        async function loadForumMessages(groupId) {
+            const container = document.getElementById('forum-messages-container');
+            container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
+
+            console.log('Loading messages for group:', groupId);
+
+            try {
+                const response = await fetch(`${API_BASE}/groups/${groupId}/messages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch messages');
+                const messages = await response.json();
+
+                console.log('Received messages:', messages);
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-gray-500">No messages yet. Start the conversation!</div>';
+                    return;
+                }
+
+                container.innerHTML = messages.map(message => `
+                    <div class="flex space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                            ${(message.user?.name || message.user?.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-sm">${message.user?.name || message.user?.email || 'Unknown User'}</span>
+                                <span class="text-xs text-gray-500">${new Date(message.created_at).toLocaleString()}</span>
+                            </div>
+                            <p class="text-sm text-gray-700">${message.message}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Scroll to bottom
+                container.scrollTop = container.scrollHeight;
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                container.innerHTML = '<div class="text-center py-4 text-red-500">Failed to load messages</div>';
+            }
+        }
+
+        // Send message to forum
+        async function sendForumMessage() {
+            const input = document.getElementById('new-message-input');
+            const message = input.value.trim();
+
+            if (!message || !currentGroupId) return;
+
+            console.log('Sending message:', message, 'to group:', currentGroupId, 'by user:', user.id);
+
+            try {
+                const response = await fetch(`${API_BASE}/groups/${currentGroupId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        message: message
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to send message');
+
+                const result = await response.json();
+                console.log('Message sent successfully:', result);
+
+                input.value = '';
+                await loadForumMessages(currentGroupId); // Refresh messages
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message. Please try again.');
+            }
+        }
+
+        // View group details (placeholder)
+        function viewGroupDetails(groupId) {
+            alert(`Group details functionality will be implemented soon.\nGroup ID: ${groupId}`);
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        // Render My Progress Today - Updated to track completed courses
+        async function renderUserProgress() {
+            const userId = user.id;
+
+            try {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/users/${userId}/progress`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch progress details.');
+
+                const progressData = await response.json();
+
+                // Calculate completed courses
+                const completedCourses = progressData.filter(item => item.isCompleted).length;
+                const totalCourses = progressData.length;
+                const completedPercentage = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0;
+
+                // Update Course Completed
+                document.getElementById('course-completed-count').textContent = `${completedCourses}/${totalCourses}`;
+                document.getElementById('course-completed-bar').style.width = `${completedPercentage}%`;
+
+                // Weekly Goal (get from localStorage or default to 3)
+                const weeklyGoal = parseInt(localStorage.getItem('weeklyGoal') || '3');
+                const weeklyProgress = Math.min(completedCourses, weeklyGoal);
+                const weeklyPercentage = weeklyGoal > 0 ? (weeklyProgress / weeklyGoal) * 100 : 0;
+
+                document.getElementById('weekly-goal-count').textContent = `${weeklyProgress}/${weeklyGoal} courses`;
+                document.getElementById('weekly-goal-bar').style.width = `${weeklyPercentage}%`;
+
+                // Calculate Study Points (100 points per completed course)
+                const studyPoints = completedCourses * 100;
+                document.getElementById('study-points').textContent = studyPoints;
+
+                // Determine Rank based on points
+                updateRankBadge(studyPoints);
+
+            } catch (error) {
+                console.error('Progress Fetch Error:', error);
+                document.getElementById('course-completed-count').textContent = '0/0';
+                document.getElementById('study-points').textContent = '0';
+            }
+        }
+
+        // SVG Badge Templates
+        const RANK_BADGES = {
+            ruby: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" class="w-full h-full">
+                <defs>
+                    <linearGradient id="miniRed" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#ff6b6b"/>
+                        <stop offset="100%" stop-color="#b82a2a"/>
+                    </linearGradient>
+                    <filter id="miniDrop">
+                        <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.28"/>
+                    </filter>
+                </defs>
+                <g filter="url(#miniDrop)">
+                    <path d="M110 12 L180 50 L180 110 C180 150 140 178 110 198 C80 178 40 150 40 110 L40 50 Z"
+                        fill="url(#miniRed)" stroke="#ffd6d6" stroke-width="3"/>
+                </g>
+            </svg>`,
+
+            bronze: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#ff7b6b"/>
+                        <stop offset="50%" stop-color="#e6452b"/>
+                        <stop offset="100%" stop-color="#8f1f17"/>
+                    </linearGradient>
+                    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.35"/>
+                    </filter>
+                </defs>
+                <g filter="url(#softShadow)">
+                    <polygon points="256,36 420,120 420,292 256,376 92,292 92,120"
+                            fill="url(#redGrad)" stroke="#ffb2aa" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            silver: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="silverGrad" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#f4f7fb"/>
+                        <stop offset="50%" stop-color="#c9d3dc"/>
+                        <stop offset="100%" stop-color="#9aa6b2"/>
+                    </linearGradient>
+                    <filter id="shadowSmall">
+                        <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.25"/>
+                    </filter>
+                </defs>
+                <g filter="url(#shadowSmall)">
+                    <polygon points="256,34 410,120 410,292 256,378 102,292 102,120"
+                            fill="url(#silverGrad)" stroke="#f0f4f8" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            gold: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full">
+                <defs>
+                    <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#ffe57f"/>
+                        <stop offset="50%" stop-color="#ffb84d"/>
+                        <stop offset="100%" stop-color="#c37a12"/>
+                    </linearGradient>
+                    <filter id="goldShadow">
+                        <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.28"/>
+                    </filter>
+                </defs>
+                <g filter="url(#goldShadow)">
+                    <polygon points="256,36 420,120 420,292 256,376 92,292 92,120"
+                            fill="url(#goldGrad)" stroke="#fff0c4" stroke-width="6"/>
+                </g>
+            </svg>`,
+
+            sapphire: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" class="w-full h-full">
+                <defs>
+                    <linearGradient id="purpleGrad" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#b38cff"/>
+                        <stop offset="50%" stop-color="#8b4dff"/>
+                        <stop offset="100%" stop-color="#5a1fb6"/>
+                    </linearGradient>
+                    <filter id="bigShadow">
+                        <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.32"/>
+                    </filter>
+                </defs>
+                <g filter="url(#bigShadow)">
+                    <polygon points="280,30 460,140 460,340 280,450 100,340 100,140"
+                            fill="url(#purpleGrad)" stroke="#e6d5ff" stroke-width="8"/>
+                </g>
+            </svg>`
+        };
+
+        // Rank/Badge System
+        function updateRankBadge(points) {
+            let rankName, rankColor, rankBadge, rankDesc;
+
+            if (points >= 1500) {
+                rankName = 'Sapphire';
+                rankColor = 'from-purple-200 to-purple-100';
+                rankBadge = RANK_BADGES.sapphire;
+                rankDesc = 'Elite learner! You\'ve mastered 15+ courses!';
+            } else if (points >= 1000) {
+                rankName = 'Gold';
+                rankColor = 'from-yellow-300 to-yellow-100';
+                rankBadge = RANK_BADGES.gold;
+                rankDesc = `${1500 - points} points to Sapphire`;
+            } else if (points >= 500) {
+                rankName = 'Silver';
+                rankColor = 'from-gray-300 to-gray-200';
+                rankBadge = RANK_BADGES.silver;
+                rankDesc = `${1000 - points} points to Gold`;
+            } else if (points >= 100) {
+                rankName = 'Bronze';
+                rankColor = 'from-orange-300 to-orange-200';
+                rankBadge = RANK_BADGES.bronze;
+                rankDesc = `${500 - points} points to Silver`;
+            } else {
+                rankName = 'Ruby';
+                rankColor = 'from-red-200 to-red-100';
+                rankBadge = RANK_BADGES.ruby;
+                rankDesc = `${100 - points} points to Bronze`;
+            }
+
+            document.getElementById('rank-name').textContent = rankName;
+            document.getElementById('rank-description').textContent = rankDesc;
+            document.getElementById('rank-badge').innerHTML = rankBadge;
+
+            // Update rank container background
+            const rankContainer = document.getElementById('rank-container');
+            rankContainer.className = `p-4 bg-gradient-to-br ${rankColor} rounded-lg border-2 border-yellow-200`;
+        }
+
+        // Weekly Goal Adjustment
+        function showWeeklyGoalDialog() {
+            const currentGoal = parseInt(localStorage.getItem('weeklyGoal') || '3');
+            const newGoal = prompt(`Set your weekly course completion goal (current: ${currentGoal} courses):`, currentGoal);
+
+            if (newGoal !== null && !isNaN(newGoal) && newGoal > 0) {
+                localStorage.setItem('weeklyGoal', newGoal);
+                renderUserProgress(); // Refresh display
+            }
+        }
+
+        // Render Leaderboard (API: /leaderboard)
+        async function renderLeaderboard() {
+            const container = document.getElementById('leaderboard-container');
+            try {
+                const response = await fetch(`${API_BASE}/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch leaderboard.');
+                const leaderboard = await response.json();
+
+                container.innerHTML = leaderboard.map(entry => {
+                    // Giả định Alex Chen là người dùng hiện tại nếu user.name không có
+                    const isCurrentUser = entry.name.includes(user.name || "Alex Chen"); 
+                    const bgColor = isCurrentUser ? 'bg-orange-50 border border-orange-300' : 'bg-gray-50';
+                    const rankEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank;
+                    const rankColor = entry.rank <= 3 ? 'text-2xl' : 'text-lg text-gray-400';
+                    const pointColor = entry.change > 0 ? 'text-green-600' : 'text-gray-500';
+
+                    return `
+                        <div class="flex items-center justify-between p-3 ${bgColor} rounded-lg card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="${rankColor}">${rankEmoji}</div>
+                                <div class="w-10 h-10 bg-${entry.color} rounded-full flex items-center justify-center text-white font-bold">
+                                    ${entry.initials}
+                                </div>
+                                <div>
+                                    <div class="font-semibold">${entry.name} ${isCurrentUser ? '(You)' : ''}</div>
+                                    <div class="text-sm text-gray-600">${entry.hours} hours studied</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-orange-600">${entry.points.toLocaleString()} pts</div>
+                                <div class="text-xs ${pointColor}">+${entry.change} this week</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error("Leaderboard fetch error:", error);
+                container.innerHTML = `<p class="text-sm text-red-500">Error loading leaderboard.</p>`;
+            }
+        }
+
+        // Render Friends Online (API: /friends)
+        async function renderFriendsStatus() {
+            const container = document.getElementById('friends-online-container');
+            const countElement = document.getElementById('friends-online-count');
+            try {
+                const response = await fetch(`${API_BASE}/friends`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch friends status.');
+                const data = await response.json();
+
+                countElement.textContent = `${data.totalOnline} online`;
+
+                container.innerHTML = data.friends.map(friend => {
+                    const onlineIndicator = friend.online 
+                        ? `<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white online-indicator"></div>`
+                        : `<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white"></div>`;
+
+                    return `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="relative">
+                                    <div class="w-8 h-8 bg-${friend.color} rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                        ${friend.initials}
+                                    </div>
+                                    ${onlineIndicator}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold">${friend.name}</div>
+                                    <div class="text-xs text-gray-500">${friend.status}</div>
+                                </div>
+                            </div>
+                            <button class="text-blue-500 hover:text-blue-600 text-lg">
+                                ${friend.emoji}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error("Friends status error:", error);
+                container.innerHTML = `<p class="text-sm text-red-500">Error loading friends list.</p>`;
+                countElement.textContent = `0 online`;
+            }
+        }
+
+        // Render Active Challenges
+        async function renderActiveChallenges() {
+            const container = document.getElementById('active-challenges-container');
+            try {
+                const response = await fetch(`${API_BASE}/challenges`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch challenges');
+                const challenges = await response.json();
+
+                if (challenges.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-trophy mr-2"></i>No active challenges yet
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = challenges.slice(0, 3).map(challenge => {
+                    // Calculate progress (assuming user progress is available)
+                    const progress = Math.floor(Math.random() * 100); // Placeholder - should come from API
+                    const progressColor = progress >= 70 ? 'blue' : progress >= 40 ? 'yellow' : 'red';
+
+                    return `
+                        <div class="border border-${progressColor}-200 rounded-lg p-4 bg-${progressColor}-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-${progressColor}-800">${challenge.title}</h4>
+                                <span class="text-xs bg-${progressColor}-200 text-${progressColor}-800 px-2 py-1 rounded-full">
+                                    ${progress}%
+                                </span>
+                            </div>
+                            <div class="w-full bg-${progressColor}-200 rounded-full h-2 mb-2">
+                                <div class="bg-${progressColor}-500 h-2 rounded-full progress-bar" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="text-xs text-${progressColor}-700">${challenge.description}</div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                Reward: ${challenge.reward} points
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error fetching challenges:', error);
+                container.innerHTML = `
+                    <div class="text-center py-4 text-red-500">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Failed to load challenges
+                    </div>
+                `;
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update user info in header
+            const initials = getUserInitials();
+            document.getElementById('user-avatar').textContent = initials;
+            document.getElementById('user-name').textContent = user.name;
+            
+            // Logout functionality
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'LoginPage.html';
+            });
+
+            // Redirect user profile click (Header avatar)
+            document.getElementById('user-profile-btn').addEventListener('click', () => {
+                window.location.href = 'ProfilePage.html';
+            });
+            
+            // Study Groups Event Listeners
+            document.getElementById('join-new-group-btn').addEventListener('click', showAvailableGroups);
+            document.getElementById('close-groups-modal').addEventListener('click', () => {
+                document.getElementById('available-groups-modal').classList.add('hidden');
+            });
+
+            // Close available groups modal when clicking outside
+            document.getElementById('available-groups-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'available-groups-modal') {
+                    document.getElementById('available-groups-modal').classList.add('hidden');
+                }
+            });
+
+            document.getElementById('close-forum-modal').addEventListener('click', () => {
+                document.getElementById('group-forum-modal').classList.add('hidden');
+            });
+
+            // Close forum modal when clicking outside
+            document.getElementById('group-forum-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'group-forum-modal') {
+                    document.getElementById('group-forum-modal').classList.add('hidden');
+                }
+            });
+
+            document.getElementById('send-message-btn').addEventListener('click', sendForumMessage);
+            document.getElementById('new-message-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendForumMessage();
+                }
+            });
+
+            // Weekly Goal Adjustment Button
+            document.getElementById('adjust-goal-btn').addEventListener('click', showWeeklyGoalDialog);
+
+            // --- POMODORO TIMER FUNCTIONALITY ---
+
+            let timerInterval;
+            let timeLeft = 25 * 60; // 25 minutes in seconds
+            let isRunning = false;
+            let isWorkSession = true;
+            let sessionsCompleted = parseInt(localStorage.getItem('pomodoroSessions') || '0');
+
+            const WORK_TIME = 25 * 60; // 25 minutes
+            const BREAK_TIME = 5 * 60; // 5 minutes
+            const CIRCLE_CIRCUMFERENCE = 351.86; // 2 * π * 56
+
+            // Update sessions count display
+            document.getElementById('sessions-count').textContent = sessionsCompleted;
+
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer-display').textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Update progress circle
+                const totalTime = isWorkSession ? WORK_TIME : BREAK_TIME;
+                const progress = (totalTime - timeLeft) / totalTime;
+                const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
+                document.getElementById('timer-progress').style.strokeDashoffset = offset;
+
+                // Update timer mode display
+                document.getElementById('timer-mode').textContent = isWorkSession ? 'Work' : 'Break';
+
+                // Update progress circle color
+                const progressCircle = document.getElementById('timer-progress');
+                progressCircle.style.stroke = isWorkSession ? '#3b82f6' : '#10b981';
+            }
+
+            function startTimer() {
+                if (isRunning) return;
+
+                isRunning = true;
+                document.getElementById('start-timer').textContent = 'Running...';
+                document.getElementById('start-timer').disabled = true;
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        document.getElementById('start-timer').textContent = 'Start';
+                        document.getElementById('start-timer').disabled = false;
+
+                        if (isWorkSession) {
+                            // Work session completed
+                            sessionsCompleted++;
+                            localStorage.setItem('pomodoroSessions', sessionsCompleted.toString());
+                            document.getElementById('sessions-count').textContent = sessionsCompleted;
+
+                            // Switch to break
+                            isWorkSession = false;
+                            timeLeft = BREAK_TIME;
+                            alert('Work session completed! Time for a 5-minute break.');
+                        } else {
+                            // Break completed
+                            isWorkSession = true;
+                            timeLeft = WORK_TIME;
+                            alert('Break completed! Ready for another work session?');
+                        }
+
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+
+            function pauseTimer() {
+                if (!isRunning) return;
+
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('start-timer').textContent = 'Resume';
+                document.getElementById('start-timer').disabled = false;
+            }
+
+            function resetTimer() {
+                clearInterval(timerInterval);
+                isRunning = false;
+                isWorkSession = true;
+                timeLeft = WORK_TIME;
+                document.getElementById('start-timer').textContent = 'Start';
+                document.getElementById('start-timer').disabled = false;
+                updateTimerDisplay();
+            }
+
+            // Timer event listeners
+            document.getElementById('start-timer').addEventListener('click', startTimer);
+            document.getElementById('pause-timer').addEventListener('click', pauseTimer);
+            document.getElementById('reset-timer').addEventListener('click', resetTimer);
+
+            // Initialize timer display
+            updateTimerDisplay();
+
+            // Run data fetching functions
+            renderUserProgress();
+            renderLeaderboard();
+            renderFriendsStatus();
+            renderMyStudyGroups();
+            renderActiveChallenges();
+        });
+
+    </script>
+
+<footer class="bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+            <!-- Back to top button -->
+            <div class="text-center mb-12">
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    Back to top
+                </button>
+            </div>
+
+            <!-- Footer content with white background and border -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                    <!-- Learning -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">Learning</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/courses" class="text-gray-600 hover:text-gray-900 transition-colors">Browse Courses</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Categories</a></li>
+                            <li><a href="/community" class="text-gray-600 hover:text-gray-900 transition-colors">Learning Paths</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Free Courses</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Features -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">Features</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/quiz" class="text-gray-600 hover:text-gray-900 transition-colors">Quizzes</a></li>
+                            <li><a href="/quiz" class="text-gray-600 hover:text-gray-900 transition-colors">Certificates</a></li>
+                            <li><a href="/account" class="text-gray-600 hover:text-gray-900 transition-colors">Progress Tracking</a></li>
+                            <li><a href="/community" class="text-gray-600 hover:text-gray-900 transition-colors">Discussion Forums</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Account -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">Account</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/payment" class="text-gray-600 hover:text-gray-900 transition-colors">Become Instructor</a></li>
+                            <li><a href="/payment" class="text-gray-600 hover:text-gray-900 transition-colors">Premium Plans</a></li>
+                            <li><a href="/account" class="text-gray-600 hover:text-gray-900 transition-colors">My Dashboard</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Support -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">Support</h3>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Help Center</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Contact Us</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Student Guide</a></li>
+                            <li><a href="/blog" class="text-gray-600 hover:text-gray-900 transition-colors">UniLearn Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">Legal</h3>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Terms of Service</a></li>
+                            <li><a href="#" class="text-gray-600 hover:text-gray-900 transition-colors">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social media and bottom section -->
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Social media icons -->
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.624 5.367 11.99 11.988 11.99s11.99-5.366 11.99-11.99C24.007 5.367 18.641.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.328-1.297l-.061-.053-.349-.264c-.615-.491-1.016-1.239-1.016-2.086v-2.555c0-.847.401-1.595 1.016-2.086l.349-.264.061-.053c.88-.807 2.031-1.297 3.328-1.297h7.098c1.297 0 2.448.49 3.328 1.297l.061.053.349.264c.615.491 1.016 1.239 1.016 2.086v2.555c0 .847-.401 1.595-1.016 2.086l-.349.264-.061.053c-.88.807-2.031 1.297-3.328 1.297H8.449z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span class="sr-only">YouTube</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span class="sr-only">LinkedIn</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Logo and copyright -->
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex items-center mb-4">
+                        <svg class="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="ml-2 text-xl font-bold text-gray-600">UniLearn</span>
+                    </div>
+                    <p class="text-sm text-gray-500">
+                        © 2025 UniLearn Inc. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

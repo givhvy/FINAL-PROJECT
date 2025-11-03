@@ -1,0 +1,581 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | E-Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fb;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .sidebar-link.active {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            border-left: 3px solid #4f46e5;
+        }
+        .sidebar-link:hover:not(.active) {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar fixed md:relative w-64 bg-white shadow-lg h-screen z-10 transition-transform">
+            <div class="p-6">
+                <div class="flex items-center mb-8">
+                    <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">E</div>
+                    <h1 class="ml-3 text-xl font-bold text-gray-800">EduLearn</h1>
+                </div>
+                
+                <nav>
+                    <div class="space-y-1">
+                        <a href="#" class="sidebar-link active flex items-center px-4 py-3 text-sm font-medium rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            My Courses
+                        </a>
+                        <a href="/blog" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3v6m0 0l-3-3m3 3l3-3" />
+                            </svg>
+                            Blog
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Calendar
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                            Assignments
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                            Messages
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-600 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Settings
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div class="flex items-center md:hidden">
+                        <button id="menuToggle" class="text-gray-500 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="relative w-full max-w-md mx-4 hidden md:block">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search for courses, assignments...">
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <button class="flex mx-4 text-gray-600 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="absolute top-3 right-8 bg-red-500 rounded-full w-2 h-2"></span>
+                        </button>
+                        
+                        <div class="relative">
+                            <button class="flex items-center focus:outline-none">
+                                <div class="w-8 h-8 overflow-hidden rounded-full bg-indigo-100">
+                                    <svg class="w-full h-full text-indigo-500" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                                    </svg>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-gray-700 hidden md:block">Huy Pham</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-bold text-gray-800">Welcome back, Huy!</h1>
+                    <p class="text-gray-600">Here's an overview of your learning progress</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-indigo-100 text-indigo-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h2 class="font-semibold text-gray-600 text-sm">Enrolled Courses</h2>
+                                <p class="text-2xl font-bold text-gray-800">5</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h2 class="font-semibold text-gray-600 text-sm">Completed</h2>
+                                <p class="text-2xl font-bold text-gray-800">2</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h2 class="font-semibold text-gray-600 text-sm">Hours Spent</h2>
+                                <p class="text-2xl font-bold text-gray-800">42</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-red-100 text-red-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h2 class="font-semibold text-gray-600 text-sm">Assignments Due</h2>
+                                <p class="text-2xl font-bold text-gray-800">3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Sections -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- In Progress Courses -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg shadow mb-8">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="font-bold text-lg text-gray-800">In Progress Courses</h2>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-6">
+                                    <!-- Course 1 -->
+                                    <div class="course-card bg-white border border-gray-100 rounded-lg p-4 transition duration-300 ease-in-out">
+                                        <div class="flex flex-col md:flex-row items-start md:items-center">
+                                            <div class="flex-shrink-0 w-full md:w-48 h-32 mb-4 md:mb-0 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <div class="md:ml-6 flex-1">
+                                                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                                    <div>
+                                                        <h3 class="text-lg font-semibold text-gray-800">Web Development Fundamentals</h3>
+                                                        <p class="text-sm text-gray-600">Instructor: Sarah Williams</p>
+                                                    </div>
+                                                    <div class="mt-2 md:mt-0 flex items-center">
+                                                        <div class="relative w-16 h-16">
+                                                            <svg class="w-16 h-16">
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#4f46e5" stroke-width="8" stroke-dasharray="175.9" stroke-dashoffset="44" class="progress-ring"/>
+                                                            </svg>
+                                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                                <span class="text-sm font-semibold">75%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="flex items-center text-sm">
+                                                        <span class="text-gray-500">Next lesson:</span>
+                                                        <span class="ml-2 font-medium">CSS Flexbox & Grid</span>
+                                                    </div>
+                                                    <div class="mt-4 flex">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueWebDevCourse()">
+                                                            Continue Learning
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Course 2 -->
+                                    <div class="course-card bg-white border border-gray-100 rounded-lg p-4 transition duration-300 ease-in-out">
+                                        <div class="flex flex-col md:flex-row items-start md:items-center">
+                                            <div class="flex-shrink-0 w-full md:w-48 h-32 mb-4 md:mb-0 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                                                </svg>
+                                            </div>
+                                            <div class="md:ml-6 flex-1">
+                                                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                                    <div>
+                                                        <h3 class="text-lg font-semibold text-gray-800">Data Science Essentials</h3>
+                                                        <p class="text-sm text-gray-600">Instructor: Michael Chen</p>
+                                                    </div>
+                                                    <div class="mt-2 md:mt-0 flex items-center">
+                                                        <div class="relative w-16 h-16">
+                                                            <svg class="w-16 h-16">
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#4f46e5" stroke-width="8" stroke-dasharray="175.9" stroke-dashoffset="88" class="progress-ring"/>
+                                                            </svg>
+                                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                                <span class="text-sm font-semibold">50%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="flex items-center text-sm">
+                                                        <span class="text-gray-500">Next lesson:</span>
+                                                        <span class="ml-2 font-medium">Statistical Analysis</span>
+                                                    </div>
+                                                    <div class="mt-4 flex">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueDataScienceCourse()">
+                                                            Continue Learning
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Course 3 -->
+                                    <div class="course-card bg-white border border-gray-100 rounded-lg p-4 transition duration-300 ease-in-out">
+                                        <div class="flex flex-col md:flex-row items-start md:items-center">
+                                            <div class="flex-shrink-0 w-full md:w-48 h-32 mb-4 md:mb-0 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                                </svg>
+                                            </div>
+                                            <div class="md:ml-6 flex-1">
+                                                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                                    <div>
+                                                        <h3 class="text-lg font-semibold text-gray-800">Business Communication</h3>
+                                                        <p class="text-sm text-gray-600">Instructor: Jessica Taylor</p>
+                                                    </div>
+                                                    <div class="mt-2 md:mt-0 flex items-center">
+                                                        <div class="relative w-16 h-16">
+                                                            <svg class="w-16 h-16">
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                                                                <circle cx="32" cy="32" r="28" fill="none" stroke="#4f46e5" stroke-width="8" stroke-dasharray="175.9" stroke-dashoffset="132" class="progress-ring"/>
+                                                            </svg>
+                                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                                <span class="text-sm font-semibold">25%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="flex items-center text-sm">
+                                                        <span class="text-gray-500">Next lesson:</span>
+                                                        <span class="ml-2 font-medium">Presentation Skills</span>
+                                                    </div>
+                                                    <div class="mt-4 flex">
+                                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out" onclick="continueBusinessCommCourse()">
+                                                            Continue Learning
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Learning Activity -->
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="font-bold text-lg text-gray-800">Learning Activity</h2>
+                            </div>
+                            <div class="p-6">
+                                <canvas id="activityChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar Content -->
+                    <div class="space-y-8">
+                        <!-- Upcoming Assignments -->
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="font-bold text-lg text-gray-800">Upcoming Assignments</h2>
+                            </div>
+                            <div class="p-6">
+                                <ul class="space-y-4">
+                                    <li class="border-l-4 border-red-500 pl-4 py-2">
+                                        <p class="font-medium text-gray-800">Final Project Submission</p>
+                                        <p class="text-sm text-gray-600">Web Development Fundamentals</p>
+                                        <div class="flex items-center mt-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="ml-1 text-xs text-red-500 font-medium">Due tomorrow</span>
+                                        </div>
+                                    </li>
+                                    <li class="border-l-4 border-yellow-500 pl-4 py-2">
+                                        <p class="font-medium text-gray-800">Data Analysis Report</p>
+                                        <p class="text-sm text-gray-600">Data Science Essentials</p>
+                                        <div class="flex items-center mt-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="ml-1 text-xs text-yellow-500 font-medium">Due in 3 days</span>
+                                        </div>
+                                    </li>
+                                    <li class="border-l-4 border-green-500 pl-4 py-2">
+                                        <p class="font-medium text-gray-800">Group Presentation</p>
+                                        <p class="text-sm text-gray-600">Business Communication</p>
+                                        <div class="flex items-center mt-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="ml-1 text-xs text-green-500 font-medium">Due in 7 days</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-6">
+                                    <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View all assignments</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recommended Courses -->
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="font-bold text-lg text-gray-800">Recommended Courses</h2>
+                            </div>
+                            <div class="p-6">
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h3 class="font-medium text-gray-800">JavaScript Frameworks</h3>
+                                            <p class="text-sm text-gray-600">Based on your interests</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h3 class="font-medium text-gray-800">Cybersecurity Basics</h3>
+                                            <p class="text-sm text-gray-600">Popular in your field</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h3 class="font-medium text-gray-800">Machine Learning</h3>
+                                            <p class="text-sm text-gray-600">Trending now</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-6">
+                                    <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Browse course catalog</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Announcements -->
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="font-bold text-lg text-gray-800">Announcements</h2>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                                        <h3 class="font-medium text-blue-800">Platform Maintenance</h3>
+                                        <p class="text-sm text-blue-600 mt-1">Scheduled maintenance this Saturday from 2-4 AM EST.</p>
+                                    </div>
+                                    <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                                        <h3 class="font-medium text-green-800">New Courses Added</h3>
+                                        <p class="text-sm text-green-600 mt-1">Check out 15 new courses in our catalog!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+        
+        // Learning activity chart
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        const activityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Hours Studied',
+                    data: [2, 3.5, 1, 4, 2.5, 3, 1.5],
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: 'rgba(79, 70, 229, 1)',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#1f2937',
+                        bodyColor: '#4b5563',
+                        borderColor: 'rgba(203, 213, 225, 1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                return tooltipItems[0].label;
+                            },
+                            label: function(context) {
+                                return `${context.parsed.y} hours`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(243, 244, 246, 1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            font: {
+                                size: 11
+                            },
+                            padding: 8
+                        },
+                        border: {
+                            dash: [4, 4]
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            font: {
+                                size: 11
+                            },
+                            padding: 8
+                        }
+                    }
+                }
+            }
+        });
+
+        // Continue Learning functions
+        function continueWebDevCourse() {
+            // Redirect to Web Development course - assuming courseId = 1
+            window.location.href = 'CourseandLesson.html#lesson/1';
+        }
+
+        function continueDataScienceCourse() {
+            // Redirect to Data Science course - assuming courseId = 2
+            window.location.href = 'CourseandLesson.html#lesson/2';
+        }
+
+        function continueBusinessCommCourse() {
+            // Redirect to Business Communication course - assuming courseId = 3
+            window.location.href = 'CourseandLesson.html#lesson/3';
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94ee1b0fe5de472e',t:'MTc0OTc4MTE5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

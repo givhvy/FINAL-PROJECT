@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : 'font-sans bg-gray-100' %>">
+
+    <% if (typeof showHeader === 'undefined' || showHeader) { %>
+        <%- include('../partials/header') %>
+    <% } %>
+
+    <!-- Main Content -->
+    <main>
+        <%- body %>
+    </main>
+
+    <% if (typeof showFooter === 'undefined' || showFooter) { %>
+        <%- include('../partials/footer') %>
+    <% } %>
+
+    <!-- Common Scripts -->
+    <script>
+        // API Base URL Configuration
+        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin);
+
+        // Common utility functions
+        function showNotification(message, type = 'info') {
+            // Simple notification system
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Auth check utility
+        function getUser() {
+            const userStr = localStorage.getItem('user');
+            return userStr ? JSON.parse(userStr) : null;
+        }
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        function isAuthenticated() {
+            return !!getToken();
+        }
+    </script>
+
+    <% if (typeof customScripts !== 'undefined') { %>
+        <%- customScripts %>
+    <% } %>
+</body>
+</html>
