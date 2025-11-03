@@ -49,17 +49,12 @@
             </div>
             <nav class="mt-10">
                 <div class="sidebar-item active flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="dashboard"> <i class="fas fa-tachometer-alt mr-3"></i> <span>Dashboard</span> </div>
+                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="users"> <i class="fas fa-users mr-3"></i> <span>Users</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="courses"> <i class="fas fa-book mr-3"></i> <span>Courses</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="students"> <i class="fas fa-users mr-3"></i> <span>Students</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="quizzes"> <i class="fas fa-puzzle-piece mr-3"></i> <span>Quizzes</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="subscriptions"> <i class="fas fa-tags mr-3"></i> <span>Subscriptions</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="instructors"> <i class="fas fa-chalkboard-teacher mr-3"></i> <span>Instructors</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="assignments"> <i class="fas fa-tasks mr-3"></i> <span>Assignments</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="challenges"> <i class="fas fa-trophy mr-3"></i> <span>Challenges</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="blog"> <i class="fas fa-blog mr-3"></i> <span>Blog</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="user-roles" id="user-roles-nav"> <i class="fas fa-user-shield mr-3"></i> <span>User Roles</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="reports"> <i class="fas fa-chart-bar mr-3"></i> <span>Reports</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
             <div class="px-4 absolute bottom-4 left-0 right-0">
@@ -140,41 +135,6 @@
                     </div>
                 </section>
                 
-                <section id="students" class="page-content hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
-                        <div class="p-4 border-b flex flex-col md:flex-row md:items-center md:justify-between">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">Student Management</h2>
-                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-                                <div class="relative">
-                                    <input type="text" placeholder="Search students..." class="border rounded-lg px-3 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i> Add New Student
-                                </button>
-                            </div>
-                        </div>
-                        <div class="p-4 overflow-x-auto">
-                            <table class="min-w-full">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
-                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <th class="px-4 py-3">Student</th>
-                                        <th class="px-4 py-3">Email</th>
-                                        <th class="px-4 py-3">Enrolled Courses</th>
-                                        <th class="px-4 py-3">Progress</th>
-                                        <th class="px-4 py-3">Join Date</th>
-                                        <th class="px-4 py-3">Status</th>
-                                        <th class="px-4 py-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="students-table-body" class="divide-y divide-gray-200">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="quizzes" class="page-content hidden"><p>Quizzes Management Coming Soon</p></section>
 
                 <section id="subscriptions" class="page-content hidden">
                     <div id="subscriptions-container">
@@ -250,29 +210,6 @@
         </div>
     </div>
 </section>
-               <section id="instructors" class="page-content hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
-        <div class="p-4 border-b flex justify-between items-center">
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Instructor Management</h2>
-        </div>
-        <div class="p-4 overflow-x-auto">
-            <table class="min-w-full">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <th class="px-4 py-3">Instructor</th>
-                        <th class="px-4 py-3">Email</th>
-                        <th class="px-4 py-3">Courses Taught</th>
-                        <th class="px-4 py-3">Join Date</th>
-                        <th class="px-4 py-3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="instructors-table-body" class="divide-y divide-gray-200">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-</section>
-                <section id="assignments" class="page-content hidden"><p>Assignment Management Coming Soon</p></section>
 
                 <!-- CHALLENGES MANAGEMENT SECTION -->
                 <section id="challenges" class="page-content hidden">
@@ -348,72 +285,53 @@
                     </div>
                 </section>
 
-                <!-- USER ROLES MANAGEMENT SECTION -->
-                <section id="user-roles" class="page-content hidden">
+                <!-- USER MANAGEMENT SECTION -->
+                <section id="users" class="page-content hidden">
                     <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">User Role Management</h2>
-                        <p class="text-gray-600 dark:text-gray-400 mt-2">Manage user permissions and assign roles (Admin/Teacher/Student)</p>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">User Management</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mt-2">Manage all users, assign roles, and edit user information</p>
                     </div>
 
-                    <!-- Role Assignment Form -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Assign Role</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="user-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select User</label>
-                                <select id="user-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <option value="">Loading users...</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="role-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Role</label>
-                                <select id="role-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <option value="">Select Role</option>
-                                    <option value="student">Student</option>
-                                    <option value="teacher">Teacher</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button id="assign-role-btn" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    Assign Role
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Users Table with Roles -->
+                    <!-- Users Table with Enhanced Features -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Users and Their Roles</h3>
-                            <div class="flex space-x-3">
-                                <select id="role-filter" class="border rounded-lg px-3 py-2 text-sm">
-                                    <option value="">All Roles</option>
-                                    <option value="student">Students</option>
-                                    <option value="teacher">Teachers</option>
-                                    <option value="admin">Admins</option>
-                                </select>
-                                <div class="relative">
-                                    <input type="text" id="user-search" placeholder="Search users..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm"></i>
+                        <div class="p-4 border-b">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Users</h3>
+                                <div class="flex flex-col md:flex-row gap-3">
+                                    <select id="role-filter" class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="">All Roles</option>
+                                        <option value="student">Students Only</option>
+                                        <option value="teacher">Teachers Only</option>
+                                        <option value="admin">Admins Only</option>
+                                    </select>
+                                    <div class="relative">
+                                        <input type="text" id="user-search" placeholder="Search users..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                                    </div>
+                                    <button id="add-user-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center text-sm whitespace-nowrap">
+                                        <i class="fas fa-plus mr-2"></i> Add User
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="p-4 overflow-x-auto">
                             <table class="min-w-full">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
-                                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <tr class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         <th class="px-4 py-3">User</th>
                                         <th class="px-4 py-3">Email</th>
-                                        <th class="px-4 py-3">Current Role</th>
+                                        <th class="px-4 py-3">Role</th>
+                                        <th class="px-4 py-3">Courses</th>
+                                        <th class="px-4 py-3">Progress</th>
                                         <th class="px-4 py-3">Join Date</th>
+                                        <th class="px-4 py-3">Status</th>
                                         <th class="px-4 py-3">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="user-roles-table-body" class="divide-y divide-gray-200">
+                                <tbody id="users-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr>
-                                        <td colspan="5" class="text-center py-8 text-gray-500">
-                                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                                        <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                            <i class="fas fa-users text-4xl mb-4"></i>
                                             <p>Loading users...</p>
                                         </td>
                                     </tr>
@@ -424,9 +342,71 @@
                 </section>
 
 
-                <section id="reports" class="page-content hidden"><p>Reports Coming Soon</p></section>
                 <section id="settings" class="page-content hidden"><p>Settings Coming Soon</p></section>
             </main>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div id="user-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 m-4 max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="user-modal-title" class="text-2xl font-bold text-gray-800 dark:text-gray-200">Edit User</h2>
+                <button id="close-user-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="user-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
+                            <input type="text" id="user-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter full name">
+                        </div>
+                        <div>
+                            <label for="user-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
+                            <input type="email" id="user-email" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter email">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="user-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role *</label>
+                            <select id="user-role" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Select Role</option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="user-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <input type="password" id="user-password" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Leave blank to keep current">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Only fill if changing password</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="user-phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                        <input type="tel" id="user-phone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter phone number">
+                    </div>
+
+                    <div>
+                        <label for="user-bio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
+                        <textarea id="user-bio" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter user bio"></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancel-user-btn" class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -575,20 +555,16 @@
             // Call appropriate render function for the page
             if (targetId === 'courses') {
                 renderCourseManagementPage();
-            } else if (targetId === 'students') {
-                fetchAndRenderStudents();
+            } else if (targetId === 'users') {
+                renderUsersPage();
             } else if (targetId === 'subscriptions') {
                 renderSubscriptionManagementPage();
-            } else if (targetId === 'instructors') {
-                renderInstructorManagementPage();
             } else if (targetId === 'challenges') {
                 fetchAndRenderChallenges();
             } else if (targetId === 'certificates') {
                 populateCertificateForm();
             } else if (targetId === 'blog') {
                 fetchAndRenderBlogPosts();
-            } else if (targetId === 'user-roles') {
-                renderUserRolesPage();
             }
         }
 
@@ -605,38 +581,6 @@
                 console.error('Core Data Fetch Error:', error);
                 alert('Error loading essential data: ' + error.message);
             }
-        }
-        
-        // --- STUDENT MANAGEMENT (from File 2 - More Advanced) ---
-        async function fetchAndRenderStudents() {
-            const container = document.getElementById('students-table-body');
-            if(!container) return;
-
-            const students = allUsers.filter(u => u.role === 'student');
-            let studentRows = students.map(student => {
-                const parts = student.name ? student.name.split(' ') : [];
-                let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (student.name ? student.name.charAt(0).toUpperCase() : '??');
-                const progress = student.overall_progress || 0;
-
-                return `
-                    <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700">
-                        <td class="px-4 py-3"><div class="flex items-center"><div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-semibold mr-3"><span>${initials}</span></div><span>${student.name || 'N/A'}</span></div></td>
-                        <td class="px-4 py-3">${student.email || 'N/A'}</td>
-                        <td class="px-4 py-3 text-center">${student.enrolled_courses?.length || 0}</td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center">
-                                <div class="w-full bg-gray-200 rounded-full h-2 mr-2"><div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div></div>
-                                <span class="text-xs text-gray-500">${progress}%</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">${student.createdAt ? new Date(student.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
-                        <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span></td>
-                        <td class="px-4 py-3"><div class="flex space-x-3"><button class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button><button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button></div></td>
-                    </tr>
-                `;
-            }).join('');
-
-            container.innerHTML = students.length > 0 ? studentRows : '<tr><td colspan="7" class="text-center py-4 text-gray-500">No students found.</td></tr>';
         }
 
         // === MERGED FROM FILE 1: COMPLETE SUBSCRIPTION MANAGEMENT LOGIC ===
@@ -712,49 +656,6 @@
             });
         }
         
-        // --- INSTRUCTOR MANAGEMENT FUNCTIONS ---
-        function renderInstructorManagementPage() {
-            const tableBody = document.getElementById('instructors-table-body');
-            if (!tableBody) return;
-            
-            // Lọc ra chỉ những user có vai trò là 'teacher' từ biến allUsers đã có
-            const instructors = allUsers.filter(user => user.role === 'teacher');
-
-            if (instructors.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No instructors found.</td></tr>`;
-                return;
-            }
-
-            tableBody.innerHTML = instructors.map(instructor => {
-                 const parts = instructor.name ? instructor.name.split(' ') : [];
-                 let initials = parts.length > 1 ? parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase() : (instructor.name ? instructor.name.charAt(0).toUpperCase() : '??');
-                 
-                 // Đếm số khóa học mà giáo viên này dạy từ biến allCourses đã có
-                 const coursesTaught = allCourses.filter(course => course.teacher_id === instructor.id).length;
-
-                 return `
-                    <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700">
-                         <td class="px-4 py-3">
-                             <div class="flex items-center">
-                                 <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-semibold mr-3">
-                                     <span>${initials}</span>
-                                 </div>
-                                 <span>${instructor.name || 'N/A'}</span>
-                             </div>
-                         </td>
-                         <td class="px-4 py-3">${instructor.email || 'N/A'}</td>
-                         <td class="px-4 py-3 text-center">${coursesTaught}</td>
-                         <td class="px-4 py-3">${instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
-                         <td class="px-4 py-3">
-                             <div class="flex space-x-3">
-                                 <button title="View Details" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
-                                 <button title="Delete User" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
-                             </div>
-                         </td>
-                    </tr>
-                 `;
-            }).join('');
-        }
         async function handleDeleteCourse(event) {
             const courseId = event.currentTarget.dataset.courseId;
             if (!confirm('Are you sure you want to delete this course and all its content (lessons, quizzes)? This action cannot be undone.')) {
@@ -1360,45 +1261,52 @@
         let filteredUsersForRoles = [];
 
         // Render user roles management page
-        function renderUserRolesPage() {
-            populateUserSelect();
-            renderUserRolesTable();
+        // ========== USER MANAGEMENT (UNIFIED) ==========
+        let filteredUsers = [];
+
+        function renderUsersPage() {
+            filteredUsers = [...allUsers];
+            displayUsersTable(filteredUsers);
+            setupUserFilters();
         }
 
-        // Populate user select dropdown
-        function populateUserSelect() {
-            const userSelect = document.getElementById('user-select');
-            if (!userSelect) return;
+        function setupUserFilters() {
+            const roleFilter = document.getElementById('role-filter');
+            const userSearch = document.getElementById('user-search');
 
-            userSelect.innerHTML = '<option value="">Select a user...</option>';
+            if (roleFilter) {
+                roleFilter.addEventListener('change', filterUsers);
+            }
 
-            allUsers.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = `${user.name || 'Unknown'} (${user.email})`;
-                userSelect.appendChild(option);
+            if (userSearch) {
+                userSearch.addEventListener('input', filterUsers);
+            }
+        }
+
+        function filterUsers() {
+            const roleFilter = document.getElementById('role-filter')?.value || '';
+            const searchTerm = document.getElementById('user-search')?.value.toLowerCase() || '';
+
+            filteredUsers = allUsers.filter(user => {
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesSearch = !searchTerm ||
+                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                    (user.email && user.email.toLowerCase().includes(searchTerm));
+                return matchesRole && matchesSearch;
             });
+
+            displayUsersTable(filteredUsers);
         }
 
-        // Render users table with roles
-        function renderUserRolesTable() {
-            const tableBody = document.getElementById('user-roles-table-body');
-            if (!tableBody) return;
-
-            filteredUsersForRoles = [...allUsers];
-            displayUsersTable(filteredUsersForRoles);
-        }
-
-        // Display users in table
         function displayUsersTable(users) {
-            const tableBody = document.getElementById('user-roles-table-body');
+            const tableBody = document.getElementById('users-table-body');
             if (!tableBody) return;
 
             if (users.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="text-center py-8 text-gray-500">
-                            <i class="fas fa-user-shield text-4xl mb-4"></i>
+                        <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-users text-4xl mb-4"></i>
                             <p>No users found.</p>
                         </td>
                     </tr>
@@ -1413,42 +1321,69 @@
                     (user.name ? user.name.charAt(0).toUpperCase() : '??');
 
                 const roleColors = {
-                    'admin': 'bg-red-100 text-red-800',
-                    'teacher': 'bg-blue-100 text-blue-800',
-                    'student': 'bg-green-100 text-green-800'
+                    'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                    'teacher': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                    'student': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                 };
 
                 const roleColor = roleColors[user.role] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
                 const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US') : 'N/A';
 
+                // Calculate progress and courses for students/teachers
+                const enrolledCourses = user.enrolled_courses?.length || 0;
+                const progress = user.overall_progress || 0;
+                const taughtCourses = user.role === 'teacher' ?
+                    allCourses.filter(c => c.teacher === user.id || c.teacherId === user.id).length : 0;
+
                 return `
-                    <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700">
+                    <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <td class="px-4 py-3">
                             <div class="flex items-center">
-                                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold mr-3">
+                                <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold mr-3">
                                     <span>${initials}</span>
                                 </div>
-                                <span>${user.name || 'Unknown'}</span>
+                                <span class="font-medium">${user.name || 'Unknown'}</span>
                             </div>
                         </td>
                         <td class="px-4 py-3">${user.email || 'N/A'}</td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full ${roleColor}">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium ${roleColor}">
                                 ${(user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1)}
                             </span>
                         </td>
+                        <td class="px-4 py-3 text-center">
+                            ${user.role === 'teacher' ? taughtCourses : enrolledCourses}
+                        </td>
+                        <td class="px-4 py-3">
+                            ${user.role === 'student' ? `
+                                <div class="flex items-center">
+                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mr-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">${progress}%</span>
+                                </div>
+                            ` : '<span class="text-gray-400 text-xs">N/A</span>'}
+                        </td>
                         <td class="px-4 py-3">${joinDate}</td>
                         <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</span>
+                        </td>
+                        <td class="px-4 py-3">
                             <div class="flex space-x-2">
+                                <button onclick="editUser('${user.id}')"
+                                        class="text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 p-1 rounded"
+                                        title="Edit user">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <button onclick="quickRoleChange('${user.id}', '${user.role}')"
-                                        class="text-blue-600 hover:bg-blue-50 p-1 rounded text-xs"
-                                        title="Quick role change">
+                                        class="text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 p-1 rounded"
+                                        title="Change role">
                                     <i class="fas fa-user-cog"></i>
                                 </button>
-                                <button onclick="viewUserDetails('${user.id}')"
-                                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs"
-                                        title="View details">
-                                    <i class="fas fa-eye"></i>
+                                <button onclick="deleteUser('${user.id}')"
+                                        class="text-red-600 hover:bg-red-50 dark:hover:bg-red-900 p-1 rounded"
+                                        title="Delete user">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
@@ -1457,64 +1392,95 @@
             }).join('');
         }
 
-        // Assign role to user
-        async function assignRole() {
-            const userId = document.getElementById('user-select').value;
-            const newRole = document.getElementById('role-select').value;
+        // Edit user - open modal with user data
+        function editUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
 
-            if (!userId || !newRole) {
-                alert('Please select both a user and a role.');
-                return;
+            document.getElementById('user-id').value = user.id;
+            document.getElementById('user-name').value = user.name || '';
+            document.getElementById('user-email').value = user.email || '';
+            document.getElementById('user-role').value = user.role || 'student';
+            document.getElementById('user-phone').value = user.phone || '';
+            document.getElementById('user-bio').value = user.bio || '';
+            document.getElementById('user-password').value = '';
+
+            document.getElementById('user-modal-title').textContent = 'Edit User';
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        // Add new user - open empty modal
+        function addNewUser() {
+            document.getElementById('user-form').reset();
+            document.getElementById('user-id').value = '';
+            document.getElementById('user-modal-title').textContent = 'Add New User';
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        // Save user (create or update)
+        async function saveUser(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById('user-id').value;
+            const userData = {
+                name: document.getElementById('user-name').value,
+                email: document.getElementById('user-email').value,
+                role: document.getElementById('user-role').value,
+                phone: document.getElementById('user-phone').value,
+                bio: document.getElementById('user-bio').value
+            };
+
+            const password = document.getElementById('user-password').value;
+            if (password) {
+                userData.password = password;
             }
 
             try {
-                const response = await fetch(`/api/users/${userId}/role`, {
-                    method: 'PUT',
+                const url = userId ? `/api/users/${userId}` : '/api/users';
+                const method = userId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ role: newRole })
+                    body: JSON.stringify(userData)
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to update user role');
+                    throw new Error(errorData.error || `Failed to ${userId ? 'update' : 'create'} user`);
                 }
 
                 const result = await response.json();
 
                 // Update local data
-                const userIndex = allUsers.findIndex(u => u.id === userId);
-                if (userIndex !== -1) {
-                    allUsers[userIndex].role = newRole;
+                if (userId) {
+                    const userIndex = allUsers.findIndex(u => u.id === userId);
+                    if (userIndex !== -1) {
+                        allUsers[userIndex] = { ...allUsers[userIndex], ...userData };
+                    }
+                } else {
+                    await fetchAllData(); // Refresh all data for new user
                 }
 
-                // Reset form
-                document.getElementById('user-select').value = '';
-                document.getElementById('role-select').value = '';
+                // Close modal and refresh
+                document.getElementById('user-modal').classList.add('hidden');
+                renderUsersPage();
 
-                // Refresh display
-                renderUserRolesTable();
-
-                alert(`Role updated successfully! User is now a ${newRole}.`);
+                alert(`User ${userId ? 'updated' : 'created'} successfully!`);
 
             } catch (error) {
-                console.error('Error updating user role:', error);
+                console.error('Error saving user:', error);
                 alert(`Error: ${error.message}`);
             }
         }
 
-        // Quick role change function
+        // Quick role change
         async function quickRoleChange(userId, currentRole) {
             const roles = ['student', 'teacher', 'admin'];
-            const roleOptions = roles.map(role =>
-                `<option value="${role}" ${role === currentRole ? 'selected' : ''}>
-                    ${role.charAt(0).toUpperCase() + role.slice(1)}
-                </option>`
-            ).join('');
-
-            const newRole = prompt(`Select new role for user:\n\nCurrent role: ${currentRole}\n\nEnter new role (student/teacher/admin):`, currentRole);
+            const newRole = prompt(`Change role for user:\n\nCurrent role: ${currentRole}\n\nEnter new role (student/teacher/admin):`, currentRole);
 
             if (!newRole || newRole === currentRole || !roles.includes(newRole.toLowerCase())) {
                 return;
@@ -1535,15 +1501,12 @@
                     throw new Error(errorData.error || 'Failed to update user role');
                 }
 
-                // Update local data
                 const userIndex = allUsers.findIndex(u => u.id === userId);
                 if (userIndex !== -1) {
                     allUsers[userIndex].role = newRole.toLowerCase();
                 }
 
-                // Refresh display
-                renderUserRolesTable();
-
+                renderUsersPage();
                 alert(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
 
             } catch (error) {
@@ -1552,30 +1515,40 @@
             }
         }
 
-        // View user details (placeholder)
-        function viewUserDetails(userId) {
+        // Delete user
+        async function deleteUser(userId) {
             const user = allUsers.find(u => u.id === userId);
-            if (user) {
-                alert(`User Details:\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email}\nRole: ${user.role || 'student'}\nJoin Date: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}`);
+            if (!user) return;
+
+            if (!confirm(`Are you sure you want to delete ${user.name || user.email}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to delete user');
+                }
+
+                // Remove from local data
+                allUsers = allUsers.filter(u => u.id !== userId);
+                renderUsersPage();
+
+                alert('User deleted successfully!');
+
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert(`Error: ${error.message}`);
             }
         }
 
-        // Filter users by role
-        function filterUsersByRole() {
-            const roleFilter = document.getElementById('role-filter').value;
-            const searchTerm = document.getElementById('user-search').value.toLowerCase();
-
-            filteredUsersForRoles = allUsers.filter(user => {
-                const matchesRole = !roleFilter || user.role === roleFilter;
-                const matchesSearch = !searchTerm ||
-                    (user.name || '').toLowerCase().includes(searchTerm) ||
-                    (user.email || '').toLowerCase().includes(searchTerm);
-
-                return matchesRole && matchesSearch;
-            });
-
-            displayUsersTable(filteredUsersForRoles);
-        }
 
 
         // --- CERTIFICATE & OTHER FUNCTIONS ---
@@ -1728,10 +1701,15 @@
             }
         });
 
-        // Event listeners for User Roles Management
-        document.getElementById('assign-role-btn').addEventListener('click', assignRole);
-        document.getElementById('role-filter').addEventListener('change', filterUsersByRole);
-        document.getElementById('user-search').addEventListener('input', filterUsersByRole);
+        // Event listeners for User Management
+        document.getElementById('add-user-btn')?.addEventListener('click', addNewUser);
+        document.getElementById('close-user-modal')?.addEventListener('click', () => {
+            document.getElementById('user-modal').classList.add('hidden');
+        });
+        document.getElementById('cancel-user-btn')?.addEventListener('click', () => {
+            document.getElementById('user-modal').classList.add('hidden');
+        });
+        document.getElementById('user-form')?.addEventListener('submit', saveUser);
 
 
         // Initialize TinyMCE editor on page load

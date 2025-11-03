@@ -7,6 +7,7 @@ router.get('/', userController.getUsers);
 router.post('/', userController.createUser);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);
+router.put('/:id/role', userController.updateUserRole);
 router.delete('/:id', userController.deleteUser);
 // NEW: GET /api/users/:id/progress -> Lấy tiến trình học tập chi tiết
 router.get('/:id/progress', userController.getUserProgressDetails);
