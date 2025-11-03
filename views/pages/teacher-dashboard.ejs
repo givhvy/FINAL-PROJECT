@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Logout
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
     });
 
     // Add Course button
@@ -829,7 +829,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch and display study groups
     async function fetchStudyGroups() {
         try {
-            const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/community/groups', {
+            const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community/groups', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -899,7 +899,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const subject = prompt('Enter subject/topic:') || 'General';
 
         try {
-            const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/community/groups', {
+            const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community/groups', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -935,7 +935,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             // Note: We'll need to add a delete endpoint to the backend
-            const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/community/groups/${groupId}`, {
+            const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/community/groups/${groupId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Auth Guard
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lessonId = urlParams.get('lessonId');
     if (!lessonId) {
         alert('No lesson selected.');
-        window.location.href = 'TeacherDashboard.html';
+        window.location.href = '/teacher';
         return;
     }
 

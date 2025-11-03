@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // --- AUTH CHECK & UI SETUP ---
     if (!token || !user) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
     
@@ -420,16 +420,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('user-avatar').textContent = getUserInitials(user.name);
     document.getElementById('user-menu-button').addEventListener('click', () => {
         if (user.role === 'teacher') {
-            window.location.href = 'TeacherDashboard.html';
+            window.location.href = '/teacher';
         } else if (user.role === 'admin') {
-            window.location.href = 'AdminDashboard.html';
+            window.location.href = '/admin';
         } else {
-            window.location.href = 'ProfilePage.html';
+            window.location.href = '/profile';
         }
     });
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
     });
 
     // Mobile menu toggle
@@ -447,18 +447,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Mobile profile button
         document.getElementById('mobile-profile-button').addEventListener('click', () => {
             if (user.role === 'teacher') {
-                window.location.href = 'TeacherDashboard.html';
+                window.location.href = '/teacher';
             } else if (user.role === 'admin') {
-                window.location.href = 'AdminDashboard.html';
+                window.location.href = '/admin';
             } else {
-                window.location.href = 'ProfilePage.html';
+                window.location.href = '/profile';
             }
         });
 
         // Mobile logout button
         document.getElementById('mobile-logout-button').addEventListener('click', () => {
             localStorage.clear();
-            window.location.href = 'LoginPage.html';
+            window.location.href = '/login';
         });
     }
 
@@ -479,9 +479,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Add click event listener
         dashboardButton.addEventListener('click', () => {
             if (user.role === 'admin') {
-                window.location.href = 'AdminDashboard.html';
+                window.location.href = '/admin';
             } else if (user.role === 'teacher') {
-                window.location.href = 'TeacherDashboard.html';
+                window.location.href = '/teacher';
             }
         });
     }
@@ -1040,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentArea.innerHTML = `<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg flex justify-center items-center min-h-[40rem]"><div class="loader"></div></div>`;
         try {
             console.log('Fetching lesson:', lessonId);
-            const res = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             console.log('Response status:', res.status);
             if (!res.ok) {
                 const errorText = await res.text();

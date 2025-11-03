@@ -235,7 +235,7 @@
                 // Gộp first name và last name thành full name để gửi đi
                 const name = `${firstName} ${lastName}`;
 
-                const API_URL = 'http://localhost:7000/api/auth/register';
+                const API_URL = 'http://localhost:5000/api/auth/register';
 
                 try {
                     const response = await fetch(API_URL, {
@@ -258,7 +258,7 @@
 
                     // Tự động chuyển đến trang đăng nhập sau 2 giây
                     setTimeout(() => {
-                        window.location.href = 'LoginPage.html';
+                        window.location.href = '/login';
                     }, 2000);
 
                 } catch (error) {

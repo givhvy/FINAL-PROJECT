@@ -411,7 +411,7 @@
 
                 // Add click event listener
                 dashboardButton.addEventListener('click', () => {
-                    window.location.href = 'AdminDashboard.html';
+                    window.location.href = '/admin';
                 });
             }
         }
@@ -1181,7 +1181,7 @@
         // Load blog posts from API
         async function loadBlogPosts() {
             try {
-                const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/blog?status=published&limit=20');
+                const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/blog?status=published&limit=20');
                 console.log('Blog API response status:', response.status);
                 if (response.ok) {
                     const data = await response.json();
@@ -1301,7 +1301,7 @@
         async function showArticle(id) {
             try {
                 // Try to fetch from API first
-                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/blog/${id}`);
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/blog/${id}`);
                 let article;
 
                 if (response.ok) {
@@ -1470,13 +1470,13 @@
 
             // Redirect user profile click
             document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = 'ProfilePage.html';
+                window.location.href = '/profile';
             });
 
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear();
-                window.location.href = 'LoginPage.html';
+                window.location.href = '/login';
             });
         }
 

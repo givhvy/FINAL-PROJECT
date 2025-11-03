@@ -306,12 +306,12 @@
 
     <script>
         // --- AUTH & SETUP ---
-        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin) + '/api/community'; 
+        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community'; 
         const user = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
         
         if (!token || !user) {
-            window.location.href = 'LoginPage.html';
+            window.location.href = '/login';
         }
 
         function getUserInitials() {
@@ -575,7 +575,7 @@
             const userId = user.id;
 
             try {
-                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:7000' : window.location.origin}/api/users/${userId}/progress`, {
+                const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/users/${userId}/progress`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -902,12 +902,12 @@
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear();
-                window.location.href = 'LoginPage.html';
+                window.location.href = '/login';
             });
 
             // Redirect user profile click (Header avatar)
             document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = 'ProfilePage.html';
+                window.location.href = '/profile';
             });
             
             // Study Groups Event Listeners

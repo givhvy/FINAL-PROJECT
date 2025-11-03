@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!token || !user) {
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -373,12 +373,12 @@ async function fetchAndRenderLearningProgress() {
     document.getElementById('user-avatar').textContent = getUserInitials(user.name);
     
     document.getElementById('user-menu-button').addEventListener('click', () => {
-        window.location.href = 'ProfilePage.html';
+        window.location.href = '/profile';
     });
     
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
-        window.location.href = 'LoginPage.html';
+        window.location.href = '/login';
     });
 
     // Main Tab Switching
