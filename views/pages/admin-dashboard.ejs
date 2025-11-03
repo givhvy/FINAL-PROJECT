@@ -39,7 +39,7 @@
 </head>
 <body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
     <div class="flex h-screen">
-        <div id="sidebar" class="sidebar bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
+        <div id="sidebar" class="sidebar bg-gray-900 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20 border-r border-gray-800">
             <div class="flex items-center justify-between px-4">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-graduation-cap text-2xl"></i>
@@ -58,13 +58,13 @@
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
             <div class="px-4 absolute bottom-4 left-0 right-0">
-                <div class="flex items-center space-x-3 border-t border-indigo-700 pt-4">
-                    <div id="admin-avatar" class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-lg"></div>
+                <div class="flex items-center space-x-3 border-t border-gray-700 pt-4">
+                    <div id="admin-avatar" class="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-lg"></div>
                     <div class="flex-1">
                         <p id="admin-user-name" class="text-sm font-semibold">Admin User</p>
-                        <p id="admin-user-email" class="text-xs text-indigo-300">admin@unilearn.com</p>
+                        <p id="admin-user-email" class="text-xs text-gray-400">admin@unilearn.com</p>
                     </div>
-                    <button id="logout-button-sidebar" class="text-indigo-300 hover:text-white" title="Logout"><i class="fas fa-sign-out-alt text-lg"></i></button>
+                    <button id="logout-button-sidebar" class="text-gray-400 hover:text-white" title="Logout"><i class="fas fa-sign-out-alt text-lg"></i></button>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@
 
                         <div class="relative">
                             <button id="userMenuBtn" class="flex items-center space-x-2">
-                                <div id="header-avatar" class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white"></div>
+                                <div id="header-avatar" class="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center text-white"></div>
                                 <span id="header-user-name" class="hidden md:inline text-gray-700 dark:text-gray-300">Admin User</span>
                                 <i class="fas fa-chevron-down text-xs text-gray-500 dark:text-gray-400"></i>
                             </button>
