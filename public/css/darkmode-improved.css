@@ -80,13 +80,18 @@
     background-color: var(--accent-blue-hover) !important;
 }
 
-/* Links and interactive elements */
-.dark a:not(.bg-blue-600) {
+/* Links and interactive elements - exclude navigation and footer links */
+.dark a:not(.bg-blue-600):not(.nav-link):not([href="/cart"]):not(#dashboard-button):not(#logout-button):not([href="/payment"]):not(footer a) {
     color: var(--accent-blue) !important;
 }
 
-.dark a:not(.bg-blue-600):hover {
+.dark a:not(.bg-blue-600):not(.nav-link):not([href="/cart"]):not(#dashboard-button):not(#logout-button):not([href="/payment"]):not(footer a):hover {
     color: var(--accent-blue-hover) !important;
+}
+
+/* Footer links - ensure proper dark mode colors */
+.dark footer a {
+    color: inherit !important;
 }
 
 /* Form inputs */

@@ -5,15 +5,15 @@
             <div class="flex items-center">
                 <a href="/" class="flex-shrink-0 flex items-center space-x-1">
                     <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
-                    <div class="text-2xl font-bold" style="color: #4f46e5; font-weight: 800;">UniLearn</div>
+                    <div class="text-2xl font-bold text-indigo-600 dark:text-white" style="font-weight: 800;">UniLearn</div>
                 </a>
 
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
-                    <a href="/courses" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Courses</a>
-                    <a href="/account" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">My Learning</a>
-                    <a href="/community" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Community</a>
-                    <a href="/blog" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Blog</a>
-                    <a href="/payment" class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
+                    <a href="/courses" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Courses</a>
+                    <a href="/account" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">My Learning</a>
+                    <a href="/community" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Community</a>
+                    <a href="/blog" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Blog</a>
+                    <a href="/payment" class="text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
                         <i class="fas fa-star text-yellow-400"></i>
                         <span>Upgrade</span>
                     </a>
@@ -37,13 +37,13 @@
                 </button>
 
                 <!-- Dashboard Button for Admin/Teacher -->
-                <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors sm:flex items-center space-x-2">
+                <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-colors sm:flex items-center space-x-2">
                     <i class="fas fa-tachometer-alt"></i>
                     <span id="dashboard-text">Dashboard</span>
                 </button>
 
                 <!-- Shopping Cart Icon -->
-                <a href="/cart" class="relative ml-3 hidden sm:block text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                <a href="/cart" class="relative ml-3 hidden sm:block text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-shopping-cart text-xl"></i>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold hidden">0</span>
                 </a>
@@ -53,7 +53,7 @@
                         <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
                     </button>
                 </div>
-                <button id="logout-button" class="ml-4 hidden sm:block text-sm font-medium text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 transition-colors">Logout</button>
+                <button id="logout-button" class="ml-4 hidden sm:block text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Logout</button>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
                 <a href="/account" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">My Learning</a>
                 <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Community</a>
                 <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Blog</a>
-                <a href="/payment" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+                <a href="/payment" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
                     <i class="fas fa-star text-yellow-400 mr-2"></i>Upgrade
                 </a>
                 <button id="mobile-profile-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
