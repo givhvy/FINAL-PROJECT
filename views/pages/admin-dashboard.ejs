@@ -118,10 +118,10 @@
             <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-700 p-6">
                 <section id="dashboard" class="page-content">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 class="text-2xl font-bold">1,245</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
-                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Active Courses</p> <h3 class="text-2xl font-bold">42</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
-                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Revenue</p> <h3 class="text-2xl font-bold">$24,500</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-dollar-sign text-xl"></i> </div> </div> </div>
-                        <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Completion Rate</p> <h3 class="text-2xl font-bold">78%</h3> <p class="text-xs mt-1"><span class="text-red-300">↓ 3%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-chart-pie text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 id="total-students" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Active Courses</p> <h3 id="active-courses" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Enrollments</p> <h3 id="total-enrollments" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-user-plus text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Avg Rating</p> <h3 id="avg-rating" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 5%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-star text-xl"></i> </div> </div> </div>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="card bg-white dark:bg-gray-800 rounded-lg shadow-md col-span-2">
@@ -188,23 +188,45 @@
                 
                 <section id="courses" class="page-content hidden">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
-        <div class="p-4 border-b flex justify-between items-center">
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Course Management</h2>
-            <!-- Nút "Add New Course" có thể được thêm ở đây nếu cần -->
+        <div class="p-4 border-b">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Course Management & Approval</h2>
+                <div class="flex flex-col md:flex-row gap-3">
+                    <select id="course-status-filter" class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Statuses</option>
+                        <option value="draft">Draft</option>
+                        <option value="pending">Pending Approval</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <div class="relative">
+                        <input type="text" id="course-search" placeholder="Search courses..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="p-4 overflow-x-auto">
             <table class="min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <tr class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th class="px-4 py-3 w-8"></th>
                         <th class="px-4 py-3">Course Title</th>
                         <th class="px-4 py-3">Instructor</th>
+                        <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Price</th>
-                        <th class="px-4 py-3">Date Created</th>
+                        <th class="px-4 py-3">Enrolled</th>
+                        <th class="px-4 py-3">Created</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="courses-table-body" class="divide-y divide-gray-200">
-                    <!-- Dữ liệu khóa học sẽ được render ở đây -->
+                <tbody id="courses-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-book text-4xl mb-4"></i>
+                            <p>Loading courses...</p>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -577,10 +599,35 @@
                 if (!usersRes.ok || !coursesRes.ok) throw new Error("Failed to fetch core data.");
                 allUsers = await usersRes.json();
                 allCourses = await coursesRes.json();
+
+                // Update dashboard statistics with real data
+                updateDashboardStats();
             } catch (error) {
                 console.error('Core Data Fetch Error:', error);
                 alert('Error loading essential data: ' + error.message);
             }
+        }
+
+        // Update dashboard statistics with real Firebase data
+        function updateDashboardStats() {
+            // Calculate total students (users with role 'student')
+            const totalStudents = allUsers.filter(user => user.role === 'student').length;
+            document.getElementById('total-students').textContent = totalStudents.toLocaleString();
+
+            // Calculate active courses (approved courses only)
+            const activeCourses = allCourses.filter(course => course.status === 'approved').length;
+            document.getElementById('active-courses').textContent = activeCourses;
+
+            // Calculate total enrollments across all courses
+            const totalEnrollments = allCourses.reduce((sum, course) => sum + (course.enrolledStudents || 0), 0);
+            document.getElementById('total-enrollments').textContent = totalEnrollments.toLocaleString();
+
+            // Calculate average rating across all courses
+            const coursesWithRating = allCourses.filter(course => course.rating > 0);
+            const avgRating = coursesWithRating.length > 0
+                ? (coursesWithRating.reduce((sum, course) => sum + course.rating, 0) / coursesWithRating.length).toFixed(1)
+                : '0.0';
+            document.getElementById('avg-rating').textContent = avgRating;
         }
 
         // === MERGED FROM FILE 1: COMPLETE SUBSCRIPTION MANAGEMENT LOGIC ===
@@ -622,58 +669,312 @@
         }
 
         // --- COURSE MANAGEMENT FUNCTIONS ---
+        let filteredCourses = [];
+        let expandedCourses = new Set();
+
         function renderCourseManagementPage() {
-            const tableBody = document.querySelector('#courses-table-body');
+            filteredCourses = [...allCourses];
+            displayCoursesTable(filteredCourses);
+            setupCourseFilters();
+        }
+
+        function setupCourseFilters() {
+            const statusFilter = document.getElementById('course-status-filter');
+            const courseSearch = document.getElementById('course-search');
+
+            if (statusFilter) {
+                statusFilter.removeEventListener('change', filterCourses);
+                statusFilter.addEventListener('change', filterCourses);
+            }
+
+            if (courseSearch) {
+                courseSearch.removeEventListener('input', filterCourses);
+                courseSearch.addEventListener('input', filterCourses);
+            }
+        }
+
+        function filterCourses() {
+            const statusFilter = document.getElementById('course-status-filter')?.value || '';
+            const searchTerm = document.getElementById('course-search')?.value.toLowerCase() || '';
+
+            filteredCourses = allCourses.filter(course => {
+                const matchesStatus = !statusFilter || (course.status || 'draft') === statusFilter;
+                const matchesSearch = !searchTerm ||
+                    (course.title && course.title.toLowerCase().includes(searchTerm)) ||
+                    (course.description && course.description.toLowerCase().includes(searchTerm)) ||
+                    (course.instructor && course.instructor.toLowerCase().includes(searchTerm));
+                return matchesStatus && matchesSearch;
+            });
+
+            displayCoursesTable(filteredCourses);
+        }
+
+        function displayCoursesTable(courses) {
+            const tableBody = document.getElementById('courses-table-body');
             if (!tableBody) return;
 
-            if (allCourses.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No courses found.</td></tr>`;
+            if (courses.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-book text-4xl mb-4"></i>
+                            <p>No courses found.</p>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
-            tableBody.innerHTML = allCourses.map(course => `
-                <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700">
-                    <td class="px-4 py-3">
-                        <div class="font-medium">${course.title}</div>
-                        <div class="text-xs text-gray-500">${(course.description || '').substring(0, 50)}...</div>
-                    </td>
-                    <td class="px-4 py-3">${course.teacher?.name || 'N/A'}</td>
-                    <td class="px-4 py-3">$${course.price}</td>
-                    <td class="px-4 py-3">${new Date(course.createdAt).toLocaleDateString('en-US')}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex space-x-3">
-                            <button data-course-id="${course.id}" class="delete-course-btn text-red-600 hover:text-red-800" title="Delete Course">
-                                <i class="fas fa-trash pointer-events-none"></i>
+            tableBody.innerHTML = courses.map(course => {
+                const status = course.status || 'draft';
+                const statusColors = {
+                    'draft': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                    'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                    'approved': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                    'rejected': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                };
+                const statusColor = statusColors[status] || statusColors.draft;
+                const isExpanded = expandedCourses.has(course.id);
+
+                return `
+                    <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition course-row" data-course-id="${course.id}">
+                        <td class="px-4 py-3">
+                            <button onclick="toggleCourseDetails('${course.id}')" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                                <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}"></i>
                             </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-            
-            // Gán sự kiện cho các nút xóa mới được tạo
-            tableBody.querySelectorAll('.delete-course-btn').forEach(button => {
-                button.addEventListener('click', handleDeleteCourse);
-            });
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="font-medium">${course.title}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">${(course.description || '').substring(0, 50)}${course.description?.length > 50 ? '...' : ''}</div>
+                        </td>
+                        <td class="px-4 py-3">${course.instructor || course.teacher?.name || 'N/A'}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium ${statusColor}">
+                                ${status.charAt(0).toUpperCase() + status.slice(1)}
+                            </span>
+                            ${course.rejectionReason ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1" title="${course.rejectionReason}">Reason: ${course.rejectionReason.substring(0, 30)}...</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3">$${course.price || 0}</td>
+                        <td class="px-4 py-3 text-center">${course.enrolledStudents || 0}</td>
+                        <td class="px-4 py-3">${course.createdAt ? new Date(course.createdAt).toLocaleDateString('en-US') : 'N/A'}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex space-x-2">
+                                ${status === 'pending' ? `
+                                    <button onclick="approveCourse('${course.id}')"
+                                            class="text-green-600 hover:bg-green-50 dark:hover:bg-green-900 p-1 rounded"
+                                            title="Approve course">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button onclick="rejectCoursePrompt('${course.id}')"
+                                            class="text-red-600 hover:bg-red-50 dark:hover:bg-red-900 p-1 rounded"
+                                            title="Reject course">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : ''}
+                                <button onclick="deleteCourse('${course.id}')"
+                                        class="text-red-600 hover:bg-red-50 dark:hover:bg-red-900 p-1 rounded"
+                                        title="Delete course">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    ${isExpanded ? `
+                        <tr class="course-details bg-gray-50 dark:bg-gray-800" data-course-id="${course.id}">
+                            <td colspan="8" class="px-4 py-3">
+                                <div class="ml-8 space-y-4">
+                                    <div id="course-lessons-${course.id}" class="course-content-section">
+                                        <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            <i class="fas fa-book-open mr-2"></i>Lessons
+                                        </h4>
+                                        <div class="text-gray-500 dark:text-gray-400">Loading lessons...</div>
+                                    </div>
+                                    <div id="course-quizzes-${course.id}" class="course-content-section">
+                                        <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            <i class="fas fa-question-circle mr-2"></i>Quizzes
+                                        </h4>
+                                        <div class="text-gray-500 dark:text-gray-400">Loading quizzes...</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    ` : ''}
+                `;
+            }).join('');
         }
-        
-        async function handleDeleteCourse(event) {
-            const courseId = event.currentTarget.dataset.courseId;
-            if (!confirm('Are you sure you want to delete this course and all its content (lessons, quizzes)? This action cannot be undone.')) {
+
+        // Toggle course details (lessons and quizzes)
+        async function toggleCourseDetails(courseId) {
+            if (expandedCourses.has(courseId)) {
+                expandedCourses.delete(courseId);
+            } else {
+                expandedCourses.add(courseId);
+                // Fetch lessons and quizzes
+                await loadCourseContent(courseId);
+            }
+            displayCoursesTable(filteredCourses);
+        }
+
+        // Load lessons and quizzes for a course
+        async function loadCourseContent(courseId) {
+            try {
+                // Fetch lessons
+                const lessonsRes = await fetch(`/api/courses/${courseId}/lessons`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const lessons = await lessonsRes.json();
+
+                // Fetch quizzes
+                const quizzesRes = await fetch(`/api/courses/${courseId}/quizzes`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const quizzes = await quizzesRes.json();
+
+                // Update the DOM after expanding
+                setTimeout(() => {
+                    const lessonsContainer = document.getElementById(`course-lessons-${courseId}`);
+                    if (lessonsContainer) {
+                        if (lessons.length > 0) {
+                            lessonsContainer.innerHTML = `
+                                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-book-open mr-2"></i>Lessons (${lessons.length})
+                                </h4>
+                                <ul class="space-y-2">
+                                    ${lessons.map((lesson, idx) => `
+                                        <li class="flex items-center text-sm">
+                                            <span class="text-gray-500 dark:text-gray-400 mr-2">${idx + 1}.</span>
+                                            <span class="text-gray-700 dark:text-gray-300">${lesson.title}</span>
+                                            <span class="ml-auto text-xs text-gray-500 dark:text-gray-400">${lesson.duration || 'N/A'}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            `;
+                        } else {
+                            lessonsContainer.innerHTML = `
+                                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-book-open mr-2"></i>Lessons
+                                </h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No lessons added yet.</p>
+                            `;
+                        }
+                    }
+
+                    const quizzesContainer = document.getElementById(`course-quizzes-${courseId}`);
+                    if (quizzesContainer) {
+                        if (quizzes.length > 0) {
+                            quizzesContainer.innerHTML = `
+                                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-question-circle mr-2"></i>Quizzes (${quizzes.length})
+                                </h4>
+                                <ul class="space-y-2">
+                                    ${quizzes.map(quiz => `
+                                        <li class="flex items-center text-sm">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            <span class="text-gray-700 dark:text-gray-300">${quiz.title}</span>
+                                            <span class="ml-auto text-xs text-gray-500 dark:text-gray-400">${quiz.questions?.length || 0} questions</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            `;
+                        } else {
+                            quizzesContainer.innerHTML = `
+                                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-question-circle mr-2"></i>Quizzes
+                                </h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No quizzes added yet.</p>
+                            `;
+                        }
+                    }
+                }, 100);
+            } catch (error) {
+                console.error('Error loading course content:', error);
+            }
+        }
+
+        // Approve course
+        async function approveCourse(courseId) {
+            if (!confirm('Are you sure you want to approve this course?')) {
                 return;
             }
+
+            try {
+                const response = await fetch(`/api/courses/${courseId}/approve`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ approvedBy: user.id })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to approve course');
+                }
+
+                alert('Course approved successfully!');
+                await fetchAllData();
+                renderCourseManagementPage();
+            } catch (error) {
+                console.error('Error approving course:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Reject course with reason
+        function rejectCoursePrompt(courseId) {
+            const reason = prompt('Please enter the reason for rejection:');
+            if (!reason || reason.trim() === '') {
+                return;
+            }
+            rejectCourse(courseId, reason);
+        }
+
+        async function rejectCourse(courseId, reason) {
+            try {
+                const response = await fetch(`/api/courses/${courseId}/reject`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to reject course');
+                }
+
+                alert('Course rejected.');
+                await fetchAllData();
+                renderCourseManagementPage();
+            } catch (error) {
+                console.error('Error rejecting course:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Delete course
+        async function deleteCourse(courseId) {
+            if (!confirm('Are you sure you want to delete this course and all its content? This action cannot be undone.')) {
+                return;
+            }
+
             try {
                 const response = await fetch(`/api/courses/${courseId}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error('Failed to delete course.');
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete course');
+                }
+
                 alert('Course deleted successfully!');
-                
-                // Tải lại toàn bộ dữ liệu và render lại trang
                 await fetchAllData();
                 renderCourseManagementPage();
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                console.error('Error deleting course:', error);
+                alert('Error: ' + error.message);
             }
         }
         async function openSubscriptionModal(planId = null) {
