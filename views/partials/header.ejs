@@ -3,17 +3,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <!-- Dark Mode Toggle -->
-                <label class="relative inline-flex items-center cursor-pointer mr-3">
-                    <input type="checkbox" id="darkModeToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                        </svg>
-                    </span>
-                </label>
-
                 <a href="/" class="flex-shrink-0 flex items-center space-x-1">
                     <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
                     <div class="text-2xl font-bold" style="color: #4f46e5; font-weight: 800;">UniLearn</div>
@@ -32,6 +21,16 @@
             </div>
 
             <div class="flex items-center space-x-3">
+                <!-- Dark Mode Toggle - Moved to the right -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </span>
+                </label>
                 <!-- Mobile menu button -->
                 <button type="button" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" id="mobile-menu-button">
                     <i class="fas fa-bars text-xl"></i>
