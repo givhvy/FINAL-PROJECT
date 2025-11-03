@@ -1671,18 +1671,18 @@
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
-                                <button onclick="editUser('${user.id}')"
-                                        class="text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 p-1 rounded"
+                                <button data-action="edit" data-user-id="${user.id}"
+                                        class="user-action-btn text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 p-1 rounded"
                                         title="Edit user">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="quickRoleChange('${user.id}', '${user.role}')"
-                                        class="text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 p-1 rounded"
+                                <button data-action="change-role" data-user-id="${user.id}" data-user-role="${user.role}"
+                                        class="user-action-btn text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 p-1 rounded"
                                         title="Change role">
                                     <i class="fas fa-user-cog"></i>
                                 </button>
-                                <button onclick="deleteUser('${user.id}')"
-                                        class="text-red-600 hover:bg-red-50 dark:hover:bg-red-900 p-1 rounded"
+                                <button data-action="delete" data-user-id="${user.id}"
+                                        class="user-action-btn text-red-600 hover:bg-red-50 dark:hover:bg-red-900 p-1 rounded"
                                         title="Delete user">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -2012,6 +2012,23 @@
         });
         document.getElementById('user-form')?.addEventListener('submit', saveUser);
 
+        // Event delegation for user action buttons
+        document.addEventListener('click', async (e) => {
+            const button = e.target.closest('.user-action-btn');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const userId = button.dataset.userId;
+
+            if (action === 'edit') {
+                editUser(userId);
+            } else if (action === 'change-role') {
+                const currentRole = button.dataset.userRole;
+                await quickRoleChange(userId, currentRole);
+            } else if (action === 'delete') {
+                await deleteUser(userId);
+            }
+        });
 
         // Initialize TinyMCE editor on page load
         initBlogEditor();
