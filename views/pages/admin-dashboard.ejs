@@ -119,7 +119,7 @@
                 <section id="dashboard" class="page-content">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 id="total-students" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
-                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Active Courses</p> <h3 id="active-courses" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Courses</p> <h3 id="total-courses" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
                         <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Enrollments</p> <h3 id="total-enrollments" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-user-plus text-xl"></i> </div> </div> </div>
                         <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Avg Rating</p> <h3 id="avg-rating" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 5%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-star text-xl"></i> </div> </div> </div>
                     </div>
@@ -614,9 +614,9 @@
             const totalStudents = allUsers.filter(user => user.role === 'student').length;
             document.getElementById('total-students').textContent = totalStudents.toLocaleString();
 
-            // Calculate active courses (approved courses only)
-            const activeCourses = allCourses.filter(course => course.status === 'approved').length;
-            document.getElementById('active-courses').textContent = activeCourses;
+            // Calculate total courses (all courses on platform)
+            const totalCourses = allCourses.length;
+            document.getElementById('total-courses').textContent = totalCourses;
 
             // Calculate total enrollments across all courses
             const totalEnrollments = allCourses.reduce((sum, course) => sum + (course.enrolledStudents || 0), 0);
