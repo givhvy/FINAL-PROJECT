@@ -2,12 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 // Import các hàm từ controller mà chúng ta đã sửa
-const { 
-    createCourse, 
-    getCourses, 
-    getCourseById, 
-    updateCourse, 
-    deleteCourse 
+const {
+    createCourse,
+    getCourses,
+    getCourseById,
+    updateCourse,
+    deleteCourse,
+    approveCourse,
+    rejectCourse,
+    submitForApproval,
+    getCourseLessons,
+    getCourseQuizzes
 } = require('../controllers/courseController');
 
 // --- ĐỊNH NGHĨA CÁC ROUTE CHO /api/courses ---
@@ -22,11 +27,18 @@ router.post('/', createCourse);
 router.get('/:id', getCourseById);
 
 // PUT /api/courses/:id -> Cập nhật khóa học
-// (Lưu ý: PUT hoặc PATCH đều được, PUT thường dùng để thay thế toàn bộ)
 router.put('/:id', updateCourse);
 
 // DELETE /api/courses/:id -> Xóa khóa học
 router.delete('/:id', deleteCourse);
 
+// Course approval routes
+router.put('/:id/approve', approveCourse);
+router.put('/:id/reject', rejectCourse);
+router.put('/:id/submit', submitForApproval);
+
+// Get course content
+router.get('/:id/lessons', getCourseLessons);
+router.get('/:id/quizzes', getCourseQuizzes);
 
 module.exports = router;

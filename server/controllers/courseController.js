@@ -148,7 +148,7 @@ exports.deleteCourse = async (req, res) => {
         const db = getFirestore();
         const courseId = req.params.id;
         const docRef = db.collection('courses').doc(courseId);
-        
+
         const docSnap = await docRef.get();
         if (!docSnap.exists) {
             return res.status(404).json({ error: 'Course not found' });
@@ -174,6 +174,108 @@ exports.deleteCourse = async (req, res) => {
         res.status(200).json({ message: 'Course and all related content deleted successfully' });
     } catch (err) {
         console.error("Delete Course Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Approve course (Admin only)
+exports.approveCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const { approvedBy } = req.body;
+
+        if (!approvedBy) {
+            return res.status(400).json({ error: 'Approved by user ID is required' });
+        }
+
+        const approvedCourse = await Course.approveCourse(courseId, approvedBy);
+        res.status(200).json({
+            message: 'Course approved successfully',
+            course: approvedCourse.toJSON()
+        });
+    } catch (err) {
+        console.error("Approve Course Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Reject course (Admin only)
+exports.rejectCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const { reason } = req.body;
+
+        if (!reason) {
+            return res.status(400).json({ error: 'Rejection reason is required' });
+        }
+
+        const rejectedCourse = await Course.rejectCourse(courseId, reason);
+        res.status(200).json({
+            message: 'Course rejected',
+            course: rejectedCourse.toJSON()
+        });
+    } catch (err) {
+        console.error("Reject Course Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Submit course for approval (Teacher)
+exports.submitForApproval = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const submittedCourse = await Course.submitForApproval(courseId);
+        res.status(200).json({
+            message: 'Course submitted for approval',
+            course: submittedCourse.toJSON()
+        });
+    } catch (err) {
+        console.error("Submit Course Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Get lessons for a course
+exports.getCourseLessons = async (req, res) => {
+    try {
+        const db = getFirestore();
+        const courseId = req.params.id;
+
+        const lessonsSnapshot = await db.collection('lessons')
+            .where('course_id', '==', courseId)
+            .orderBy('order', 'asc')
+            .get();
+
+        const lessons = lessonsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.status(200).json(lessons);
+    } catch (err) {
+        console.error("Get Course Lessons Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Get quizzes for a course
+exports.getCourseQuizzes = async (req, res) => {
+    try {
+        const db = getFirestore();
+        const courseId = req.params.id;
+
+        const quizzesSnapshot = await db.collection('quizzes')
+            .where('course_id', '==', courseId)
+            .get();
+
+        const quizzes = quizzesSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        res.status(200).json(quizzes);
+    } catch (err) {
+        console.error("Get Course Quizzes Error:", err);
         res.status(500).json({ error: err.message });
     }
 };

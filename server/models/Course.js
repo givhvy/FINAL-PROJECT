@@ -19,6 +19,10 @@ class Course {
         this.rating = data.rating || 0;
         this.enrolledStudents = data.enrolledStudents || 0;
         this.isPublished = data.isPublished !== undefined ? data.isPublished : false;
+        this.status = data.status || 'draft'; // draft, pending, approved, rejected
+        this.rejectionReason = data.rejectionReason || null;
+        this.approvedBy = data.approvedBy || null;
+        this.approvedAt = data.approvedAt || null;
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
     }
@@ -146,6 +150,10 @@ class Course {
                 rating: newCourse.rating,
                 enrolledStudents: newCourse.enrolledStudents,
                 isPublished: newCourse.isPublished,
+                status: newCourse.status,
+                rejectionReason: newCourse.rejectionReason,
+                approvedBy: newCourse.approvedBy,
+                approvedAt: newCourse.approvedAt,
                 createdAt: newCourse.createdAt,
                 updatedAt: newCourse.updatedAt
             });
@@ -295,6 +303,92 @@ class Course {
             return snapshot.docs.map(doc => new Course({ id: doc.id, ...doc.data() }));
         } catch (error) {
             throw new Error(`Error getting popular courses: ${error.message}`);
+        }
+    }
+
+    /**
+     * Approve course (Admin only)
+     * @param {string} id - Course ID
+     * @param {string} approvedBy - Admin user ID
+     * @returns {Promise<Course>} - Course object đã cập nhật
+     */
+    static async approveCourse(id, approvedBy) {
+        try {
+            const db = this.getDB();
+            const courseRef = db.collection('courses').doc(id);
+            const doc = await courseRef.get();
+
+            if (!doc.exists) {
+                throw new Error('Course not found');
+            }
+
+            await courseRef.update({
+                status: 'approved',
+                isPublished: true,
+                approvedBy: approvedBy,
+                approvedAt: new Date().toISOString(),
+                rejectionReason: null,
+                updatedAt: new Date().toISOString()
+            });
+
+            return await this.findById(id);
+        } catch (error) {
+            throw new Error(`Error approving course: ${error.message}`);
+        }
+    }
+
+    /**
+     * Reject course (Admin only)
+     * @param {string} id - Course ID
+     * @param {string} reason - Rejection reason
+     * @returns {Promise<Course>} - Course object đã cập nhật
+     */
+    static async rejectCourse(id, reason) {
+        try {
+            const db = this.getDB();
+            const courseRef = db.collection('courses').doc(id);
+            const doc = await courseRef.get();
+
+            if (!doc.exists) {
+                throw new Error('Course not found');
+            }
+
+            await courseRef.update({
+                status: 'rejected',
+                isPublished: false,
+                rejectionReason: reason,
+                updatedAt: new Date().toISOString()
+            });
+
+            return await this.findById(id);
+        } catch (error) {
+            throw new Error(`Error rejecting course: ${error.message}`);
+        }
+    }
+
+    /**
+     * Submit course for approval (Teacher)
+     * @param {string} id - Course ID
+     * @returns {Promise<Course>} - Course object đã cập nhật
+     */
+    static async submitForApproval(id) {
+        try {
+            const db = this.getDB();
+            const courseRef = db.collection('courses').doc(id);
+            const doc = await courseRef.get();
+
+            if (!doc.exists) {
+                throw new Error('Course not found');
+            }
+
+            await courseRef.update({
+                status: 'pending',
+                updatedAt: new Date().toISOString()
+            });
+
+            return await this.findById(id);
+        } catch (error) {
+            throw new Error(`Error submitting course for approval: ${error.message}`);
         }
     }
 
