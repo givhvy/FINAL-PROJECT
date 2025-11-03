@@ -161,6 +161,10 @@ app.get('/account', (req, res) => {
 });
 
 // E-commerce pages
+app.get('/cart', (req, res) => {
+  res.render('pages/cart', { title: 'Shopping Cart' });
+});
+
 app.get('/order', (req, res) => {
   res.render('pages/order', { title: 'Order' });
 });

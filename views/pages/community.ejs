@@ -857,19 +857,27 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Update user info in header
             const initials = getUserInitials();
-            document.getElementById('user-avatar').textContent = initials;
-            document.getElementById('user-name').textContent = user.name;
-            
+            const userAvatarEl = document.getElementById('user-avatar');
+            if (userAvatarEl) {
+                userAvatarEl.textContent = initials;
+            }
+
             // Logout functionality
-            document.getElementById('logout-button').addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = '/login';
-            });
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                });
+            }
 
             // Redirect user profile click (Header avatar)
-            document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = '/profile';
-            });
+            const userMenuBtn = document.getElementById('user-menu-button');
+            if (userMenuBtn) {
+                userMenuBtn.addEventListener('click', () => {
+                    window.location.href = '/profile';
+                });
+            }
             
             // Study Groups Event Listeners
             document.getElementById('join-new-group-btn').addEventListener('click', showAvailableGroups);

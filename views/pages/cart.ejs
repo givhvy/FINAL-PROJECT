@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - UniLearn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f5f7fa; }
+        .cart-item { transition: all 0.3s ease; }
+        .cart-item:hover { transform: translateX(5px); }
+        .remove-btn:hover { transform: scale(1.1); }
+    </style>
+    <script src="/js/darkmode.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="/css/darkmode-improved.css">
+</head>
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <%- include('../partials/header') %>
+
+    <div class="min-h-screen flex flex-col">
+        <main class="flex-grow container mx-auto py-8 px-4 md:px-6">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Shopping Cart</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Review your courses before checkout</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Cart Items Section -->
+                <div class="lg:w-2/3">
+                    <!-- Empty Cart State -->
+                    <div id="empty-cart" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+                        <i class="fas fa-shopping-cart text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h2>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6">Start adding courses to your cart!</p>
+                        <a href="/courses" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200">
+                            Browse Courses
+                        </a>
+                    </div>
+
+                    <!-- Cart Items List -->
+                    <div id="cart-items" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">
+                            <span id="cart-count-display">0</span> Course(s) in Cart
+                        </h2>
+                        <div id="cart-items-container" class="space-y-4">
+                            <!-- Cart items will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Section -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">Order Summary</h2>
+
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Tax (0%):</span>
+                                <span>$0.00</span>
+                            </div>
+                            <div class="border-t pt-3 flex justify-between font-semibold text-xl text-gray-800 dark:text-gray-200">
+                                <span>Total:</span>
+                                <span id="total">$0.00</span>
+                            </div>
+                        </div>
+
+                        <button id="checkout-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-lock mr-2"></i>
+                            Proceed to Checkout
+                        </button>
+
+                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <h3 class="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">
+                                <i class="fas fa-info-circle text-blue-600 mr-2"></i>Why Choose UniLearn?
+                            </h3>
+                            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Lifetime access</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Certificate of completion</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>30-day money-back guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // Cart functionality
+        let cart = [];
+
+        // Load cart from localStorage
+        function loadCart() {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            renderCart();
+            updateSummary();
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Render cart items
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyCart = document.getElementById('empty-cart');
+            const cartItems = document.getElementById('cart-items');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (cart.length === 0) {
+                emptyCart.classList.remove('hidden');
+                cartItems.classList.add('hidden');
+                checkoutBtn.disabled = true;
+            } else {
+                emptyCart.classList.add('hidden');
+                cartItems.classList.remove('hidden');
+                checkoutBtn.disabled = false;
+
+                container.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div class="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-${item.icon || 'book'} text-white text-3xl"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">${item.name}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${item.category || 'Course'}</p>
+                            <div class="flex items-center mt-1">
+                                <div class="flex text-yellow-400 text-sm">
+                                    ${'<i class="fas fa-star"></i>'.repeat(5)}
+                                </div>
+                                <span class="ml-2 text-sm text-gray-500">4.8 (2,500+ reviews)</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-indigo-600">$${parseFloat(item.price).toFixed(2)}</p>
+                            <button onclick="removeFromCart(${index})" class="remove-btn mt-2 text-red-500 hover:text-red-700 transition-colors">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('cart-count-display').textContent = cart.length;
+
+            // Update header cart count
+            const headerCartCount = document.getElementById('cart-count');
+            if (headerCartCount) {
+                if (cart.length > 0) {
+                    headerCartCount.textContent = cart.length;
+                    headerCartCount.classList.remove('hidden');
+                } else {
+                    headerCartCount.classList.add('hidden');
+                }
+            }
+        }
+
+        // Update order summary
+        function updateSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            const total = subtotal; // Tax is 0% for now
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Remove item from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCart();
+            updateSummary();
+        }
+
+        // Checkout
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            if (cart.length === 0) return;
+
+            // For now, just redirect to payment page
+            // In a real app, you'd create an order first
+            alert('Proceeding to checkout with ' + cart.length + ' course(s)');
+            window.location.href = '/payment';
+        });
+
+        // Initialize cart on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+
+            // Setup user avatar
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                const userAvatar = document.getElementById('user-avatar');
+                if (userAvatar) {
+                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+                    userAvatar.textContent = initials;
+                }
+            }
+
+            // Logout functionality
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                });
+            }
+
+            // User menu redirect
+            const userMenuBtn = document.getElementById('user-menu-button');
+            if (userMenuBtn) {
+                userMenuBtn.addEventListener('click', () => {
+                    window.location.href = '/profile';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
