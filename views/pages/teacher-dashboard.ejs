@@ -196,20 +196,21 @@
                     </div>
                 </header>
                 <main class="flex-1 overflow-y-auto p-5 bg-gray-50 dark:bg-gray-900">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                        <h3 class="text-lg font-semibold mb-4 border-b pb-2">All Registered Students</h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 text-gray-800 dark:text-gray-200">All Registered Students</h3>
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 dark:bg-gray-900">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Enrolled Courses</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overall Progress</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="students-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                                    <tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500">Loading students...</td></tr>
+                                <tbody id="students-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">Loading students...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -586,47 +587,139 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     async function fetchAndRenderAllStudents() {
         const tableBody = document.getElementById('students-table-body');
-        
+
         if (allStudents.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500 text-center">No students registered yet.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">No students registered yet.</td></tr>`;
             return;
         }
 
         tableBody.innerHTML = '';
         allStudents.forEach(student => {
+            // Calculate student statistics
+            const enrolledCourses = student.enrolled_courses?.length || 0;
+            const overallProgress = student.overall_progress || 0;
+
             const studentRow = document.createElement('tr');
+            studentRow.className = 'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
             studentRow.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 h-10 w-10">
-                            <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm">
+                            <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold text-sm">
                                 ${getInitials(student.name)}
                             </div>
                         </div>
                         <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">${student.name}</div>
+                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">${student.name || 'Unknown'}</div>
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${student.email}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                    <span class="font-semibold">${enrolledCourses}</span> course${enrolledCourses !== 1 ? 's' : ''}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                        ${student.role.charAt(0).toUpperCase() + student.role.slice(1)}
-                    </span>
+                    <div class="flex items-center">
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mr-2" style="width: 120px;">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: ${overallProgress}%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">${overallProgress}%</span>
+                    </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button data-id="${student.id}" class="text-indigo-600 hover:text-indigo-900 view-student-btn">View Profile</button>
+                    <button data-student-id="${student.id}" class="view-progress-btn text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1">
+                        <i class="fas fa-chart-line"></i> View Progress
+                    </button>
                 </td>
             `;
             tableBody.appendChild(studentRow);
         });
-        
-        // Add listener for view profile (placeholder)
-        document.querySelectorAll('.view-student-btn').forEach(btn => {
+
+        // Add listener for view progress
+        document.querySelectorAll('.view-progress-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                alert(`Viewing profile for student ID: ${e.currentTarget.dataset.id}.`);
+                const studentId = e.currentTarget.dataset.studentId;
+                showStudentProgressModal(studentId);
             });
         });
+    }
+
+    // Show detailed student progress in a modal
+    function showStudentProgressModal(studentId) {
+        const student = allStudents.find(s => s.id === studentId);
+        if (!student) {
+            alert('Student not found');
+            return;
+        }
+
+        // Create modal dynamically
+        const modalHTML = `
+            <div id="progress-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+                <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 m-4 max-w-4xl w-full">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Student Progress: ${student.name}</h2>
+                        <button onclick="closeProgressModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Enrolled Courses</p>
+                                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">${student.enrolled_courses?.length || 0}</p>
+                            </div>
+                            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Overall Progress</p>
+                                <p class="text-2xl font-bold text-green-600 dark:text-green-400">${student.overall_progress || 0}%</p>
+                            </div>
+                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Completed Courses</p>
+                                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">${student.completed_courses?.length || 0}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Course Progress Details</h3>
+                            <div class="space-y-3">
+                                ${(student.enrolled_courses && student.enrolled_courses.length > 0) ?
+                                    student.enrolled_courses.map(courseId => {
+                                        const course = allCourses.find(c => c.id === courseId);
+                                        const progress = student.course_progress?.[courseId] || 0;
+                                        return `
+                                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="font-medium text-gray-800 dark:text-gray-200">${course?.title || 'Unknown Course'}</span>
+                                                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${progress}%</span>
+                                                </div>
+                                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')
+                                : '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No enrolled courses yet.</p>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="closeProgressModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    // Close progress modal
+    window.closeProgressModal = function() {
+        const modal = document.getElementById('progress-modal');
+        if (modal) modal.remove();
     }
 
     // === QUIZ MANAGEMENT (Placeholder) === 
