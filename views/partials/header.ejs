@@ -8,18 +8,8 @@
                     <a href="/" class="text-2xl font-bold text-white dark:text-gray-100" id="logo" style="color: #818cf8; font-weight: 800;">UniLearn</a>
                 </div>
             </div>
-            <div class="hidden md:block">
-                <div class="ml-10 flex items-baseline space-x-8">
-                    <!-- Dark Mode Toggle -->
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="darkModeToggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        <span class="ml-2 text-sm font-medium text-gray-300 dark:text-gray-300">
-                            <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                            </svg>
-                        </span>
-                    </label>
+            <div class="hidden md:flex md:items-center md:space-x-8">
+                <div class="flex items-baseline space-x-8">
                     <a href="/courses" class="text-gray-300 dark:text-gray-200 hover:text-blue-400 dark:hover:text-blue-300 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800 dark:hover:bg-gray-700" id="nav-link-1">Courses</a>
                     <a href="/community" class="text-gray-300 dark:text-gray-200 hover:text-blue-400 dark:hover:text-blue-300 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800 dark:hover:bg-gray-700" id="nav-link-2">Community</a>
                     <a href="/blog" class="text-gray-300 dark:text-gray-200 hover:text-blue-400 dark:hover:text-blue-300 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800 dark:hover:bg-gray-700" id="nav-link-3">Blog</a>
@@ -41,6 +31,16 @@
                     <% } %>
                     <% } %>
                 </div>
+                <!-- Dark Mode Toggle - Moved to the right -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2 text-sm font-medium text-gray-300 dark:text-gray-300">
+                        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </span>
+                </label>
             </div>
 
             <!-- Mobile menu button -->

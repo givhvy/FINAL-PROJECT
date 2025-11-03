@@ -235,46 +235,7 @@
     <link rel="stylesheet" href="/css/darkmode-improved.css">
 </head>
 <body class="font-sans bg-gray-900 text-white transition-colors duration-300 dark:bg-gray-900" id="body">
-    <!-- Navigation -->
-    <nav class="bg-gray-900/95 dark:bg-gray-800/95 backdrop-blur-lg shadow-2xl fixed w-full z-50 transition-all duration-300 border-b border-gray-800" id="nav">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center space-x-1">
-                        <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
-                        <span class="text-2xl font-bold text-white" id="logo" style="color: #818cf8; font-weight: 800;">UniLearn</span>
-                    </div>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="/courses" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-1">Courses</a>
-                        <a href="/community" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-2">Community</a>
-                        <a href="/blog" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-3">Blog</a>
-                        <a href="#features" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-4">Features</a>
-                        <a href="#pricing" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-5">Pricing</a>
-                        <a href="#about" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-800" id="nav-link-6">About</a>
-                        
-                        <!-- Dark Mode Toggle -->
-                        <div class="flex items-center space-x-4">
-                            <label class="toggle-switch relative">
-                                <input type="checkbox" id="darkModeToggle" checked>
-                                <span class="slider"></span>
-                                <span class="dark-mode-icon sun-icon">☀️</span>
-                                <span class="dark-mode-icon moon-icon">🌙</span>
-                            </label>
-                        </div>
-                        
-                 <a href="/login"
-   class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700
-          transition-all duration-300 font-semibold shadow-lg hover:shadow-xl neon-glow inline-block text-center">
-   Get Started
-</a>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include('../partials/header') %>
 
     <!-- Hero Section -->
     <section class="dark-blue-gradient pt-24 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" id="hero">
@@ -531,53 +492,6 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black text-white py-16 border-t border-gray-800" id="footer">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div class="md:col-span-2">
-                    <div class="flex items-center mb-6">
-                        <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
-                        <span class="text-2xl font-bold" id="footer-logo" style="color: #818cf8; font-weight: 800;">UniLearn</span>
-                    </div>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-6" id="footer-description">Empowering millions of learners worldwide with cutting-edge education and innovative learning experiences that transform careers and lives.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors border border-gray-700 hover:border-blue-500">
-                            <span class="text-lg">📘</span>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors border border-gray-700 hover:border-blue-500">
-                            <span class="text-lg">🐦</span>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors border border-gray-700 hover:border-blue-500">
-                            <span class="text-lg">💼</span>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-blue-400" id="footer-learn-title">Learn</h3>
-                    <ul class="space-y-3 text-gray-400" id="footer-learn-list">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Web Development</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Data Science</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">UI/UX Design</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Mobile Development</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Digital Marketing</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-blue-400" id="footer-support-title">Support</h3>
-                    <ul class="space-y-3 text-gray-400" id="footer-support-list">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Community</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-                <p class="text-gray-400 text-lg" id="footer-copyright">&copy; 2024 UniLearn. All rights reserved. Crafted with 💙 for learners everywhere.</p>
-            </div>
-        </div>
-    </footer>
 
     <script>
         // Check if dark mode toggle is checked on load
@@ -813,5 +727,6 @@
             });
         });
     </script>
+    <%- include('../partials/footer') %>
 </body>
 </html>

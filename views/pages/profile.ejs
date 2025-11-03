@@ -32,45 +32,8 @@
     <link rel="stylesheet" href="/css/darkmode-improved.css">
 </head>
 <body class="bg-gray-50 dark:bg-gray-700 transition-colors duration-300 dark:bg-gray-900">
+    <%- include('../partials/header') %>
     <div class="min-h-screen flex flex-col">
-        <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-
-                    <!-- Dark Mode Toggle -->
-                    <label class="relative inline-flex items-center cursor-pointer mr-3">
-                        <input type="checkbox" id="darkModeToggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                            </svg>
-                        </span>
-                    </label>
-                        <a href="/" class="flex-shrink-0 flex items-center">
-                            <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
-                            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-gray-200">CodeMaster</span>
-                        </a>
-                        <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
-                            <a href="/courses" class="nav-link">Courses</a>
-                            <a href="/account" class="nav-link">My Learning</a> 
-                            <a href="/quiz" class="nav-link">Quizz</a>
-                            <a href="/community" class="nav-link">Community</a>
-                        </div>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="ml-3 relative">
-                            <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
-                                 <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">HP</div>
-                            </button>
-                        </div>
-                        <button id="logout-button" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-800 dark:text-gray-200">Logout</button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
         <main class="flex-grow py-8">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center mb-6">

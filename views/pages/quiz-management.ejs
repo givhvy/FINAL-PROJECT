@@ -18,16 +18,8 @@
     <link rel="stylesheet" href="/css/darkmode-improved.css">
 </head>
 <body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <%- include('../partials/header') %>
     <div class="min-h-screen">
-        <header class="bg-white dark:bg-gray-800 shadow-sm">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Quiz Management</h1>
-                    <a href="/teacher" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">← Back to Dashboard</a>
-                </div>
-            </div>
-        </header>
-
         <main class="py-10">
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
@@ -198,5 +190,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     findOrCreateQuizForLesson();
 });
 </script>
+    <%- include('../partials/footer') %>
 </body>
 </html>
