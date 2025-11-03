@@ -18,16 +18,25 @@ exports.createCourse = async (req, res) => {
 };
 
 // Get all courses (Bao gồm lessons và thông tin giảng viên)
+// FR2.4: Supports filtering by category, price, and instructor
 exports.getCourses = async (req, res) => {
     try {
         const db = getFirestore();
-        const coursesRef = db.collection('courses');
-        const snapshot = await coursesRef.get();
+        let coursesQuery = db.collection('courses');
 
-        const courses = await Promise.all(snapshot.docs.map(async (courseDoc) => {
+        // FR2.2: Filter by category if provided
+        const { category, minPrice, maxPrice, instructorId, instructor } = req.query;
+
+        if (category) {
+            coursesQuery = coursesQuery.where('category', '==', category);
+        }
+
+        const snapshot = await coursesQuery.get();
+
+        let courses = await Promise.all(snapshot.docs.map(async (courseDoc) => {
             const courseData = courseDoc.data();
             let teacherData = null;
-            
+
             // 1. Lấy thông tin giảng viên (populate teacher)
             if (courseData.teacher_id) {
                 const teacherRef = db.collection('users').doc(courseData.teacher_id);
@@ -46,13 +55,38 @@ exports.getCourses = async (req, res) => {
                 lessons.push({ id: lessonDoc.id, ...lessonDoc.data() });
             });
 
-            return { 
-                id: courseDoc.id, 
+            return {
+                id: courseDoc.id,
                 ...courseData,
                 teacher: teacherData,
                 lessons: lessons,
             };
         }));
+
+        // FR2.4: Client-side filtering for price range and instructor
+        // (Firestore doesn't support range queries well with other filters)
+        if (minPrice !== undefined) {
+            const min = parseFloat(minPrice);
+            courses = courses.filter(course => (course.price || 0) >= min);
+        }
+
+        if (maxPrice !== undefined) {
+            const max = parseFloat(maxPrice);
+            courses = courses.filter(course => (course.price || 0) <= max);
+        }
+
+        // Filter by instructor ID or name
+        if (instructorId) {
+            courses = courses.filter(course => course.teacher_id === instructorId);
+        } else if (instructor) {
+            const instructorLower = instructor.toLowerCase();
+            courses = courses.filter(course =>
+                course.teacher &&
+                course.teacher.name &&
+                course.teacher.name.toLowerCase().includes(instructorLower)
+            );
+        }
+
         res.status(200).json(courses);
     } catch (err) {
         console.error("Get Courses Error:", err);

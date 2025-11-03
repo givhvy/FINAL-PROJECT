@@ -1,10 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getFirestore } = require('firebase-admin/firestore');
-// BỔ SUNG: Import cả sendWelcomeEmail
+// Import email services
 const { sendResetPasswordEmail, sendWelcomeEmail } = require('../services/emailService');
 // Import User Model
 const User = require('../models/User');
+// Import email validator
+const { isEducationalEmail, isValidEmailFormat } = require('../utils/emailValidator');
 
 // Hàm tạo mã ngẫu nhiên 6 chữ số (giữ nguyên)
 const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -14,12 +16,30 @@ exports.register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
 
+        // Validate email format
+        if (!isValidEmailFormat(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        // Determine the user role (default to 'student' if not specified)
+        const userRole = role || 'student';
+
+        // FR1.5: Verify student status for users registering as students
+        if (userRole === 'student') {
+            if (!isEducationalEmail(email)) {
+                return res.status(400).json({
+                    error: 'Students must register with an educational email address (e.g., .edu, .edu.vn, .ac.uk)',
+                    hint: 'Please use your school or university email address'
+                });
+            }
+        }
+
         // Sử dụng User Model để tạo người dùng mới
         const newUser = await User.create({
             name,
             email,
             password,
-            role: role || 'student'
+            role: userRole
         });
 
         // --- KÍCH HOẠT: Gửi email chào mừng ---

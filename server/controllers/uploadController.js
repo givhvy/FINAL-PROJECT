@@ -1,4 +1,5 @@
 const cloudinary = require('../config/cloudinary');
+const User = require('../models/User');
 
 // Upload image to Cloudinary
 exports.uploadImage = async (req, res) => {
@@ -64,5 +65,48 @@ exports.uploadVideo = async (req, res) => {
     } catch (error) {
         console.error('Video Upload Error:', error);
         res.status(500).json({ error: 'Failed to upload video: ' + error.message });
+    }
+};
+
+// Upload profile picture to Cloudinary and update user
+exports.uploadProfilePicture = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const userId = req.user.id; // From auth middleware (line 23: req.user = { id: userSnap.id, ...})
+
+        // Upload to Cloudinary in profile pictures folder
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'codemaster/profiles',
+                    resource_type: 'image',
+                    transformation: [
+                        { width: 500, height: 500, crop: 'fill', gravity: 'face' },
+                        { quality: 'auto', fetch_format: 'auto' }
+                    ]
+                },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            uploadStream.end(req.file.buffer);
+        });
+
+        // Update user's avatarUrl in database
+        await User.update(userId, { avatarUrl: result.secure_url });
+
+        res.status(200).json({
+            success: true,
+            url: result.secure_url,
+            public_id: result.public_id,
+            message: 'Profile picture updated successfully'
+        });
+    } catch (error) {
+        console.error('Profile Picture Upload Error:', error);
+        res.status(500).json({ error: 'Failed to upload profile picture: ' + error.message });
     }
 };

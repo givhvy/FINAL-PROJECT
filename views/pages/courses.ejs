@@ -133,22 +133,46 @@
                 <div id="carousel-pagination-dots" class="carousel-pagination"></div>
             </div>
 
-            <div class="mb-8 flex flex-wrap gap-4 items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
-                <div class="flex items-center space-x-3 overflow-x-auto">
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
-                    <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                        <button data-filter="All" class="filter-btn active">All</button>
-                        <button data-filter="Development" class="filter-btn">💻 Development</button>
-                        <button data-filter="Design" class="filter-btn">🎨 Design</button>
-                        <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
-                        <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
-                        <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
-                        <button data-filter="Business" class="filter-btn">💼 Business</button>
+            <div class="mb-8 pb-2 border-b border-gray-200 dark:border-gray-700">
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-4 items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3 overflow-x-auto">
+                        <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
+                        <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
+                            <button data-filter="All" class="filter-btn active">All</button>
+                            <button data-filter="Development" class="filter-btn">💻 Development</button>
+                            <button data-filter="Design" class="filter-btn">🎨 Design</button>
+                            <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
+                            <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                            <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
+                            <button data-filter="Business" class="filter-btn">💼 Business</button>
+                        </div>
+                    </div>
+                    <div class="relative flex-shrink-0">
+                        <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
                     </div>
                 </div>
-                <div class="relative flex-shrink-0">
-                    <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                    <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
+
+                <!-- Advanced Filters (FR2.4: Price & Instructor) -->
+                <div class="flex flex-wrap gap-4 items-center">
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Price:</label>
+                        <select id="price-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                            <option value="all">All Prices</option>
+                            <option value="free">Free</option>
+                            <option value="0-50">$0 - $50</option>
+                            <option value="50-100">$50 - $100</option>
+                            <option value="100+">$100+</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instructor:</label>
+                        <input type="text" id="instructor-filter" placeholder="Filter by instructor..." class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                    </div>
+                    <button id="clear-filters-btn" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                        Clear Filters
+                    </button>
                 </div>
             </div>
 
@@ -186,18 +210,18 @@
         <div id="lesson-page" class="lesson-container hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"></div>
     </div>
 
-    <section id="newsletter-section" class="bg-gradient-to-br from-blue-50 to-indigo-100 py-16">
+    <section id="newsletter-section" class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-black py-16">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 sm:text-4xl">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
                 Subscribe to Email Notifications
             </h2>
-            <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+            <p class="mt-4 text-xl text-gray-600 dark:text-gray-300">
                 Receive the latest offers, free courses and weekly tech news from UniLearn.
             </p>
             <form id="newsletter-form" class="mt-8 sm:flex sm:max-w-lg sm:mx-auto">
                 <label for="email-address" class="sr-only">Email address</label>
                 <input id="email-address" name="email" type="email" autocomplete="email" required
-                    class="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                    class="w-full px-5 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 rounded-md"
                     placeholder="Enter your email address">
                 <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
                     <button type="submit" id="newsletter-submit-btn"
@@ -206,7 +230,7 @@
                     </button>
                 </div>
             </form>
-            <p id="newsletter-message" class="mt-4 text-sm font-medium"></p>
+            <p id="newsletter-message" class="mt-4 text-sm font-medium dark:text-gray-300"></p>
         </div>
     </section>
 
@@ -236,7 +260,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return initials;
     }
     
-    document.getElementById('user-avatar').textContent = getUserInitials(user.name);
+    // Set header avatar with profile picture support
+    const headerAvatar = document.getElementById('user-avatar');
+    if (headerAvatar) {
+        if (user.avatarUrl) {
+            headerAvatar.innerHTML = `<img src="${user.avatarUrl}" alt="Avatar" class="h-8 w-8 rounded-full object-cover">`;
+        } else {
+            headerAvatar.textContent = getUserInitials(user.name);
+            headerAvatar.className = 'h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold';
+        }
+    }
     document.getElementById('user-menu-button').addEventListener('click', () => {
         if (user.role === 'teacher') {
             window.location.href = '/teacher';
@@ -531,20 +564,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingSpinner.style.display = 'none';
         coursesGrid.innerHTML = '';
         const searchTerm = document.getElementById('course-search').value.toLowerCase();
+        const priceFilter = document.getElementById('price-filter').value;
+        const instructorFilter = document.getElementById('instructor-filter').value.toLowerCase();
 
         const filteredCourses = allCoursesData.filter(course => {
+            // Category filter
             const filterValue = currentFilter.toLowerCase();
             const courseCategory = course.category ? course.category.toLowerCase() : '';
             const courseLevel = course.level ? course.level.toLowerCase() : '';
 
-            const categoryMatch = filterValue === 'all' || 
+            const categoryMatch = filterValue === 'all' ||
                                 courseCategory.includes(filterValue) ||
-                                courseLevel.includes(filterValue); 
-                                  
+                                courseLevel.includes(filterValue);
+
+            // Search filter
             const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
                                 (course.description && course.description.toLowerCase().includes(searchTerm));
-                                
-            return categoryMatch && searchMatch;
+
+            // FR2.4: Price filter
+            let priceMatch = true;
+            const coursePrice = course.price || 0;
+            if (priceFilter === 'free') {
+                priceMatch = coursePrice === 0;
+            } else if (priceFilter === '0-50') {
+                priceMatch = coursePrice >= 0 && coursePrice <= 50;
+            } else if (priceFilter === '50-100') {
+                priceMatch = coursePrice > 50 && coursePrice <= 100;
+            } else if (priceFilter === '100+') {
+                priceMatch = coursePrice > 100;
+            }
+
+            // FR2.4: Instructor filter
+            let instructorMatch = true;
+            if (instructorFilter) {
+                const instructorName = course.teacher?.name?.toLowerCase() || course.instructor?.toLowerCase() || '';
+                instructorMatch = instructorName.includes(instructorFilter);
+            }
+
+            return categoryMatch && searchMatch && priceMatch && instructorMatch;
         });
 
         if (filteredCourses.length === 0) {
@@ -598,8 +655,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="text-sm text-gray-500">${totalLessons} lessons</span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">${course.title}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 two-line-ellipsis">${descriptionText}</p>
-                    
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-2 two-line-ellipsis">${descriptionText}</p>
+
+                    ${course.teacher ? `
+                        <div class="flex items-center space-x-2 mb-3">
+                            <div class="flex-shrink-0">
+                                ${course.teacher.avatarUrl ?
+                                    `<img src="${course.teacher.avatarUrl}" alt="${course.teacher.name}" class="h-6 w-6 rounded-full object-cover">` :
+                                    `<div class="h-6 w-6 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-semibold">
+                                        ${course.teacher.name ? course.teacher.name.charAt(0).toUpperCase() : 'T'}
+                                    </div>`
+                                }
+                            </div>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-chalkboard-teacher mr-1"></i>${course.teacher.name || 'Instructor'}
+                            </span>
+                        </div>
+                    ` : course.instructor ? `
+                        <div class="flex items-center space-x-2 mb-3">
+                            <i class="fas fa-user-circle text-gray-400 text-lg"></i>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">${course.instructor}</span>
+                        </div>
+                    ` : ''}
+
                     <div class="mt-auto border-t pt-3">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-lg font-bold text-indigo-600">${priceDisplay}</span>
@@ -1222,6 +1300,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     
     document.getElementById('course-search').addEventListener('input', renderCourses);
+
+    // FR2.4: Event listeners for new filters
+    document.getElementById('price-filter').addEventListener('change', renderCourses);
+    document.getElementById('instructor-filter').addEventListener('input', renderCourses);
+
+    // Clear all filters button
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+        // Reset category filter
+        currentFilter = 'All';
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.filter-btn[data-filter="All"]').classList.add('active');
+
+        // Reset price filter
+        document.getElementById('price-filter').value = 'all';
+
+        // Reset instructor filter
+        document.getElementById('instructor-filter').value = '';
+
+        // Reset search
+        document.getElementById('course-search').value = '';
+
+        // Re-render courses
+        renderCourses();
+    });
 
     // --- HISTORY MANAGEMENT ---
     window.addEventListener('popstate', (event) => {

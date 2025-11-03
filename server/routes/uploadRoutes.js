@@ -13,8 +13,25 @@ const upload = multer({
     }
 });
 
+// Configure multer for profile pictures (smaller file size limit)
+const profileUpload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit for profile pictures
+    },
+    fileFilter: (req, file, cb) => {
+        // Only accept image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed for profile pictures'));
+        }
+    }
+});
+
 // Upload routes (protected by authentication)
 router.post('/image', authMiddleware, upload.single('file'), uploadController.uploadImage);
 router.post('/video', authMiddleware, upload.single('file'), uploadController.uploadVideo);
+router.post('/profile-picture', authMiddleware, profileUpload.single('file'), uploadController.uploadProfilePicture);
 
 module.exports = router;

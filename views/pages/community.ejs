@@ -855,11 +855,16 @@
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Update user info in header
+            // Update user info in header with profile picture support
             const initials = getUserInitials();
             const userAvatarEl = document.getElementById('user-avatar');
             if (userAvatarEl) {
-                userAvatarEl.textContent = initials;
+                if (user.avatarUrl) {
+                    userAvatarEl.innerHTML = `<img src="${user.avatarUrl}" alt="Avatar" class="h-8 w-8 rounded-full object-cover">`;
+                } else {
+                    userAvatarEl.textContent = initials;
+                    userAvatarEl.className = 'h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold';
+                }
             }
 
             // Logout functionality

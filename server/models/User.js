@@ -12,6 +12,8 @@ class User {
         this.email = data.email;
         this.password = data.password;
         this.role = data.role || 'student';
+        this.avatarUrl = data.avatarUrl || data.profilePicture || null;
+        this.phone = data.phone || null;
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
         this.resetPasswordCode = data.resetPasswordCode || null;
@@ -124,6 +126,8 @@ class User {
                 email: newUser.email,
                 password: newUser.password,
                 role: newUser.role,
+                avatarUrl: newUser.avatarUrl,
+                phone: newUser.phone,
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt
             });

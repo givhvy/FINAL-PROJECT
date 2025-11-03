@@ -26,19 +26,19 @@ exports.sendWelcomeEmail = async (userEmail, userName) => {
     }
 
     const mailOptions = {
-        from: `"UniLearn" <${SENDER_EMAIL}>`, // Địa chỉ gửi đi là email của bạn
+        from: `"UniLearn" <${SENDER_EMAIL}>`,
         to: userEmail,
-        subject: '🎉 Chào mừng đến với UniLearn! Hãy bắt đầu hành trình học tập của bạn.',
+        subject: '🎉 Welcome to UniLearn! Start Your Learning Journey.',
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                <h2 style="color: #4f46e5;">Xin chào, ${userName}!</h2>
-                <p>Cảm ơn bạn đã đăng ký tài khoản tại UniLearn. Chúng tôi rất vui được đồng hành cùng bạn trên hành trình chinh phục lập trình.</p>
-                <p>Bạn có thể đăng nhập ngay và khám phá hàng trăm khóa học chất lượng cao:</p>
-                <a href="http://localhost:5000/LoginPage.html" 
+                <h2 style="color: #4f46e5;">Hello, ${userName}!</h2>
+                <p>Thank you for registering an account with UniLearn. We are excited to accompany you on your programming journey.</p>
+                <p>You can log in now and explore hundreds of high-quality courses:</p>
+                <a href="http://localhost:5000/LoginPage.html"
                    style="display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                   Đăng nhập ngay
+                   Log in now
                 </a>
-                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Trân trọng,<br>Đội ngũ UniLearn.</p>
+                <p style="margin-top: 20px; font-size: 0.8em; color: #777;">Best regards,<br>The UniLearn Team.</p>
             </div>
         `
     };
