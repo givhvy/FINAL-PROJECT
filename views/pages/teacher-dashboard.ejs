@@ -789,7 +789,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 3. Filter grades for teacher's courses only
             allQuizGrades = allGrades.filter(grade => {
                 return teacherCourses.some(course =>
-                    course.id === grade.quiz?.courseId
+                    course.id === grade.quiz?.course_id
                 );
             });
 
@@ -823,7 +823,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Group grades by course and quiz
         const groupedGrades = {};
         grades.forEach(grade => {
-            const courseId = grade.quiz?.courseId || 'unknown';
+            const courseId = grade.quiz?.course_id || 'unknown';
             if (!groupedGrades[courseId]) {
                 groupedGrades[courseId] = {};
             }
@@ -941,7 +941,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (courseId === 'all') {
                 renderQuizGradesTable(allQuizGrades);
             } else {
-                const filtered = allQuizGrades.filter(g => g.quiz?.courseId === courseId);
+                const filtered = allQuizGrades.filter(g => g.quiz?.course_id === courseId);
                 renderQuizGradesTable(filtered);
             }
         });
