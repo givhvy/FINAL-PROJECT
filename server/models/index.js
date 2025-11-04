@@ -10,6 +10,7 @@ const Quiz = require('./Quiz');
 const Question = require('./Question');
 const Order = require('./Order');
 const Payment = require('./Payment');
+const Enrollment = require('./Enrollment');
 
 module.exports = {
     User,
@@ -18,5 +19,6 @@ module.exports = {
     Quiz,
     Question,
     Order,
-    Payment
+    Payment,
+    Enrollment
 };

@@ -154,16 +154,14 @@
                     </div>
                 </div>
 
-                <!-- Advanced Filters (FR2.4: Price & Instructor) -->
+                <!-- Advanced Filters (FR2.4: Tier & Instructor) -->
                 <div class="flex flex-wrap gap-4 items-center">
                     <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Price:</label>
-                        <select id="price-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
-                            <option value="all">All Prices</option>
-                            <option value="free">Free</option>
-                            <option value="0-50">$0 - $50</option>
-                            <option value="50-100">$50 - $100</option>
-                            <option value="100+">$100+</option>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Access Tier:</label>
+                        <select id="tier-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                            <option value="all">All Tiers</option>
+                            <option value="free">Free Tier</option>
+                            <option value="pro">Pro Tier</option>
                         </select>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -270,6 +268,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             headerAvatar.className = 'h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold';
         }
     }
+
+    // Set user subscription tier badge
+    const tierBadgeElement = document.getElementById('user-tier-badge');
+    if (tierBadgeElement) {
+        const userTier = user.subscriptionTier || 'free';
+        if (userTier === 'pro') {
+            tierBadgeElement.innerHTML = `
+                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                    <i class="fas fa-crown"></i> PRO
+                </span>
+            `;
+        } else {
+            tierBadgeElement.innerHTML = `
+                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
+                    FREE
+                </span>
+            `;
+        }
+    }
+
     document.getElementById('user-menu-button').addEventListener('click', () => {
         if (user.role === 'teacher') {
             window.location.href = '/teacher';
@@ -564,7 +582,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingSpinner.style.display = 'none';
         coursesGrid.innerHTML = '';
         const searchTerm = document.getElementById('course-search').value.toLowerCase();
-        const priceFilter = document.getElementById('price-filter').value;
+        const tierFilter = document.getElementById('tier-filter').value;
         const instructorFilter = document.getElementById('instructor-filter').value.toLowerCase();
 
         const filteredCourses = allCoursesData.filter(course => {
@@ -581,18 +599,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
                                 (course.description && course.description.toLowerCase().includes(searchTerm));
 
-            // FR2.4: Price filter
-            let priceMatch = true;
-            const coursePrice = course.price || 0;
-            if (priceFilter === 'free') {
-                priceMatch = coursePrice === 0;
-            } else if (priceFilter === '0-50') {
-                priceMatch = coursePrice >= 0 && coursePrice <= 50;
-            } else if (priceFilter === '50-100') {
-                priceMatch = coursePrice > 50 && coursePrice <= 100;
-            } else if (priceFilter === '100+') {
-                priceMatch = coursePrice > 100;
-            }
+            // Tier filter - currently not filtering by tier since all courses are available to all tiers
+            // (Free tier can access 3 courses, Pro tier unlimited)
+            let tierMatch = true;
+            // You can implement tier-based filtering logic here if needed in the future
 
             // FR2.4: Instructor filter
             let instructorMatch = true;
@@ -601,7 +611,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 instructorMatch = instructorName.includes(instructorFilter);
             }
 
-            return categoryMatch && searchMatch && priceMatch && instructorMatch;
+            return categoryMatch && searchMatch && tierMatch && instructorMatch;
         });
 
         if (filteredCourses.length === 0) {
@@ -616,7 +626,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             const courseProgress = userProgressData[course.id];
             const actualProgress = courseProgress ? courseProgress.percentage : 0;
 
-            const priceDisplay = course.price && course.price > 0 ? `${course.price.toFixed(2)}` : 'FREE';
+            // Determine user's access based on subscription tier
+            const userTier = user.subscriptionTier || 'free';
+            const isEnrolled = actualProgress > 0; // If user has progress, they're enrolled
+
+            // Count total enrollments to determine if free tier limit is reached
+            const enrollmentCount = Object.keys(userProgressData).length;
+            const canEnrollFree = enrollmentCount < 3;
+
+            // Determine tier badge display
+            let tierBadge = '';
+            if (userTier === 'pro') {
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full">PRO ACCESS</span>';
+            } else if (isEnrolled) {
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full">ENROLLED</span>';
+            } else if (canEnrollFree) {
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full">FREE TIER</span>';
+            } else {
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full flex items-center gap-1"><i class="fas fa-lock text-xs"></i> LOCKED</span>';
+            }
 
             // Determine progress color based on completion percentage
             const progressColor = actualProgress === 100 ? 'green' : actualProgress >= 50 ? 'blue' : actualProgress > 0 ? 'yellow' : 'gray';
@@ -680,7 +708,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     <div class="mt-auto border-t pt-3">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-lg font-bold text-indigo-600">${priceDisplay}</span>
+                            ${tierBadge}
                             <div class="flex items-center text-sm text-gray-500">
                                 <i class="fas fa-star text-yellow-400 mr-1"></i>
                                 <span>4.7</span>
@@ -1302,7 +1330,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('course-search').addEventListener('input', renderCourses);
 
     // FR2.4: Event listeners for new filters
-    document.getElementById('price-filter').addEventListener('change', renderCourses);
+    document.getElementById('tier-filter').addEventListener('change', renderCourses);
     document.getElementById('instructor-filter').addEventListener('input', renderCourses);
 
     // Clear all filters button
@@ -1312,8 +1340,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector('.filter-btn[data-filter="All"]').classList.add('active');
 
-        // Reset price filter
-        document.getElementById('price-filter').value = 'all';
+        // Reset tier filter
+        document.getElementById('tier-filter').value = 'all';
 
         // Reset instructor filter
         document.getElementById('instructor-filter').value = '';

@@ -14,6 +14,7 @@ class User {
         this.role = data.role || 'student';
         this.avatarUrl = data.avatarUrl || data.profilePicture || null;
         this.phone = data.phone || null;
+        this.subscriptionTier = data.subscriptionTier || 'free'; // 'free' or 'pro'
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
         this.resetPasswordCode = data.resetPasswordCode || null;
@@ -114,9 +115,13 @@ class User {
             // Hash password
             const hashedPassword = await bcrypt.hash(userData.password, 10);
 
+            // Check if email is .edu to grant Pro tier automatically
+            const subscriptionTier = this.isEduEmail(userData.email) ? 'pro' : 'free';
+
             const newUser = new User({
                 ...userData,
                 password: hashedPassword,
+                subscriptionTier: subscriptionTier,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             });
@@ -128,6 +133,7 @@ class User {
                 role: newUser.role,
                 avatarUrl: newUser.avatarUrl,
                 phone: newUser.phone,
+                subscriptionTier: newUser.subscriptionTier,
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt
             });
@@ -227,6 +233,49 @@ class User {
             this.resetPasswordExpires = null;
         } catch (error) {
             throw new Error(`Error clearing reset code: ${error.message}`);
+        }
+    }
+
+    /**
+     * Check if email is .edu domain
+     * @param {string} email - Email to check
+     * @returns {boolean} - true if email ends with .edu
+     */
+    static isEduEmail(email) {
+        return email.toLowerCase().endsWith('.edu');
+    }
+
+    /**
+     * Check if user has Pro tier
+     * @returns {boolean} - true if user is Pro
+     */
+    isPro() {
+        return this.subscriptionTier === 'pro';
+    }
+
+    /**
+     * Upgrade user to Pro tier
+     * @param {string} id - User ID
+     * @returns {Promise<User>} - Updated user
+     */
+    static async upgradeToProTier(id) {
+        try {
+            return await this.update(id, { subscriptionTier: 'pro' });
+        } catch (error) {
+            throw new Error(`Error upgrading to Pro tier: ${error.message}`);
+        }
+    }
+
+    /**
+     * Downgrade user to Free tier
+     * @param {string} id - User ID
+     * @returns {Promise<User>} - Updated user
+     */
+    static async downgradeToFreeTier(id) {
+        try {
+            return await this.update(id, { subscriptionTier: 'free' });
+        } catch (error) {
+            throw new Error(`Error downgrading to Free tier: ${error.message}`);
         }
     }
 
