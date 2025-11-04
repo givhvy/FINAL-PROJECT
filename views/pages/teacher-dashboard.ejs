@@ -272,29 +272,78 @@
             <!-- CERTIFICATES PAGE -->
             <div id="certificates-page" class="page-content hidden flex-1 flex flex-col overflow-hidden">
                 <header class="bg-white dark:bg-gray-800 shadow-sm">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Certificate Generator</h2>
+                    <div class="p-4 flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Certificates Management</h2>
+                        <div class="flex space-x-2">
+                            <input type="text" id="cert-search" placeholder="Search by student or course..." class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            <select id="cert-filter" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                <option value="all">All Courses</option>
+                            </select>
+                        </div>
                     </div>
                 </header>
                 <main class="flex-1 overflow-y-auto p-5 bg-gray-50 dark:bg-gray-900">
-                    <div class="max-w-4xl mx-auto">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
-                            <div class="mb-6">
-                                <label for="cert-user" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Student</label>
-                                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></select>
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Total Certificates</p>
+                                    <p id="total-certs" class="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-1">0</p>
+                                </div>
+                                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+                                    <i class="fas fa-certificate text-blue-600 dark:text-blue-400 text-2xl"></i>
+                                </div>
                             </div>
-                            <div class="mb-6">
-                                <label for="cert-course" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Your Completed Course</label>
-                                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></select>
-                            </div>
-                            <div class="mb-6">
-                                <label for="cert-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date of Completion</label>
-                                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                            </div>
-                            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">Generate & Preview</button>
                         </div>
-                        <div id="certificate-preview-container" class="w-full mt-8 hidden">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Unique Students</p>
+                                    <p id="unique-students" class="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-1">0</p>
+                                </div>
+                                <div class="bg-green-100 dark:bg-green-900 p-3 rounded-full">
+                                    <i class="fas fa-user-graduate text-green-600 dark:text-green-400 text-2xl"></i>
+                                </div>
                             </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">This Month</p>
+                                    <p id="monthly-certs" class="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-1">0</p>
+                                </div>
+                                <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full">
+                                    <i class="fas fa-calendar text-purple-600 dark:text-purple-400 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificates Table -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Certificate #</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Course</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Issued Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificates-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <!-- Certificates will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="certificates-empty" class="hidden text-center py-12">
+                            <i class="fas fa-certificate text-gray-400 text-6xl mb-4"></i>
+                            <p class="text-gray-600 dark:text-gray-400 text-lg">No certificates found</p>
+                            <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">Certificates will appear here when students complete courses</p>
+                        </div>
                     </div>
                 </main>
             </div>
@@ -435,7 +484,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (targetId === 'profile-page') loadProfileData();
         else if (targetId === 'students-page') fetchAndRenderAllStudents();
         else if (targetId === 'quizzes-page') renderQuizManagementPage();
-        else if (targetId === 'certificates-page') populateCertificateForm();
+        else if (targetId === 'certificates-page') loadCertificatesDatabase();
         else if (targetId === 'groups-page') fetchStudyGroups();
     }
 
@@ -951,27 +1000,187 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // === CERTIFICATE FUNCTIONS === 
+    // === CERTIFICATE FUNCTIONS ===
 
-    function populateCertificateForm() {
-        const userSelect = document.getElementById('cert-user');
-        const courseSelect = document.getElementById('cert-course');
-        const dateInput = document.getElementById('cert-date');
+    let allCertificates = [];
+    let filteredCertificates = [];
 
-        userSelect.innerHTML = '<option value="">-- Select a Student --</option>';
-        allStudents.forEach(student => {
-            userSelect.innerHTML += `<option value="${student.id}" data-name="${student.name}">${student.name} (${student.email})</option>`;
-        });
+    async function loadCertificatesDatabase() {
+        try {
+            // Fetch all certificates
+            const response = await fetch('/api/certificates', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-        courseSelect.innerHTML = '<option value="">-- Select Your Course --</option>';
-        const myCourses = allCourses.filter(course => course.teacher_id === user.id);
-        myCourses.forEach(course => {
-            courseSelect.innerHTML += `<option value="${course.id}" data-title="${course.title}">${course.title}</option>`;
-        });
+            if (!response.ok) throw new Error('Failed to fetch certificates');
 
-        dateInput.value = new Date().toISOString().split('T')[0];
-        document.getElementById('certificate-preview-container').classList.add('hidden'); // Hide old preview
+            allCertificates = await response.json();
+
+            // Filter to show only certificates for teacher's courses
+            const myCourseIds = allCourses.filter(c => c.teacher_id === user.id).map(c => c.id);
+            filteredCertificates = allCertificates.filter(cert => myCourseIds.includes(cert.course_id));
+
+            // Update statistics
+            updateCertificateStats(filteredCertificates);
+
+            // Populate course filter
+            populateCourseFilter(myCourseIds);
+
+            // Render certificates table
+            renderCertificatesTable(filteredCertificates);
+
+        } catch (error) {
+            console.error('Error loading certificates:', error);
+            document.getElementById('certificates-table-body').innerHTML = `
+                <tr><td colspan="6" class="px-6 py-4 text-center text-red-600">Failed to load certificates</td></tr>
+            `;
+        }
     }
+
+    function updateCertificateStats(certificates) {
+        // Total certificates
+        document.getElementById('total-certs').textContent = certificates.length;
+
+        // Unique students
+        const uniqueStudents = new Set(certificates.map(c => c.user_id));
+        document.getElementById('unique-students').textContent = uniqueStudents.size;
+
+        // This month certificates
+        const now = new Date();
+        const thisMonth = certificates.filter(c => {
+            const certDate = new Date(c.issued_at);
+            return certDate.getMonth() === now.getMonth() && certDate.getFullYear() === now.getFullYear();
+        });
+        document.getElementById('monthly-certs').textContent = thisMonth.length;
+    }
+
+    function populateCourseFilter(myCourseIds) {
+        const filterSelect = document.getElementById('cert-filter');
+        filterSelect.innerHTML = '<option value="all">All Courses</option>';
+
+        const myCourses = allCourses.filter(c => myCourseIds.includes(c.id));
+        myCourses.forEach(course => {
+            filterSelect.innerHTML += `<option value="${course.id}">${course.title}</option>`;
+        });
+    }
+
+    function renderCertificatesTable(certificates) {
+        const tbody = document.getElementById('certificates-table-body');
+        const emptyDiv = document.getElementById('certificates-empty');
+
+        if (certificates.length === 0) {
+            tbody.innerHTML = '';
+            emptyDiv.classList.remove('hidden');
+            return;
+        }
+
+        emptyDiv.classList.add('hidden');
+
+        tbody.innerHTML = certificates.map(cert => {
+            const issuedDate = new Date(cert.issued_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            return `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-mono text-gray-900 dark:text-gray-200">${cert.certificate_number}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-xs mr-3">
+                                ${getInitials(cert.student_name)}
+                            </div>
+                            <div class="text-sm font-medium text-gray-900 dark:text-gray-200">${cert.student_name}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 dark:text-gray-200">${cert.course_title}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${issuedDate}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Issued
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="viewCertificate('${cert.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <a href="/api/certificates/${cert.id}/download" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                            <i class="fas fa-download"></i> PDF
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function getInitials(name) {
+        if (!name) return '?';
+        const parts = name.trim().split(' ');
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+
+    // Search and filter functionality
+    document.getElementById('cert-search')?.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const courseFilter = document.getElementById('cert-filter').value;
+
+        let filtered = filteredCertificates;
+
+        // Apply course filter
+        if (courseFilter !== 'all') {
+            filtered = filtered.filter(c => c.course_id === courseFilter);
+        }
+
+        // Apply search filter
+        if (searchTerm) {
+            filtered = filtered.filter(c =>
+                c.student_name.toLowerCase().includes(searchTerm) ||
+                c.course_title.toLowerCase().includes(searchTerm) ||
+                c.certificate_number.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        renderCertificatesTable(filtered);
+    });
+
+    document.getElementById('cert-filter')?.addEventListener('change', (e) => {
+        const courseId = e.target.value;
+        const searchTerm = document.getElementById('cert-search').value.toLowerCase();
+
+        let filtered = filteredCertificates;
+
+        // Apply course filter
+        if (courseId !== 'all') {
+            filtered = filtered.filter(c => c.course_id === courseId);
+        }
+
+        // Apply search filter
+        if (searchTerm) {
+            filtered = filtered.filter(c =>
+                c.student_name.toLowerCase().includes(searchTerm) ||
+                c.course_title.toLowerCase().includes(searchTerm) ||
+                c.certificate_number.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        renderCertificatesTable(filtered);
+    });
+
+    // View certificate in modal
+    window.viewCertificate = function(certId) {
+        const cert = allCertificates.find(c => c.id === certId);
+        if (!cert) return;
+
+        alert(`Certificate Details:\n\nNumber: ${cert.certificate_number}\nStudent: ${cert.student_name}\nCourse: ${cert.course_title}\nIssued: ${new Date(cert.issued_at).toLocaleDateString()}`);
+    };
 
     // HÀM: TẢI CERTIFICATE (Giữ nguyên)
     function downloadCertificate() {
