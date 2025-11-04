@@ -47,6 +47,46 @@
             min-width: 6rem;
             text-align: center;
         }
+
+        /* Certificate Styles */
+        .certificate-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .certificate-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Certificate Modal */
+        .certificate-modal {
+            font-family: 'Playfair Display', serif;
+            background-image: radial-gradient(#e6f0ff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .certificate-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 12px solid transparent;
+            border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1;
+            pointer-events: none;
+        }
+        .certificate-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #1e3a8a;
+        }
+        .certificate-title {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -67,6 +107,7 @@
                     <button id="tab-dashboard" class="py-2 px-1 font-semibold text-lg tab-button active" data-target="content-dashboard">My Dashboard</button>
                     <button id="tab-quizzes" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-quizzes">Quizzes</button>
                     <button id="tab-grades" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-grades">Grades</button>
+                    <button id="tab-certificates" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-certificates">Certificates</button>
                 </div>
                 
                 <div id="tab-content-container">
@@ -101,9 +142,77 @@
                            </div>
                     </div>
 
+                    <div id="content-certificates" class="hidden">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">My Certificates</h2>
+                        <div id="certificates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <p class="col-span-full text-gray-500 text-center py-4">Loading your certificates...</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificate-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6 no-print">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Certificate Details</h2>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="certificate-content" class="certificate-modal w-full aspect-[1.4/1] bg-white rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
+                    <!-- Certificate content will be rendered here -->
+                </div>
+
+                <div class="flex justify-center gap-4 mt-6 no-print">
+                    <button id="download-pdf-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition">
+                        Download PDF
+                    </button>
+                    <button id="print-certificate-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition">
+                        Print Certificate
+                    </button>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg no-print">
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>Certificate Number:</strong> <span id="modal-cert-number"></span>
+                    </p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                        <strong>Issued Date:</strong> <span id="modal-cert-date"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Completion Popup -->
+    <div id="completion-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-lg w-full p-8 text-center">
+            <div class="mb-6">
+                <div class="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                    <svg class="w-12 h-12 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Congratulations!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">You have successfully completed the course and earned your certificate!</p>
+            <div class="flex gap-4 justify-center">
+                <button id="view-certificate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition">
+                    View Certificate
+                </button>
+                <button id="close-completion-popup" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-6 rounded-lg transition">
+                    Close
+                </button>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -148,6 +257,8 @@ document.addEventListener('DOMContentLoaded', async () => {
              fetchAndRenderAvailableQuizzes();
         } else if (targetId === 'grades') {
              fetchAndRenderMyGrades();
+        } else if (targetId === 'certificates') {
+             fetchAndRenderCertificates();
         }
     }
 
@@ -330,6 +441,171 @@ async function fetchAndRenderLearningProgress() {
 }
 
 
+    // --- CERTIFICATE FUNCTIONS ---
+
+    let currentCertificate = null;
+
+    // Format date
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Render certificate HTML
+    function renderCertificate(cert) {
+        return `
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
+            <div class="absolute bottom-0 right-0 w-full h-16 bg-gradient-to-l from-blue-600/10 to-indigo-600/10"></div>
+
+            <div class="text-center z-10 px-6">
+                <div class="mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-16 h-16 mx-auto mb-2 text-blue-600">
+                        <path fill="currentColor" d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                        <path fill="currentColor" d="M9.999 13.587L7.7 11.292l-1.412 1.416 3.713 3.705 6.706-6.706-1.414-1.414z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion</h2>
+                <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
+                <p class="text-gray-600 mb-2">This certifies that</p>
+                <h2 class="certificate-name">${cert.student_name}</h2>
+                <p class="text-gray-600 mb-6">has successfully completed the course</p>
+                <h3 class="text-2xl font-semibold text-blue-800 mb-6">${cert.course_title}</h3>
+                <p class="text-gray-600 mb-8">${formatDate(cert.completion_date)}</p>
+
+                <div class="flex justify-center items-center gap-16 mt-2">
+                    <div class="text-center">
+                        <div class="text-xl text-blue-800 mb-2" style="font-family: cursive;">${cert.instructor_name}</div>
+                        <div class="w-40 border-t border-gray-400"></div>
+                        <p class="text-sm text-gray-600 mt-1">Course Instructor</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl text-blue-800 mb-2" style="font-family: cursive;">Program Director</div>
+                        <div class="w-40 border-t border-gray-400"></div>
+                        <p class="text-sm text-gray-600 mt-1">CodeMaster Academy</p>
+                    </div>
+                </div>
+            </div>
+
+            <svg class="absolute bottom-6 right-10" style="width: 120px; height: 120px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/>
+                <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text>
+                <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text>
+            </svg>
+        `;
+    }
+
+    // Fetch and render certificates
+    async function fetchAndRenderCertificates() {
+        const certificatesGrid = document.getElementById('certificates-grid');
+        certificatesGrid.innerHTML = '<p class="col-span-full text-gray-500 text-center py-4">Loading your certificates...</p>';
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/certificates/user/${user.id}`);
+            const certificates = await response.json();
+
+            if (certificates.length === 0) {
+                certificatesGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="w-24 h-24 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Certificates Yet</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Complete courses to earn certificates!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            certificatesGrid.innerHTML = certificates.map(cert => `
+                <div class="certificate-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" onclick="viewCertificate('${cert.id}')">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">${cert.course_title}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Completed: ${formatDate(cert.completion_date)}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-500">Certificate #${cert.certificate_number}</p>
+                        <button class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
+                            View Certificate
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading certificates:', error);
+            certificatesGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <p class="text-red-600 dark:text-red-400">Error loading certificates. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    // View certificate details
+    async function viewCertificate(certId) {
+        try {
+            const response = await fetch(`http://localhost:5000/api/certificates/${certId}`);
+            currentCertificate = await response.json();
+
+            document.getElementById('certificate-content').innerHTML = renderCertificate(currentCertificate);
+            document.getElementById('modal-cert-number').textContent = currentCertificate.certificate_number;
+            document.getElementById('modal-cert-date').textContent = formatDate(currentCertificate.issued_at);
+            document.getElementById('certificate-modal').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading certificate:', error);
+            alert('Error loading certificate details.');
+        }
+    }
+
+    // Close modal
+    document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('certificate-modal').classList.add('hidden');
+        currentCertificate = null;
+    });
+
+    // Download PDF
+    document.getElementById('download-pdf-btn').addEventListener('click', async () => {
+        if (!currentCertificate) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/certificates/${currentCertificate.id}/download`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `certificate-${currentCertificate.certificate_number}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading certificate:', error);
+            alert('Error downloading certificate. Please try again.');
+        }
+    });
+
+    // Print certificate
+    document.getElementById('print-certificate-btn').addEventListener('click', () => {
+        window.print();
+    });
+
+    // Completion popup handlers
+    document.getElementById('close-completion-popup').addEventListener('click', () => {
+        document.getElementById('completion-popup').classList.add('hidden');
+    });
+
+    document.getElementById('view-certificate-btn').addEventListener('click', () => {
+        document.getElementById('completion-popup').classList.add('hidden');
+        setActiveTab('certificates');
+    });
+
+    // Make viewCertificate global
+    window.viewCertificate = viewCertificate;
+
     // --- INITIALIZATION ---
 
     // 1. Setup Listeners
@@ -348,12 +624,20 @@ async function fetchAndRenderLearningProgress() {
     document.getElementById('tab-dashboard').addEventListener('click', () => setActiveTab('dashboard'));
     document.getElementById('tab-quizzes').addEventListener('click', () => setActiveTab('quizzes'));
     document.getElementById('tab-grades').addEventListener('click', () => setActiveTab('grades'));
+    document.getElementById('tab-certificates').addEventListener('click', () => setActiveTab('certificates'));
 
 
     // 2. Initial Data Load
     fetchAndRenderLearningProgress(); // GỌI HÀM MỚI Ở ĐÂY
     fetchAndRenderEnrolledCourses();
-    setActiveTab('dashboard'); // Mặc định hiển thị Dashboard
+
+    // Check for hash in URL to open specific tab
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['dashboard', 'quizzes', 'grades', 'certificates'].includes(hash)) {
+        setActiveTab(hash);
+    } else {
+        setActiveTab('dashboard'); // Mặc định hiển thị Dashboard
+    }
 });
 </script>
 
