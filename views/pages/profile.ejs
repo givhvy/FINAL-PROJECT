@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
     <style>
@@ -68,6 +69,26 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Order History Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Order History</h2>
+
+                    <div id="order-history-loading" class="text-center py-8">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        <p class="mt-2 text-gray-600 dark:text-gray-400">Loading orders...</p>
+                    </div>
+
+                    <div id="order-history-empty" class="hidden text-center py-12">
+                        <i class="fas fa-shopping-bag text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-600 dark:text-gray-400 text-lg">No orders yet</p>
+                        <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">Your purchase history will appear here</p>
+                    </div>
+
+                    <div id="order-history-list" class="hidden space-y-4">
+                        <!-- Orders will be loaded here -->
                     </div>
                 </div>
             </div>
@@ -385,7 +406,107 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/login';
     });
 
+    // --- ORDER HISTORY ---
+    async function loadOrderHistory() {
+        const loadingEl = document.getElementById('order-history-loading');
+        const emptyEl = document.getElementById('order-history-empty');
+        const listEl = document.getElementById('order-history-list');
+
+        try {
+            const response = await fetch(`/api/orders?userId=${user.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to load orders');
+
+            const allOrders = await response.json();
+
+            // Filter orders by current user
+            const userOrders = allOrders.filter(order => order.userId === user.id);
+
+            loadingEl.classList.add('hidden');
+
+            if (userOrders.length === 0) {
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+
+            // Sort by date (newest first)
+            userOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            listEl.classList.remove('hidden');
+            listEl.innerHTML = userOrders.map(order => {
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                    'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                    'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                    'refunded': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                };
+
+                const statusColor = statusColors[order.status] || 'bg-gray-100 text-gray-800';
+                const orderDate = new Date(order.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const courseName = order.course?.title || order.courseName || 'Unknown Course';
+
+                return `
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-shopping-cart text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 text-lg">${courseName}</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            Order ID: <span class="font-mono">${order.id.substring(0, 12)}...</span>
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                                            <i class="fas fa-calendar-alt mr-1"></i>${orderDate}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                                    $${parseFloat(order.price || 0).toFixed(2)}
+                                </span>
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColor}">
+                                    ${order.status.toUpperCase()}
+                                </span>
+                                ${order.paymentMethod ? `
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        <i class="fas fa-credit-card mr-1"></i>${order.paymentMethod}
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Error loading order history:', error);
+            loadingEl.classList.add('hidden');
+            listEl.classList.remove('hidden');
+            listEl.innerHTML = `
+                <div class="text-center py-8 text-red-500">
+                    <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                    <p>Error loading order history</p>
+                    <p class="text-sm mt-2">${error.message}</p>
+                </div>
+            `;
+        }
+    }
+
     // --- INITIALIZATION ---
     renderProfile(user); // Khởi tạo giao diện với dữ liệu hiện tại
+    loadOrderHistory(); // Load order history
 });
 </script>

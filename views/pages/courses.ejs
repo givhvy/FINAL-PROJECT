@@ -670,7 +670,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             courseCard.innerHTML = `
                 <div class="h-40 relative overflow-hidden">
                     ${course.imageUrl && course.imageUrl.trim() !== '' ?
-                        `<img src="${course.imageUrl}" alt="${course.title}" class="w-full h-full object-cover">
+                        `<img src="${course.imageUrl}" alt="${course.title}" class="w-full h-full object-cover" loading="lazy" decoding="async">
                          <div class="absolute inset-0 bg-black bg-opacity-10 hover:bg-opacity-20 transition-all duration-300"></div>` :
                         `<div class="${bgColor} w-full h-full flex items-center justify-center">
                             <i class="fas ${iconClass} text-white text-6xl opacity-80"></i>
@@ -1326,12 +1326,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (targetButton) targetButton.click();
         });
     });
-    
-    document.getElementById('course-search').addEventListener('input', renderCourses);
+
+    // Debounce function to prevent excessive re-renders
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Use debounced versions for input events
+    const debouncedRenderCourses = debounce(renderCourses, 300);
+
+    document.getElementById('course-search').addEventListener('input', debouncedRenderCourses);
 
     // FR2.4: Event listeners for new filters
     document.getElementById('tier-filter').addEventListener('change', renderCourses);
-    document.getElementById('instructor-filter').addEventListener('input', renderCourses);
+    document.getElementById('instructor-filter').addEventListener('input', debouncedRenderCourses);
 
     // Clear all filters button
     document.getElementById('clear-filters-btn').addEventListener('click', () => {
