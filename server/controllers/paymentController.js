@@ -10,7 +10,8 @@ const {
 } = require('firebase-admin/firestore');
 
 // Đảm bảo bạn đã chạy 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { Order, User } = require('../models');
 
 // --- Stripe Integration Logic ---
 exports.createCheckoutSession = async (req, res) => {
@@ -60,6 +61,82 @@ exports.createCheckoutSession = async (req, res) => {
     } catch (err) {
         console.error("Stripe Checkout Error:", err);
         res.status(500).json({ error: err.message, message: 'Failed to create payment session.' });
+    }
+};
+
+// Verify payment and create order
+exports.verifyPaymentAndCreateOrder = async (req, res) => {
+    try {
+        const { sessionId } = req.body;
+
+        if (!sessionId) {
+            return res.status(400).json({ error: 'Session ID is required' });
+        }
+
+        // Retrieve the Stripe session
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        if (!session) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        // Check if payment was successful
+        if (session.payment_status !== 'paid') {
+            return res.status(400).json({ error: 'Payment not completed' });
+        }
+
+        const userId = session.client_reference_id || session.metadata.user_id;
+        const courseId = session.metadata.course_id;
+
+        // Check if order already exists for this session
+        const db = getFirestore();
+        const existingOrderSnapshot = await db.collection('orders')
+            .where('paymentId', '==', sessionId)
+            .get();
+
+        if (!existingOrderSnapshot.empty) {
+            // Order already created
+            const existingOrder = existingOrderSnapshot.docs[0];
+            return res.status(200).json({
+                message: 'Order already exists',
+                order: { id: existingOrder.id, ...existingOrder.data() }
+            });
+        }
+
+        // Get course details
+        const courseDoc = await db.collection('courses').doc(courseId).get();
+        const courseData = courseDoc.exists ? courseDoc.data() : null;
+        const courseName = courseData?.title || 'Subscription Plan';
+
+        // Create order
+        const orderData = {
+            userId: userId,
+            courseId: courseId,
+            courseName: courseName,
+            price: session.amount_total / 100, // Convert from cents
+            status: 'completed',
+            paymentMethod: 'stripe',
+            paymentId: sessionId,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        const orderRef = await db.collection('orders').add(orderData);
+
+        // Check if this is a subscription purchase (no specific courseId or subscription plan)
+        // If it's a subscription, upgrade user to Pro tier
+        if (!courseId || courseName.toLowerCase().includes('pro') || courseName.toLowerCase().includes('subscription')) {
+            await User.upgradeToProTier(userId);
+        }
+
+        res.status(201).json({
+            message: 'Order created successfully',
+            order: { id: orderRef.id, ...orderData }
+        });
+
+    } catch (err) {
+        console.error("Payment Verification Error:", err);
+        res.status(500).json({ error: err.message, message: 'Failed to verify payment and create order' });
     }
 };
 
