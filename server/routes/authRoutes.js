@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 // Import các hàm từ controller
 const { register, login, forgotPassword, resetPassword } = require('../controllers/authController');
@@ -17,6 +19,61 @@ router.post('/forgot-password', forgotPassword);
 
 // NEW: POST /api/auth/reset-password
 router.post('/reset-password', resetPassword);
+
+// --- GOOGLE OAUTH ROUTES ---
+
+// TEST route
+router.get('/google/test', (req, res) => {
+  res.json({ message: 'Google OAuth route is working!', passportStrategies: Object.keys(passport._strategies || {}) });
+});
+
+// GET /api/auth/google - Initiate Google OAuth
+router.get('/google', (req, res, next) => {
+  console.log('🔵 /api/auth/google route hit!');
+  console.log('Available strategies:', Object.keys(passport._strategies || {}));
+  
+  if (!passport._strategies || !passport._strategies.google) {
+    return res.status(500).json({ error: 'Google OAuth strategy not configured' });
+  }
+  
+  passport.authenticate('google', {
+    scope: ['profile', 'email']
+  })(req, res, next);
+});
+
+// GET /api/auth/google/callback - Google OAuth callback
+router.get('/google/callback', 
+  passport.authenticate('google', { 
+    failureRedirect: '/login',
+    session: false 
+  }),
+  (req, res) => {
+    try {
+      // Generate JWT token
+      const token = jwt.sign(
+        { 
+          userId: req.user.id,
+          email: req.user.email,
+          role: req.user.role
+        },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '7d' }
+      );
+
+      // Redirect to frontend with token
+      res.redirect(`/?token=${token}&user=${encodeURIComponent(JSON.stringify({
+        id: req.user.id,
+        email: req.user.email,
+        name: req.user.name,
+        role: req.user.role,
+        avatarUrl: req.user.avatarUrl
+      }))}`);
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      res.redirect('/login?error=auth_failed');
+    }
+  }
+);
 
 
 // Xuất router để server.js có thể sử dụng

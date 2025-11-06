@@ -728,6 +728,40 @@
                 el.style.boxShadow = `0 0 ${20 + parallax * 0.1}px rgba(59, 130, 246, ${0.4 + scrolled * 0.0001})`;
             });
         });
+
+        // Handle Google OAuth callback
+        (function handleOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const userStr = urlParams.get('user');
+
+            if (token && userStr) {
+                try {
+                    const user = JSON.parse(decodeURIComponent(userStr));
+                    
+                    // Save to localStorage
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    
+                    // Clear URL parameters
+                    window.history.replaceState({}, document.title, '/');
+                    
+                    // Show success message and redirect
+                    alert(`Welcome ${user.name}! You have successfully signed in with Google.`);
+                    
+                    // Redirect based on role
+                    if (user.role === 'admin') {
+                        window.location.href = '/admin';
+                    } else if (user.role === 'teacher') {
+                        window.location.href = '/teacher';
+                    } else {
+                        window.location.href = '/courses';
+                    }
+                } catch (error) {
+                    console.error('Error processing OAuth callback:', error);
+                }
+            }
+        })();
     </script>
     <%- include('../partials/footer') %>
 </body>

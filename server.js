@@ -33,27 +33,6 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
   }
 }
 
-// ====== 2. IMPORT CÁC ROUTE ======
-const authRoutes = require('./server/routes/authRoutes');
-const userRoutes = require('./server/routes/userRoutes');
-const courseRoutes = require('./server/routes/courseRoutes');
-const lessonRoutes = require('./server/routes/lessonRoutes');
-const quizRoutes = require('./server/routes/quizRoutes');
-const questionRoutes = require('./server/routes/questionRoutes');
-const gradeRoutes = require('./server/routes/gradeRoutes');
-const orderRoutes = require('./server/routes/orderRoutes');
-const paymentRoutes = require('./server/routes/paymentRoutes');
-const certificateRoutes = require('./server/routes/certificateRoutes');
-const subscriptionRoutes = require('./server/routes/subscriptionRoutes');
-const marketingRoutes = require('./server/routes/marketingRoutes');
-const progressRoutes = require('./server/routes/progressRoutes');
-
-
-// BỔ SUNG ROUTE MỚI
-const communityRoutes = require('./server/routes/communityRoutes');
-const blogRoutes = require('./server/routes/blogRoutes');
-const uploadRoutes = require('./server/routes/uploadRoutes');
-
 // ====== 3. KHỞI TẠO ỨNG DỤNG VÀ FIREBASE ======
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -77,6 +56,29 @@ app.set('views', './views');
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public')); // Phục vụ static files từ thư mục public
+
+// Session middleware for Passport
+const session = require('express-session');
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-session-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', 
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport
+const passport = require('./server/config/passport')(app);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Make passport available to routes
+app.use((req, res, next) => {
+  req.passport = passport;
+  next();
+});
 
 // Thêm đối tượng 'db' vào mọi request để các controller có thể sử dụng
 app.use((req, res, next) => {
@@ -114,6 +116,24 @@ app.use((req, res, next) => {
   
   next();
 });
+
+// ====== 2. IMPORT CÁC ROUTE (SAU KHI PASSPORT ĐÃ ĐƯỢC KHỞI TẠO) ======
+const authRoutes = require('./server/routes/authRoutes');
+const userRoutes = require('./server/routes/userRoutes');
+const courseRoutes = require('./server/routes/courseRoutes');
+const lessonRoutes = require('./server/routes/lessonRoutes');
+const quizRoutes = require('./server/routes/quizRoutes');
+const questionRoutes = require('./server/routes/questionRoutes');
+const gradeRoutes = require('./server/routes/gradeRoutes');
+const orderRoutes = require('./server/routes/orderRoutes');
+const paymentRoutes = require('./server/routes/paymentRoutes');
+const certificateRoutes = require('./server/routes/certificateRoutes');
+const subscriptionRoutes = require('./server/routes/subscriptionRoutes');
+const marketingRoutes = require('./server/routes/marketingRoutes');
+const progressRoutes = require('./server/routes/progressRoutes');
+const communityRoutes = require('./server/routes/communityRoutes');
+const blogRoutes = require('./server/routes/blogRoutes');
+const uploadRoutes = require('./server/routes/uploadRoutes');
 
 // ====== 6. ĐỊNH NGHĨA API ROUTES ======
 app.use('/api/auth', authRoutes);
