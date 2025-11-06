@@ -4,92 +4,16 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "client/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "server.js"
-    },
-    {
-      "src": "/community",
-      "dest": "client/Community.html"
-    },
-    {
-      "src": "/login",
-      "dest": "client/LoginPage.html"
-    },
-    {
-      "src": "/signup",
-      "dest": "client/SignUpPage.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "client/ProfilePage.html"
-    },
-    {
-      "src": "/account",
-      "dest": "client/AccountProfile.html"
-    },
-    {
-      "src": "/blog",
-      "dest": "client/Blog.html"
-    },
-    {
-      "src": "/courses",
-      "dest": "client/CourseandLesson.html"
-    },
-    {
-      "src": "/admin",
-      "dest": "client/AdminDashboard.html"
-    },
-    {
-      "src": "/student",
-      "dest": "client/StudentDashboard.html"
-    },
-    {
-      "src": "/teacher",
-      "dest": "client/TeacherDashboard.html"
-    },
-    {
-      "src": "/lessons",
-      "dest": "client/LessonManagement.html"
-    },
-    {
-      "src": "/quiz",
-      "dest": "client/QuizManagement.html"
-    },
-    {
-      "src": "/grades",
-      "dest": "client/QuizzAndGrades.html"
-    },
-    {
-      "src": "/certificate",
-      "dest": "client/CertificateGenerator.html"
-    },
-    {
-      "src": "/order",
-      "dest": "client/OrderPage.html"
-    },
-    {
-      "src": "/payment",
-      "dest": "client/PaymentPage.html"
-    },
-    {
-      "src": "/success",
-      "dest": "client/SuccessPage.html"
-    },
-    {
-      "src": "/cancel",
-      "dest": "client/CancelPage.html"
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "client/$1"
+      "dest": "server.js"
     }
   ],
   "env": {
