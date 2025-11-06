@@ -132,22 +132,18 @@ exports.getLeaderboard = async (req, res) => {
             // Chỉ lấy students (có thể thêm điều kiện khác)
             if (userData.role !== 'student') continue;
             
-            // Tính study hours từ enrollments hoặc progress
+            // Lấy courses completed từ enrollments
             const enrollmentsSnapshot = await db.collection('enrollments')
                 .where('userId', '==', userDoc.id)
                 .get();
             
-            const totalHours = enrollmentsSnapshot.docs.reduce((total, doc) => {
-                const data = doc.data();
-                return total + (data.studyHours || 0);
-            }, 0);
-            
-            // Tính points (100 points per completed course + bonus)
+            // Đếm số courses đã hoàn thành (progress = 100)
             const completedCourses = enrollmentsSnapshot.docs.filter(doc => 
                 doc.data().progress === 100
             ).length;
             
-            const totalPoints = (completedCourses * 100) + Math.floor(totalHours * 10);
+            // Lấy study points từ user data (nếu có) hoặc tính toán
+            const studyPoints = userData.studyPoints || userData.points || (completedCourses * 100);
             
             // Tạo initials từ name
             const nameParts = (userData.name || 'User').split(' ');
@@ -158,8 +154,8 @@ exports.getLeaderboard = async (req, res) => {
             leaderboardData.push({
                 id: userDoc.id,
                 name: userData.name || 'Unknown User',
-                hours: Math.round(totalHours),
-                points: totalPoints,
+                hours: completedCourses, // Số courses hoàn thành thay vì hours
+                points: studyPoints,
                 change: Math.floor(Math.random() * 300) + 50, // Random change for this week
                 initials: initials.toUpperCase(),
                 color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
