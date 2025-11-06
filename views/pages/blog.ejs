@@ -239,31 +239,11 @@
 
     <!-- Footer -->
     <script>
-        // Authentication check and dashboard button setup
+        // Authentication check
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-        // Show dashboard button for admin/teacher
-        if (user.role === 'admin' || user.role === 'teacher') {
-            const dashboardButton = document.getElementById('dashboard-button-blog');
-            const dashboardText = document.getElementById('dashboard-text-blog');
-
-            if (dashboardButton) {
-                dashboardButton.classList.remove('hidden');
-
-                // Set appropriate text
-                if (user.role === 'admin') {
-                    dashboardText.textContent = 'Admin Dashboard';
-                } else if (user.role === 'teacher') {
-                    dashboardText.textContent = 'Teacher Dashboard';
-                }
-
-                // Add click event listener
-                dashboardButton.addEventListener('click', () => {
-                    window.location.href = '/admin';
-                });
-            }
-        }
+        // Dashboard button is now handled by header.ejs universal script
 
         // Blog articles will be loaded from API
         let articles = [];

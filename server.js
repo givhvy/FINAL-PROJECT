@@ -84,6 +84,37 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware to extract user from Authorization header and pass to views
+app.use((req, res, next) => {
+  res.locals.user = null;
+  
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    
+    try {
+      // Try to verify as JWT
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      res.locals.user = {
+        id: decoded.userId,
+        email: decoded.email,
+        role: decoded.role || 'student'
+      };
+    } catch (jwtError) {
+      // Try Firebase token
+      try {
+        // For Firebase tokens, we'd need async verification which is complex for middleware
+        // So we'll just pass null and let client-side handle it
+      } catch (firebaseError) {
+        // Both failed, user remains null
+      }
+    }
+  }
+  
+  next();
+});
+
 // ====== 6. ĐỊNH NGHĨA API ROUTES ======
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

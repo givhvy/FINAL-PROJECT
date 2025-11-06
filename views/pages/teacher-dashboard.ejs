@@ -1355,8 +1355,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Generate Certificate button
-    document.getElementById('generate-certificate').addEventListener('click', generateCertificatePreview);
+    // Generate Certificate button (check if exists first)
+    const generateCertBtn = document.getElementById('generate-certificate');
+    if (generateCertBtn) {
+        generateCertBtn.addEventListener('click', generateCertificatePreview);
+    }
 
     // --- STUDY GROUPS FUNCTIONALITY ---
 

@@ -36,7 +36,7 @@
                     <i class="fas fa-bars text-xl"></i>
                 </button>
 
-                <!-- Dashboard Button for Admin/Teacher -->
+                <!-- Dashboard Button for Admin/Teacher Only -->
                 <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-colors sm:flex items-center space-x-2">
                     <i class="fas fa-tachometer-alt"></i>
                     <span id="dashboard-text">Dashboard</span>
@@ -98,4 +98,50 @@
         document.getElementById('darkModeToggle').checked = this.checked;
         document.getElementById('darkModeToggle').dispatchEvent(new Event('change'));
     });
+
+    // Dashboard button visibility and click handler - Universal for all pages
+    (function setupDashboardButton() {
+        const dashboardButton = document.getElementById('dashboard-button');
+        const dashboardText = document.getElementById('dashboard-text');
+        
+        if (!dashboardButton) return;
+        
+        try {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userRole = (user.role || '').toLowerCase(); // Case-insensitive
+            
+            console.log('User role:', userRole); // Debug log
+            
+            // Show button only for admin and teacher (case-insensitive)
+            if (userRole === 'admin' || userRole === 'teacher') {
+                dashboardButton.classList.remove('hidden');
+                dashboardButton.style.display = 'flex'; // Ensure it's visible
+                
+                // Set appropriate text
+                if (userRole === 'admin') {
+                    dashboardText.textContent = 'Admin Dashboard';
+                } else if (userRole === 'teacher') {
+                    dashboardText.textContent = 'Teacher Dashboard';
+                }
+                
+                // Add click event listener
+                dashboardButton.addEventListener('click', function() {
+                    if (userRole === 'admin') {
+                        window.location.href = '/admin';
+                    } else if (userRole === 'teacher') {
+                        window.location.href = '/teacher';
+                    }
+                });
+            } else {
+                // Student or any other role - ensure button stays hidden
+                dashboardButton.classList.add('hidden');
+                dashboardButton.style.display = 'none'; // Ensure it's hidden
+                console.log('Dashboard button hidden for role:', userRole);
+            }
+        } catch (error) {
+            console.error('Error setting up dashboard button:', error);
+            dashboardButton.classList.add('hidden');
+            dashboardButton.style.display = 'none';
+        }
+    })();
 </script>

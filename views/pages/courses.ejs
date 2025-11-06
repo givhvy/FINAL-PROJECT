@@ -14,8 +14,36 @@
         .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
         .lesson-card:hover { background-color: #f0f9ff; }
         .active-lesson { border-left: 4px solid #3b82f6; background-color: #eff6ff; font-weight: 600; }
-        .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        
+        /* Enhanced Loading Spinner */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .loader { 
+            border: 5px solid #e5e7eb; 
+            border-radius: 50%; 
+            border-top: 5px solid #3b82f6; 
+            border-right: 5px solid #8b5cf6;
+            width: 60px; 
+            height: 60px; 
+            animation: spin 0.8s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .loading-text {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
         
         /* Progress Bar Styles for Cards */
         .progress-bar-container { height: 6px; border-radius: 3px; background-color: #e5e7eb; overflow: hidden; }
@@ -176,7 +204,10 @@
 
             <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
-                    <div class="loader"></div>
+                    <div class="loading-container">
+                        <div class="loader"></div>
+                        <p class="loading-text">Loading courses...</p>
+                    </div>
                 </div>
             </div>
 
@@ -357,29 +388,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Show Dashboard button for Admin/Teacher
-    const dashboardButton = document.getElementById('dashboard-button');
-    const dashboardText = document.getElementById('dashboard-text');
-
-    if (user.role === 'admin' || user.role === 'teacher') {
-        dashboardButton.classList.remove('hidden');
-
-        // Set appropriate text and destination
-        if (user.role === 'admin') {
-            dashboardText.textContent = 'Admin Dashboard';
-        } else if (user.role === 'teacher') {
-            dashboardText.textContent = 'Teacher Dashboard';
-        }
-
-        // Add click event listener
-        dashboardButton.addEventListener('click', () => {
-            if (user.role === 'admin') {
-                window.location.href = '/admin';
-            } else if (user.role === 'teacher') {
-                window.location.href = '/teacher';
-            }
-        });
-    }
+    // Dashboard button is now handled by header.ejs universal script
     
     // --- ENHANCED CAROUSEL LOGIC ---
     const featuredBanner = document.getElementById('featured-banner');
@@ -432,7 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-gradient-to-r ${currentBanner.color} rounded-full mb-3 inline-block">${currentBanner.tag}</span>
             <h2 class="text-4xl font-extrabold mb-3">${currentBanner.title}</h2>
             <p class="text-white/80 mb-6 max-w-lg">${currentBanner.subtitle}</p>
-            <a href="#" class="bg-white dark:bg-gray-800/20 backdrop-blur-sm text-white font-semibold py-3 px-6 rounded-lg hover:bg-white dark:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30">
+            <a href="#" class="bg-white/90 hover:bg-white text-indigo-700 dark:bg-gray-800/20 dark:backdrop-blur-sm dark:text-white font-semibold py-3 px-6 rounded-lg dark:hover:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30 shadow-lg">
                 ${currentBanner.buttonText}
             </a>`;
 
