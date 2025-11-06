@@ -32,6 +32,8 @@ exports.getUserProgress = async (req, res) => {
             .where('user_id', '==', userId)
             .where('status', '==', 'completed');
         const userOrders = await userOrdersQuery.get();
+        
+        console.log(`\n🔍 [PROGRESS] User ${userId}: Found ${userOrders.size} orders`);
 
         let completedCourses = 0;
         let totalLessonsCompleted = 0;
@@ -66,12 +68,17 @@ exports.getUserProgress = async (req, res) => {
             const completedLessonsSnapshot = await completedLessonsQuery.get();
             const completedLessonsCount = completedLessonsSnapshot.size;
             totalLessonsCompleted += completedLessonsCount;
+            
+            console.log(`   📚 Course ${courseId}: ${completedLessonsCount}/${totalLessons} lessons completed`);
 
             // If 100% complete, count as completed course
             if (totalLessons > 0 && completedLessonsCount >= totalLessons) {
                 completedCourses++;
+                console.log(`   ✅ Course COMPLETED!`);
             }
         }
+        
+        console.log(`\n📊 [PROGRESS] Total: ${completedCourses}/${userOrders.size} courses, ${totalLessonsCompleted} lessons, ${(totalLessonsCompleted * 10) + (completedCourses * 100)} pts`);
 
         // 3. Get weekly lesson completions for study time estimate
         const weeklyCompletions = await db.collection('lesson_completions')
@@ -121,8 +128,10 @@ exports.getLeaderboard = async (req, res) => {
     try {
         const db = getFirestore();
         
+        console.log('🔍 [LEADERBOARD] Fetching all users...');
         // Lấy tất cả users
         const usersSnapshot = await db.collection('users').get();
+        console.log(`📊 [LEADERBOARD] Found ${usersSnapshot.docs.length} total users`);
         
         const leaderboardData = [];
         
@@ -130,20 +139,68 @@ exports.getLeaderboard = async (req, res) => {
             const userData = userDoc.data();
             
             // Chỉ lấy students (có thể thêm điều kiện khác)
-            if (userData.role !== 'student') continue;
+            if (userData.role !== 'student') {
+                console.log(`⏭️  [LEADERBOARD] Skipping ${userData.name} - role: ${userData.role}`);
+                continue;
+            }
             
-            // Lấy courses completed từ enrollments
-            const enrollmentsSnapshot = await db.collection('enrollments')
-                .where('userId', '==', userDoc.id)
+            console.log(`\n👤 [LEADERBOARD] Processing user: ${userData.name} (${userDoc.id})`);
+            
+            // Lấy orders của user
+            const ordersSnapshot = await db.collection('orders')
+                .where('user_id', '==', userDoc.id)
+                .where('status', '==', 'completed')
                 .get();
             
-            // Đếm số courses đã hoàn thành (progress = 100)
-            const completedCourses = enrollmentsSnapshot.docs.filter(doc => 
-                doc.data().progress === 100
-            ).length;
+            console.log(`   📚 Found ${ordersSnapshot.docs.length} orders for ${userData.name}`);
             
-            // Lấy study points từ user data (nếu có) hoặc tính toán
-            const studyPoints = userData.studyPoints || userData.points || (completedCourses * 100);
+            let completedCourses = 0;
+            
+            // Kiểm tra từng course xem đã hoàn thành 100% chưa (dựa vào user_progress)
+            for (const orderDoc of ordersSnapshot.docs) {
+                const orderData = orderDoc.data();
+                const courseId = orderData.course_id;
+                
+                if (!courseId) continue;
+                
+                // Get total lessons in this course
+                const lessonsSnapshot = await db.collection('lessons')
+                    .where('course_id', '==', courseId)
+                    .get();
+                const totalLessons = lessonsSnapshot.size;
+                
+                // Get completed lessons from user_progress
+                const progressQuery = db.collection('user_progress')
+                    .where('user_id', '==', userDoc.id)
+                    .where('course_id', '==', courseId)
+                    .where('progress_type', '==', 'lesson_completed');
+                const progressSnapshot = await progressQuery.get();
+                const completedLessons = progressSnapshot.size;
+                
+                // Calculate percentage
+                let percentage = 0;
+                if (totalLessons > 0) {
+                    percentage = Math.round((completedLessons / totalLessons) * 100);
+                } else {
+                    percentage = 100; // No lessons = complete
+                }
+                
+                // Only count if 100% complete AND has lessons (skip empty courses)
+                if (percentage >= 100 && totalLessons > 0) {
+                    completedCourses++;
+                    console.log(`   ✅ Course ${courseId}: ${completedLessons}/${totalLessons} lessons (${percentage}%) - COMPLETED`);
+                } else if (totalLessons === 0) {
+                    console.log(`   ⏭️  Course ${courseId}: No lessons (skipped)`);
+                } else {
+                    console.log(`   ⏳ Course ${courseId}: ${completedLessons}/${totalLessons} lessons (${percentage}%) - IN PROGRESS`);
+                }
+            }
+            
+            // Tính study points: 100 pts per completed course
+            const studyPoints = completedCourses * 100;
+            
+            console.log(`   ✅ Total completed courses: ${completedCourses}`);
+            console.log(`   💯 Study points: ${studyPoints}`);
             
             // Tạo initials từ name
             const nameParts = (userData.name || 'User').split(' ');
@@ -154,13 +211,14 @@ exports.getLeaderboard = async (req, res) => {
             leaderboardData.push({
                 id: userDoc.id,
                 name: userData.name || 'Unknown User',
-                hours: completedCourses, // Số courses hoàn thành thay vì hours
-                points: studyPoints,
-                change: Math.floor(Math.random() * 300) + 50, // Random change for this week
+                hours: completedCourses, // Số courses hoàn thành
+                points: studyPoints, // Study points dựa trên courses completed
                 initials: initials.toUpperCase(),
                 color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
             });
         }
+        
+        console.log(`\n📊 [LEADERBOARD] Total students in leaderboard: ${leaderboardData.length}`);
         
         // Sắp xếp theo points giảm dần
         leaderboardData.sort((a, b) => b.points - a.points);
@@ -172,10 +230,15 @@ exports.getLeaderboard = async (req, res) => {
         
         // Chỉ lấy top 10
         const top10 = leaderboardData.slice(0, 10);
+        
+        console.log('🏆 [LEADERBOARD] Top 10:');
+        top10.forEach(entry => {
+            console.log(`   ${entry.rank}. ${entry.name}: ${entry.hours} courses, ${entry.points} pts`);
+        });
 
         res.status(200).json(top10);
     } catch (err) {
-        console.error('Leaderboard Error:', err);
+        console.error('❌ [LEADERBOARD] Error:', err);
         res.status(500).json({ error: 'Failed to fetch leaderboard data.' });
     }
 };
