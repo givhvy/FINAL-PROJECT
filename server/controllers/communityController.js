@@ -116,18 +116,68 @@ exports.getUserProgress = async (req, res) => {
     }
 };
 
-// Hàm giả định để lấy dữ liệu Leaderboard
+// Hàm lấy dữ liệu Leaderboard THẬT từ Firebase
 exports.getLeaderboard = async (req, res) => {
     try {
-        const leaderboardData = [
-            { id: 1, name: "Sarah Martinez", hours: 32, points: 2840, change: 340, initials: "SM", rank: 1, color: "yellow-400" },
-            { id: 2, name: "David Kim", hours: 28, points: 2520, change: 280, initials: "DK", rank: 2, color: "gray-400" },
-            { id: 3, name: "Alex Chen", hours: 25, points: 2247, change: 247, initials: "AC", rank: 3, color: "orange-400" },
-            { id: 4, name: "Emma Johnson", hours: 22, points: 1980, change: 180, initials: "EJ", rank: 4, color: "purple-400" },
-            { id: 5, name: "Mike Rodriguez", hours: 20, points: 1750, change: 150, initials: "MR", rank: 5, color: "green-400" }
-        ];
+        const db = getFirestore();
+        
+        // Lấy tất cả users
+        const usersSnapshot = await db.collection('users').get();
+        
+        const leaderboardData = [];
+        
+        for (const userDoc of usersSnapshot.docs) {
+            const userData = userDoc.data();
+            
+            // Chỉ lấy students (có thể thêm điều kiện khác)
+            if (userData.role !== 'student') continue;
+            
+            // Tính study hours từ enrollments hoặc progress
+            const enrollmentsSnapshot = await db.collection('enrollments')
+                .where('userId', '==', userDoc.id)
+                .get();
+            
+            const totalHours = enrollmentsSnapshot.docs.reduce((total, doc) => {
+                const data = doc.data();
+                return total + (data.studyHours || 0);
+            }, 0);
+            
+            // Tính points (100 points per completed course + bonus)
+            const completedCourses = enrollmentsSnapshot.docs.filter(doc => 
+                doc.data().progress === 100
+            ).length;
+            
+            const totalPoints = (completedCourses * 100) + Math.floor(totalHours * 10);
+            
+            // Tạo initials từ name
+            const nameParts = (userData.name || 'User').split(' ');
+            const initials = nameParts.length > 1 
+                ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+                : nameParts[0][0] + (nameParts[0][1] || '');
+            
+            leaderboardData.push({
+                id: userDoc.id,
+                name: userData.name || 'Unknown User',
+                hours: Math.round(totalHours),
+                points: totalPoints,
+                change: Math.floor(Math.random() * 300) + 50, // Random change for this week
+                initials: initials.toUpperCase(),
+                color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
+            });
+        }
+        
+        // Sắp xếp theo points giảm dần
+        leaderboardData.sort((a, b) => b.points - a.points);
+        
+        // Gán rank
+        leaderboardData.forEach((entry, index) => {
+            entry.rank = index + 1;
+        });
+        
+        // Chỉ lấy top 10
+        const top10 = leaderboardData.slice(0, 10);
 
-        res.status(200).json(leaderboardData);
+        res.status(200).json(top10);
     } catch (err) {
         console.error('Leaderboard Error:', err);
         res.status(500).json({ error: 'Failed to fetch leaderboard data.' });
