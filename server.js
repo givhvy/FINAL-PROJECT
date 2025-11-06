@@ -49,13 +49,14 @@ const db = admin.firestore();
 console.log('Firebase Admin SDK initialized successfully!');
 
 // ====== 4. CẤU HÌNH VIEW ENGINE (EJS) ======
+const path = require('path');
 app.set('view engine', 'ejs');
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 
 // ====== 5. MIDDLEWARE (PHẦN MỀM TRUNG GIAN) ======
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // Phục vụ static files từ thư mục public
+app.use(express.static(path.join(__dirname, 'public'))); // Phục vụ static files từ thư mục public
 
 // Session middleware for Passport
 const session = require('express-session');
