@@ -99,6 +99,11 @@
         document.getElementById('darkModeToggle').dispatchEvent(new Event('change'));
     });
 
+    // Mobile profile button click handler
+    document.getElementById('mobile-profile-button')?.addEventListener('click', function() {
+        window.location.href = '/profile';
+    });
+
     // Dashboard button visibility and role-based UI setup - Universal for all pages
     (function setupRoleBasedUI() {
         const dashboardButton = document.getElementById('dashboard-button');
