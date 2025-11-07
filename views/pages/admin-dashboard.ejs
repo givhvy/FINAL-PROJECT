@@ -58,13 +58,13 @@
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="blog"> <i class="fas fa-blog mr-3"></i> <span>Blog</span> </div>
             </nav>
             <div class="px-4 absolute bottom-4 left-0 right-0">
-                <div class="flex items-center space-x-3 border-t border-gray-700 pt-4">
+                <div class="flex items-center space-x-3 border-t border-gray-700 pt-4 cursor-pointer hover:bg-gray-800 rounded-lg p-2 -m-2 transition-colors" id="admin-profile-section">
                     <div id="admin-avatar" class="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center text-lg"></div>
                     <div class="flex-1">
                         <p id="admin-user-name" class="text-sm font-semibold">Admin User</p>
                         <p id="admin-user-email" class="text-xs text-gray-400">admin@unilearn.com</p>
                     </div>
-                    <button id="logout-button-sidebar" class="text-gray-400 hover:text-white" title="Logout"><i class="fas fa-sign-out-alt text-lg"></i></button>
+                    <button id="logout-button-sidebar" class="text-gray-400 hover:text-white" title="Logout" onclick="event.stopPropagation()"><i class="fas fa-sign-out-alt text-lg"></i></button>
                 </div>
             </div>
         </div>
@@ -638,6 +638,38 @@
                 <div class="mt-6 flex justify-end space-x-3">
                     <button type="button" id="cancel-challenge-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Challenge</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Profile Edit Modal -->
+    <div id="admin-profile-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-30">
+        <div class="modal-content relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 m-4 max-w-md w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Edit Profile</h2>
+                <button id="close-profile-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="admin-profile-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                    <input type="text" id="edit-admin-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Avatar Color</label>
+                    <div class="flex gap-2">
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-blue-500" data-color="blue-500"></button>
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-green-500" data-color="green-500"></button>
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-purple-500" data-color="purple-500"></button>
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-red-500" data-color="red-500"></button>
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-yellow-500" data-color="yellow-500"></button>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-profile-edit" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -2174,7 +2206,65 @@ Dates:
 
 
         // --- CERTIFICATE & OTHER FUNCTIONS ---
-        function populateCertificateForm() { /* Placeholder */ }
+        async function populateCertificateForm() {
+            const tbody = document.getElementById('certificates-table-body');
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8"><i class="fas fa-spinner fa-spin text-2xl"></i><p class="mt-2">Loading certificates...</p></td></tr>`;
+
+            try {
+                const response = await fetch('/api/certificates', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch certificates');
+
+                const certificates = await response.json();
+
+                if (certificates.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-500"><i class="fas fa-certificate text-4xl mb-4"></i><p>No certificates issued yet</p></td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = certificates.map(cert => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">${cert.studentName || 'N/A'}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">${cert.studentEmail || 'N/A'}</td>
+                        <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-200">${cert.courseName || 'N/A'}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">${new Date(cert.issueDate || cert.createdAt).toLocaleDateString()}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 font-mono">${cert.certificateNumber || cert.id}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <a href="/api/certificates/${cert.id}/download" target="_blank" class="text-blue-600 hover:text-blue-800 mr-3">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <button onclick="viewCertificate('${cert.id}')" class="text-green-600 hover:text-green-800">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Setup search functionality
+                const searchInput = document.getElementById('certificate-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const query = e.target.value.toLowerCase();
+                        const rows = tbody.querySelectorAll('tr');
+                        rows.forEach(row => {
+                            const text = row.textContent.toLowerCase();
+                            row.style.display = text.includes(query) ? '' : 'none';
+                        });
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading certificates:', error);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500"><i class="fas fa-exclamation-triangle text-4xl mb-4"></i><p>Error loading certificates: ${error.message}</p></td></tr>`;
+            }
+        }
+
+        function viewCertificate(certificateId) {
+            window.open(`/account#certificates`, '_blank');
+        }
+
         function renderQuizManagementPage() { /* Placeholder */ }
 
         // --- CHARTS FUNCTIONS (from File 2) ---
@@ -2185,9 +2275,42 @@ Dates:
                 options: { maintainAspectRatio: false, responsive: true }
             });
             const categoriesCtx = document.getElementById('categoriesCanvas').getContext('2d');
+            // Calculate real category distribution from courses
+            const categoryCount = {};
+            allCourses.forEach(course => {
+                const category = course.category || 'Other';
+                categoryCount[category] = (categoryCount[category] || 0) + 1;
+            });
+
+            const categoryLabels = Object.keys(categoryCount);
+            const categoryData = Object.values(categoryCount);
+            const categoryColors = ['#3B82F6', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B', '#6B7280', '#EC4899', '#14B8A6'];
+
             new Chart(categoriesCtx, {
-                type: 'doughnut', data: { labels: ['Development', 'Design', 'Business', 'Marketing', 'IT & Software', 'Other'], datasets: [{ data: [35, 20, 15, 12, 10, 8], backgroundColor: ['#3B82F6', '#8B5CF6', '#10B981', '#EF4444', '#F59E0B', '#6B7280'], borderWidth: 0 }] },
-                options: { maintainAspectRatio: false, responsive: true }
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels.length > 0 ? categoryLabels : ['No Data'],
+                    datasets: [{
+                        data: categoryData.length > 0 ? categoryData : [1],
+                        backgroundColor: categoryColors.slice(0, categoryLabels.length),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
             });
         };
         
@@ -2353,6 +2476,62 @@ Dates:
 
         // Initialize TinyMCE editor on page load
         initBlogEditor();
+
+        // Admin Profile Edit
+        let selectedAvatarColor = 'blue-500';
+        document.getElementById('admin-profile-section')?.addEventListener('click', () => {
+            document.getElementById('edit-admin-name').value = user.name || '';
+            document.getElementById('admin-profile-modal').classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.avatar-color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.avatar-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-600'));
+                btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-600');
+                selectedAvatarColor = btn.dataset.color;
+            });
+        });
+
+        document.getElementById('admin-profile-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newName = document.getElementById('edit-admin-name').value;
+
+            try {
+                const response = await fetch(`/api/users/${user.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name: newName })
+                });
+
+                if (!response.ok) throw new Error('Failed to update profile');
+
+                // Update local storage and UI
+                user.name = newName;
+                localStorage.setItem('user', JSON.stringify(user));
+
+                const initials = newName.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('admin-user-name').textContent = newName;
+                document.getElementById('admin-avatar').textContent = initials;
+                document.getElementById('header-user-name').textContent = newName;
+                document.getElementById('header-avatar').textContent = initials;
+
+                document.getElementById('admin-profile-modal').classList.add('hidden');
+                alert('Profile updated successfully!');
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+            }
+        });
+
+        document.getElementById('close-profile-modal')?.addEventListener('click', () => {
+            document.getElementById('admin-profile-modal').classList.add('hidden');
+        });
+
+        document.getElementById('cancel-profile-edit')?.addEventListener('click', () => {
+            document.getElementById('admin-profile-modal').classList.add('hidden');
+        });
 
         // Initial calls
         await fetchAllData();
