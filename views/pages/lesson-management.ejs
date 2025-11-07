@@ -455,11 +455,29 @@
                         const res = await fetch(`/api/lessons/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                         if (!res.ok) throw new Error('Could not fetch lesson details.');
                         const lesson = await res.json();
-                        document.getElementById('lesson-title').value = lesson.title;
-                        document.getElementById('lesson-video-url').value = lesson.content_data || '';
-                        quill.root.innerHTML = lesson.content_data_html || ''; // Load content into editor
+                        
+                        // Populate form fields
+                        document.getElementById('lesson-title').value = lesson.title || '';
+                        document.getElementById('lesson-video-url').value = lesson.video_url || '';
+                        
+                        // Load lesson content into Quill editor
+                        if (lesson.content) {
+                            // If content is HTML string, set it directly
+                            quill.root.innerHTML = lesson.content;
+                        } else if (lesson.content_data_html) {
+                            quill.root.innerHTML = lesson.content_data_html;
+                        } else if (lesson.content_data) {
+                            // Fallback to plain text if no HTML
+                            quill.setText(lesson.content_data);
+                        } else {
+                            quill.setText('');
+                        }
+                        
+                        // Scroll to form
+                        lessonForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     } catch (error) {
                         alert('Error fetching lesson: ' + error.message);
+                        console.error('Edit lesson error:', error);
                     }
                 } else if (type === 'quiz') {
                     // Quiz editing logic

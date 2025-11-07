@@ -107,12 +107,38 @@
         const mobileUpgradeButton = document.getElementById('mobile-upgrade-button');
         const cartButton = document.getElementById('cart-button');
         const tierBadge = document.getElementById('user-tier-badge');
+        const userAvatar = document.getElementById('user-avatar');
+        const logoutButton = document.getElementById('logout-button');
+        const userMenuButton = document.getElementById('user-menu-button');
+        const mobileLogoutButton = document.getElementById('mobile-logout-button');
+        const mobileProfileButton = document.getElementById('mobile-profile-button');
 
         try {
+            const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userRole = (user.role || '').toLowerCase(); // Case-insensitive
 
             console.log('User role:', userRole); // Debug log
+            console.log('Token exists:', !!token); // Debug log
+
+            // Check if user is logged in
+            if (!token || !user || !user.email) {
+                // User is not logged in - hide all user-related elements
+                console.log('User not logged in, hiding user elements');
+
+                if (dashboardButton) dashboardButton.style.display = 'none';
+                if (upgradeButton) upgradeButton.style.display = 'none';
+                if (mobileUpgradeButton) mobileUpgradeButton.style.display = 'none';
+                if (cartButton) cartButton.style.display = 'none';
+                if (tierBadge) tierBadge.style.display = 'none';
+                if (userAvatar) userAvatar.parentElement.style.display = 'none';
+                if (logoutButton) logoutButton.style.display = 'none';
+                if (userMenuButton) userMenuButton.style.display = 'none';
+                if (mobileLogoutButton) mobileLogoutButton.style.display = 'none';
+                if (mobileProfileButton) mobileProfileButton.style.display = 'none';
+
+                return; // Exit early
+            }
 
             // Handle dashboard button and role-specific UI
             if (userRole === 'admin' || userRole === 'teacher') {

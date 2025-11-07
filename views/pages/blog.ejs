@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniLearn Blog - Latest Tech Articles</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -1284,29 +1285,23 @@
                 renderArticles();
             });
 
-            // User profile and logout functionality
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            // Logout functionality - header handles the button, just ensure it works
+            const logoutBtn = document.getElementById('logout-button');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-button');
 
-            // Update user avatar and name
-            if (user && user.name) {
-                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                document.getElementById('user-avatar').textContent = initials;
-                document.getElementById('user-name').textContent = user.name;
-            } else {
-                document.getElementById('user-avatar').textContent = 'U';
-                document.getElementById('user-name').textContent = 'Guest';
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                });
             }
 
-            // Redirect user profile click
-            document.getElementById('user-profile-btn').addEventListener('click', () => {
-                window.location.href = '/profile';
-            });
-
-            // Logout functionality
-            document.getElementById('logout-button').addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = '/login';
-            });
+            if (mobileLogoutBtn) {
+                mobileLogoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                });
+            }
         }
 
         // Initialize when page loads
