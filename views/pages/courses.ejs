@@ -146,14 +146,41 @@
         /* MOBILE RESPONSIVE STYLES */
         @media (max-width: 640px) {
             .featured-banner {
-                height: 200px;
-                padding: 1.5rem;
+                height: 180px; /* Shorter banner on mobile */
+                padding: 1rem;
+                border-radius: 0.75rem; /* Smaller border radius */
+            }
+            .banner-content {
+                max-width: 100%;
             }
             .banner-content h1 {
-                font-size: 1.5rem !important;
+                font-size: 1.25rem !important; /* Smaller title */
+                line-height: 1.3;
+                margin-bottom: 0.5rem;
+            }
+            .banner-content .text-sm {
+                font-size: 0.75rem !important; /* Smaller tag */
+                padding: 0.25rem 0.5rem;
             }
             .banner-content p {
-                font-size: 0.875rem !important;
+                font-size: 0.75rem !important; /* Smaller description */
+                line-height: 1.4;
+                display: -webkit-box;
+                -webkit-line-clamp: 2; /* Limit to 2 lines */
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .banner-content button {
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+                margin-top: 0.75rem;
+            }
+            .carousel-pagination {
+                bottom: 0.75rem;
+            }
+            .pagination-dot {
+                width: 8px;
+                height: 8px;
             }
             .filter-btn {
                 font-size: 0.875rem;
@@ -535,10 +562,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         featuredBanner.style.backgroundImage = `url('${currentBanner.image}')`;
         
         bannerContent.innerHTML = `
-            <span class="text-sm font-bold uppercase tracking-widest text-white/90 px-3 py-1 bg-gradient-to-r ${currentBanner.color} rounded-full mb-3 inline-block">${currentBanner.tag}</span>
-            <h2 class="text-4xl font-extrabold mb-3">${currentBanner.title}</h2>
-            <p class="text-white/80 mb-6 max-w-lg">${currentBanner.subtitle}</p>
-            <a href="#" class="bg-white/90 hover:bg-white text-indigo-700 dark:bg-gray-800/20 dark:backdrop-blur-sm dark:text-white font-semibold py-3 px-6 rounded-lg dark:hover:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30 shadow-lg">
+            <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-white/90 px-2 sm:px-3 py-1 bg-gradient-to-r ${currentBanner.color} rounded-full mb-2 sm:mb-3 inline-block">${currentBanner.tag}</span>
+            <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 sm:mb-3 leading-tight">${currentBanner.title}</h2>
+            <p class="text-xs sm:text-sm md:text-base text-white/80 mb-3 sm:mb-6 max-w-lg line-clamp-2 sm:line-clamp-none">${currentBanner.subtitle}</p>
+            <a href="#" class="bg-white/90 hover:bg-white text-indigo-700 dark:bg-gray-800/20 dark:backdrop-blur-sm dark:text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded-lg dark:hover:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30 shadow-lg text-xs sm:text-sm md:text-base">
                 ${currentBanner.buttonText}
             </a>`;
 

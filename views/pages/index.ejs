@@ -37,6 +37,17 @@
             border: none;
         }
         
+        /* Mobile adjustments for Spline */
+        @media (max-width: 768px) {
+            #spline-bg {
+                height: 60vh; /* Shorter on mobile */
+            }
+            #spline-bg iframe {
+                transform: scale(1.2); /* Zoom in slightly on mobile */
+                transform-origin: center center;
+            }
+        }
+        
         /* Gradient overlay */
         .gradient-overlay {
             position: fixed;
