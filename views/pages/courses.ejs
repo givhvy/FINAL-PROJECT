@@ -1075,15 +1075,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const isQuiz = item.contentType === 'quiz';
                 const isCompleted = !isQuiz && completedLessonIds.has(item.id);
 
-                // Check if lesson is locked (Pro only)
-                const isLocked = !isQuiz && item.locked;
-                const isFreeTier = !isQuiz && item.freeTier;
+                // Check course-level locked status (not lesson-level)
                 const userTier = user.subscriptionTier || 'free';
                 const userRole = (user.role || '').toLowerCase();
                 const isTeacherOrAdmin = userRole === 'teacher' || userRole === 'admin';
 
-                // Determine if user has access
-                const hasAccess = isTeacherOrAdmin || isQuiz || !isLocked || userTier === 'pro';
+                // Determine if user has access based on COURSE locked status
+                const courseIsLocked = course.locked !== false; // Default to locked if not specified
+                const hasAccess = isTeacherOrAdmin || !courseIsLocked || userTier === 'pro';
 
                 const icon = isQuiz
                     ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>`
@@ -1092,24 +1091,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ? `<i class="fas fa-check-circle text-green-500 ml-auto lesson-checkmark"></i>`
                     : '';
 
-                // Add lock icon for locked lessons
-                const lockBadge = isLocked && !hasAccess
-                    ? `<span class="ml-2 px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded"><i class="fas fa-lock"></i></span>`
-                    : '';
-                const freeBadge = isFreeTier
-                    ? `<span class="ml-2 px-2 py-0.5 text-xs font-bold bg-blue-500 text-white rounded"><i class="fas fa-unlock"></i></span>`
-                    : '';
-
                 return `
                     <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200 ${!hasAccess ? 'opacity-60' : ''}"
                         data-id="${item.id}"
                         data-type="${item.contentType}"
-                        data-locked="${isLocked}"
                         data-has-access="${hasAccess}">
                         ${icon}
                         <span class="text-sm font-medium pointer-events-none flex-1">${index + 1}. ${item.title}</span>
-                        ${lockBadge}
-                        ${freeBadge}
                         ${checkmark}
                     </li>
                 `;
@@ -1174,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Check if user has access
                 if (!hasAccess) {
-                    alert('This lesson requires a Pro subscription. Upgrade to access all course content!');
+                    alert('This course requires a Pro subscription. Upgrade to access this locked course!');
                     window.location.href = '/payment';
                     return;
                 }
