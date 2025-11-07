@@ -13,7 +13,7 @@
                     <a href="/account" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">My Learning</a>
                     <a href="/community" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Community</a>
                     <a href="/blog" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Blog</a>
-                    <a href="/payment" class="text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
+                    <a href="/payment" id="upgrade-button" class="text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
                         <i class="fas fa-star text-yellow-400"></i>
                         <span>Upgrade</span>
                     </a>
@@ -43,7 +43,7 @@
                 </button>
 
                 <!-- Shopping Cart Icon -->
-                <a href="/cart" class="relative ml-3 hidden sm:block text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                <a href="/cart" id="cart-button" class="relative ml-3 hidden sm:block text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-shopping-cart text-xl"></i>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold hidden">0</span>
                 </a>
@@ -67,7 +67,7 @@
                 <a href="/account" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">My Learning</a>
                 <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Community</a>
                 <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Blog</a>
-                <a href="/payment" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+                <a href="/payment" id="mobile-upgrade-button" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
                     <i class="fas fa-star text-yellow-400 mr-2"></i>Upgrade
                 </a>
                 <button id="mobile-profile-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
@@ -99,49 +99,101 @@
         document.getElementById('darkModeToggle').dispatchEvent(new Event('change'));
     });
 
-    // Dashboard button visibility and click handler - Universal for all pages
-    (function setupDashboardButton() {
+    // Dashboard button visibility and role-based UI setup - Universal for all pages
+    (function setupRoleBasedUI() {
         const dashboardButton = document.getElementById('dashboard-button');
         const dashboardText = document.getElementById('dashboard-text');
-        
-        if (!dashboardButton) return;
-        
+        const upgradeButton = document.getElementById('upgrade-button');
+        const mobileUpgradeButton = document.getElementById('mobile-upgrade-button');
+        const cartButton = document.getElementById('cart-button');
+        const tierBadge = document.getElementById('user-tier-badge');
+
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userRole = (user.role || '').toLowerCase(); // Case-insensitive
-            
+
             console.log('User role:', userRole); // Debug log
-            
-            // Show button only for admin and teacher (case-insensitive)
+
+            // Handle dashboard button and role-specific UI
             if (userRole === 'admin' || userRole === 'teacher') {
-                dashboardButton.classList.remove('hidden');
-                dashboardButton.style.display = 'flex'; // Ensure it's visible
-                
-                // Set appropriate text
-                if (userRole === 'admin') {
-                    dashboardText.textContent = 'Admin Dashboard';
-                } else if (userRole === 'teacher') {
-                    dashboardText.textContent = 'Teacher Dashboard';
-                }
-                
-                // Add click event listener
-                dashboardButton.addEventListener('click', function() {
+                // Show dashboard button
+                if (dashboardButton) {
+                    dashboardButton.classList.remove('hidden');
+                    dashboardButton.style.display = 'flex';
+
+                    // Set appropriate text
                     if (userRole === 'admin') {
-                        window.location.href = '/admin';
+                        dashboardText.textContent = 'Admin Dashboard';
                     } else if (userRole === 'teacher') {
-                        window.location.href = '/teacher';
+                        dashboardText.textContent = 'Teacher Dashboard';
                     }
-                });
+
+                    // Add click event listener
+                    dashboardButton.addEventListener('click', function() {
+                        if (userRole === 'admin') {
+                            window.location.href = '/admin';
+                        } else if (userRole === 'teacher') {
+                            window.location.href = '/teacher';
+                        }
+                    });
+                }
+
+                // Hide upgrade button for teachers and admins
+                if (upgradeButton) {
+                    upgradeButton.style.display = 'none';
+                }
+                if (mobileUpgradeButton) {
+                    mobileUpgradeButton.style.display = 'none';
+                }
+
+                // Hide cart button for teachers and admins
+                if (cartButton) {
+                    cartButton.style.display = 'none';
+                }
+
+                // Set role-appropriate badge
+                if (tierBadge) {
+                    if (userRole === 'admin') {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                                <i class="fas fa-shield-alt"></i> ADMIN
+                            </span>
+                        `;
+                    } else if (userRole === 'teacher') {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full flex items-center gap-1">
+                                <i class="fas fa-chalkboard-teacher"></i> TEACHER
+                            </span>
+                        `;
+                    }
+                }
             } else {
-                // Student or any other role - ensure button stays hidden
-                dashboardButton.classList.add('hidden');
-                dashboardButton.style.display = 'none'; // Ensure it's hidden
-                console.log('Dashboard button hidden for role:', userRole);
+                // Student role - hide dashboard button
+                if (dashboardButton) {
+                    dashboardButton.classList.add('hidden');
+                    dashboardButton.style.display = 'none';
+                }
+
+                // Show upgrade and cart buttons for students
+                if (upgradeButton) {
+                    upgradeButton.style.display = 'flex';
+                }
+                if (mobileUpgradeButton) {
+                    mobileUpgradeButton.style.display = 'block';
+                }
+                if (cartButton) {
+                    cartButton.style.display = 'block';
+                }
+
+                // Set student tier badge (handled by existing page logic)
+                console.log('Student UI setup complete');
             }
         } catch (error) {
-            console.error('Error setting up dashboard button:', error);
-            dashboardButton.classList.add('hidden');
-            dashboardButton.style.display = 'none';
+            console.error('Error setting up role-based UI:', error);
+            if (dashboardButton) {
+                dashboardButton.classList.add('hidden');
+                dashboardButton.style.display = 'none';
+            }
         }
     })();
 </script>

@@ -56,7 +56,6 @@
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="certificates"> <i class="fas fa-certificate mr-3"></i> <span>Certificates</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="challenges"> <i class="fas fa-trophy mr-3"></i> <span>Challenges</span> </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="blog"> <i class="fas fa-blog mr-3"></i> <span>Blog</span> </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-md cursor-pointer" data-target="settings"> <i class="fas fa-cog mr-3"></i> <span>Settings</span> </div>
             </nav>
             <div class="px-4 absolute bottom-4 left-0 right-0">
                 <div class="flex items-center space-x-3 border-t border-gray-700 pt-4">
@@ -255,46 +254,39 @@
                 </section>
 
                 <section id="certificates" class="page-content hidden">
-                    <div class="max-w-4xl mx-auto">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
-                            <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Certificate Generator</h1>
-                            <div class="mb-6">
-                                <label for="cert-user" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Student</label>
-                                <select id="cert-user" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                                    <option value="">-- Loading Students --</option>
-                                </select>
-                            </div>
-                            <div class="mb-6">
-                                <label for="cert-course" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Completed Course</label>
-                                <select id="cert-course" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                                    <option value="">-- Loading Courses --</option>
-                                </select>
-                            </div>
-                            <div class="mb-6">
-                                <label for="cert-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date of Completion</label>
-                                <input type="date" id="cert-date" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                            </div>
-                            <button id="generate-certificate" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
-                                Generate Certificate
-                            </button>
-                        </div>
-                        <div id="certificate-preview-container" class="w-full mt-8 hidden">
-                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Certificate Preview</h2>
-                            <div class="flex justify-end mb-4">
-                                <button id="download-certificate" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition">Download Certificate</button>
-                            </div>
-                            <div id="certificate-template" class="certificate w-full aspect-[1.4/1] bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8 flex flex-col items-center justify-center relative">
-                                <div class="text-center z-10 px-6">
-                                    <h2 class="text-xl uppercase tracking-widest text-gray-500 mb-2">Certificate of Completion from UniLearn</h2>
-                                    <h1 class="certificate-title text-4xl font-bold mb-4">Achievement Award</h1>
-                                    <p class="text-gray-600 dark:text-gray-400 mb-2">This certifies that</p>
-                                    <h2 id="preview-student-name" class="certificate-name">STUDENT NAME</h2>
-                                    <p class="text-gray-600 dark:text-gray-400 mb-6">has successfully completed the course</p>
-                                    <h3 id="preview-course-name" class="text-2xl font-semibold text-blue-800 mb-6">COURSE NAME</h3>
-                                    <p id="preview-issue-date" class="text-gray-600 dark:text-gray-400 mb-8">Date</p>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Certificate Database</h2>
+                                <div class="flex gap-3">
+                                    <div class="relative">
+                                        <input type="text" id="certificate-search" placeholder="Search certificates..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                                    </div>
                                 </div>
-                                <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/> <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/> <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/> <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text> <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text> </svg>
                             </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th class="px-4 py-3">Student</th>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Course</th>
+                                        <th class="px-4 py-3">Issue Date</th>
+                                        <th class="px-4 py-3">Certificate ID</th>
+                                        <th class="px-4 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificates-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                            <i class="fas fa-certificate text-4xl mb-4"></i>
+                                            <p>Loading certificates...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -477,7 +469,6 @@
                 </section>
 
 
-                <section id="settings" class="page-content hidden"><p>Settings Coming Soon</p></section>
             </main>
         </div>
     </div>

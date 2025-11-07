@@ -191,45 +191,63 @@
                 <div id="carousel-pagination-dots" class="carousel-pagination"></div>
             </div>
 
-            <div class="mb-8 pb-2 border-b border-gray-200 dark:border-gray-700">
-                <!-- Category Filters -->
-                <div class="flex flex-wrap gap-4 items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3 overflow-x-auto">
-                        <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
-                        <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                            <button data-filter="All" class="filter-btn active">All</button>
-                            <button data-filter="Development" class="filter-btn">💻 Development</button>
-                            <button data-filter="Design" class="filter-btn">🎨 Design</button>
-                            <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
-                            <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
-                            <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
-                            <button data-filter="Business" class="filter-btn">💼 Business</button>
-                        </div>
-                    </div>
-                    <div class="relative flex-shrink-0">
-                        <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                        <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
-                    </div>
+            <!-- ALL COURSES SECTION -->
+            <div id="all-courses" class="mb-12">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">
+                        📚 All Courses
+                    </h2>
                 </div>
 
-                <!-- Advanced Filters (FR2.4: Tier & Instructor) -->
-                <div class="flex flex-wrap gap-4 items-center">
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Access Tier:</label>
-                        <select id="tier-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
-                            <option value="all">All Tiers</option>
-                            <option value="free">Free Tier</option>
-                            <option value="pro">Pro Tier</option>
-                        </select>
+                <div class="mb-8 pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <!-- Category Filters -->
+                    <div class="flex flex-wrap gap-4 items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3 overflow-x-auto">
+                            <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
+                            <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
+                                <button data-filter="All" class="filter-btn active">All</button>
+                                <button data-filter="Development" class="filter-btn">💻 Development</button>
+                                <button data-filter="Design" class="filter-btn">🎨 Design</button>
+                                <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
+                                <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                                <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
+                                <button data-filter="Business" class="filter-btn">💼 Business</button>
+                            </div>
+                        </div>
+                        <div class="relative flex-shrink-0">
+                            <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instructor:</label>
-                        <input type="text" id="instructor-filter" placeholder="Filter by instructor..." class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+
+                    <!-- Advanced Filters (FR2.4: Tier & Instructor) -->
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Access Tier:</label>
+                            <select id="tier-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                                <option value="all">All Tiers</option>
+                                <option value="free">Free Tier</option>
+                                <option value="pro">Pro Tier</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instructor:</label>
+                            <input type="text" id="instructor-filter" placeholder="Filter by instructor..." class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                        </div>
+                        <button id="clear-filters-btn" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                            Clear Filters
+                        </button>
                     </div>
-                    <button id="clear-filters-btn" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
-                        Clear Filters
-                    </button>
                 </div>
+            
+            <div id="courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+                <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
+                    <div class="loading-container">
+                        <div class="loader"></div>
+                        <p class="loading-text">Loading courses...</p>
+                    </div>
+                </div>
+            </div>
             </div>
 
             <!-- POPULAR COURSES SECTION -->
@@ -259,21 +277,6 @@
                 </div>
                 <div id="trending-courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                     <!-- Trending courses will be loaded here -->
-                </div>
-            </div>
-
-            <!-- ALL COURSES SECTION -->
-            <div id="all-courses" class="mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-                    📚 All Courses
-                </h2>
-            
-            <div id="courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
-                <div id="loading-spinner" class="col-span-3 flex justify-center items-center h-64">
-                    <div class="loading-container">
-                        <div class="loader"></div>
-                        <p class="loading-text">Loading courses...</p>
-                    </div>
                 </div>
             </div>
 
@@ -391,22 +394,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Set user subscription tier badge
+    // Set user subscription tier badge (role-based)
     const tierBadgeElement = document.getElementById('user-tier-badge');
     if (tierBadgeElement) {
-        const userTier = user.subscriptionTier || 'free';
-        if (userTier === 'pro') {
+        const userRole = (user.role || '').toLowerCase();
+
+        // Check if user is admin or teacher
+        if (userRole === 'admin') {
             tierBadgeElement.innerHTML = `
-                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center gap-1">
-                    <i class="fas fa-crown"></i> PRO
+                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                    <i class="fas fa-shield-alt"></i> ADMIN
+                </span>
+            `;
+        } else if (userRole === 'teacher') {
+            tierBadgeElement.innerHTML = `
+                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full flex items-center gap-1">
+                    <i class="fas fa-chalkboard-teacher"></i> TEACHER
                 </span>
             `;
         } else {
-            tierBadgeElement.innerHTML = `
-                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
-                    FREE
-                </span>
-            `;
+            // Student - show subscription tier
+            const userTier = user.subscriptionTier || 'free';
+            if (userTier === 'pro') {
+                tierBadgeElement.innerHTML = `
+                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                        <i class="fas fa-crown"></i> PRO
+                    </span>
+                `;
+            } else {
+                tierBadgeElement.innerHTML = `
+                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
+                        FREE
+                    </span>
+                `;
+            }
         }
     }
 
@@ -643,7 +664,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let userProgressData = {};
 
     // --- ENHANCED COURSE LOGIC ---
+    let isLoadingCourses = false;
     async function fetchAllCourses() {
+        if (isLoadingCourses) return; // Prevent duplicate calls
+        isLoadingCourses = true;
+
         loadingSpinner.style.display = 'flex';
         coursesGrid.innerHTML = '';
         try {
@@ -676,8 +701,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             loadingSpinner.style.display = 'none';
             coursesGrid.innerHTML = `<p class="col-span-3 text-center text-red-500">${error.message}</p>`;
+        } finally {
+            isLoadingCourses = false;
         }
     }
+
+    // Helper function to navigate to course details
+    window.loadCourseDetails = function(courseId) {
+        showLessonPage(courseId);
+    };
 
     // Render Popular Courses (top 4 most enrolled)
     function renderPopularCourses() {
@@ -711,18 +743,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         const courseProgress = userProgressData[course.id];
         const actualProgress = courseProgress ? courseProgress.percentage : 0;
         const instructorName = course.teacher?.name || course.instructor || 'Expert Instructor';
-        
+
+        // Use imageUrl or thumbnail for the image
+        const courseImage = course.imageUrl || course.thumbnail || '';
+        const iconMap = {
+            'Development': 'fa-code',
+            'Design': 'fa-paint-brush',
+            'Data Science': 'fa-chart-bar',
+            'Marketing': 'fa-bullhorn',
+            'Business': 'fa-chart-line',
+            'AI & ML': 'fa-brain'
+        };
+        const iconClass = iconMap[course.category] || 'fa-graduation-cap';
+
         return `
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1"
                  onclick="loadCourseDetails('${course.id}')">
-                <div class="relative h-40 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
-                    ${course.thumbnail ? 
-                        `<img src="${course.thumbnail}" alt="${course.title}" class="w-full h-full object-cover">` :
-                        `<div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-4xl">📚</span>
+                <div class="relative h-40 overflow-hidden">
+                    ${courseImage && courseImage.trim() !== '' ?
+                        `<img src="${courseImage}" alt="${course.title}" class="w-full h-full object-cover">` :
+                        `<div class="bg-gradient-to-br from-blue-500 to-purple-600 w-full h-full flex items-center justify-center">
+                            <i class="fas ${iconClass} text-white text-5xl opacity-80"></i>
                         </div>`
                     }
-                    ${actualProgress > 0 ? 
+                    ${actualProgress > 0 ?
                         `<div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">
                             ${actualProgress}%
                         </div>` : ''
@@ -738,6 +782,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
                             ${course.category || 'General'}
                         </span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-500 mt-2">
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <span>4.7</span>
                     </div>
                 </div>
             </div>
@@ -1026,6 +1074,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? allContent.map((item, index) => {
                 const isQuiz = item.contentType === 'quiz';
                 const isCompleted = !isQuiz && completedLessonIds.has(item.id);
+
+                // Check if lesson is locked (Pro only)
+                const isLocked = !isQuiz && item.locked;
+                const isFreeTier = !isQuiz && item.freeTier;
+                const userTier = user.subscriptionTier || 'free';
+                const userRole = (user.role || '').toLowerCase();
+                const isTeacherOrAdmin = userRole === 'teacher' || userRole === 'admin';
+
+                // Determine if user has access
+                const hasAccess = isTeacherOrAdmin || isQuiz || !isLocked || userTier === 'pro';
+
                 const icon = isQuiz
                     ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>`
                     : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
@@ -1033,12 +1092,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ? `<i class="fas fa-check-circle text-green-500 ml-auto lesson-checkmark"></i>`
                     : '';
 
+                // Add lock icon for locked lessons
+                const lockBadge = isLocked && !hasAccess
+                    ? `<span class="ml-2 px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded"><i class="fas fa-lock"></i></span>`
+                    : '';
+                const freeBadge = isFreeTier
+                    ? `<span class="ml-2 px-2 py-0.5 text-xs font-bold bg-blue-500 text-white rounded"><i class="fas fa-unlock"></i></span>`
+                    : '';
+
                 return `
-                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200"
+                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200 ${!hasAccess ? 'opacity-60' : ''}"
                         data-id="${item.id}"
-                        data-type="${item.contentType}">
+                        data-type="${item.contentType}"
+                        data-locked="${isLocked}"
+                        data-has-access="${hasAccess}">
                         ${icon}
-                        <span class="text-sm font-medium pointer-events-none">${index + 1}. ${item.title}</span>
+                        <span class="text-sm font-medium pointer-events-none flex-1">${index + 1}. ${item.title}</span>
+                        ${lockBadge}
+                        ${freeBadge}
                         ${checkmark}
                     </li>
                 `;
@@ -1099,6 +1170,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.addEventListener('click', async () => {
                 const id = card.dataset.id;
                 const type = card.dataset.type;
+                const hasAccess = card.dataset.hasAccess === 'true';
+
+                // Check if user has access
+                if (!hasAccess) {
+                    alert('This lesson requires a Pro subscription. Upgrade to access all course content!');
+                    window.location.href = '/payment';
+                    return;
+                }
 
                 lessonPage.querySelectorAll('#content-list-sidebar .lesson-card').forEach(c => c.classList.remove('active-lesson'));
                 card.classList.add('active-lesson');
