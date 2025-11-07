@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%233B82F6' d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'></path></svg>">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
         .progress-bar { height: 8px; border-radius: 4px; background-color: #e5e7eb; overflow: hidden; }
@@ -87,6 +89,51 @@
             background-clip: text;
             color: transparent;
         }
+
+        /* Swiper Mobile Tab Navigation */
+        .swiper-mobile-tabs {
+            padding-bottom: 1rem;
+        }
+        .swiper-mobile-tabs .swiper-pagination {
+            bottom: 0;
+        }
+        .swiper-mobile-tabs .swiper-pagination-bullet {
+            background: #3b82f6;
+            opacity: 0.5;
+            width: 8px;
+            height: 8px;
+        }
+        .swiper-mobile-tabs .swiper-pagination-bullet-active {
+            opacity: 1;
+            width: 24px;
+            border-radius: 4px;
+        }
+        
+        /* Mobile tab indicator */
+        .mobile-tab-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .mobile-tab-indicator span {
+            display: block;
+            width: 2rem;
+            height: 3px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .mobile-tab-indicator span.active {
+            background: #3b82f6;
+            width: 3rem;
+        }
+
+        @media (max-width: 767px) {
+            .tab-button {
+                display: none;
+            }
+        }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -102,12 +149,55 @@
         <main class="flex-grow py-8">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
              
+                <!-- Mobile Tab Indicator (visible on mobile only) -->
+                <div class="mobile-tab-indicator md:hidden">
+                    <span class="active" data-tab="0"></span>
+                    <span data-tab="1"></span>
+                    <span data-tab="2"></span>
+                    <span data-tab="3"></span>
+                </div>
 
-                <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 space-x-6">
+                <!-- Desktop Tab Buttons (hidden on mobile) -->
+                <div class="hidden md:flex border-b border-gray-200 dark:border-gray-700 mb-6 space-x-6">
                     <button id="tab-dashboard" class="py-2 px-1 font-semibold text-lg tab-button active" data-target="content-dashboard">My Dashboard</button>
                     <button id="tab-quizzes" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-quizzes">Quizzes</button>
                     <button id="tab-grades" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-grades">Grades</button>
                     <button id="tab-certificates" class="py-2 px-1 font-semibold text-lg tab-button" data-target="content-certificates">Certificates</button>
+                </div>
+
+                <!-- Mobile Swipeable Container -->
+                <div class="swiper swiper-mobile-tabs md:hidden mb-6">
+                    <div class="swiper-wrapper">
+                        <!-- Slide 1: My Dashboard -->
+                        <div class="swiper-slide">
+                            <div class="text-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">My Dashboard</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Swipe to navigate →</p>
+                            </div>
+                        </div>
+                        <!-- Slide 2: Quizzes -->
+                        <div class="swiper-slide">
+                            <div class="text-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Quizzes</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Swipe to navigate ←→</p>
+                            </div>
+                        </div>
+                        <!-- Slide 3: Grades -->
+                        <div class="swiper-slide">
+                            <div class="text-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Grades</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Swipe to navigate ←→</p>
+                            </div>
+                        </div>
+                        <!-- Slide 4: Certificates -->
+                        <div class="swiper-slide">
+                            <div class="text-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Certificates</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">← Swipe to navigate</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
                 </div>
                 
                 <div id="tab-content-container">
@@ -638,8 +728,79 @@ async function fetchAndRenderLearningProgress() {
     } else {
         setActiveTab('dashboard'); // Mặc định hiển thị Dashboard
     }
+
+    // Initialize Swiper for mobile tab navigation
+    let tabSwiper = null;
+    
+    function initMobileSwiper() {
+        if (window.innerWidth < 768) { // Mobile only
+            if (!tabSwiper) {
+                tabSwiper = new Swiper('.swiper-mobile-tabs', {
+                    slidesPerView: 1,
+                    spaceBetween: 0,
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    on: {
+                        slideChange: function () {
+                            const activeIndex = this.activeIndex;
+                            const tabs = ['dashboard', 'quizzes', 'grades', 'certificates'];
+                            
+                            // Update tab content
+                            setActiveTab(tabs[activeIndex]);
+                            
+                            // Update mobile tab indicators
+                            document.querySelectorAll('.mobile-tab-indicator span').forEach((indicator, index) => {
+                                if (index === activeIndex) {
+                                    indicator.classList.add('active');
+                                } else {
+                                    indicator.classList.remove('active');
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        } else {
+            // Destroy swiper on desktop
+            if (tabSwiper) {
+                tabSwiper.destroy(true, true);
+                tabSwiper = null;
+            }
+        }
+    }
+
+    // Initialize on load
+    initMobileSwiper();
+
+    // Re-initialize on resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            initMobileSwiper();
+        }, 250);
+    });
+
+    // Desktop tab button clicks
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.dataset.target;
+            const tabName = target.replace('content-', '');
+            setActiveTab(tabName);
+            
+            // Update active button state
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 });
 </script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 
     <%- include('../partials/footer') %>
 </body>
