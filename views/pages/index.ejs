@@ -40,11 +40,27 @@
         /* Mobile adjustments for Spline */
         @media (max-width: 768px) {
             #spline-bg {
-                height: 60vh; /* Shorter on mobile */
+                position: absolute; /* Change to absolute on mobile */
+                top: 0;
+                height: 70vh; /* Shorter on mobile - only covers hero section */
+                max-height: 500px;
             }
             #spline-bg iframe {
-                transform: scale(1.2); /* Zoom in slightly on mobile */
+                transform: scale(1.3); /* Moderate zoom */
                 transform-origin: center center;
+            }
+            /* Ensure content flows naturally on mobile */
+            main {
+                position: relative;
+                z-index: 10;
+            }
+            /* Gradient overlay more opaque on mobile for better text readability */
+            .gradient-overlay {
+                background: linear-gradient(to bottom, 
+                    rgba(0, 0, 0, 0.4) 0%, 
+                    rgba(0, 0, 0, 0.6) 50%, 
+                    rgba(0, 0, 0, 0.9) 100%
+                );
             }
         }
         

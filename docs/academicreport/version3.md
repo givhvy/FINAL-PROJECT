@@ -2865,3 +2865,8 @@ Zawacki-Richter, O., Marín, V.I., Bond, M. and Gouverneur, F. (2019) 'Systemati
 ---
 
 # APPENDICES
+
+note giảm testing , giảm references, tập trung viết thêm cho những phần quan trọng trong các template đã gửi, làm thêm moscow (must, should, could, wont have) để functional requirement riêng với moscow. 
+
+
+đẩy các lines .md lên 3000 nếu muốn. nói thêm về gamification system.

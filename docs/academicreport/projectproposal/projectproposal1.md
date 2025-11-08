@@ -369,3 +369,5 @@ UNESCO (2020) *COVID-19 Educational Disruption and Response*. Paris: United Nati
 **Institution:** University of Greenwich  
 **Programme:** BSc (Hons) Computer Science  
 **Submission Date:** November 2025
+
+note làm ngắn gọn như 4 trang trong proposalexample thôi

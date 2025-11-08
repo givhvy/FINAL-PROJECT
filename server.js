@@ -186,9 +186,10 @@ app.get('/teacher', (req, res) => {
   res.render('pages/teacher-dashboard', { title: 'Teacher Dashboard' });
 });
 
-app.get('/student', (req, res) => {
-  res.render('pages/student-dashboard', { title: 'Student Dashboard' });
-});
+// Student dashboard - deprecated, use /account instead
+// app.get('/student', (req, res) => {
+//   res.render('pages/student-dashboard', { title: 'Student Dashboard' });
+// });
 
 // Public pages
 app.get('/courses', (req, res) => {
@@ -209,7 +210,12 @@ app.get('/profile', (req, res) => {
 });
 
 app.get('/account', (req, res) => {
-  res.render('pages/account', { title: 'Account' });
+  res.render('pages/mylearning', { title: 'My Learning' });
+});
+
+// Redirect old /mylearning route to /account for consistency
+app.get('/mylearning', (req, res) => {
+  res.redirect('/account');
 });
 
 // E-commerce pages
