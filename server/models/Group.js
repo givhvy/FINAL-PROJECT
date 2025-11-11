@@ -78,7 +78,7 @@ class Group {
     }
 
     /**
-     * Get user's study groups
+     * Get user's study groups (checkpoint)
      */
     static async findByUser(userId) {
         const db = this.getDB();
@@ -139,7 +139,7 @@ class Group {
             throw new ValidationError('User is already a member of this group');
         }
 
-        // Add user to group
+        // Add user to group (create in crud)
         const memberData = {
             group_id: groupId,
             user_id: userId,
@@ -221,7 +221,7 @@ class Group {
     }
 
     /**
-     * Validate group data
+     * Validate group data (kiểm tra input vào từ bên form)
      */
     static validate(data) {
         if (!data.name || data.name.length < 3) {

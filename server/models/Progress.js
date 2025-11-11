@@ -298,6 +298,77 @@ class Progress {
 
         return progressData;
     }
+
+    /**
+     * Get daily progress count (lessons completed today)
+     * @param {string} userId - User ID
+     * @returns {Promise<number>} - Count of lessons completed today
+     */
+    static async getDailyProgress(userId) {
+        const db = this.getDB();
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Try camelCase first (new schema)
+        let snapshot = await db.collection('progress')
+            .where('userId', '==', userId)
+            .where('completed', '==', true)
+            .where('completedAt', '>=', today)
+            .get();
+
+        // If empty, try snake_case (old schema)
+        if (snapshot.empty) {
+            snapshot = await db.collection('progress')
+                .where('user_id', '==', userId)
+                .where('completed', '==', true)
+                .where('completed_at', '>=', today)
+                .get();
+        }
+
+        return snapshot.size;
+    }
+
+    /**
+     * Get weekly progress count (lessons completed this week)
+     * @param {string} userId - User ID
+     * @returns {Promise<number>} - Count of lessons completed this week
+     */
+    static async getWeeklyProgress(userId) {
+        const db = this.getDB();
+
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+
+        // Try camelCase first (new schema)
+        let snapshot = await db.collection('progress')
+            .where('userId', '==', userId)
+            .where('completed', '==', true)
+            .where('completedAt', '>=', weekAgo)
+            .get();
+
+        // If empty, try snake_case (old schema)
+        if (snapshot.empty) {
+            snapshot = await db.collection('progress')
+                .where('user_id', '==', userId)
+                .where('completed', '==', true)
+                .where('completed_at', '>=', weekAgo)
+                .get();
+        }
+
+        return snapshot.size;
+    }
+
+    /**
+     * Calculate study points based on lessons and courses completed
+     * @param {number} lessonsCount - Number of lessons completed
+     * @param {number} coursesCount - Number of courses completed
+     * @returns {number} - Total study points
+     */
+    static calculateStudyPoints(lessonsCount, coursesCount) {
+        // 10 points per lesson, 100 bonus points per completed course
+        return (lessonsCount * 10) + (coursesCount * 100);
+    }
 }
 
 module.exports = Progress;

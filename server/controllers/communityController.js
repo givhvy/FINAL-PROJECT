@@ -20,7 +20,6 @@ const Progress = require('../models/Progress');
  */
 exports.getUserProgress = async (req, res) => {
     try {
-        const db = getFirestore();
         const userId = req.headers['user-id'] || req.user?.id || req.body?.user_id;
 
         if (!userId) {
@@ -29,30 +28,11 @@ exports.getUserProgress = async (req, res) => {
 
         console.log(`\n🔍 [PROGRESS] Fetching progress for user: ${userId}`);
 
-        // Get today's date for daily progress
-        const today = new Date();
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+        // Use Progress model methods for daily and weekly progress
+        const dailyLessons = await Progress.getDailyProgress(userId);
+        const weeklyLessons = await Progress.getWeeklyProgress(userId);
 
-        // Get this week's start date
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - today.getDay());
-        weekStart.setHours(0, 0, 0, 0);
-
-        // Query 1: Get completed lessons today
-        const lessonsCompletedToday = await db.collection('lesson_completions')
-            .where('user_id', '==', userId)
-            .where('completed_at', '>=', todayStart.toISOString())
-            .where('completed_at', '<', todayEnd.toISOString())
-            .get();
-
-        // Query 2: Get weekly lesson completions for study time estimate
-        const weeklyCompletions = await db.collection('lesson_completions')
-            .where('user_id', '==', userId)
-            .where('completed_at', '>=', weekStart.toISOString())
-            .get();
-
-        // Query 3-5: Use Progress model's optimized method to get overall progress
+        // Use Progress model's optimized method to get overall progress
         // This internally batches queries efficiently
         const overallProgress = await Progress.getUserOverallProgress(userId);
 
@@ -66,11 +46,11 @@ exports.getUserProgress = async (req, res) => {
         console.log(`📊 [PROGRESS] ${completedCourses}/${totalEnrolledCourses} courses, ${totalLessonsCompleted} lessons completed`);
 
         // Estimate study time (assuming 30 minutes per lesson)
-        const dailyStudyTime = lessonsCompletedToday.size * 0.5; // 0.5 hours per lesson
-        const weeklyStudyTime = weeklyCompletions.size * 0.5;
+        const dailyStudyTime = dailyLessons * 0.5; // 0.5 hours per lesson
+        const weeklyStudyTime = weeklyLessons * 0.5;
 
-        // Calculate study points based on activity
-        const studyPoints = (totalLessonsCompleted * 10) + (completedCourses * 100);
+        // Calculate study points using Progress model method
+        const studyPoints = Progress.calculateStudyPoints(totalLessonsCompleted, completedCourses);
 
         // Set goals (these could be stored in user preferences in the future)
         const dailyGoal = 2; // 2 hours per day

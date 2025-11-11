@@ -246,6 +246,48 @@ class User {
     }
 
     /**
+     * Check if email is educational (.edu or .ac domain)
+     * @param {string} email - Email to check
+     * @returns {boolean} - true if email is educational domain
+     */
+    static isEducationalEmail(email) {
+        const lowerEmail = email.toLowerCase();
+        return lowerEmail.endsWith('.edu') || lowerEmail.endsWith('.ac.uk') ||
+               lowerEmail.endsWith('.edu.vn') || lowerEmail.includes('.ac.');
+    }
+
+    /**
+     * Verify user as student by checking email and updating to Pro tier
+     * @param {string} userId - User ID
+     * @param {string} email - Email to verify
+     * @returns {Promise<User>} - Updated user with Pro tier
+     */
+    static async verifyAsStudent(userId, email) {
+        try {
+            // Find user by ID
+            const user = await this.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Check if email matches user's email
+            if (user.email !== email) {
+                throw new Error('Email does not match user account');
+            }
+
+            // Check if email is educational
+            if (!this.isEducationalEmail(email)) {
+                throw new Error('Email must be from an educational institution (.edu, .ac, etc.)');
+            }
+
+            // Update user to Pro tier
+            return await this.upgradeToProTier(userId);
+        } catch (error) {
+            throw new Error(`Error verifying student: ${error.message}`);
+        }
+    }
+
+    /**
      * Check if user has Pro tier
      * @returns {boolean} - true if user is Pro
      */

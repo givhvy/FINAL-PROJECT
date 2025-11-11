@@ -5,6 +5,8 @@ const User = require('../models/User');
 const Enrollment = require('../models/Enrollment');
 const Course = require('../models/Course');
 const Progress = require('../models/Progress');
+const Order = require('../models/Order');
+const Lesson = require('../models/Lesson');
 
 // Create a new user
 exports.createUser = async (req, res) => {
@@ -101,7 +103,6 @@ exports.deleteUser = async (req, res) => {
 // NEW: Hàm lấy chi tiết tiến trình học tập của người dùng
 exports.getUserProgressDetails = async (req, res) => {
     try {
-        const db = getFirestore();
         const userId = req.params.id;
 
         // Validate userId
@@ -109,12 +110,10 @@ exports.getUserProgressDetails = async (req, res) => {
             return res.status(400).json({ error: 'Invalid user ID provided.' });
         }
 
-        // 1. Get user's enrolled courses from orders collection
-        const ordersRef = db.collection('orders');
-        const userOrdersQuery = ordersRef.where('user_id', '==', userId).where('status', '==', 'completed');
-        const ordersSnapshot = await userOrdersQuery.get();
+        // 1. Get user's completed orders using Order model
+        const completedOrders = await Order.findByUserIdAndStatus(userId, 'completed');
 
-        if (ordersSnapshot.empty) {
+        if (completedOrders.length === 0) {
             return res.status(200).json([]);
         }
 
@@ -122,47 +121,38 @@ exports.getUserProgressDetails = async (req, res) => {
         const processedCourses = new Set(); // Prevent duplicate courses
 
         // 2. Process each enrolled course
-        for (const orderDoc of ordersSnapshot.docs) {
+        for (const order of completedOrders) {
             try {
-                const order = orderDoc.data();
-                const courseId = order.course_id;
+                const courseId = order.courseId;
 
-                // Skip if no course_id, undefined, or already processed
+                // Skip if no courseId, undefined, or already processed
                 if (!courseId || courseId === 'undefined' || processedCourses.has(courseId)) {
                     continue;
                 }
 
                 processedCourses.add(courseId);
 
-                // Get course details
-                const courseRef = db.collection('courses').doc(courseId);
-                const courseSnap = await courseRef.get();
+                // Get course details using Course model
+                const course = await Course.findById(courseId);
 
-                if (!courseSnap.exists) {
+                if (!course) {
                     console.warn(`Course ${courseId} not found for user ${userId}`);
                     continue; // Skip if course no longer exists
                 }
 
-                const courseData = courseSnap.data();
-
                 // Validate course data
-                if (!courseData || !courseData.title) {
+                if (!course.title) {
                     console.warn(`Invalid course data for course ${courseId}`);
                     continue;
                 }
 
-                // Get total lessons for this course
-                const lessonsQuery = db.collection('lessons').where('course_id', '==', courseId);
-                const lessonsSnapshot = await lessonsQuery.get();
-                const totalLessons = lessonsSnapshot.size;
+                // Get total lessons for this course using Lesson model
+                const lessons = await Lesson.findByCourseId(courseId);
+                const totalLessons = lessons.length;
 
-                // Get completed lessons for this user and course
-                const progressQuery = db.collection('user_progress')
-                    .where('user_id', '==', userId)
-                    .where('course_id', '==', courseId)
-                    .where('progress_type', '==', 'lesson_completed');
-                const progressSnapshot = await progressQuery.get();
-                const completedLessons = progressSnapshot.size;
+                // Get completed lessons using Progress model
+                const completedLessonsData = await Progress.getCompletedLessons(userId, courseId);
+                const completedLessons = completedLessonsData.length;
 
                 // Calculate progress percentage (handle edge cases)
                 let percentage = 0;
@@ -181,7 +171,7 @@ exports.getUserProgressDetails = async (req, res) => {
                 percentage = Math.max(0, Math.min(100, percentage));
 
                 progressData.push({
-                    name: courseData.title,
+                    name: course.title,
                     courseId: courseId,
                     percentage: percentage,
                     isCompleted: isCompleted,
@@ -214,7 +204,6 @@ exports.getUserProgressDetails = async (req, res) => {
 // NEW: Update user role (Admin/Teacher phân quyền)
 exports.updateUserRole = async (req, res) => {
     try {
-        const db = getFirestore();
         const userId = req.params.id;
         const { role } = req.body;
 
@@ -233,33 +222,22 @@ exports.updateUserRole = async (req, res) => {
             return res.status(400).json({ error: 'Invalid role. Must be: student, teacher, or admin.' });
         }
 
-        // Check if user exists
-        const userRef = db.collection('users').doc(userId);
-        const userSnap = await userRef.get();
+        // Check if user exists using User model
+        const user = await User.findById(userId);
 
-        if (!userSnap.exists) {
+        if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
 
-        const userData = userSnap.data();
-
-        // Update only the role field
-        await userRef.update({
-            role: role,
-            updatedAt: new Date()
-        });
+        // Update only the role field using User model
+        const updatedUser = await User.update(userId, { role: role });
 
         // Return success response
         res.status(200).json({
             message: `User role updated successfully to ${role}.`,
             userId: userId,
             newRole: role,
-            user: {
-                id: userId,
-                name: userData.name,
-                email: userData.email,
-                role: role
-            }
+            user: updatedUser.toJSON()
         });
 
     } catch (err) {
@@ -277,37 +255,26 @@ exports.verifyStudent = async (req, res) => {
             return res.status(400).json({ error: 'User ID and email are required' });
         }
 
-        // Kiểm tra email có phải educational email không (.edu hoặc .ac)
-        const emailPattern = /^[^\s@]+@[^\s@]+\.(edu|ac\.[a-z]{2}|edu\.[a-z]{2})$/i;
-        if (!emailPattern.test(email)) {
-            return res.status(400).json({ error: 'Invalid educational email address' });
-        }
-
-        const db = getFirestore();
-        const userRef = db.collection('users').doc(user_id);
-        const userDoc = await userRef.get();
-
-        if (!userDoc.exists) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Cập nhật user với student status
-        await userRef.update({
-            isStudent: true,
-            studentEmail: email,
-            subscriptionType: 'student_free',
-            verifiedAt: new Date().toISOString()
-        });
+        // Verify student using User model
+        const updatedUser = await User.verifyAsStudent(user_id, email);
 
         res.status(200).json({
             success: true,
             message: 'Student status verified successfully',
-            isStudent: true,
-            studentEmail: email
+            user: updatedUser.toJSON()
         });
 
     } catch (err) {
         console.error("Verify Student Error:", err);
+
+        // Handle specific error cases
+        if (err.message.includes('not found')) {
+            return res.status(404).json({ error: err.message });
+        }
+        if (err.message.includes('does not match') || err.message.includes('educational')) {
+            return res.status(400).json({ error: err.message });
+        }
+
         res.status(500).json({ error: 'Failed to verify student status. Please try again later.' });
     }
 };

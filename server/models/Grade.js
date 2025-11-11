@@ -7,7 +7,7 @@ class Grade {
     }
 
     /**
-     * Create a new grade (checkpoint)
+     * Create a new grade (create in crud) (checkpoint)
      */
     static async create(gradeData) {
         this.validate(gradeData);
@@ -152,7 +152,7 @@ class Grade {
     }
 
     /**
-     * Get quiz statistics
+     * Get quiz statistics (total attempts, average score, highest score, lowest score)
      */
     static async getQuizStats(quizId) {
         const grades = await this.findByQuiz(quizId);
@@ -177,7 +177,7 @@ class Grade {
     }
 
     /**
-     * Update grade
+     * Update grade (update in crud)
      */
     static async update(gradeId, updateData) {
         const db = this.getDB();
@@ -190,7 +190,7 @@ class Grade {
     }
 
     /**
-     * Delete grade
+     * Delete grade (delete in crud)
      */
     static async delete(gradeId) {
         const db = this.getDB();
@@ -198,7 +198,7 @@ class Grade {
     }
 
     /**
-     * Validate grade data
+     * Validate grade data (check if correct, if not then error)
      */
     static validate(data) {
         if (!data.userId) {

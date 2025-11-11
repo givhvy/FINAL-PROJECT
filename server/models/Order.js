@@ -112,6 +112,20 @@ class Order {
     }
 
     /**
+     * Lấy tất cả đơn hàng của một người dùng theo trạng thái
+     * @param {string} userId - User ID
+     * @param {string} status - Order status
+     * @returns {Promise<Array<Order>>} - Mảng Order objects
+     */
+    static async findByUserIdAndStatus(userId, status) {
+        try {
+            return await this.findAll({ userId, status });
+        } catch (error) {
+            throw new Error(`Error finding orders by user ID and status: ${error.message}`);
+        }
+    }
+
+    /**
      * Tạo đơn hàng mới
      * @param {Object} orderData - Dữ liệu đơn hàng
      * @returns {Promise<Order>} - Order object đã tạo
