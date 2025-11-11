@@ -48,17 +48,10 @@ class Grade {
     static async findByQuiz(quizId) {
         const db = this.getDB();
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('grades')
-            .where('quizId', '==', quizId)
+        // Firebase uses snake_case quiz_id
+        const snapshot = await db.collection('grades')
+            .where('quiz_id', '==', quizId)
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('grades')
-                .where('quiz_id', '==', quizId)
-                .get();
-        }
 
         // Sort by score in memory to avoid index requirement
         const grades = snapshot.docs.map(doc => ({
@@ -77,17 +70,10 @@ class Grade {
     static async findByStudent(userId) {
         const db = this.getDB();
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('grades')
-            .where('userId', '==', userId)
+        // Firebase uses snake_case user_id
+        const snapshot = await db.collection('grades')
+            .where('user_id', '==', userId)
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('grades')
-                .where('user_id', '==', userId)
-                .get();
-        }
 
         // Sort by createdAt in memory to avoid index requirement
         const grades = snapshot.docs.map(doc => ({
@@ -110,21 +96,12 @@ class Grade {
     static async findByUserAndQuiz(userId, quizId) {
         const db = this.getDB();
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('grades')
-            .where('userId', '==', userId)
-            .where('quizId', '==', quizId)
+        // Firebase uses snake_case user_id and quiz_id
+        const snapshot = await db.collection('grades')
+            .where('user_id', '==', userId)
+            .where('quiz_id', '==', quizId)
             .limit(1)
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('grades')
-                .where('user_id', '==', userId)
-                .where('quiz_id', '==', quizId)
-                .limit(1)
-                .get();
-        }
 
         if (snapshot.empty) return null;
 

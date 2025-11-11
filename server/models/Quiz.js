@@ -71,32 +71,14 @@ class Quiz {
             const db = this.getDB();
             let query = db.collection('quizzes');
 
-            // Áp dụng bộ lọc theo courseId - try both schemas
+            // Áp dụng bộ lọc theo courseId - Firebase uses snake_case course_id
             if (filters.courseId) {
-                // Try camelCase first
-                let tempQuery = query.where('courseId', '==', filters.courseId);
-                let tempSnapshot = await tempQuery.limit(1).get();
-
-                // If empty, try snake_case
-                if (tempSnapshot.empty) {
-                    query = query.where('course_id', '==', filters.courseId);
-                } else {
-                    query = tempQuery;
-                }
+                query = query.where('course_id', '==', filters.courseId);
             }
 
-            // Áp dụng bộ lọc theo lessonId - try both schemas
+            // Áp dụng bộ lọc theo lessonId - Firebase uses snake_case lesson_id
             if (filters.lessonId) {
-                // Try camelCase first
-                let tempQuery = query.where('lessonId', '==', filters.lessonId);
-                let tempSnapshot = await tempQuery.limit(1).get();
-
-                // If empty, try snake_case
-                if (tempSnapshot.empty) {
-                    query = query.where('lesson_id', '==', filters.lessonId);
-                } else {
-                    query = tempQuery;
-                }
+                query = query.where('lesson_id', '==', filters.lessonId);
             }
 
             // Áp dụng bộ lọc theo isPublished

@@ -55,14 +55,14 @@ class Order {
             const db = this.getDB();
             let query = db.collection('orders');
 
-            // Áp dụng bộ lọc theo userId
+            // Áp dụng bộ lọc theo userId - Firebase uses snake_case user_id
             if (filters.userId) {
-                query = query.where('userId', '==', filters.userId);
+                query = query.where('user_id', '==', filters.userId);
             }
 
-            // Áp dụng bộ lọc theo courseId
+            // Áp dụng bộ lọc theo courseId - Firebase uses snake_case course_id
             if (filters.courseId) {
-                query = query.where('courseId', '==', filters.courseId);
+                query = query.where('course_id', '==', filters.courseId);
             }
 
             // Áp dụng bộ lọc theo status

@@ -87,21 +87,12 @@ class Progress {
     static async getCompletedLessons(userId, courseId) {
         const db = this.getDB();
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('progress')
-            .where('userId', '==', userId)
-            .where('courseId', '==', courseId)
-            .where('completed', '==', true)
+        // Firebase uses user_progress collection with snake_case fields
+        const snapshot = await db.collection('user_progress')
+            .where('user_id', '==', userId)
+            .where('course_id', '==', courseId)
+            .where('progress_type', '==', 'lesson_completed')
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('progress')
-                .where('user_id', '==', userId)
-                .where('course_id', '==', courseId)
-                .where('completed', '==', true)
-                .get();
-        }
 
         return snapshot.docs.map(doc => ({
             id: doc.id,
@@ -310,21 +301,12 @@ class Progress {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('progress')
-            .where('userId', '==', userId)
-            .where('completed', '==', true)
-            .where('completedAt', '>=', today)
+        // Firebase uses user_progress collection with snake_case fields
+        const snapshot = await db.collection('user_progress')
+            .where('user_id', '==', userId)
+            .where('progress_type', '==', 'lesson_completed')
+            .where('completed_at', '>=', today.toISOString())
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('progress')
-                .where('user_id', '==', userId)
-                .where('completed', '==', true)
-                .where('completed_at', '>=', today)
-                .get();
-        }
 
         return snapshot.size;
     }
@@ -340,21 +322,12 @@ class Progress {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('progress')
-            .where('userId', '==', userId)
-            .where('completed', '==', true)
-            .where('completedAt', '>=', weekAgo)
+        // Firebase uses user_progress collection with snake_case fields
+        const snapshot = await db.collection('user_progress')
+            .where('user_id', '==', userId)
+            .where('progress_type', '==', 'lesson_completed')
+            .where('completed_at', '>=', weekAgo.toISOString())
             .get();
-
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('progress')
-                .where('user_id', '==', userId)
-                .where('completed', '==', true)
-                .where('completed_at', '>=', weekAgo)
-                .get();
-        }
 
         return snapshot.size;
     }
