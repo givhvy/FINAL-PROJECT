@@ -1,0 +1,43 @@
+Phase,Task ID,Task Name,Start Date,End Date,Duration (Days),Duration (Weeks),Status,Dependencies,Deliverables,Team Member
+Phase 1: Research & Requirements,P1.1,Literature Review,2025-03-01,2025-03-15,14,2,Complete,None,"Literature review document, Technology stack analysis",Student
+Phase 1: Research & Requirements,P1.2,Competitive Analysis,2025-03-08,2025-03-22,14,2,Complete,P1.1,"Competitive analysis report (Moodle, Canvas, Udemy, Google Classroom)",Student
+Phase 1: Research & Requirements,P1.3,Requirements Gathering,2025-03-15,2025-03-29,14,2,Complete,P1.2,"Requirements specification (40+ features), User personas (3 types), MoSCoW prioritization",Student
+Phase 1: Research & Requirements,P1.4,Use Case Development,2025-03-22,2025-04-12,21,3,Complete,P1.3,"Use case diagrams (25+), User stories (50+), Project proposal",Student
+Phase 2: System Design,P2.1,Architecture Design,2025-04-13,2025-04-26,14,2,Complete,P1.4,"MVC architecture diagram, Client-server design, RESTful API structure",Student
+Phase 2: System Design,P2.2,Database Schema Design,2025-04-20,2025-05-10,21,3,Complete,P2.1,"Firebase Firestore schema (21 collections), ER diagrams, Index planning",Student
+Phase 2: System Design,P2.3,UI/UX Design,2025-05-04,2025-05-24,21,3,Complete,P2.2,"Wireframes (19 pages), Figma mockups, Color scheme, Typography guide",Student
+Phase 2: System Design,P2.4,API Endpoint Design,2025-05-18,2025-06-07,21,3,Complete,P2.2,"API documentation (129+ endpoints), Request/response schemas",Student
+Phase 2: System Design,P2.5,Integration Planning,2025-05-25,2025-06-07,14,2,Complete,P2.4,"Integration workflow diagrams (Google OAuth, Stripe, Cloudinary)",Student
+Phase 3: Backend Implementation,P3.1,Development Environment Setup,2025-06-08,2025-06-14,7,1,Complete,P2.5,"Node.js v14+ setup, Express.js v5.1.0, Firebase Admin SDK v13.5.0, Git repo",Student
+Phase 3: Backend Implementation,P3.2,Authentication System,2025-06-15,2025-06-28,14,2,Complete,P3.1,"JWT authentication, Google OAuth 2.0, bcrypt hashing, authController.js (4 endpoints)",Student
+Phase 3: Backend Implementation,P3.3,Core Models Development,2025-06-22,2025-07-12,21,3,Complete,P3.2,"User.js, Course.js, Lesson.js, Enrollment.js, Quiz.js, Question.js, firebaseHelpers.js (185 lines)",Student
+Phase 3: Backend Implementation,P3.4,Business Logic Controllers,2025-07-06,2025-07-26,21,3,Complete,P3.3,"courseController.js (10 endpoints), lessonController.js (5 endpoints), quizController.js (5 endpoints), userController.js (8 endpoints)",Student
+Phase 3: Backend Implementation,P3.5,Advanced Features,2025-07-20,2025-08-09,21,3,Complete,P3.4,"Progress.js, Grade.js, Certificate.js, progressController.js (6 endpoints), gradeController.js (7 endpoints), certificateController.js (11 endpoints)",Student
+Phase 3: Backend Implementation,P3.6,Payment Integration,2025-08-03,2025-08-23,21,3,Complete,P3.5,"Stripe API v18.5.0 integration, Order.js, Payment.js, paymentController.js (7 endpoints), orderController.js (5 endpoints), Webhook handling",Student
+Phase 3: Backend Implementation,P3.7,Community Features,2025-08-10,2025-08-23,14,2,Complete,P3.4,"Group.js, Challenge.js, GroupMessage.js, communityController.js (15 endpoints), groupController.js (8 endpoints), challengeController.js (7 endpoints)",Student
+Phase 3: Backend Implementation,P3.8,Media Upload Integration,2025-08-17,2025-08-23,7,1,Complete,P3.5,"Cloudinary SDK integration, uploadController.js (3 endpoints), Image optimization, Video thumbnails",Student
+Phase 4: Frontend Development,P4.1,Landing Page & Auth UI,2025-08-24,2025-09-06,14,2,Complete,P3.8,"index.ejs with Spline 3D, login.ejs, signup.ejs, Dark theme, Mobile responsive",Student
+Phase 4: Frontend Development,P4.2,Course Catalog & Details,2025-09-07,2025-09-20,14,2,Complete,P4.1,"courses.ejs (filtering, search), Course detail page, Banner carousel, Swipe navigation",Student
+Phase 4: Frontend Development,P4.3,Dashboard Interfaces,2025-09-14,2025-10-04,21,3,Complete,P4.2,"admin-dashboard.ejs, teacher-dashboard.ejs, mylearning.ejs, Tab navigation, Progress charts",Student
+Phase 4: Frontend Development,P4.4,Lesson & Quiz Interfaces,2025-09-28,2025-10-18,21,3,Complete,P4.3,"lesson-management.ejs, Lesson viewer, quiz.ejs, quiz-management.ejs, Automated grading display",Student
+Phase 4: Frontend Development,P4.5,Payment & E-commerce,2025-10-12,2025-10-25,14,2,Complete,P4.4,"cart.ejs, payment.ejs (Stripe Checkout), success.ejs, cancel.ejs, order.ejs",Student
+Phase 4: Frontend Development,P4.6,Community & Profile,2025-10-19,2025-11-01,14,2,Complete,P4.5,"community.ejs (groups, leaderboard), profile.ejs, certificate.ejs, blog.ejs",Student
+Phase 4: Frontend Development,P4.7,UI/UX Polish,2025-10-26,2025-11-08,14,2,Complete,P4.6,"Tailwind CSS refinements, Font Awesome icons, Loading animations, Mobile fixes, Dark mode consistency",Student
+Phase 5: Testing & QA,P5.1,Unit Testing,2025-10-05,2025-10-25,21,3,Complete,P3.4 P4.2,"Jest framework setup, Model tests, Controller tests, Utility tests, 70%+ code coverage",Student
+Phase 5: Testing & QA,P5.2,Integration Testing,2025-10-19,2025-11-01,14,2,Complete,P5.1,"Firebase emulator testing, API endpoint tests, Authentication flow tests, Payment flow tests",Student
+Phase 5: Testing & QA,P5.3,Security Testing,2025-10-26,2025-11-08,14,2,Complete,P5.2,"OWASP Top 10 scan, XSS prevention, CSRF protection, Password security audit",Student
+Phase 5: Testing & QA,P5.4,Performance Testing,2025-11-02,2025-11-15,14,2,Complete,P5.3,"Load testing (100+ users), Response time optimization (<1s), Database query optimization",Student
+Phase 5: Testing & QA,P5.5,Cross-browser & Device Testing,2025-11-09,2025-11-22,14,2,Complete,P5.4,"Chrome, Firefox, Safari, Edge testing, Mobile (iOS, Android), Tablet, Screen reader accessibility",Student
+Phase 5: Testing & QA,P5.6,User Acceptance Testing,2025-11-16,2025-11-22,7,1,Complete,P5.5,"Recruit 10+ test users, Usability sessions, Feedback gathering, Critical bug fixes",Student
+Phase 6: MVC Refactoring,P6.1,Create Firebase Helpers,2025-10-19,2025-10-25,7,1,Complete,P3.3,"firebaseHelpers.js (185 lines), getAllDocuments(), getDocumentById(), CRUD operations",Student
+Phase 6: MVC Refactoring,P6.2,Build Missing Models,2025-10-26,2025-11-01,7,1,Complete,P6.1,"Grade.js (350+ lines, 12 methods), Certificate.js (280+ lines, 10 methods), Progress.js (240+ lines, 8 methods)",Student
+Phase 6: MVC Refactoring,P6.3,Enhance Existing Models,2025-10-26,2025-11-08,14,2,Complete,P6.2,"User.js enhancements (5 methods), Enrollment.js (4 methods), Course.js (3 methods), Lesson.js (3 methods)",Student
+Phase 6: MVC Refactoring,P6.4,Fix N+1 Query Problems,2025-11-02,2025-11-08,7,1,Complete,P6.3,"courseController.js: 201→4 queries (98% reduction), lessonController.js N+1 fixes, Batch operations",Student
+Phase 6: MVC Refactoring,P6.5,Refactor All Controllers,2025-11-09,2025-11-15,7,1,Complete,P6.4,"communityController.js (244→205 lines, 16% reduction), userController.js (111→68 lines, 39% reduction), Remove .select() patterns",Student
+Phase 6: MVC Refactoring,P6.6,Fix Database Issues,2025-11-16,2025-11-19,3,0.4,Complete,P6.5,"firestore.indexes.json creation, Fix courseId/course_id inconsistencies, Resolve Firebase index errors",Student
+Phase 6: MVC Refactoring,P6.7,Final Verification,2025-11-20,2025-11-22,3,0.4,Complete,P6.6,"Server startup with zero errors, 100% MVC compliance verification, Performance benchmarking, Completion reports",Student
+Phase 7: Deployment & Docs,P7.1,Production Deployment,2025-11-09,2025-11-15,7,1,Complete,P5.4,"Vercel setup, Environment variables, Firebase production DB, Custom domain (x.huy.global), SSL certificate, Production testing",Student
+Phase 7: Deployment & Docs,P7.2,Academic Report Writing,2025-11-16,2025-11-22,7,1,Complete,P6.5,"9 chapters (Introduction, Literature Review, Methodology, System Design, Implementation, Testing, Results, Discussion, Conclusion), version5.md",Student
+Phase 7: Deployment & Docs,P7.3,Technical Documentation,2025-11-23,2025-11-26,3,0.4,Complete,P7.2,"API documentation, Database schema docs, Deployment guide, User manual, Admin guide",Student
+Phase 7: Deployment & Docs,P7.4,Presentation Preparation,2025-11-23,2025-11-29,7,1,In Progress,P7.2,"PowerPoint slides, Demo video, Q&A preparation, Practice presentation",Student
+Phase 7: Deployment & Docs,P7.5,Final Submission,2025-11-29,2025-11-29,1,0.1,Pending,P7.4,"Submit academic report, Submit source code (GitHub), Submit documentation, Submit presentation materials",Student

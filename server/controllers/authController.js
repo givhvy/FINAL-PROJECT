@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getFirestore } = require('firebase-admin/firestore');
 // Import email services

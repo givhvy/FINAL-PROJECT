@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('description').value = course.description;
             document.getElementById('category').value = course.category || '';
             document.getElementById('level').value = course.level;
-            document.getElementById('imageUrl').value = course.imageUrl || '';
+            document.getElementById('imageUrl').value = course.imageUrl || course.thumbnail || '';
 
             // Set locked/free radio buttons
             const isLocked = course.locked !== false;
@@ -613,8 +613,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentEditingCourseId = course.id;
 
             // Show preview if editing and has image
-            if (course.imageUrl) {
-                previewImg.src = course.imageUrl;
+            const courseImageUrl = course.imageUrl || course.thumbnail;
+            if (courseImageUrl) {
+                previewImg.src = courseImageUrl;
                 imagePreview.classList.remove('hidden');
             }
         } else { // Adding mode
@@ -887,11 +888,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             const allGrades = await gradesResponse.json();
 
-            // 3. Filter grades for teacher's courses only
-            allQuizGrades = allGrades.filter(grade => {
-                return teacherCourses.some(course =>
-                    course.id === grade.quiz?.course_id
-                );
+            // 3. Fetch all quizzes to get course associations
+            const quizzesResponse = await fetch('/api/quizzes', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const allQuizzes = await quizzesResponse.json();
+
+            // Create quiz map for quick lookup
+            const quizMap = {};
+            allQuizzes.forEach(quiz => {
+                quizMap[quiz.id] = quiz;
+            });
+
+            // 4. Fetch all users to get student information
+            const usersResponse = await fetch('/api/users', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const allUsers = await usersResponse.json();
+
+            // Create user map for quick lookup
+            const userMap = {};
+            allUsers.forEach(user => {
+                userMap[user.id] = user;
+            });
+
+            // 5. Enrich grades with quiz, course, and user information
+            const enrichedGrades = allGrades.map(grade => {
+                const quizId = grade.quizId || grade.quiz_id;
+                const quiz = quizMap[quizId];
+                const userId = grade.userId || grade.user_id;
+                const user = userMap[userId];
+                return {
+                    ...grade,
+                    quiz: quiz || { title: 'Quiz Deleted', course_id: null, courseId: null },
+                    user: user || { name: 'Unknown User', email: 'N/A' }
+                };
+            });
+
+            // 6. Filter grades for teacher's courses only
+            allQuizGrades = enrichedGrades.filter(grade => {
+                const courseId = grade.courseId || grade.course_id || grade.quiz?.courseId || grade.quiz?.course_id;
+                return teacherCourses.some(course => course.id === courseId);
             });
 
             renderQuizGradesTable(allQuizGrades);

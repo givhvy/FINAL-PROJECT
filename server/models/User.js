@@ -290,6 +290,104 @@ class User {
         delete obj.resetPasswordExpires;
         return obj;
     }
+
+    /**
+     * Batch get users by IDs (fixes N+1 query problem)
+     * @param {Array<string>} userIds - Array of user IDs
+     * @returns {Promise<Array<Object>>} - Array of sanitized user objects
+     */
+    static async findByIds(userIds) {
+        try {
+            if (!userIds || userIds.length === 0) return [];
+
+            const db = this.getDB();
+            const uniqueIds = [...new Set(userIds)]; // Remove duplicates
+
+            // Firestore 'in' query limit is 10
+            const chunkSize = 10;
+            const chunks = [];
+            for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+                chunks.push(uniqueIds.slice(i, i + chunkSize));
+            }
+
+            // Fetch all chunks in parallel
+            const promises = chunks.map(chunk =>
+                db.collection('users')
+                    .where(require('firebase-admin').firestore.FieldPath.documentId(), 'in', chunk)
+                    .get()
+            );
+
+            const snapshots = await Promise.all(promises);
+
+            // Flatten results and sanitize
+            const users = snapshots.flatMap(snapshot =>
+                snapshot.docs.map(doc => {
+                    const user = new User({ id: doc.id, ...doc.data() });
+                    return user.toJSON(); // Automatically removes sensitive fields
+                })
+            );
+
+            return users;
+        } catch (error) {
+            throw new Error(`Error finding users by IDs: ${error.message}`);
+        }
+    }
+
+    /**
+     * Sanitize user data (remove password and sensitive fields)
+     * Static method for sanitizing plain objects
+     * @param {Object} userData - User data object
+     * @returns {Object} - Sanitized user data
+     */
+    static sanitize(userData) {
+        if (!userData) return null;
+
+        const { password, resetPasswordCode, resetPasswordExpires, ...sanitized } = userData;
+        return sanitized;
+    }
+
+    /**
+     * Get public profile (sanitized user data)
+     * @param {string} userId - User ID
+     * @returns {Promise<Object>} - Sanitized user object
+     */
+    static async getPublicProfile(userId) {
+        try {
+            const user = await this.findById(userId);
+            if (!user) return null;
+            return user.toJSON();
+        } catch (error) {
+            throw new Error(`Error getting public profile: ${error.message}`);
+        }
+    }
+
+    /**
+     * Check if user is admin
+     * @param {string} userId - User ID
+     * @returns {Promise<boolean>} - true if user is admin
+     */
+    static async isAdmin(userId) {
+        try {
+            const user = await this.findById(userId);
+            return user && user.role === 'admin';
+        } catch (error) {
+            throw new Error(`Error checking admin status: ${error.message}`);
+        }
+    }
+
+    /**
+     * Check if user is teacher
+     * @param {string} userId - User ID
+     * @returns {Promise<boolean>} - true if user is teacher or admin
+     */
+    static async isTeacher(userId) {
+        try {
+            const user = await this.findById(userId);
+            return user && (user.role === 'teacher' || user.role === 'admin');
+        } catch (error) {
+            throw new Error(`Error checking teacher status: ${error.message}`);
+        }
+    }
 }
 
 module.exports = User;

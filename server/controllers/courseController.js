@@ -1,70 +1,51 @@
-const { getFirestore } = require('firebase-admin/firestore');
+const Course = require('../models/Course');
+const Lesson = require('../models/Lesson');
+const User = require('../models/User');
 
 // Create a new course
 exports.createCourse = async (req, res) => {
     try {
-        const db = getFirestore();
-        const courseData = { ...req.body, createdAt: new Date().toISOString() };
-        // Đảm bảo giá trị price là number
-        if (courseData.price !== undefined) {
-            courseData.price = parseFloat(courseData.price);
-        }
-        const newCourseRef = await db.collection('courses').add(courseData);
-        res.status(201).json({ id: newCourseRef.id, ...courseData });
+        const courseData = {
+            ...req.body,
+            // Ensure price is number
+            price: req.body.price !== undefined ? parseFloat(req.body.price) : 0,
+            // Support both camelCase and snake_case
+            instructorId: req.body.instructorId || req.body.teacher_id,
+            teacher_id: req.body.teacher_id || req.body.instructorId
+        };
+
+        const newCourse = await Course.create(courseData);
+
+        res.status(201).json({
+            success: true,
+            data: newCourse.toJSON()
+        });
     } catch (err) {
         console.error("Create Course Error:", err);
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ success: false, error: err.message });
     }
 };
 
 // Get all courses (Bao gồm lessons và thông tin giảng viên)
 // FR2.4: Supports filtering by category, price, and instructor
+// OPTIMIZED: Uses Course.getAllWithDetails() to fix N+1 query problem
 exports.getCourses = async (req, res) => {
     try {
-        const db = getFirestore();
-        let coursesQuery = db.collection('courses');
-
-        // FR2.2: Filter by category if provided
         const { category, minPrice, maxPrice, instructorId, instructor } = req.query;
 
+        // Build filters for Course.getAllWithDetails()
+        const filters = {};
         if (category) {
-            coursesQuery = coursesQuery.where('category', '==', category);
+            filters.category = category;
+        }
+        if (instructorId) {
+            filters.instructorId = instructorId;
         }
 
-        const snapshot = await coursesQuery.get();
+        // Get all courses with teacher and enrollment data (3 queries total instead of N+1)
+        let courses = await Course.getAllWithDetails(filters);
 
-        let courses = await Promise.all(snapshot.docs.map(async (courseDoc) => {
-            const courseData = courseDoc.data();
-            let teacherData = null;
-
-            // 1. Lấy thông tin giảng viên (populate teacher)
-            if (courseData.teacher_id) {
-                const teacherRef = db.collection('users').doc(courseData.teacher_id);
-                const teacherSnap = await teacherRef.get();
-                if (teacherSnap.exists) {
-                    teacherData = { id: teacherSnap.id, ...teacherSnap.data() };
-                    delete teacherData.password;
-                }
-            }
-
-            // 2. Lấy tất cả lessons của khóa học
-            const lessons = [];
-            const lessonsQuery = db.collection('lessons').where('course_id', '==', courseDoc.id);
-            const lessonsSnapshot = await lessonsQuery.get();
-            lessonsSnapshot.forEach(lessonDoc => {
-                lessons.push({ id: lessonDoc.id, ...lessonDoc.data() });
-            });
-
-            return {
-                id: courseDoc.id,
-                ...courseData,
-                teacher: teacherData,
-                lessons: lessons,
-            };
-        }));
-
-        // FR2.4: Client-side filtering for price range and instructor
-        // (Firestore doesn't support range queries well with other filters)
+        // Client-side filtering for price range (Firestore doesn't support range queries well)
         if (minPrice !== undefined) {
             const min = parseFloat(minPrice);
             courses = courses.filter(course => (course.price || 0) >= min);
@@ -75,16 +56,35 @@ exports.getCourses = async (req, res) => {
             courses = courses.filter(course => (course.price || 0) <= max);
         }
 
-        // Filter by instructor ID or name
-        if (instructorId) {
-            courses = courses.filter(course => course.teacher_id === instructorId);
-        } else if (instructor) {
+        // Filter by instructor name
+        if (instructor) {
             const instructorLower = instructor.toLowerCase();
             courses = courses.filter(course =>
                 course.teacher &&
                 course.teacher.name &&
                 course.teacher.name.toLowerCase().includes(instructorLower)
             );
+        }
+
+        // Fetch lessons for each course (batch by courseIds)
+        if (courses.length > 0) {
+            const courseIds = courses.map(c => c.id);
+            const allLessons = await Lesson.findByCourseIds(courseIds);
+
+            // Group lessons by courseId
+            const lessonsByCourse = {};
+            allLessons.forEach(lesson => {
+                if (!lessonsByCourse[lesson.courseId]) {
+                    lessonsByCourse[lesson.courseId] = [];
+                }
+                lessonsByCourse[lesson.courseId].push(lesson);
+            });
+
+            // Attach lessons to courses
+            courses = courses.map(course => ({
+                ...course,
+                lessons: lessonsByCourse[course.id] || []
+            }));
         }
 
         res.status(200).json(courses);
@@ -97,118 +97,115 @@ exports.getCourses = async (req, res) => {
 // Get course by ID (Bao gồm lessons và quizzes)
 exports.getCourseById = async (req, res) => {
     try {
-        const db = getFirestore();
         const courseId = req.params.id;
-        const courseRef = db.collection('courses').doc(courseId);
-        const courseSnap = await courseRef.get();
 
-        if (!courseSnap.exists) {
-            return res.status(404).json({ error: 'Course not found' });
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({ success: false, error: 'Course not found' });
         }
 
-        const courseData = courseSnap.data();
+        const courseData = course.toJSON();
         let teacherData = null;
 
         // 1. Lấy thông tin giảng viên
-        if (courseData.teacher_id) {
-            const teacherRef = db.collection('users').doc(courseData.teacher_id);
-            const teacherSnap = await teacherRef.get();
-            if (teacherSnap.exists) {
-                teacherData = { id: teacherSnap.id, ...teacherSnap.data() };
-                delete teacherData.password;
+        if (courseData.instructorId || courseData.teacher_id) {
+            const teacherId = courseData.instructorId || courseData.teacher_id;
+            const teacher = await User.findById(teacherId);
+            if (teacher) {
+                teacherData = teacher.toJSON();
             }
         }
 
         // 2. Lấy tất cả lessons của khóa học
-        const lessons = [];
-        const lessonsQuery = db.collection('lessons').where('course_id', '==', courseId);
-        const lessonsSnapshot = await lessonsQuery.get();
-        lessonsSnapshot.forEach(lessonDoc => {
-            lessons.push({ id: lessonDoc.id, ...lessonDoc.data() });
-        });
+        const lessons = await Lesson.findByCourseId(courseId);
 
         // 3. Lấy tất cả quizzes của khóa học
-        const quizzes = [];
-        const quizzesQuery = db.collection('quizzes').where('course_id', '==', courseId);
-        const quizzesSnapshot = await quizzesQuery.get();
-        quizzesSnapshot.forEach(quizDoc => {
-            quizzes.push({ id: quizDoc.id, ...quizDoc.data() });
-        });
+        const Quiz = require('../models/Quiz');
+        const quizzes = await Quiz.findByCourseId(courseId);
 
         res.status(200).json({
-            id: courseSnap.id,
-            ...courseData,
-            teacher: teacherData,
-            lessons: lessons,
-            quizzes: quizzes,
+            success: true,
+            data: {
+                ...courseData,
+                teacher: teacherData,
+                lessons: lessons.map(l => l.toJSON()),
+                quizzes: quizzes.map(q => q.toJSON()),
+            }
         });
     } catch (err) {
         console.error("Get Course By ID Error:", err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 // Update course
 exports.updateCourse = async (req, res) => {
     try {
-        const db = getFirestore();
-        const docRef = db.collection('courses').doc(req.params.id);
-        
-        // Tạo payload mới, đảm bảo price là number nếu được gửi lên
-        const updateData = req.body;
+        const courseId = req.params.id;
+
+        // Prepare update data, ensure price is number if provided
+        const updateData = { ...req.body };
         if (updateData.price !== undefined) {
             updateData.price = parseFloat(updateData.price);
         }
 
-        const docSnap = await docRef.get();
-        if (!docSnap.exists) {
-            return res.status(404).json({ error: 'Course not found' });
-        }
-        
-        // Cập nhật tài liệu
-        await docRef.update(updateData);
-        
-        // Trả về dữ liệu cập nhật
-        res.status(200).json({ id: req.params.id, ...updateData });
+        const updatedCourse = await Course.update(courseId, updateData);
+
+        res.status(200).json({
+            success: true,
+            data: updatedCourse.toJSON()
+        });
     } catch (err) {
         console.error("Update Course Error:", err);
-        res.status(400).json({ error: 'Failed to update course: ' + err.message });
+        if (err.message.includes('not found')) {
+            res.status(404).json({ success: false, error: err.message });
+        } else {
+            res.status(400).json({ success: false, error: 'Failed to update course: ' + err.message });
+        }
     }
 };
 
 // Delete course (Xóa khóa học và tất cả lessons/quizzes liên quan)
 exports.deleteCourse = async (req, res) => {
     try {
-        const db = getFirestore();
         const courseId = req.params.id;
-        const docRef = db.collection('courses').doc(courseId);
 
-        const docSnap = await docRef.get();
-        if (!docSnap.exists) {
-            return res.status(404).json({ error: 'Course not found' });
+        // Check if course exists
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ success: false, error: 'Course not found' });
         }
 
-        const batch = db.batch();
+        // 1. Delete all lessons related to this course
+        const lessons = await Lesson.findByCourseId(courseId);
+        for (const lesson of lessons) {
+            await Lesson.delete(lesson.id);
+        }
 
-        // 1. Xóa các lessons liên quan
-        const lessonsQuery = db.collection('lessons').where('course_id', '==', courseId);
-        const lessonsSnapshot = await lessonsQuery.get();
-        lessonsSnapshot.forEach(doc => batch.delete(doc.ref));
+        // 2. Delete all quizzes related to this course
+        const Quiz = require('../models/Quiz');
+        const Question = require('../models/Question');
+        const quizzes = await Quiz.findByCourseId(courseId);
+        for (const quiz of quizzes) {
+            // Delete questions in each quiz
+            const questions = await Question.findByQuizId(quiz.id);
+            for (const question of questions) {
+                await Question.delete(question.id);
+            }
+            await Quiz.delete(quiz.id);
+        }
 
-        // 2. Xóa các quizzes liên quan
-        const quizzesQuery = db.collection('quizzes').where('course_id', '==', courseId);
-        const quizzesSnapshot = await quizzesQuery.get();
-        quizzesSnapshot.forEach(doc => batch.delete(doc.ref));
+        // 3. Delete the course itself
+        await Course.delete(courseId);
 
-        // 3. Xóa chính khóa học
-        batch.delete(docRef);
-
-        await batch.commit();
-
-        res.status(200).json({ message: 'Course and all related content deleted successfully' });
+        res.status(200).json({
+            success: true,
+            message: 'Course and all related content deleted successfully'
+        });
     } catch (err) {
         console.error("Delete Course Error:", err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
@@ -272,44 +269,34 @@ exports.submitForApproval = async (req, res) => {
 // Get lessons for a course
 exports.getCourseLessons = async (req, res) => {
     try {
-        const db = getFirestore();
         const courseId = req.params.id;
 
-        const lessonsSnapshot = await db.collection('lessons')
-            .where('course_id', '==', courseId)
-            .orderBy('order', 'asc')
-            .get();
+        const lessons = await Lesson.findByCourseId(courseId);
 
-        const lessons = lessonsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        res.status(200).json(lessons);
+        res.status(200).json({
+            success: true,
+            data: lessons.map(l => l.toJSON())
+        });
     } catch (err) {
         console.error("Get Course Lessons Error:", err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 // Get quizzes for a course
 exports.getCourseQuizzes = async (req, res) => {
     try {
-        const db = getFirestore();
         const courseId = req.params.id;
 
-        const quizzesSnapshot = await db.collection('quizzes')
-            .where('course_id', '==', courseId)
-            .get();
+        const Quiz = require('../models/Quiz');
+        const quizzes = await Quiz.findByCourseId(courseId);
 
-        const quizzes = quizzesSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        res.status(200).json(quizzes);
+        res.status(200).json({
+            success: true,
+            data: quizzes.map(q => q.toJSON())
+        });
     } catch (err) {
         console.error("Get Course Quizzes Error:", err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 };

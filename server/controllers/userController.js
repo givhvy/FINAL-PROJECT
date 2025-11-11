@@ -2,6 +2,9 @@
 
 const { getFirestore } = require('firebase-admin/firestore');
 const User = require('../models/User');
+const Enrollment = require('../models/Enrollment');
+const Course = require('../models/Course');
+const Progress = require('../models/Progress');
 
 // Create a new user
 exports.createUser = async (req, res) => {
@@ -124,8 +127,8 @@ exports.getUserProgressDetails = async (req, res) => {
                 const order = orderDoc.data();
                 const courseId = order.course_id;
 
-                // Skip if no course_id or already processed
-                if (!courseId || processedCourses.has(courseId)) {
+                // Skip if no course_id, undefined, or already processed
+                if (!courseId || courseId === 'undefined' || processedCourses.has(courseId)) {
                     continue;
                 }
 

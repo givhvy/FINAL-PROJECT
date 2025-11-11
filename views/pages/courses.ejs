@@ -921,8 +921,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             courseCard.innerHTML = `
                 <div class="h-40 relative overflow-hidden">
-                    ${course.imageUrl && course.imageUrl.trim() !== '' ?
-                        `<img src="${course.imageUrl}" alt="${course.title}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                    ${(course.imageUrl || course.thumbnail) && (course.imageUrl || course.thumbnail).trim() !== '' ?
+                        `<img src="${course.imageUrl || course.thumbnail}" alt="${course.title}" class="w-full h-full object-cover" loading="lazy" decoding="async">
                          <div class="absolute inset-0 bg-black bg-opacity-10 hover:bg-opacity-20 transition-all duration-300"></div>` :
                         `<div class="${bgColor} w-full h-full flex items-center justify-center">
                             <i class="fas ${iconClass} text-white text-6xl opacity-80"></i>
@@ -1101,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             if (progressRes.ok) {
                 const progressData = await progressRes.json();
-                completedLessonIds = new Set(progressData.map(p => p.lesson_id));
+                completedLessonIds = new Set(progressData.map(p => p.lessonId || p.lesson_id));
             }
         } catch (error) {
             console.warn('Could not fetch completed lessons:', error);
@@ -1257,20 +1257,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             let videoHTML = '';
-            if (lesson.content_type === 'video' && lesson.content_data) {
-                const data = lesson.content_data;
+            // Check if lesson has a video URL (videoUrl or video_url for backwards compatibility)
+            const videoUrl = lesson.videoUrl || lesson.video_url || '';
+            if (videoUrl && videoUrl.trim() !== '') {
+                const data = videoUrl;
                 let embedUrl = '';
-                
+
                 if (data.includes('youtube.com') || data.includes('youtu.be')) {
                     // Handle YouTube
-                    embedUrl = data.includes('watch?v=') 
-                        ? data.replace('watch?v=', 'embed/') 
+                    embedUrl = data.includes('watch?v=')
+                        ? data.replace('watch?v=', 'embed/')
                         : data.replace('youtu.be/', 'youtube.com/embed/');
-                        
+
                 } else if (data.includes('drive.google.com/embed')) {
                     // Handle Google Drive (already embeddable)
-                    embedUrl = data; 
-                    
+                    embedUrl = data;
+
                 } else if (data.includes('drive.google.com/file/d/')) {
                     // Handle regular Drive share links
                     const match = data.match(/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -1320,7 +1322,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 ${buttonText}
                             </button>
                         </div>
-                        <div class="prose max-w-none lesson-html-content">${lesson.content_data_html || ''}</div>
+                        <div class="prose max-w-none lesson-html-content">
+                            ${lesson.description ? `<p class="text-gray-600 dark:text-gray-400 mb-4">${lesson.description}</p>` : ''}
+                            ${lesson.content || ''}
+                        </div>
                     </div>
                 </div>`;
             contentArea.innerHTML = contentHTML;

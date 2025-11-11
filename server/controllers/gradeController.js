@@ -1,54 +1,43 @@
-const { getFirestore } = require('firebase-admin/firestore');
+const Grade = require('../models/Grade');
 
 // Create a new grade
 exports.createGrade = async (req, res) => {
   try {
-    const db = getFirestore();
-    const gradeData = { ...req.body, createdAt: new Date().toISOString() };
-    const newGradeRef = await db.collection('grades').add(gradeData);
-    res.status(201).json({ id: newGradeRef.id, ...gradeData });
+    const grade = await Grade.create(req.body);
+    res.status(201).json({ success: true, grade });
   } catch (err) {
     console.error("Create Grade Error:", err);
     res.status(400).json({ error: err.message });
   }
 };
 
-// Get all grades
+// Get all grades (for admin/teacher)
 exports.getGrades = async (req, res) => {
   try {
-    const db = getFirestore();
-    const gradesRef = db.collection('grades');
-    const snapshot = await gradesRef.get();
+    const { userId, quizId } = req.query;
 
-    const grades = await Promise.all(snapshot.docs.map(async (gradeDoc) => {
-      const gradeData = gradeDoc.data();
-      let userData = null;
-      let quizData = null;
+    let grades;
+    if (userId) {
+      grades = await Grade.findByStudent(userId);
+    } else if (quizId) {
+      grades = await Grade.findByQuiz(quizId);
+    } else {
+      // Fetch all grades for admin/teacher dashboard
+      const db = Grade.getDB();
+      const snapshot = await db.collection('grades').get();
 
-      if (gradeData.user_id) {
-        const userRef = db.collection('users').doc(gradeData.user_id);
-        const userSnap = await userRef.get();
-        if (userSnap.exists) {
-          userData = { id: userSnap.id, ...userSnap.data() };
-          delete userData.password;
-        }
-      }
+      grades = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
 
-      if (gradeData.quiz_id) {
-        const quizRef = db.collection('quizzes').doc(gradeData.quiz_id);
-        const quizSnap = await quizRef.get();
-        if (quizSnap.exists) {
-          quizData = { id: quizSnap.id, ...quizSnap.data() };
-        }
-      }
-      
-      return { 
-        id: gradeDoc.id, 
-        ...gradeData,
-        user: userData,
-        quiz: quizData,
-      };
-    }));
+      // Sort by createdAt descending
+      grades.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || a.createdAt || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || b.createdAt || new Date(0);
+        return dateB - dateA;
+      });
+    }
 
     res.status(200).json(grades);
   } catch (err) {
@@ -60,44 +49,37 @@ exports.getGrades = async (req, res) => {
 // Get grade by ID
 exports.getGradeById = async (req, res) => {
   try {
-    const db = getFirestore();
-    const gradeRef = db.collection('grades').doc(req.params.id);
-    const gradeSnap = await gradeRef.get();
-
-    if (!gradeSnap.exists) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-
-    const gradeData = gradeSnap.data();
-    let userData = null;
-    let quizData = null;
-
-    if (gradeData.user_id) {
-        const userRef = db.collection('users').doc(gradeData.user_id);
-        const userSnap = await userRef.get();
-        if (userSnap.exists) {
-          userData = { id: userSnap.id, ...userSnap.data() };
-          delete userData.password;
-        }
-    }
-
-    if (gradeData.quiz_id) {
-        const quizRef = db.collection('quizzes').doc(gradeData.quiz_id);
-        const quizSnap = await quizRef.get();
-        if (quizSnap.exists) {
-          quizData = { id: quizSnap.id, ...quizSnap.data() };
-        }
-    }
-
-    res.status(200).json({
-      id: gradeSnap.id,
-      ...gradeData,
-      user: userData,
-      quiz: quizData,
-    });
-
+    const grade = await Grade.findById(req.params.id);
+    res.status(200).json(grade);
   } catch (err) {
     console.error("Get Grade By ID Error:", err);
+    if (err.message.includes('not found')) {
+      return res.status(404).json({ error: err.message });
+    }
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get student's average
+exports.getStudentAverage = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const average = await Grade.getStudentAverage(userId);
+    res.status(200).json({ userId, average });
+  } catch (err) {
+    console.error("Get Student Average Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get quiz statistics
+exports.getQuizStats = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const stats = await Grade.getQuizStats(quizId);
+    res.status(200).json({ quizId, ...stats });
+  } catch (err) {
+    console.error("Get Quiz Stats Error:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -105,16 +87,13 @@ exports.getGradeById = async (req, res) => {
 // Update grade
 exports.updateGrade = async (req, res) => {
   try {
-    const db = getFirestore();
-    const docRef = db.collection('grades').doc(req.params.id);
-    const docSnap = await docRef.get();
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-    await docRef.update(req.body);
-    res.status(200).json({ id: req.params.id, ...req.body });
+    const updatedGrade = await Grade.update(req.params.id, req.body);
+    res.status(200).json({ success: true, grade: updatedGrade });
   } catch (err) {
     console.error("Update Grade Error:", err);
+    if (err.message.includes('not found')) {
+      return res.status(404).json({ error: err.message });
+    }
     res.status(400).json({ error: err.message });
   }
 };
@@ -122,16 +101,13 @@ exports.updateGrade = async (req, res) => {
 // Delete grade
 exports.deleteGrade = async (req, res) => {
   try {
-    const db = getFirestore();
-    const docRef = db.collection('grades').doc(req.params.id);
-    const docSnap = await docRef.get();
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: 'Grade not found' });
-    }
-    await docRef.delete();
+    await Grade.delete(req.params.id);
     res.status(200).json({ message: 'Grade deleted successfully' });
   } catch (err) {
     console.error("Delete Grade Error:", err);
+    if (err.message.includes('not found')) {
+      return res.status(404).json({ error: err.message });
+    }
     res.status(500).json({ error: err.message });
   }
 };

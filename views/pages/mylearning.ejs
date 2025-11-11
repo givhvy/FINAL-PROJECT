@@ -407,10 +407,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const quizzesResponse = await fetch('/api/quizzes', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!quizzesResponse.ok) throw new Error('Failed to fetch quizzes.');
             const quizzes = await quizzesResponse.json();
-            
-            const gradesResponse = await fetch('/api/grades', { headers: { 'Authorization': `Bearer ${token}` } });
-            const allGrades = gradesResponse.ok ? await gradesResponse.json() : [];
-            const completedQuizIds = new Set(allGrades.filter(g => g.user_id === user.id).map(g => g.quiz_id));
+
+            const gradesResponse = await fetch(`/api/grades?userId=${user.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const myGrades = gradesResponse.ok ? await gradesResponse.json() : [];
+            const completedQuizIds = new Set(myGrades.map(g => g.quizId || g.quiz_id));
 
 
             const availableQuizzes = quizzes.filter(q => !completedQuizIds.has(q.id));
@@ -446,13 +446,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function fetchAndRenderMyGrades() {
         const gradesListDiv = document.getElementById('my-grades-list');
         gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">Loading your grades...</p>';
-        
+
         try {
-            const gradesResponse = await fetch('/api/grades', { headers: { 'Authorization': `Bearer ${token}` } });
+            const gradesResponse = await fetch(`/api/grades?userId=${user.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!gradesResponse.ok) throw new Error('Failed to fetch grades.');
-            const allGrades = await gradesResponse.json();
-            
-            const myGrades = allGrades.filter(grade => grade.user_id === user.id); 
+            const myGrades = await gradesResponse.json(); 
 
             if (myGrades.length === 0) {
                 gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">You have not completed any quizzes yet.</p>';
@@ -592,7 +590,7 @@ async function fetchAndRenderLearningProgress() {
         certificatesGrid.innerHTML = '<p class="col-span-full text-gray-500 text-center py-4">Loading your certificates...</p>';
 
         try {
-            const response = await fetch(`http://localhost:5000/api/certificates/user/${user.id}`);
+            const response = await fetch(`/api/certificates/user/${user.id}`);
             const certificates = await response.json();
 
             if (certificates.length === 0) {
@@ -638,7 +636,7 @@ async function fetchAndRenderLearningProgress() {
     // View certificate details
     async function viewCertificate(certId) {
         try {
-            const response = await fetch(`http://localhost:5000/api/certificates/${certId}`);
+            const response = await fetch(`/api/certificates/${certId}`);
             currentCertificate = await response.json();
 
             document.getElementById('certificate-content').innerHTML = renderCertificate(currentCertificate);
@@ -662,7 +660,7 @@ async function fetchAndRenderLearningProgress() {
         if (!currentCertificate) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/certificates/${currentCertificate.id}/download`);
+            const response = await fetch(`/api/certificates/${currentCertificate.id}/download`);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');

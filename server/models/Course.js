@@ -10,12 +10,16 @@ class Course {
         this.title = data.title;
         this.description = data.description || '';
         this.instructor = data.instructor || '';
-        this.instructorId = data.instructorId || null;
+        // Support both camelCase and snake_case for backwards compatibility
+        this.instructorId = data.instructorId || data.teacher_id || null;
+        this.teacher_id = data.teacher_id || data.instructorId || null; // Keep for backwards compat
         this.price = data.price || 0;
         this.duration = data.duration || '';
         this.level = data.level || 'beginner'; // beginner, intermediate, advanced
         this.category = data.category || '';
-        this.thumbnail = data.thumbnail || '';
+        // Support both thumbnail and imageUrl for backwards compatibility
+        this.thumbnail = data.thumbnail || data.imageUrl || '';
+        this.imageUrl = data.imageUrl || data.thumbnail || ''; // Keep for backwards compat
         this.rating = data.rating || 0;
         this.enrolledStudents = data.enrolledStudents || 0;
         this.isPublished = data.isPublished !== undefined ? data.isPublished : false;
@@ -64,7 +68,8 @@ class Course {
             const db = this.getDB();
             let query = db.collection('courses');
 
-            // Áp dụng các bộ lọc
+            // Áp dụng các bộ lọc     // Lọc theo category, level, hoặc người dạy
+
             if (filters.category) {
                 query = query.where('category', '==', filters.category);
             }
@@ -123,7 +128,7 @@ class Course {
     }
 
     /**
-     * Tạo khóa học mới
+     * Tạo khóa học mới (Create in CRUD)
      * @param {Object} courseData - Dữ liệu khóa học
      * @returns {Promise<Course>} - Course object đã tạo
      */
@@ -191,7 +196,7 @@ class Course {
     }
 
     /**
-     * Xóa khóa học
+     * Xóa khóa học (Delete in CRUD, checkpoint)
      * @param {string} id - Course ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */
@@ -206,7 +211,7 @@ class Course {
     }
 
     /**
-     * Tăng số lượng học sinh đăng ký
+     * Tăng số lượng học sinh đăng ký (Mỗi khi có người mới học → cộng thêm 1 vào số học sinh.)
      * @param {string} id - Course ID
      * @returns {Promise<Course>} - Course object đã cập nhật
      */
@@ -389,6 +394,64 @@ class Course {
             return await this.findById(id);
         } catch (error) {
             throw new Error(`Error submitting course for approval: ${error.message}`);
+        }
+    }
+
+    /**
+     * Get all courses with teacher details and enrollment counts (fixes N+1 query)
+     * @param {Object} filters - Optional filters (same as findAll)
+     * @returns {Promise<Array<Object>>} - Array of course objects with teacher and enrollmentCount
+     */
+    static async getAllWithDetails(filters = {}) {
+        try {
+            const User = require('./User');
+            const Enrollment = require('./Enrollment');
+
+            // Query 1: Get all courses with filters
+            const courses = await this.findAll(filters);
+
+            if (courses.length === 0) {
+                return [];
+            }
+
+            // Query 2: Batch fetch teachers using User.findByIds()
+            const teacherIds = [...new Set(courses.map(c => c.instructorId).filter(Boolean))];
+            const teachers = teacherIds.length > 0 ? await User.findByIds(teacherIds) : [];
+            const teacherMap = Object.fromEntries(teachers.map(t => [t.id, t]));
+
+            // Query 3: Get enrollment counts using Enrollment.countByCourses()
+            const courseIds = courses.map(c => c.id);
+            const enrollmentCounts = await Enrollment.countByCourses(courseIds);
+
+            // Combine data in memory
+            return courses.map(course => ({
+                id: course.id,
+                title: course.title,
+                description: course.description,
+                instructor: course.instructor,
+                instructorId: course.instructorId,
+                teacher_id: course.teacher_id, // Backwards compatibility
+                price: course.price,
+                duration: course.duration,
+                level: course.level,
+                category: course.category,
+                thumbnail: course.thumbnail,
+                imageUrl: course.imageUrl, // Backwards compatibility
+                rating: course.rating,
+                enrolledStudents: course.enrolledStudents,
+                isPublished: course.isPublished,
+                status: course.status,
+                rejectionReason: course.rejectionReason,
+                approvedBy: course.approvedBy,
+                approvedAt: course.approvedAt,
+                createdAt: course.createdAt,
+                updatedAt: course.updatedAt,
+                // Enriched data
+                teacher: teacherMap[course.instructorId] || null,
+                enrollmentCount: enrollmentCounts[course.id] || 0
+            }));
+        } catch (error) {
+            throw new Error(`Error getting all courses with details: ${error.message}`);
         }
     }
 

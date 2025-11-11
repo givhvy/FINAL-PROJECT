@@ -7,9 +7,17 @@ const { getFirestore } = require('firebase-admin/firestore');
 class Enrollment {
     constructor(data) {
         this.id = data.id || null;
-        this.userId = data.userId;
-        this.courseId = data.courseId;
-        this.enrolledAt = data.enrolledAt || new Date().toISOString();
+
+        // Support both camelCase and snake_case for backwards compatibility
+        this.userId = data.userId || data.user_id;
+        this.user_id = data.user_id || data.userId; // Keep for backwards compat
+
+        this.courseId = data.courseId || data.course_id;
+        this.course_id = data.course_id || data.courseId; // Keep for backwards compat
+
+        this.enrolledAt = data.enrolledAt || data.enrolled_at || new Date().toISOString();
+        this.enrolled_at = data.enrolled_at || data.enrolledAt || new Date().toISOString();
+
         this.status = data.status || 'active'; // 'active', 'completed', 'dropped'
     }
 
@@ -28,9 +36,18 @@ class Enrollment {
     static async findByUserId(userId) {
         try {
             const db = this.getDB();
-            const snapshot = await db.collection('enrollments')
+
+            // Try camelCase first (new schema)
+            let snapshot = await db.collection('enrollments')
                 .where('userId', '==', userId)
                 .get();
+
+            // If empty, try snake_case (old schema)
+            if (snapshot.empty) {
+                snapshot = await db.collection('enrollments')
+                    .where('user_id', '==', userId)
+                    .get();
+            }
 
             return snapshot.docs.map(doc => new Enrollment({ id: doc.id, ...doc.data() }));
         } catch (error) {
@@ -46,9 +63,18 @@ class Enrollment {
     static async findByCourseId(courseId) {
         try {
             const db = this.getDB();
-            const snapshot = await db.collection('enrollments')
+
+            // Try camelCase first (new schema)
+            let snapshot = await db.collection('enrollments')
                 .where('courseId', '==', courseId)
                 .get();
+
+            // If empty, try snake_case (old schema)
+            if (snapshot.empty) {
+                snapshot = await db.collection('enrollments')
+                    .where('course_id', '==', courseId)
+                    .get();
+            }
 
             return snapshot.docs.map(doc => new Enrollment({ id: doc.id, ...doc.data() }));
         } catch (error) {
@@ -65,10 +91,20 @@ class Enrollment {
     static async findOne(userId, courseId) {
         try {
             const db = this.getDB();
-            const snapshot = await db.collection('enrollments')
+
+            // Try camelCase first (new schema)
+            let snapshot = await db.collection('enrollments')
                 .where('userId', '==', userId)
                 .where('courseId', '==', courseId)
                 .get();
+
+            // If empty, try snake_case (old schema)
+            if (snapshot.empty) {
+                snapshot = await db.collection('enrollments')
+                    .where('user_id', '==', userId)
+                    .where('course_id', '==', courseId)
+                    .get();
+            }
 
             if (snapshot.empty) {
                 return null;
@@ -113,7 +149,7 @@ class Enrollment {
     }
 
     /**
-     * Update enrollment status
+     * Update enrollment status (update in CRUD)
      * @param {string} id - Enrollment ID
      * @param {string} status - New status
      * @returns {Promise<Enrollment>} - Updated enrollment
@@ -156,6 +192,73 @@ class Enrollment {
             return enrollments.filter(e => e.status === 'active').length;
         } catch (error) {
             throw new Error(`Error counting enrollments: ${error.message}`);
+        }
+    }
+
+    /**
+     * Count enrollments by multiple courses (fixes N+1 query problem)
+     * @param {Array<string>} courseIds - Array of course IDs
+     * @returns {Promise<Object>} - Object with courseId as key and count as value
+     */
+    static async countByCourses(courseIds) {
+        try {
+            if (!courseIds || courseIds.length === 0) return {};
+
+            const db = this.getDB();
+            const uniqueIds = [...new Set(courseIds)]; // Remove duplicates
+
+            // Firestore 'in' query limit is 10
+            const chunkSize = 10;
+            const chunks = [];
+            for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+                chunks.push(uniqueIds.slice(i, i + chunkSize));
+            }
+
+            // Fetch all chunks in parallel (try both camelCase and snake_case)
+            const promisesCamelCase = chunks.map(chunk =>
+                db.collection('enrollments')
+                    .where('courseId', 'in', chunk)
+                    .get()
+            );
+
+            const promisesSnakeCase = chunks.map(chunk =>
+                db.collection('enrollments')
+                    .where('course_id', 'in', chunk)
+                    .get()
+            );
+
+            const snapshots = await Promise.all([...promisesCamelCase, ...promisesSnakeCase]);
+
+            // Count enrollments per course (support both field names)
+            const counts = {};
+            snapshots.forEach(snapshot => {
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const courseId = data.courseId || data.course_id;
+                    if (courseId) {
+                        counts[courseId] = (counts[courseId] || 0) + 1;
+                    }
+                });
+            });
+
+            return counts;
+        } catch (error) {
+            throw new Error(`Error counting enrollments by courses: ${error.message}`);
+        }
+    }
+
+    /**
+     * Check if user is enrolled in course
+     * @param {string} userId - User ID
+     * @param {string} courseId - Course ID
+     * @returns {Promise<boolean>} - true if enrolled
+     */
+    static async isEnrolled(userId, courseId) {
+        try {
+            const enrollment = await this.findOne(userId, courseId);
+            return enrollment !== null;
+        } catch (error) {
+            throw new Error(`Error checking enrollment: ${error.message}`);
         }
     }
 }

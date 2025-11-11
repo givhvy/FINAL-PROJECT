@@ -7,16 +7,31 @@ const { getFirestore } = require('firebase-admin/firestore');
 class Quiz {
     constructor(data) {
         this.id = data.id || null;
-        this.courseId = data.courseId;
-        this.lessonId = data.lessonId || null;
+
+        // Backwards compatibility: support both camelCase and snake_case
+        this.courseId = data.courseId || data.course_id;
+        this.course_id = data.course_id || data.courseId; // Keep for backwards compat
+
+        this.lessonId = data.lessonId || data.lesson_id || null;
+        this.lesson_id = data.lesson_id || data.lessonId || null;
+
         this.title = data.title;
         this.description = data.description || '';
         this.duration = data.duration || 0; // Duration in minutes
-        this.passingScore = data.passingScore || 70; // Minimum score to pass (%)
-        this.totalPoints = data.totalPoints || 0;
+
+        this.passingScore = data.passingScore || data.passing_score || 70;
+        this.passing_score = data.passing_score || data.passingScore || 70;
+
+        this.totalPoints = data.totalPoints || data.total_points || 0;
+        this.total_points = data.total_points || data.totalPoints || 0;
+
         this.isPublished = data.isPublished !== undefined ? data.isPublished : false;
-        this.createdAt = data.createdAt || new Date().toISOString();
-        this.updatedAt = data.updatedAt || new Date().toISOString();
+
+        this.createdAt = data.createdAt || data.created_at || new Date().toISOString();
+        this.created_at = data.created_at || data.createdAt || new Date().toISOString();
+
+        this.updatedAt = data.updatedAt || data.updated_at || new Date().toISOString();
+        this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
     /**
@@ -56,14 +71,32 @@ class Quiz {
             const db = this.getDB();
             let query = db.collection('quizzes');
 
-            // Áp dụng bộ lọc theo courseId
+            // Áp dụng bộ lọc theo courseId - try both schemas
             if (filters.courseId) {
-                query = query.where('courseId', '==', filters.courseId);
+                // Try camelCase first
+                let tempQuery = query.where('courseId', '==', filters.courseId);
+                let tempSnapshot = await tempQuery.limit(1).get();
+
+                // If empty, try snake_case
+                if (tempSnapshot.empty) {
+                    query = query.where('course_id', '==', filters.courseId);
+                } else {
+                    query = tempQuery;
+                }
             }
 
-            // Áp dụng bộ lọc theo lessonId
+            // Áp dụng bộ lọc theo lessonId - try both schemas
             if (filters.lessonId) {
-                query = query.where('lessonId', '==', filters.lessonId);
+                // Try camelCase first
+                let tempQuery = query.where('lessonId', '==', filters.lessonId);
+                let tempSnapshot = await tempQuery.limit(1).get();
+
+                // If empty, try snake_case
+                if (tempSnapshot.empty) {
+                    query = query.where('lesson_id', '==', filters.lessonId);
+                } else {
+                    query = tempQuery;
+                }
             }
 
             // Áp dụng bộ lọc theo isPublished

@@ -1,114 +1,166 @@
 // server/controllers/orderController.js
 
-const { getFirestore } = require('firebase-admin/firestore');
+const Order = require('../models/Order');
+const User = require('../models/User');
+const Course = require('../models/Course');
 
 exports.createOrder = async (req, res) => {
     try {
-        const db = getFirestore();
-        const orderData = { ...req.body, createdAt: new Date().toISOString() };
-        const newOrderRef = await db.collection('orders').add(orderData);
-        res.status(201).json({ id: newOrderRef.id, ...orderData });
+        const orderData = {
+            ...req.body,
+            // Support both camelCase and snake_case
+            userId: req.body.userId || req.body.user_id,
+            courseId: req.body.courseId || req.body.course_id,
+            courseName: req.body.courseName || req.body.course_name
+        };
+
+        const newOrder = await Order.create(orderData);
+
+        res.status(201).json({
+            success: true,
+            data: newOrder.toJSON()
+        });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error("Create Order Error:", err);
+        res.status(400).json({ success: false, error: err.message });
     }
 };
 
 exports.getOrders = async (req, res) => {
     try {
-        const db = getFirestore();
-        const ordersSnapshot = await db.collection('orders').get();
+        const filters = {};
 
-        const orders = await Promise.all(ordersSnapshot.docs.map(async (orderDoc) => {
-            const orderData = orderDoc.data();
+        // Support query filters
+        if (req.query.userId || req.query.user_id) {
+            filters.userId = req.query.userId || req.query.user_id;
+        }
+        if (req.query.courseId || req.query.course_id) {
+            filters.courseId = req.query.courseId || req.query.course_id;
+        }
+        if (req.query.status) {
+            filters.status = req.query.status;
+        }
+        if (req.query.limit) {
+            filters.limit = parseInt(req.query.limit);
+        }
+
+        const orders = await Order.findAll(filters);
+
+        // Populate user and course data
+        const populatedOrders = await Promise.all(orders.map(async (order) => {
+            const orderData = order.toJSON();
             let userData = null;
             let courseData = null;
 
-            if (orderData.user_id) {
-                const userSnap = await db.collection('users').doc(orderData.user_id).get();
-                if (userSnap.exists) {
-                    userData = { id: userSnap.id, ...userSnap.data() };
-                    delete userData.password;
+            if (orderData.userId) {
+                const user = await User.findById(orderData.userId);
+                if (user) {
+                    userData = user.toJSON();
                 }
             }
 
-            if (orderData.course_id) {
-                const courseSnap = await db.collection('courses').doc(orderData.course_id).get();
-                if (courseSnap.exists) {
-                    courseData = { id: courseSnap.id, ...courseSnap.data() };
+            if (orderData.courseId) {
+                const course = await Course.findById(orderData.courseId);
+                if (course) {
+                    courseData = course.toJSON();
                 }
             }
-          
+
             return {
-                id: orderDoc.id,
                 ...orderData,
                 user: userData,
                 course: courseData,
             };
         }));
-        res.status(200).json(orders);
+
+        res.status(200).json({
+            success: true,
+            data: populatedOrders
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Get Orders Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 exports.getOrderById = async (req, res) => {
     try {
-        const db = getFirestore();
-        const orderRef = db.collection('orders').doc(req.params.id);
-        const orderSnap = await orderRef.get();
+        const orderId = req.params.id;
+        const order = await Order.findById(orderId);
 
-        if (!orderSnap.exists) {
-            return res.status(404).json({ error: 'Order not found' });
+        if (!order) {
+            return res.status(404).json({ success: false, error: 'Order not found' });
         }
 
-        const orderData = orderSnap.data();
+        const orderData = order.toJSON();
         let userData = null;
         let courseData = null;
 
-        if (orderData.user_id) {
-            const userSnap = await db.collection('users').doc(orderData.user_id).get();
-            if (userSnap.exists) {
-                userData = { id: userSnap.id, ...userSnap.data() };
-                delete userData.password;
+        if (orderData.userId) {
+            const user = await User.findById(orderData.userId);
+            if (user) {
+                userData = user.toJSON();
             }
         }
-        
-        if (orderData.course_id) {
-            const courseSnap = await db.collection('courses').doc(orderData.course_id).get();
-            if (courseSnap.exists) {
-                courseData = { id: courseSnap.id, ...courseSnap.data() };
+
+        if (orderData.courseId) {
+            const course = await Course.findById(orderData.courseId);
+            if (course) {
+                courseData = course.toJSON();
             }
         }
 
         res.status(200).json({
-            id: orderSnap.id,
-            ...orderData,
-            user: userData,
-            course: courseData,
+            success: true,
+            data: {
+                ...orderData,
+                user: userData,
+                course: courseData,
+            }
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Get Order By ID Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 exports.updateOrder = async (req, res) => {
     try {
-        const db = getFirestore();
-        const docRef = db.collection('orders').doc(req.params.id);
-        await docRef.update(req.body);
-        res.status(200).json({ id: req.params.id, ...req.body });
+        const orderId = req.params.id;
+        const updatedOrder = await Order.update(orderId, req.body);
+
+        res.status(200).json({
+            success: true,
+            data: updatedOrder.toJSON()
+        });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error("Update Order Error:", err);
+        if (err.message.includes('not found')) {
+            res.status(404).json({ success: false, error: err.message });
+        } else {
+            res.status(400).json({ success: false, error: err.message });
+        }
     }
 };
 
 exports.deleteOrder = async (req, res) => {
     try {
-        const db = getFirestore();
-        const docRef = db.collection('orders').doc(req.params.id);
-        await docRef.delete();
-        res.status(200).json({ message: 'Order deleted successfully' });
+        const orderId = req.params.id;
+
+        // Check if order exists
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, error: 'Order not found' });
+        }
+
+        await Order.delete(orderId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Order deleted successfully'
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Delete Order Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };

@@ -1,54 +1,66 @@
-const { getFirestore } = require('firebase-admin/firestore');
-const { sendMailListConfirmation } = require('../services/emailService');
-
-// Sửa lỗi: Không gọi getFirestore() ở ngoài hàm
-// const db = getFirestore(); // Dòng này đã được xóa
-
+const Newsletter = require('../models/Newsletter');
 
 // Subscribe to newsletter
 exports.subscribeToNewsletter = async (req, res) => {
   try {
-    const db = getFirestore();
     const { email } = req.body;
 
-    // Check if email already exists
-    const subscribersRef = db.collection('newsletter_subscribers');
-    const q = subscribersRef.where('email', '==', email);
-    const snapshot = await q.get();
-
-    if (!snapshot.empty) {
-      return res.status(200).json({ message: 'Email đã được đăng ký trước đó!' });
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
     }
 
-    // Add new subscriber
-    await subscribersRef.add({
-      email: email,
-      subscribedAt: new Date().toISOString(),
-      active: true
-    });
+    const subscriber = await Newsletter.subscribe(email);
 
-    res.status(201).json({ message: 'Đăng ký thành công!' });
+    res.status(201).json({
+      success: true,
+      message: 'Đăng ký thành công!',
+      data: subscriber.toJSON()
+    });
   } catch (err) {
     console.error("Newsletter Subscribe Error:", err);
-    res.status(500).json({ error: 'Có lỗi xảy ra khi đăng ký' });
+    res.status(500).json({ success: false, error: 'Có lỗi xảy ra khi đăng ký' });
+  }
+};
+
+// Unsubscribe from newsletter
+exports.unsubscribeFromNewsletter = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    const subscriber = await Newsletter.unsubscribe(email);
+
+    if (!subscriber) {
+      return res.status(404).json({ success: false, error: 'Email not found in subscribers list' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Hủy đăng ký thành công!',
+      data: subscriber.toJSON()
+    });
+  } catch (err) {
+    console.error("Newsletter Unsubscribe Error:", err);
+    res.status(500).json({ success: false, error: 'Có lỗi xảy ra khi hủy đăng ký' });
   }
 };
 
 // Check subscription status
 exports.getSubscriptionStatus = async (req, res) => {
   try {
-    const db = getFirestore();
     const userEmail = req.user.email; // From auth middleware
 
-    const subscribersRef = db.collection('newsletter_subscribers');
-    const q = subscribersRef.where('email', '==', userEmail);
-    const snapshot = await q.get();
+    const subscribed = await Newsletter.isSubscribed(userEmail);
 
-    const subscribed = !snapshot.empty && snapshot.docs[0].data().active;
-    
-    res.json({ subscribed });
+    res.json({
+      success: true,
+      data: { subscribed }
+    });
   } catch (err) {
     console.error("Check Subscription Error:", err);
-    res.status(500).json({ error: 'Không thể kiểm tra trạng thái đăng ký' });
+    res.status(500).json({ success: false, error: 'Không thể kiểm tra trạng thái đăng ký' });
   }
 };

@@ -1,17 +1,9 @@
-const {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    getDoc,
-    doc,
-    updateDoc,
-    deleteDoc
-} = require('firebase-admin/firestore');
-
-// Đảm bảo bạn đã chạy 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env
+// 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { Order, User } = require('../models');
+const Payment = require('../models/Payment');
+const Order = require('../models/Order');
+const User = require('../models/User');
+const Course = require('../models/Course');
 
 // --- Stripe Integration Logic ---
 exports.createCheckoutSession = async (req, res) => {
@@ -70,45 +62,47 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         const { sessionId } = req.body;
 
         if (!sessionId) {
-            return res.status(400).json({ error: 'Session ID is required' });
+            return res.status(400).json({ success: false, error: 'Session ID is required' });
         }
 
         // Retrieve the Stripe session
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
         if (!session) {
-            return res.status(404).json({ error: 'Session not found' });
+            return res.status(404).json({ success: false, error: 'Session not found' });
         }
 
         // Check if payment was successful
         if (session.payment_status !== 'paid') {
-            return res.status(400).json({ error: 'Payment not completed' });
+            return res.status(400).json({ success: false, error: 'Payment not completed' });
         }
 
         const userId = session.client_reference_id || session.metadata.user_id;
         const courseId = session.metadata.course_id;
 
-        // Check if order already exists for this session
-        const db = getFirestore();
-        const existingOrderSnapshot = await db.collection('orders')
-            .where('paymentId', '==', sessionId)
-            .get();
+        // Check if order already exists for this session using Order model
+        const allOrders = await Order.findAll({});
+        const existingOrder = allOrders.find(order => order.paymentId === sessionId);
 
-        if (!existingOrderSnapshot.empty) {
+        if (existingOrder) {
             // Order already created
-            const existingOrder = existingOrderSnapshot.docs[0];
             return res.status(200).json({
+                success: true,
                 message: 'Order already exists',
-                order: { id: existingOrder.id, ...existingOrder.data() }
+                data: existingOrder.toJSON()
             });
         }
 
-        // Get course details
-        const courseDoc = await db.collection('courses').doc(courseId).get();
-        const courseData = courseDoc.exists ? courseDoc.data() : null;
-        const courseName = courseData?.title || 'Subscription Plan';
+        // Get course details using Course model
+        let courseName = 'Subscription Plan';
+        if (courseId) {
+            const course = await Course.findById(courseId);
+            if (course) {
+                courseName = course.title;
+            }
+        }
 
-        // Create order
+        // Create order using Order model
         const orderData = {
             userId: userId,
             courseId: courseId,
@@ -116,12 +110,24 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             price: session.amount_total / 100, // Convert from cents
             status: 'completed',
             paymentMethod: 'stripe',
-            paymentId: sessionId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            paymentId: sessionId
         };
 
-        const orderRef = await db.collection('orders').add(orderData);
+        const newOrder = await Order.create(orderData);
+
+        // Create payment record using Payment model
+        const paymentData = {
+            orderId: newOrder.id,
+            userId: userId,
+            amount: session.amount_total / 100,
+            currency: 'USD',
+            paymentMethod: 'stripe',
+            paymentStatus: 'completed',
+            transactionId: session.payment_intent,
+            paymentGatewayResponse: session
+        };
+
+        await Payment.create(paymentData);
 
         // Check if this is a subscription purchase (no specific courseId or subscription plan)
         // If it's a subscription, upgrade user to Pro tier
@@ -130,106 +136,161 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         }
 
         res.status(201).json({
+            success: true,
             message: 'Order created successfully',
-            order: { id: orderRef.id, ...orderData }
+            data: newOrder.toJSON()
         });
 
     } catch (err) {
         console.error("Payment Verification Error:", err);
-        res.status(500).json({ error: err.message, message: 'Failed to verify payment and create order' });
+        res.status(500).json({ success: false, error: err.message, message: 'Failed to verify payment and create order' });
     }
 };
 
 
-// --- CRUD Operations (Giữ nguyên) ---
+// --- CRUD Operations ---
 
 exports.createPayment = async (req, res) => {
     try {
-        const db = getFirestore();
-        const paymentData = { ...req.body, createdAt: new Date().toISOString() };
-        const newPaymentRef = await db.collection('payments').add(paymentData);
-        res.status(201).json({ id: newPaymentRef.id, ...paymentData });
+        const paymentData = {
+            ...req.body,
+            // Support both camelCase and snake_case
+            orderId: req.body.orderId || req.body.order_id,
+            userId: req.body.userId || req.body.user_id,
+            paymentMethod: req.body.paymentMethod || req.body.payment_method,
+            paymentStatus: req.body.paymentStatus || req.body.payment_status,
+            transactionId: req.body.transactionId || req.body.transaction_id
+        };
+
+        const newPayment = await Payment.create(paymentData);
+
+        res.status(201).json({
+            success: true,
+            data: newPayment.toJSON()
+        });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error("Create Payment Error:", err);
+        res.status(400).json({ success: false, error: err.message });
     }
 };
 
 exports.getPayments = async (req, res) => {
     try {
-        const db = getFirestore();
-        const paymentsSnapshot = await db.collection('payments').get();
+        const filters = {};
 
-        const payments = await Promise.all(paymentsSnapshot.docs.map(async (paymentDoc) => {
-            const paymentData = paymentDoc.data();
+        // Support query filters
+        if (req.query.userId || req.query.user_id) {
+            filters.userId = req.query.userId || req.query.user_id;
+        }
+        if (req.query.orderId || req.query.order_id) {
+            filters.orderId = req.query.orderId || req.query.order_id;
+        }
+        if (req.query.paymentStatus || req.query.payment_status) {
+            filters.paymentStatus = req.query.paymentStatus || req.query.payment_status;
+        }
+        if (req.query.limit) {
+            filters.limit = parseInt(req.query.limit);
+        }
+
+        const payments = await Payment.findAll(filters);
+
+        // Populate order data
+        const populatedPayments = await Promise.all(payments.map(async (payment) => {
+            const paymentData = payment.toJSON();
             let orderData = null;
 
-            if (paymentData.order_id) {
-                const orderSnap = await db.collection('orders').doc(paymentData.order_id).get();
-                if (orderSnap.exists) {
-                    orderData = { id: orderSnap.id, ...orderSnap.data() };
+            if (paymentData.orderId) {
+                const order = await Order.findById(paymentData.orderId);
+                if (order) {
+                    orderData = order.toJSON();
                 }
             }
-          
+
             return {
-                id: paymentDoc.id,
                 ...paymentData,
                 order: orderData,
             };
         }));
-        res.status(200).json(payments);
+
+        res.status(200).json({
+            success: true,
+            data: populatedPayments
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Get Payments Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 exports.getPaymentById = async (req, res) => {
     try {
-        const db = getFirestore();
-        const paymentRef = db.collection('payments').doc(req.params.id);
-        const paymentSnap = await paymentRef.get();
+        const paymentId = req.params.id;
+        const payment = await Payment.findById(paymentId);
 
-        if (!paymentSnap.exists) {
-            return res.status(404).json({ error: 'Payment not found' });
+        if (!payment) {
+            return res.status(404).json({ success: false, error: 'Payment not found' });
         }
 
-        const paymentData = paymentSnap.data();
+        const paymentData = payment.toJSON();
         let orderData = null;
 
-        if (paymentData.order_id) {
-            const orderSnap = await db.collection('orders').doc(paymentData.order_id).get();
-            if (orderSnap.exists) {
-                orderData = { id: orderSnap.id, ...orderSnap.data() };
+        if (paymentData.orderId) {
+            const order = await Order.findById(paymentData.orderId);
+            if (order) {
+                orderData = order.toJSON();
             }
         }
 
         res.status(200).json({
-            id: paymentSnap.id,
-            ...paymentData,
-            order: orderData,
+            success: true,
+            data: {
+                ...paymentData,
+                order: orderData,
+            }
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Get Payment By ID Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };
 
 exports.updatePayment = async (req, res) => {
     try {
-        const db = getFirestore();
-        const docRef = db.collection('payments').doc(req.params.id);
-        await docRef.update(req.body);
-        res.status(200).json({ id: req.params.id, ...req.body });
+        const paymentId = req.params.id;
+        const updatedPayment = await Payment.update(paymentId, req.body);
+
+        res.status(200).json({
+            success: true,
+            data: updatedPayment.toJSON()
+        });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error("Update Payment Error:", err);
+        if (err.message.includes('not found')) {
+            res.status(404).json({ success: false, error: err.message });
+        } else {
+            res.status(400).json({ success: false, error: err.message });
+        }
     }
 };
 
 exports.deletePayment = async (req, res) => {
     try {
-        const db = getFirestore();
-        const docRef = db.collection('payments').doc(req.params.id);
-        await docRef.delete();
-        res.status(200).json({ message: 'Payment deleted successfully' });
+        const paymentId = req.params.id;
+
+        // Check if payment exists
+        const payment = await Payment.findById(paymentId);
+        if (!payment) {
+            return res.status(404).json({ success: false, error: 'Payment not found' });
+        }
+
+        await Payment.delete(paymentId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Payment deleted successfully'
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Delete Payment Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 };

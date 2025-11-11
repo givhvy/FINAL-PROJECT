@@ -7,11 +7,22 @@ const { getFirestore } = require('firebase-admin/firestore');
 class Lesson {
     constructor(data) {
         this.id = data.id || null;
-        this.courseId = data.courseId;
+        // Support both camelCase and snake_case for backwards compatibility
+        this.courseId = data.courseId || data.course_id;
+        this.course_id = data.course_id || data.courseId; // Keep for backwards compat
         this.title = data.title;
         this.description = data.description || '';
-        this.content = data.content || '';
-        this.videoUrl = data.videoUrl || '';
+
+        // Backwards compatibility: support both old schema (content_data, content_type, content_data_html)
+        // and new schema (content, videoUrl)
+        this.content = data.content || data.content_data_html || '';
+        this.videoUrl = data.videoUrl || data.video_url || (data.content_type === 'video' ? data.content_data : '') || '';
+
+        // Keep old fields for backwards compatibility
+        this.content_type = data.content_type || (data.videoUrl || data.video_url ? 'video' : 'text');
+        this.content_data = data.content_data || data.videoUrl || data.video_url || '';
+        this.content_data_html = data.content_data_html || data.content || '';
+
         this.duration = data.duration || '';
         this.order = data.order || 0;
         this.isPublished = data.isPublished !== undefined ? data.isPublished : false;
@@ -92,6 +103,48 @@ class Lesson {
             return await this.findAll({ courseId });
         } catch (error) {
             throw new Error(`Error finding lessons by course ID: ${error.message}`);
+        }
+    }
+
+    /**
+     * Batch get lessons by multiple course IDs (fixes N+1 query problem)
+     * @param {Array<string>} courseIds - Array of course IDs
+     * @returns {Promise<Array<Lesson>>} - Array of Lesson objects
+     */
+    static async findByCourseIds(courseIds) {
+        try {
+            if (!courseIds || courseIds.length === 0) return [];
+
+            const db = this.getDB();
+            const uniqueIds = [...new Set(courseIds)]; // Remove duplicates
+
+            // Firestore 'in' query limit is 10
+            const chunkSize = 10;
+            const chunks = [];
+            for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+                chunks.push(uniqueIds.slice(i, i + chunkSize));
+            }
+
+            // Fetch all chunks in parallel (without orderBy to avoid index requirement)
+            const promises = chunks.map(chunk =>
+                db.collection('lessons')
+                    .where('courseId', 'in', chunk)
+                    .get()
+            );
+
+            const snapshots = await Promise.all(promises);
+
+            // Flatten results and sort in memory
+            const lessons = snapshots.flatMap(snapshot =>
+                snapshot.docs.map(doc => new Lesson({ id: doc.id, ...doc.data() }))
+            );
+
+            // Sort by order in memory
+            lessons.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            return lessons;
+        } catch (error) {
+            throw new Error(`Error finding lessons by course IDs: ${error.message}`);
         }
     }
 

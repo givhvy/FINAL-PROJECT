@@ -1,74 +1,106 @@
 // controllers/subscriptionController.js
-const { getFirestore } = require('firebase-admin/firestore');
+const Subscription = require('../models/Subscription');
 
 // Lấy tất cả các gói subscription từ Firestore
 exports.getSubscriptionPlans = async (req, res) => {
     try {
-        const db = getFirestore();
-        const plansSnapshot = await db.collection('subscriptions').orderBy('monthlyPrice').get();
-        const plans = plansSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(plans);
+        const filters = {};
+
+        if (req.query.active !== undefined) {
+            filters.active = req.query.active === 'true';
+        }
+
+        if (req.query.limit) {
+            filters.limit = parseInt(req.query.limit);
+        }
+
+        const plans = await Subscription.findAll(filters);
+
+        res.status(200).json({
+            success: true,
+            data: plans.map(p => p.toJSON())
+        });
     } catch (error) {
         console.error("Get Subscription Plans Error:", error);
-        res.status(500).json({ error: 'Failed to retrieve subscription plans.' });
+        res.status(500).json({ success: false, error: 'Failed to retrieve subscription plans.' });
     }
 };
 
 // Tạo một gói subscription mới
 exports.createSubscriptionPlan = async (req, res) => {
     try {
-        const db = getFirestore();
-        const planData = req.body;
-        // Validate data before saving (optional but recommended)
-        if (!planData.name || !planData.monthlyPrice || !planData.annualPrice || !planData.features) {
-            return res.status(400).json({ error: 'Missing required fields for subscription plan.' });
+        const planData = {
+            ...req.body,
+            // Support both camelCase and snake_case
+            monthlyPrice: req.body.monthlyPrice || req.body.monthly_price,
+            monthly_price: req.body.monthly_price || req.body.monthlyPrice,
+            annualPrice: req.body.annualPrice || req.body.annual_price,
+            annual_price: req.body.annual_price || req.body.annualPrice,
+            maxCourses: req.body.maxCourses || req.body.max_courses,
+            max_courses: req.body.max_courses || req.body.maxCourses,
+            isPopular: req.body.isPopular || req.body.is_popular,
+            is_popular: req.body.is_popular || req.body.isPopular
+        };
+
+        // Validate data before saving
+        if (!planData.name || (planData.monthlyPrice === undefined && planData.monthly_price === undefined) ||
+            (planData.annualPrice === undefined && planData.annual_price === undefined) || !planData.features) {
+            return res.status(400).json({ success: false, error: 'Missing required fields for subscription plan.' });
         }
-        const newPlanRef = await db.collection('subscriptions').add(planData);
-        res.status(201).json({ id: newPlanRef.id, ...planData });
+
+        const newPlan = await Subscription.create(planData);
+
+        res.status(201).json({
+            success: true,
+            data: newPlan.toJSON()
+        });
     } catch (error) {
         console.error("Create Subscription Plan Error:", error);
-        res.status(400).json({ error: 'Failed to create subscription plan.' });
+        res.status(400).json({ success: false, error: 'Failed to create subscription plan.' });
     }
 };
 
 // Cập nhật một gói subscription
 exports.updateSubscriptionPlan = async (req, res) => {
     try {
-        const db = getFirestore();
         const { id } = req.params;
-        const planData = req.body;
-        const planRef = db.collection('subscriptions').doc(id);
 
-        const docSnap = await planRef.get();
-        if (!docSnap.exists) {
-            return res.status(404).json({ error: 'Subscription plan not found' });
-        }
+        const updatedPlan = await Subscription.update(id, req.body);
 
-        await planRef.update(planData);
-        res.status(200).json({ id, ...planData });
+        res.status(200).json({
+            success: true,
+            data: updatedPlan.toJSON()
+        });
     } catch (error) {
         console.error("Update Subscription Plan Error:", error);
-        res.status(400).json({ error: 'Failed to update subscription plan.' });
+        if (error.message.includes('not found')) {
+            res.status(404).json({ success: false, error: 'Subscription plan not found' });
+        } else {
+            res.status(400).json({ success: false, error: 'Failed to update subscription plan.' });
+        }
     }
 };
 
 // Xóa một gói subscription
 exports.deleteSubscriptionPlan = async (req, res) => {
     try {
-        const db = getFirestore();
         const { id } = req.params;
-        const docRef = db.collection('subscriptions').doc(id);
-        
-        const docSnap = await docRef.get();
-        if (!docSnap.exists) {
-            return res.status(404).json({ error: 'Subscription plan not found' });
+
+        // Check if subscription exists
+        const subscription = await Subscription.findById(id);
+        if (!subscription) {
+            return res.status(404).json({ success: false, error: 'Subscription plan not found' });
         }
 
-        await docRef.delete();
-        res.status(200).json({ message: 'Subscription plan deleted successfully.' });
+        await Subscription.delete(id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Subscription plan deleted successfully.'
+        });
     } catch (error) {
         console.error("Delete Subscription Plan Error:", error);
-        res.status(500).json({ error: 'Failed to delete subscription plan.' });
+        res.status(500).json({ success: false, error: 'Failed to delete subscription plan.' });
     }
 };
 

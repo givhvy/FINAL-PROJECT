@@ -7,16 +7,31 @@ const { getFirestore } = require('firebase-admin/firestore');
 class Question {
     constructor(data) {
         this.id = data.id || null;
-        this.quizId = data.quizId;
-        this.questionText = data.questionText;
-        this.questionType = data.questionType || 'multiple-choice'; // multiple-choice, true-false, short-answer
+
+        // Support both camelCase and snake_case for backwards compatibility
+        this.quizId = data.quizId || data.quiz_id;
+        this.quiz_id = data.quiz_id || data.quizId; // Keep for backwards compat
+
+        this.questionText = data.questionText || data.question_text;
+        this.question_text = data.question_text || data.questionText;
+
+        this.questionType = data.questionType || data.question_type || 'multiple-choice';
+        this.question_type = data.question_type || data.questionType || 'multiple-choice';
+
         this.options = data.options || []; // Array of options for multiple-choice
-        this.correctAnswer = data.correctAnswer; // String hoặc array tùy thuộc vào loại câu hỏi
+
+        this.correctAnswer = data.correctAnswer || data.correct_answer;
+        this.correct_answer = data.correct_answer || data.correctAnswer;
+
         this.points = data.points || 1;
         this.explanation = data.explanation || ''; // Giải thích đáp án
         this.order = data.order || 0;
-        this.createdAt = data.createdAt || new Date().toISOString();
-        this.updatedAt = data.updatedAt || new Date().toISOString();
+
+        this.createdAt = data.createdAt || data.created_at || new Date().toISOString();
+        this.created_at = data.created_at || data.createdAt || new Date().toISOString();
+
+        this.updatedAt = data.updatedAt || data.updated_at || new Date().toISOString();
+        this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
     /**
@@ -54,6 +69,8 @@ class Question {
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
+
+            // Try camelCase first (new schema)
             let query = db.collection('questions');
 
             // Áp dụng bộ lọc theo quizId
@@ -66,16 +83,40 @@ class Question {
                 query = query.where('questionType', '==', filters.questionType);
             }
 
-            // Sắp xếp theo order
-            query = query.orderBy('order', 'asc');
+            // Don't use orderBy with where clause to avoid index requirement
+            // We'll sort in memory instead
 
             // Limit
             if (filters.limit) {
                 query = query.limit(filters.limit);
             }
 
-            const snapshot = await query.get();
-            return snapshot.docs.map(doc => new Question({ id: doc.id, ...doc.data() }));
+            let snapshot = await query.get();
+
+            // If empty and we had filters, try snake_case (old schema)
+            if (snapshot.empty && (filters.quizId || filters.questionType)) {
+                query = db.collection('questions');
+
+                if (filters.quizId) {
+                    query = query.where('quiz_id', '==', filters.quizId);
+                }
+
+                if (filters.questionType) {
+                    query = query.where('question_type', '==', filters.questionType);
+                }
+
+                if (filters.limit) {
+                    query = query.limit(filters.limit);
+                }
+
+                snapshot = await query.get();
+            }
+
+            // Map and sort in memory
+            const questions = snapshot.docs.map(doc => new Question({ id: doc.id, ...doc.data() }));
+            questions.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            return questions;
         } catch (error) {
             throw new Error(`Error finding all questions: ${error.message}`);
         }

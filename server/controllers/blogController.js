@@ -1,9 +1,9 @@
-const admin = require('firebase-admin');
+const Blog = require('../models/Blog');
 
 // Tạo blog post mới (chỉ admin/teacher)
 const createBlogPost = async (req, res) => {
     try {
-        const { title, content, excerpt, featured_image, tags, status = 'draft' } = req.body;
+        const { title, content, excerpt, featured_image, featuredImage, tags, status = 'draft' } = req.body;
         const { user } = req; // Từ middleware xác thực
 
         console.log('Create blog post request:', { title, hasContent: !!content, user: user?.email });
@@ -12,6 +12,7 @@ const createBlogPost = async (req, res) => {
         if (!user || (user.role !== 'admin' && user.role !== 'teacher')) {
             console.error('Access denied:', { user: user?.email, role: user?.role });
             return res.status(403).json({
+                success: false,
                 error: 'Access denied. Only admins and teachers can create blog posts.'
             });
         }
@@ -20,43 +21,35 @@ const createBlogPost = async (req, res) => {
         if (!title || !content) {
             console.error('Missing required fields:', { hasTitle: !!title, hasContent: !!content });
             return res.status(400).json({
+                success: false,
                 error: 'Title and content are required.'
             });
         }
 
-        // Tạo slug từ title
-        const slug = title.toLowerCase()
-            .replace(/[^a-z0-9 -]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .trim('-');
-
-        const blogPost = {
+        const blogData = {
             title,
             content,
-            excerpt: excerpt || content.substring(0, 200) + '...',
-            slug,
-            featured_image: featured_image || null,
+            excerpt,
+            featured_image: featured_image || featuredImage,
+            featuredImage: featuredImage || featured_image,
             tags: tags || [],
-            status, // 'published', 'draft'
+            status,
             author_id: user.id,
+            authorId: user.id,
             author_name: user.name,
-            view_count: 0,
-            like_count: 0,
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-            updated_at: admin.firestore.FieldValue.serverTimestamp()
+            authorName: user.name
         };
 
-        const docRef = await req.db.collection('blog_posts').add(blogPost);
+        const newBlog = await Blog.create(blogData);
 
         res.status(201).json({
+            success: true,
             message: 'Blog post created successfully',
-            id: docRef.id,
-            ...blogPost
+            data: newBlog.toJSON()
         });
     } catch (error) {
         console.error('Error creating blog post:', error);
-        res.status(500).json({ error: 'Failed to create blog post' });
+        res.status(500).json({ success: false, error: 'Failed to create blog post' });
     }
 };
 
@@ -68,71 +61,40 @@ const getBlogPosts = async (req, res) => {
             limit = 10,
             status,
             tag,
-            author_id
+            author_id,
+            authorId,
+            search
         } = req.query;
 
-        let query = req.db.collection('blog_posts');
+        const filters = {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            status,
+            tag,
+            author_id: author_id || authorId,
+            search
+        };
 
-        // Filter by status
-        if (status) {
-            query = query.where('status', '==', status);
-        }
-
-        // Filter by tag
-        if (tag) {
-            query = query.where('tags', 'array-contains', tag);
-        }
-
-        // Filter by author
-        if (author_id) {
-            query = query.where('author_id', '==', author_id);
-        }
-
-        // Order by created_at descending (only if no filters applied to avoid index issues)
-        if (!status && !tag && !author_id) {
-            query = query.orderBy('created_at', 'desc');
-        }
-
-        // Pagination
-        const offset = (parseInt(page) - 1) * parseInt(limit);
-        if (offset > 0) {
-            query = query.offset(offset);
-        }
-        query = query.limit(parseInt(limit));
-
-        const snapshot = await query.get();
-        const blogPosts = [];
-
-        snapshot.forEach(doc => {
-            blogPosts.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-
-        // Get total count for pagination
-        let totalQuery = req.db.collection('blog_posts');
-        if (status) {
-            totalQuery = totalQuery.where('status', '==', status);
-        }
-        const totalSnapshot = await totalQuery.get();
-
-        const totalPosts = totalSnapshot.size;
+        const blogs = await Blog.findAll(filters);
+        const totalPosts = await Blog.count({ status, tag, author_id: author_id || authorId, search });
         const totalPages = Math.ceil(totalPosts / parseInt(limit));
 
         res.json({
-            posts: blogPosts,
-            pagination: {
-                current_page: parseInt(page),
-                total_pages: totalPages,
-                total_posts: totalPosts,
-                has_next: parseInt(page) < totalPages,
-                has_prev: parseInt(page) > 1
+            success: true,
+            data: {
+                posts: blogs.map(b => b.toJSON()),
+                pagination: {
+                    current_page: parseInt(page),
+                    total_pages: totalPages,
+                    total_posts: totalPosts,
+                    has_next: parseInt(page) < totalPages,
+                    has_prev: parseInt(page) > 1
+                }
             }
         });
     } catch (error) {
         console.error('Error fetching blog posts:', error);
-        res.status(500).json({ error: 'Failed to fetch blog posts' });
+        res.status(500).json({ success: false, error: 'Failed to fetch blog posts' });
     }
 };
 
@@ -140,39 +102,33 @@ const getBlogPosts = async (req, res) => {
 const getBlogPostBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
-        let doc;
+        let blog;
 
-        // Thử tìm theo slug trước
-        const slugQuery = await req.db.collection('blog_posts')
-            .where('slug', '==', slug)
-            .limit(1)
-            .get();
+        // Try finding by slug first
+        blog = await Blog.findBySlug(slug);
 
-        if (!slugQuery.empty) {
-            doc = slugQuery.docs[0];
-        } else {
-            // Nếu không tìm thấy theo slug, thử tìm theo ID
-            doc = await req.db.collection('blog_posts').doc(slug).get();
+        // If not found by slug, try by ID
+        if (!blog) {
+            blog = await Blog.findById(slug);
         }
 
-        if (!doc.exists) {
-            return res.status(404).json({ error: 'Blog post not found' });
+        if (!blog) {
+            return res.status(404).json({ success: false, error: 'Blog post not found' });
         }
 
-        const blogPost = {
-            id: doc.id,
-            ...doc.data()
-        };
+        // Increment view count
+        await Blog.incrementViewCount(blog.id);
 
-        // Tăng view count
-        await req.db.collection('blog_posts').doc(doc.id).update({
-            view_count: admin.firestore.FieldValue.increment(1)
+        // Re-fetch to get updated view count
+        const updatedBlog = await Blog.findById(blog.id);
+
+        res.json({
+            success: true,
+            data: updatedBlog.toJSON()
         });
-
-        res.json(blogPost);
     } catch (error) {
         console.error('Error fetching blog post:', error);
-        res.status(500).json({ error: 'Failed to fetch blog post' });
+        res.status(500).json({ success: false, error: 'Failed to fetch blog post' });
     }
 };
 
@@ -186,46 +142,35 @@ const updateBlogPost = async (req, res) => {
         // Kiểm tra quyền
         if (!user || (user.role !== 'admin' && user.role !== 'teacher')) {
             return res.status(403).json({
+                success: false,
                 error: 'Access denied. Only admins and teachers can update blog posts.'
             });
         }
 
         // Lấy blog post hiện tại
-        const doc = await req.db.collection('blog_posts').doc(id).get();
-        if (!doc.exists) {
-            return res.status(404).json({ error: 'Blog post not found' });
+        const currentPost = await Blog.findById(id);
+        if (!currentPost) {
+            return res.status(404).json({ success: false, error: 'Blog post not found' });
         }
-
-        const currentPost = doc.data();
 
         // Kiểm tra nếu user không phải admin thì chỉ được sửa post của mình
         if (user.role !== 'admin' && currentPost.author_id !== user.id) {
             return res.status(403).json({
+                success: false,
                 error: 'You can only edit your own posts.'
             });
         }
 
-        // Cập nhật slug nếu title thay đổi
-        if (updateData.title && updateData.title !== currentPost.title) {
-            updateData.slug = updateData.title.toLowerCase()
-                .replace(/[^a-z0-9 -]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim('-');
-        }
-
-        // Thêm timestamp update
-        updateData.updated_at = admin.firestore.FieldValue.serverTimestamp();
-
-        await req.db.collection('blog_posts').doc(id).update(updateData);
+        const updatedBlog = await Blog.update(id, updateData);
 
         res.json({
+            success: true,
             message: 'Blog post updated successfully',
-            id: id
+            data: updatedBlog.toJSON()
         });
     } catch (error) {
         console.error('Error updating blog post:', error);
-        res.status(500).json({ error: 'Failed to update blog post' });
+        res.status(500).json({ success: false, error: 'Failed to update blog post' });
     }
 };
 
@@ -238,59 +183,49 @@ const deleteBlogPost = async (req, res) => {
         // Kiểm tra quyền
         if (!user || (user.role !== 'admin' && user.role !== 'teacher')) {
             return res.status(403).json({
+                success: false,
                 error: 'Access denied. Only admins and teachers can delete blog posts.'
             });
         }
 
         // Lấy blog post hiện tại
-        const doc = await req.db.collection('blog_posts').doc(id).get();
-        if (!doc.exists) {
-            return res.status(404).json({ error: 'Blog post not found' });
+        const currentPost = await Blog.findById(id);
+        if (!currentPost) {
+            return res.status(404).json({ success: false, error: 'Blog post not found' });
         }
-
-        const currentPost = doc.data();
 
         // Kiểm tra nếu user không phải admin thì chỉ được xóa post của mình
         if (user.role !== 'admin' && currentPost.author_id !== user.id) {
             return res.status(403).json({
+                success: false,
                 error: 'You can only delete your own posts.'
             });
         }
 
-        await req.db.collection('blog_posts').doc(id).delete();
+        await Blog.delete(id);
 
-        res.json({ message: 'Blog post deleted successfully' });
+        res.json({
+            success: true,
+            message: 'Blog post deleted successfully'
+        });
     } catch (error) {
         console.error('Error deleting blog post:', error);
-        res.status(500).json({ error: 'Failed to delete blog post' });
+        res.status(500).json({ success: false, error: 'Failed to delete blog post' });
     }
 };
 
 // Lấy các tags phổ biến
 const getBlogTags = async (req, res) => {
     try {
-        const snapshot = await req.db.collection('blog_posts')
-            .where('status', '==', 'published')
-            .get();
+        const tags = await Blog.getAllTags();
 
-        const tagCounts = {};
-
-        snapshot.forEach(doc => {
-            const tags = doc.data().tags || [];
-            tags.forEach(tag => {
-                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-            });
+        res.json({
+            success: true,
+            data: tags
         });
-
-        // Sắp xếp tags theo số lượng sử dụng
-        const sortedTags = Object.entries(tagCounts)
-            .sort(([,a], [,b]) => b - a)
-            .map(([tag, count]) => ({ tag, count }));
-
-        res.json(sortedTags);
     } catch (error) {
         console.error('Error fetching blog tags:', error);
-        res.status(500).json({ error: 'Failed to fetch blog tags' });
+        res.status(500).json({ success: false, error: 'Failed to fetch blog tags' });
     }
 };
 
