@@ -104,7 +104,7 @@ forgotPasswordForm.addEventListener('submit', async (e) => {
             throw new Error(data.error || 'Failed to process request.');
         }
 
-        // THÀNH CÔNG: Chuyển sang Modal 2
+        // THÀNH CÔNG: Chuyển sang Modal 2 (chuyển sang cảnh 2)
         currentResetUserId = data.userId; // Lấy ID người dùng từ Backend
         document.getElementById('reset-email-field').value = email; // Lưu email để hiển thị nếu cần
         document.getElementById('reset-user-id').value = currentResetUserId; // Lưu ID người dùng

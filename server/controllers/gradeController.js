@@ -1,6 +1,6 @@
 const Grade = require('../models/Grade');
 
-// Create a new grade
+// Create a new grade (checkpoint, Create in Controller)
 exports.createGrade = async (req, res) => {
   try {
     const grade = await Grade.create(req.body);
@@ -84,7 +84,7 @@ exports.getQuizStats = async (req, res) => {
   }
 };
 
-// Update grade
+// Update grade (checkpoint, Update in Controller)
 exports.updateGrade = async (req, res) => {
   try {
     const updatedGrade = await Grade.update(req.params.id, req.body);
@@ -98,7 +98,7 @@ exports.updateGrade = async (req, res) => {
   }
 };
 
-// Delete grade
+// Delete grade (checkpoint, Delete in Controller)
 exports.deleteGrade = async (req, res) => {
   try {
     await Grade.delete(req.params.id);

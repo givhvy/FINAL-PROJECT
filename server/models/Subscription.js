@@ -118,7 +118,7 @@ class Subscription {
     }
 
     /**
-     * Create a new subscription plan
+     * Create a new subscription plan (Create in CRUD)
      * @param {Object} subscriptionData - Subscription plan data
      * @returns {Promise<Subscription>} - Created Subscription object
      */
@@ -160,7 +160,7 @@ class Subscription {
     }
 
     /**
-     * Update subscription plan
+     * Update subscription plan (Update in CRUD)
      * @param {string} id - Subscription plan ID
      * @param {Object} updateData - Data to update
      * @returns {Promise<Subscription>} - Updated Subscription object
@@ -187,7 +187,7 @@ class Subscription {
     }
 
     /**
-     * Delete subscription plan
+     * Delete subscription plan (Delete in CRUD)
      * @param {string} id - Subscription plan ID
      * @returns {Promise<boolean>} - true if successful
      */

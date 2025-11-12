@@ -7,7 +7,7 @@ class GroupMessage {
     }
 
     /**
-     * Create a new group message
+     * Create a new group message (checkpoint, )
      */
     static async create(messageData) {
         this.validate(messageData);

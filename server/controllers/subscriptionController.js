@@ -16,17 +16,14 @@ exports.getSubscriptionPlans = async (req, res) => {
 
         const plans = await Subscription.findAll(filters);
 
-        res.status(200).json({
-            success: true,
-            data: plans.map(p => p.toJSON())
-        });
+        res.status(200).json(plans.map(p => p.toJSON()));
     } catch (error) {
         console.error("Get Subscription Plans Error:", error);
         res.status(500).json({ success: false, error: 'Failed to retrieve subscription plans.' });
     }
 };
 
-// Tạo một gói subscription mới
+// Tạo một gói subscription mới (Create in Controller)
 exports.createSubscriptionPlan = async (req, res) => {
     try {
         const planData = {
@@ -60,7 +57,7 @@ exports.createSubscriptionPlan = async (req, res) => {
     }
 };
 
-// Cập nhật một gói subscription
+// Cập nhật một gói subscription (Update in Controller)
 exports.updateSubscriptionPlan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -81,12 +78,12 @@ exports.updateSubscriptionPlan = async (req, res) => {
     }
 };
 
-// Xóa một gói subscription
+// Xóa một gói subscription (Delete in Controller)
 exports.deleteSubscriptionPlan = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check if subscription exists
+        // Check if subscription exists by id its
         const subscription = await Subscription.findById(id);
         if (!subscription) {
             return res.status(404).json({ success: false, error: 'Subscription plan not found' });

@@ -85,11 +85,11 @@ exports.resetCourseProgress = async (req, res) => {
     const { userId, courseId } = req.params;
     await Progress.resetCourseProgress(userId, courseId);
 
-    res.status(200).json({
+    res.status(200).json({ // response to front end 
       success: true,
       message: 'Course progress reset successfully'
     });
-  } catch (error) {
+  } catch (error) { // catch bugs
     console.error('Error resetting progress:', error);
     res.status(500).json({ error: error.message });
   }
@@ -109,7 +109,7 @@ exports.bulkUpdateProgress = async (req, res) => {
     // Calculate new completion
     const completion = await Progress.calculateCompletion(userId, courseId);
 
-    res.status(200).json({
+    res.status(200).json({ 
       success: true,
       updated: lessonIds.length,
       completion

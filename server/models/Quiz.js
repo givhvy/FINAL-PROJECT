@@ -125,7 +125,7 @@ class Quiz {
     }
 
     /**
-     * Tạo quiz mới
+     * Tạo quiz mới (Create in CRUD)
      * @param {Object} quizData - Dữ liệu quiz
      * @returns {Promise<Quiz>} - Quiz object đã tạo
      */
@@ -160,7 +160,7 @@ class Quiz {
     }
 
     /**
-     * Cập nhật quiz
+     * Cập nhật quiz (Update in CRUD)
      * @param {string} id - Quiz ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<Quiz>} - Quiz object đã cập nhật
@@ -185,7 +185,7 @@ class Quiz {
     }
 
     /**
-     * Xóa quiz
+     * Xóa quiz (Delete in CRUD)
      * @param {string} id - Quiz ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */

@@ -78,23 +78,32 @@ class Lesson {
                 query = query.where('isPublished', '==', filters.isPublished);
             }
 
-            // Sắp xếp theo order
-            query = query.orderBy('order', 'asc');
-
-            // Limit
-            if (filters.limit) {
-                query = query.limit(filters.limit);
-            }
+            // KHÔNG dùng orderBy để tránh cần composite index khi combine với where
+            // Sẽ sort trong memory sau khi fetch
 
             const snapshot = await query.get();
-            return snapshot.docs.map(doc => new Lesson({ id: doc.id, ...doc.data() }));
+            let lessons = snapshot.docs.map(doc => new Lesson({ id: doc.id, ...doc.data() }));
+
+            // Sort by order in memory to avoid composite index requirement
+            lessons.sort((a, b) => {
+                const orderA = a.order || 0;
+                const orderB = b.order || 0;
+                return orderA - orderB; // Ascending order
+            });
+
+            // Apply limit after sorting
+            if (filters.limit) {
+                lessons = lessons.slice(0, filters.limit);
+            }
+
+            return lessons;
         } catch (error) {
             throw new Error(`Error finding all lessons: ${error.message}`);
         }
     }
 
     /**
-     * Lấy tất cả bài học của một khóa học
+     * tìm theo courseId
      * @param {string} courseId - Course ID
      * @returns {Promise<Array<Lesson>>} - Mảng Lesson objects
      */
@@ -149,7 +158,7 @@ class Lesson {
     }
 
     /**
-     * Tạo bài học mới
+     * Tạo bài học mới (create in CRUD)
      * @param {Object} lessonData - Dữ liệu bài học
      * @returns {Promise<Lesson>} - Lesson object đã tạo
      */
@@ -185,7 +194,7 @@ class Lesson {
     }
 
     /**
-     * Cập nhật bài học
+     * Cập nhật bài học (update in CRUD)
      * @param {string} id - Lesson ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<Lesson>} - Lesson object đã cập nhật
@@ -210,7 +219,7 @@ class Lesson {
     }
 
     /**
-     * Xóa bài học
+     * Xóa bài học (Delete in CRUD)
      * @param {string} id - Lesson ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */

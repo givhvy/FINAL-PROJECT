@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const communityController = require('../controllers/communityController');
 const groupController = require('../controllers/groupController');
-const challengeController = require('../controllers/challengeController');
 const groupMessageController = require('../controllers/groupMessageController');
 
 // GET /api/community/progress -> Lấy tiến trình học tập của người dùng hiện tại
@@ -32,25 +31,6 @@ router.put('/groups/:groupId', groupController.updateStudyGroup);
 
 // DELETE /api/community/groups/:groupId -> Delete study group (Teachers only)
 router.delete('/groups/:groupId', groupController.deleteStudyGroup);
-
-// === CHALLENGES ROUTES ===
-// POST /api/community/challenges -> Create new challenge (Admin only)
-router.post('/challenges', challengeController.createChallenge);
-
-// GET /api/community/challenges -> Get all active challenges
-router.get('/challenges', challengeController.getActiveChallenges);
-
-// GET /api/community/challenges/:challengeId -> Get single challenge by ID
-router.get('/challenges/:challengeId', challengeController.getChallengeById);
-
-// PUT /api/community/challenges/:challengeId -> Update challenge (Admin only)
-router.put('/challenges/:challengeId', challengeController.updateChallenge);
-
-// DELETE /api/community/challenges/:challengeId -> Delete challenge (Admin only)
-router.delete('/challenges/:challengeId', challengeController.deleteChallenge);
-
-// POST /api/community/challenges/:challengeId/join -> Join a challenge
-router.post('/challenges/:challengeId/join', challengeController.joinChallenge);
 
 // === FORUM ROUTES ===
 // GET /api/community/groups/:groupId/messages -> Get group forum messages

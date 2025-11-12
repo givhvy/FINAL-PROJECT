@@ -209,7 +209,7 @@ exports.deleteCourse = async (req, res) => {
     }
 };
 
-// Approve course (Admin only)
+// Approve course (Admin only) (to be removed)!
 exports.approveCourse = async (req, res) => {
     try {
         const courseId = req.params.id;
@@ -230,7 +230,7 @@ exports.approveCourse = async (req, res) => {
     }
 };
 
-// Reject course (Admin only)
+// Reject course (Admin only) (to be removed)!
 exports.rejectCourse = async (req, res) => {
     try {
         const courseId = req.params.id;
@@ -251,7 +251,7 @@ exports.rejectCourse = async (req, res) => {
     }
 };
 
-// Submit course for approval (Teacher)
+// Submit course for approval (Teacher) (to be removed)!
 exports.submitForApproval = async (req, res) => {
     try {
         const courseId = req.params.id;

@@ -136,7 +136,7 @@ class Question {
     }
 
     /**
-     * Tạo câu hỏi mới
+     * Tạo câu hỏi mới (Create in CRUD)
      * @param {Object} questionData - Dữ liệu câu hỏi
      * @returns {Promise<Question>} - Question object đã tạo
      */
@@ -171,7 +171,7 @@ class Question {
     }
 
     /**
-     * Cập nhật câu hỏi
+     * Cập nhật câu hỏi (Update in CRUD)
      * @param {string} id - Question ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<Question>} - Question object đã cập nhật
@@ -196,7 +196,7 @@ class Question {
     }
 
     /**
-     * Xóa câu hỏi
+     * Xóa câu hỏi (Delete in CRUD)
      * @param {string} id - Question ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */
@@ -211,7 +211,7 @@ class Question {
     }
 
     /**
-     * Thay đổi thứ tự câu hỏi
+     * Thay đổi thứ tự câu hỏi (reorder)
      * @param {string} id - Question ID
      * @param {number} newOrder - Thứ tự mới
      * @returns {Promise<Question>} - Question object đã cập nhật

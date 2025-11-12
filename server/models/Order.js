@@ -7,15 +7,16 @@ const { getFirestore } = require('firebase-admin/firestore');
 class Order {
     constructor(data) {
         this.id = data.id || null;
-        this.userId = data.userId;
-        this.courseId = data.courseId;
-        this.courseName = data.courseName || '';
+        // Handle both camelCase and snake_case field names from Firebase
+        this.userId = data.userId || data.user_id;
+        this.courseId = data.courseId || data.course_id;
+        this.courseName = data.courseName || data.course_name || '';
         this.price = data.price || 0;
         this.status = data.status || 'pending'; // pending, completed, cancelled, refunded
-        this.paymentMethod = data.paymentMethod || '';
-        this.paymentId = data.paymentId || null;
-        this.createdAt = data.createdAt || new Date().toISOString();
-        this.updatedAt = data.updatedAt || new Date().toISOString();
+        this.paymentMethod = data.paymentMethod || data.payment_method || '';
+        this.paymentId = data.paymentId || data.payment_id || null;
+        this.createdAt = data.createdAt || data.created_at || new Date().toISOString();
+        this.updatedAt = data.updatedAt || data.updated_at || new Date().toISOString();
     }
 
     /**
@@ -55,31 +56,47 @@ class Order {
             const db = this.getDB();
             let query = db.collection('orders');
 
+            console.log('[Order.findAll] Filters:', filters);
+
             // Áp dụng bộ lọc theo userId - Firebase uses snake_case user_id
             if (filters.userId) {
+                console.log('[Order.findAll] Querying user_id ==', filters.userId);
                 query = query.where('user_id', '==', filters.userId);
             }
 
             // Áp dụng bộ lọc theo courseId - Firebase uses snake_case course_id
             if (filters.courseId) {
+                console.log('[Order.findAll] Querying course_id ==', filters.courseId);
                 query = query.where('course_id', '==', filters.courseId);
             }
 
             // Áp dụng bộ lọc theo status
             if (filters.status) {
+                console.log('[Order.findAll] Querying status ==', filters.status);
                 query = query.where('status', '==', filters.status);
             }
 
-            // Sắp xếp theo ngày tạo
-            query = query.orderBy('createdAt', 'desc');
-
-            // Limit
-            if (filters.limit) {
-                query = query.limit(filters.limit);
-            }
+            // KHÔNG dùng orderBy để tránh cần composite index
+            // Sẽ sort trong memory sau khi fetch
 
             const snapshot = await query.get();
-            return snapshot.docs.map(doc => new Order({ id: doc.id, ...doc.data() }));
+            console.log('[Order.findAll] Found', snapshot.docs.length, 'documents');
+            let orders = snapshot.docs.map(doc => new Order({ id: doc.id, ...doc.data() }));
+            console.log('[Order.findAll] Mapped to', orders.length, 'Order objects');
+
+            // Sort by createdAt in memory to avoid composite index requirement
+            orders.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0);
+                const dateB = new Date(b.createdAt || 0);
+                return dateB - dateA; // Descending order (newest first)
+            });
+
+            // Apply limit after sorting
+            if (filters.limit) {
+                orders = orders.slice(0, filters.limit);
+            }
+
+            return orders;
         } catch (error) {
             throw new Error(`Error finding all orders: ${error.message}`);
         }
@@ -126,7 +143,7 @@ class Order {
     }
 
     /**
-     * Tạo đơn hàng mới
+     * Tạo đơn hàng mới (Create in CRUD)
      * @param {Object} orderData - Dữ liệu đơn hàng
      * @returns {Promise<Order>} - Order object đã tạo
      */
@@ -160,7 +177,7 @@ class Order {
     }
 
     /**
-     * Cập nhật đơn hàng
+     * Cập nhật đơn hàng (Update in CRUD)
      * @param {string} id - Order ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<Order>} - Order object đã cập nhật
@@ -185,7 +202,7 @@ class Order {
     }
 
     /**
-     * Xóa đơn hàng
+     * Xóa đơn hàng (Delete in CRUD)
      * @param {string} id - Order ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */
@@ -200,7 +217,7 @@ class Order {
     }
 
     /**
-     * Cập nhật trạng thái đơn hàng
+     * Cập nhật trạng thái đơn hàng (Update in CRUD 2)
      * @param {string} id - Order ID
      * @param {string} status - Trạng thái mới
      * @returns {Promise<Order>} - Order object đã cập nhật
@@ -227,7 +244,7 @@ class Order {
     }
 
     /**
-     * Hoàn thành đơn hàng
+     * Hoàn thành đơn hàng 
      * @param {string} id - Order ID
      * @param {string} paymentId - Payment ID
      * @returns {Promise<Order>} - Order object đã cập nhật

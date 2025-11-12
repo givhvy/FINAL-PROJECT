@@ -360,17 +360,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         const enrolledListDiv = document.getElementById('enrolled-courses-list');
         enrolledListDiv.innerHTML = '<p class="text-gray-500">Loading your enrolled courses...</p>';
         try {
-            const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Failed to fetch courses.');
-            const courses = await response.json();
+            const userId = user.id;
 
-            if (courses.length === 0) {
+            // Fetch ALL user's orders to get enrolled courses (any status)
+            const ordersResponse = await fetch(`/api/orders?userId=${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!ordersResponse.ok) throw new Error('Failed to fetch orders.');
+            const orders = await ordersResponse.json();
+
+            if (!Array.isArray(orders) || orders.length === 0) {
+                enrolledListDiv.innerHTML = '<p class="text-gray-500">You are not enrolled in any courses yet. <a href="/courses" class="text-blue-600 hover:underline">Browse courses</a></p>';
+                return;
+            }
+
+            // Get unique course IDs from orders
+            const enrolledCourseIds = [...new Set(orders.map(order => order.courseId || order.course_id))];
+
+            // Fetch all courses
+            const coursesResponse = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!coursesResponse.ok) throw new Error('Failed to fetch courses.');
+            const allCourses = await coursesResponse.json();
+
+            // Filter only enrolled courses
+            const enrolledCourses = allCourses.filter(course => enrolledCourseIds.includes(course.id));
+
+            if (enrolledCourses.length === 0) {
                 enrolledListDiv.innerHTML = '<p class="text-gray-500">You are not enrolled in any courses yet.</p>';
                 return;
             }
 
             enrolledListDiv.innerHTML = '';
-            courses.slice(0, 3).forEach(course => { 
+            enrolledCourses.slice(0, 3).forEach(course => { 
                 const courseItem = document.createElement('div');
                 courseItem.className = 'quiz-card border rounded-lg p-4 hover:shadow-md transition-shadow';
                 courseItem.innerHTML = `
@@ -406,7 +427,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const quizzesResponse = await fetch('/api/quizzes', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!quizzesResponse.ok) throw new Error('Failed to fetch quizzes.');
-            const quizzes = await quizzesResponse.json();
+            let quizzes = await quizzesResponse.json();
+
+            // Ensure quizzes is an array
+            if (!Array.isArray(quizzes)) {
+                console.error('Quizzes is not an array:', quizzes);
+                quizzes = [];
+            }
 
             const gradesResponse = await fetch(`/api/grades?userId=${user.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
             const myGrades = gradesResponse.ok ? await gradesResponse.json() : [];
@@ -488,22 +515,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function fetchAndRenderLearningProgress() {
     const progressContainer = document.getElementById('progress-container');
     const userId = user.id; // Lấy ID người dùng hiện tại
-    
+
+    console.log('=== fetchAndRenderLearningProgress START ===');
+    console.log('Current userId:', userId);
+    console.log('Token exists:', !!token);
+
     progressContainer.innerHTML = '<p class="text-gray-500 text-center">Loading learning progress...</p>';
 
     try {
-        const response = await fetch(`/api/users/${userId}/progress`, { 
-            headers: { 'Authorization': `Bearer ${token}` } 
+        const apiUrl = `/api/users/${userId}/progress`;
+        console.log('Fetching from:', apiUrl);
+
+        const response = await fetch(apiUrl, {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-        
-        if (!response.ok) throw new Error('Failed to fetch progress details.');
-        
-        const progressData = await response.json();
+
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Progress API error:', errorText);
+            throw new Error('Failed to fetch progress details.');
+        }
+
+        let progressData = await response.json();
+        console.log('Raw progressData received:', progressData);
+        console.log('progressData type:', typeof progressData);
+        console.log('progressData is array:', Array.isArray(progressData));
+
+        // Ensure progressData is an array
+        if (!Array.isArray(progressData)) {
+            console.error('Progress data is not an array:', progressData);
+            progressData = [];
+        }
+
+        console.log('progressData length:', progressData.length);
+        console.log('progressData items:', progressData);
 
         if (progressData.length === 0) {
+            console.log('No progress data, showing empty message');
             progressContainer.innerHTML = '<p class="text-gray-500 text-center">No active courses found.</p>';
             return;
         }
+
+        console.log('Rendering progress for', progressData.length, 'courses');
 
         progressContainer.innerHTML = progressData.map(item => {
             const percent = item.percentage || 0;
@@ -523,8 +579,13 @@ async function fetchAndRenderLearningProgress() {
         }).join('');
 
     } catch (error) {
-        console.error('Progress Fetch Error:', error);
+        console.error('=== Progress Fetch Error ===');
+        console.error('Error:', error);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
         progressContainer.innerHTML = `<p class="text-red-500 text-center">Error loading progress: ${error.message}</p>`;
+    } finally {
+        console.log('=== fetchAndRenderLearningProgress END ===');
     }
 }
 

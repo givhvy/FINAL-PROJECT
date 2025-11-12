@@ -98,7 +98,7 @@ class User {
     }
 
     /**
-     * Tạo người dùng mới
+     * Tạo người dùng mới (Create in CRUD)
      * @param {Object} userData - Dữ liệu người dùng
      * @returns {Promise<User>} - User object đã tạo
      */
@@ -146,7 +146,7 @@ class User {
     }
 
     /**
-     * Cập nhật thông tin người dùng
+     * Cập nhật thông tin người dùng (Update in CRUD)
      * @param {string} id - User ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<User>} - User object đã cập nhật
@@ -177,7 +177,7 @@ class User {
     }
 
     /**
-     * Xóa người dùng
+     * Xóa người dùng (Delete in CRUD)
      * @param {string} id - User ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */
@@ -220,7 +220,7 @@ class User {
     }
 
     /**
-     * Xóa mã reset password
+     * Xóa mã reset password (clear reset code)
      */
     async clearResetCode() {
         try {
@@ -246,7 +246,7 @@ class User {
     }
 
     /**
-     * Check if email is educational (.edu or .ac domain)
+     * Check if email is educational (.edu or .ac domain) (Check if sinh viên greenwich)
      * @param {string} email - Email to check
      * @returns {boolean} - true if email is educational domain
      */

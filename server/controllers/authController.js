@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { getFirestore } = require('firebase-admin/firestore');
-// Import email services
+// Import email services (Checkpoint)
 const { sendResetPasswordEmail, sendWelcomeEmail } = require('../services/emailService');
 // Import User Model
 const User = require('../models/User');

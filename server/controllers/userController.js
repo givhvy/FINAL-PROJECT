@@ -8,14 +8,14 @@ const Progress = require('../models/Progress');
 const Order = require('../models/Order');
 const Lesson = require('../models/Lesson');
 
-// Create a new user
+// Create a new user (Create in Controller)
 exports.createUser = async (req, res) => {
     try {
         // Sử dụng User Model
         const newUser = await User.create(req.body);
         res.status(201).json(newUser.toJSON());
     } catch (err) {
-        console.error("Create User Error:", err);
+        console.error("Create User Error:", err); // console bug if needed
         if (err.message === 'Email already in use') {
             return res.status(400).json({ error: err.message });
         }
@@ -23,7 +23,7 @@ exports.createUser = async (req, res) => {
     }
 };
 
-// Get all users
+// Get all users find all filter
 exports.getUsers = async (req, res) => {
     try {
         // Sử dụng User Model
@@ -38,14 +38,14 @@ exports.getUsers = async (req, res) => {
         const users = await User.findAll(filters);
         const usersJSON = users.map(user => user.toJSON());
 
-        res.status(200).json(usersJSON);
+        res.status(200).json(usersJSON); // trả dữ liệu
     } catch (err) {
-        console.error("Get Users Error:", err);
+        console.error("Get Users Error:", err); // catch bugs
         res.status(500).json({ error: err.message });
     }
 };
 
-// Get user by ID
+// Get user by ID (find by id)
 exports.getUserById = async (req, res) => {
     try {
         // Sử dụng User Model
@@ -62,7 +62,7 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// Update user
+// Update user (Update in Controller) (to pro)
 exports.updateUser = async (req, res) => {
     try {
         // Sử dụng User Model
@@ -82,7 +82,7 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-// Delete user
+// Delete user (Delete in Controller) (For admin dashboard)
 exports.deleteUser = async (req, res) => {
     try {
         // Kiểm tra user có tồn tại không
@@ -104,16 +104,22 @@ exports.deleteUser = async (req, res) => {
 exports.getUserProgressDetails = async (req, res) => {
     try {
         const userId = req.params.id;
+        console.log('=== getUserProgressDetails START ===');
+        console.log('Received userId:', userId);
 
         // Validate userId
         if (!userId || typeof userId !== 'string') {
+            console.error('Invalid userId:', userId);
             return res.status(400).json({ error: 'Invalid user ID provided.' });
         }
 
-        // 1. Get user's completed orders using Order model
-        const completedOrders = await Order.findByUserIdAndStatus(userId, 'completed');
+        // 1. Get ALL user's orders (any status) to find enrolled courses
+        const userOrders = await Order.findByUserId(userId);
+        console.log('Found orders for user:', userOrders.length);
+        console.log('Orders:', userOrders.map(o => ({ id: o.id, courseId: o.courseId, status: o.status })));
 
-        if (completedOrders.length === 0) {
+        if (userOrders.length === 0) {
+            console.log('No orders found, returning empty array');
             return res.status(200).json([]);
         }
 
@@ -121,19 +127,23 @@ exports.getUserProgressDetails = async (req, res) => {
         const processedCourses = new Set(); // Prevent duplicate courses
 
         // 2. Process each enrolled course
-        for (const order of completedOrders) {
+        for (const order of userOrders) {
             try {
                 const courseId = order.courseId;
+                console.log('Processing order:', { orderId: order.id, courseId, status: order.status });
 
                 // Skip if no courseId, undefined, or already processed
                 if (!courseId || courseId === 'undefined' || processedCourses.has(courseId)) {
+                    console.log('Skipping course:', courseId, '(reason: invalid or duplicate)');
                     continue;
                 }
 
                 processedCourses.add(courseId);
+                console.log('Added courseId to processing:', courseId);
 
                 // Get course details using Course model
                 const course = await Course.findById(courseId);
+                console.log('Found course:', course ? { id: course.id, title: course.title } : 'null');
 
                 if (!course) {
                     console.warn(`Course ${courseId} not found for user ${userId}`);
@@ -149,35 +159,48 @@ exports.getUserProgressDetails = async (req, res) => {
                 // Get total lessons for this course using Lesson model
                 const lessons = await Lesson.findByCourseId(courseId);
                 const totalLessons = lessons.length;
+                console.log(`Course ${courseId} has ${totalLessons} total lessons`);
 
                 // Get completed lessons using Progress model
                 const completedLessonsData = await Progress.getCompletedLessons(userId, courseId);
                 const completedLessons = completedLessonsData.length;
+                console.log(`User completed ${completedLessons} lessons in course ${courseId}`);
 
                 // Calculate progress percentage (handle edge cases)
                 let percentage = 0;
                 let isCompleted = false;
 
                 if (totalLessons > 0) {
+                    // Normal case: calculate percentage based on completed/total
                     percentage = Math.round((completedLessons / totalLessons) * 100);
                     isCompleted = completedLessons >= totalLessons;
-                } else {
-                    // Course has no lessons - consider it complete
+                } else if (completedLessons > 0) {
+                    // Edge case: User completed lessons but lessons were deleted from course
+                    // Assume course is 100% complete since user has progress
+                    console.log(`Course ${courseId} has no lessons but user completed ${completedLessons} lessons - showing 100%`);
                     percentage = 100;
                     isCompleted = true;
+                } else {
+                    // Course has no lessons and user hasn't completed any - show 0%
+                    console.log(`Course ${courseId} has no lessons and no progress, showing 0%`);
+                    percentage = 0;
+                    isCompleted = false;
                 }
 
-                // Ensure percentage is within bounds
+                // Ensure percentage is within bounds (no ..100)
                 percentage = Math.max(0, Math.min(100, percentage));
 
-                progressData.push({
+                const courseProgress = {
                     name: course.title,
                     courseId: courseId,
                     percentage: percentage,
                     isCompleted: isCompleted,
                     completedLessons: completedLessons,
                     totalLessons: totalLessons
-                });
+                };
+
+                console.log('Adding course progress:', courseProgress);
+                progressData.push(courseProgress);
 
             } catch (courseError) {
                 console.error(`Error processing course for user ${userId}:`, courseError);
@@ -193,6 +216,9 @@ exports.getUserProgressDetails = async (req, res) => {
             return b.percentage - a.percentage;
         });
 
+        console.log('Final progressData array:', progressData);
+        console.log('=== getUserProgressDetails END ===');
+
         res.status(200).json(progressData);
 
     } catch (err) {
@@ -201,14 +227,14 @@ exports.getUserProgressDetails = async (req, res) => {
     }
 };
 
-// NEW: Update user role (Admin/Teacher phân quyền)
+// NEW: Update user role (Admin/Teacher phân quyền) (chỉnh cho admin dashboard chỉnh user role nếu cần)
 exports.updateUserRole = async (req, res) => {
     try {
         const userId = req.params.id;
         const { role } = req.body;
 
         // Check if requesting user has admin privileges
-        // This assumes the JWT middleware has set req.user
+        // This assumes the JWT middleware has set req.user 
         if (req.user && req.user.role !== 'admin') {
             return res.status(403).json({ error: 'Access denied. Only admins can update user roles.' });
         }
@@ -246,7 +272,7 @@ exports.updateUserRole = async (req, res) => {
     }
 };
 
-// Verify student status với educational email
+// Verify student status với educational email (mail edu)
 exports.verifyStudent = async (req, res) => {
     try {
         const { user_id, email } = req.body;

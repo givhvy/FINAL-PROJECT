@@ -1,4 +1,4 @@
-/**
+/** (helper avatar file)
  * Avatar Helper - Updates user avatar across all pages
  * Supports profile pictures from Cloudinary or falls back to initials
  */

@@ -1,12 +1,12 @@
-const GroupMessage = require('../models/GroupMessage');
+const GroupMessage = require('../models/GroupMessage'); // gọi model 
 
-// Get forum messages for a study group
-exports.getGroupMessages = async (req, res) => {
+// Get forum messages for a study group (lấy tổng tin nhắn trong group)
+exports.getGroupMessages = async (req, res) => {  // dùng routes
     try {
         console.log('Getting messages for group:', req.params.groupId);
         const { groupId } = req.params;
 
-        const messages = await GroupMessage.findByGroup(groupId);
+        const messages = await GroupMessage.findByGroup(groupId); //groupmessage là class
 
         console.log('Returning messages:', messages.length);
         res.status(200).json(messages);

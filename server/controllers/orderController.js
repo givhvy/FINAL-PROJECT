@@ -4,7 +4,7 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const Course = require('../models/Course');
 
-exports.createOrder = async (req, res) => {
+exports.createOrder = async (req, res) => { // cho routes xài , create trong controller
     try {
         const orderData = {
             ...req.body,
@@ -16,10 +16,7 @@ exports.createOrder = async (req, res) => {
 
         const newOrder = await Order.create(orderData);
 
-        res.status(201).json({
-            success: true,
-            data: newOrder.toJSON()
-        });
+        res.status(201).json(newOrder.toJSON());
     } catch (err) {
         console.error("Create Order Error:", err);
         res.status(400).json({ success: false, error: err.message });
@@ -73,10 +70,7 @@ exports.getOrders = async (req, res) => {
             };
         }));
 
-        res.status(200).json({
-            success: true,
-            data: populatedOrders
-        });
+        res.status(200).json(populatedOrders);
     } catch (err) {
         console.error("Get Orders Error:", err);
         res.status(500).json({ success: false, error: err.message });
@@ -111,12 +105,9 @@ exports.getOrderById = async (req, res) => {
         }
 
         res.status(200).json({
-            success: true,
-            data: {
-                ...orderData,
-                user: userData,
-                course: courseData,
-            }
+            ...orderData,
+            user: userData,
+            course: courseData,
         });
     } catch (err) {
         console.error("Get Order By ID Error:", err);
@@ -124,16 +115,13 @@ exports.getOrderById = async (req, res) => {
     }
 };
 
-exports.updateOrder = async (req, res) => {
+exports.updateOrder = async (req, res) => { // update trong controller
     try {
         const orderId = req.params.id;
         const updatedOrder = await Order.update(orderId, req.body);
 
-        res.status(200).json({
-            success: true,
-            data: updatedOrder.toJSON()
-        });
-    } catch (err) {
+        res.status(200).json(updatedOrder.toJSON());
+    } catch (err) { // bắt bugs
         console.error("Update Order Error:", err);
         if (err.message.includes('not found')) {
             res.status(404).json({ success: false, error: err.message });
@@ -143,7 +131,7 @@ exports.updateOrder = async (req, res) => {
     }
 };
 
-exports.deleteOrder = async (req, res) => {
+exports.deleteOrder = async (req, res) => { // delete trong controller
     try {
         const orderId = req.params.id;
 
@@ -159,7 +147,7 @@ exports.deleteOrder = async (req, res) => {
             success: true,
             message: 'Order deleted successfully'
         });
-    } catch (err) {
+    } catch (err) { // bắt bugs
         console.error("Delete Order Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }

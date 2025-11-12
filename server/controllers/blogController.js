@@ -1,6 +1,6 @@
 const Blog = require('../models/Blog');
 
-// Tạo blog post mới (chỉ admin/teacher)
+// Tạo blog post mới (chỉ admin/teacher) (Create in Controller)
 const createBlogPost = async (req, res) => {
     try {
         const { title, content, excerpt, featured_image, featuredImage, tags, status = 'draft' } = req.body;
@@ -174,7 +174,7 @@ const updateBlogPost = async (req, res) => {
     }
 };
 
-// Xóa blog post (chỉ admin/teacher và author)
+// Xóa blog post (chỉ admin/teacher và author) (Delete trong Controller)
 const deleteBlogPost = async (req, res) => {
     try {
         const { id } = req.params;
@@ -214,7 +214,7 @@ const deleteBlogPost = async (req, res) => {
     }
 };
 
-// Lấy các tags phổ biến
+// Lấy các tags phổ biến (checkpoint)
 const getBlogTags = async (req, res) => {
     try {
         const tags = await Blog.getAllTags();

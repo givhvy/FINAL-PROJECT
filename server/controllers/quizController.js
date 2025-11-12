@@ -13,7 +13,7 @@ exports.createQuiz = async (req, res) => {
             return res.status(400).json({ error: 'Quiz title, course ID, and at least one question are required.' });
         }
 
-        // Create quiz
+        // Create quiz (Create in Controller, the course quizz)
         const quizData = {
             title,
             description: description || '',
@@ -25,7 +25,7 @@ exports.createQuiz = async (req, res) => {
 
         const newQuiz = await Quiz.create(quizData);
 
-        // Create questions
+        // Create questions (the question inside quizz like lessons)
         const createdQuestions = [];
         for (const q of questions) {
             const questionData = {
@@ -41,7 +41,7 @@ exports.createQuiz = async (req, res) => {
             createdQuestions.push(createdQuestion);
         }
 
-        res.status(201).json({
+        res.status(201).json({ 
             success: true,
             message: 'Quiz and questions created successfully!',
             data: {
@@ -81,10 +81,7 @@ exports.getQuizzes = async (req, res) => {
 
         const quizzes = await Quiz.findAll(filters);
 
-        res.status(200).json({
-            success: true,
-            data: quizzes.map(q => q.toJSON())
-        });
+        res.status(200).json(quizzes.map(q => q.toJSON()));
     } catch (err) {
         console.error("Get Quizzes Error:", err);
         res.status(500).json({ success: false, error: err.message });
@@ -118,7 +115,7 @@ exports.getQuizById = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
-// Update quiz
+// Update quiz (Update in Controller)
 exports.updateQuiz = async (req, res) => {
     try {
         const quizId = req.params.id;
@@ -143,7 +140,7 @@ exports.updateQuiz = async (req, res) => {
     }
 };
 
-// Delete quiz
+// Delete quiz (Delete in Controller)
 exports.deleteQuiz = async (req, res) => {
     try {
         const quizId = req.params.id;

@@ -6,11 +6,11 @@ const Progress = require('../models/Progress');
 
 /**
  * Community Controller
- * Handles leaderboard and user progress tracking
+ * Handles leaderboard and user progress tracking only
  *
  * NOTE: Study Groups, Challenges, and Forum functionality have been moved to:
  * - groupController.js - For study group CRUD operations
- * - challengeController.js - For challenge management
+ * - challengeController.js - For challenge management (will soon removed)
  * - groupMessageController.js - For study group forum/messages
  */
 
@@ -28,7 +28,7 @@ exports.getUserProgress = async (req, res) => {
 
         console.log(`\n🔍 [PROGRESS] Fetching progress for user: ${userId}`);
 
-        // Use Progress model methods for daily and weekly progress
+        // Use Progress model "methods" for daily and weekly progress
         const dailyLessons = await Progress.getDailyProgress(userId);
         const weeklyLessons = await Progress.getWeeklyProgress(userId);
 
@@ -295,7 +295,7 @@ exports.getLeaderboard = async (req, res) => {
 
 /**
  * Get friends status (mock data for now)
- * TODO: Implement real friends system with database
+ * TODO: Implement real friends system with database(toned
  */
 exports.getFriendsStatus = async (req, res) => {
     try {

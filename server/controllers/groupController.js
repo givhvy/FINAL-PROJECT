@@ -1,4 +1,4 @@
-const Group = require('../models/Group');
+const Group = require('../models/Group'); // xài  class Group nằm trong thư mục models/Group.js
 
 // Create a new study group (Teachers only)
 exports.createStudyGroup = async (req, res) => {
@@ -30,7 +30,7 @@ exports.createStudyGroup = async (req, res) => {
 };
 
 // Get all study groups
-exports.getStudyGroups = async (req, res) => {
+exports.getStudyGroups = async (req, res) => { // sử dụng routes
     try {
         const groups = await Group.getAllActive();
         res.status(200).json(groups);
@@ -104,7 +104,7 @@ exports.updateStudyGroup = async (req, res) => {
 };
 
 // Delete a study group (Teachers only)
-exports.deleteStudyGroup = async (req, res) => {
+exports.deleteStudyGroup = async (req, res) => { // sử dụng routes
     try {
         const { groupId } = req.params;
         await Group.delete(groupId);

@@ -223,7 +223,7 @@ class Blog {
     }
 
     /**
-     * Create a new blog post
+     * Create a new blog post (Create in CRUD)
      * @param {Object} blogData - Blog post data
      * @returns {Promise<Blog>} - Created Blog object
      */
@@ -273,7 +273,7 @@ class Blog {
     }
 
     /**
-     * Update blog post
+     * Update blog post (Update in CRUD)
      * @param {string} id - Blog post ID
      * @param {Object} updateData - Data to update
      * @returns {Promise<Blog>} - Updated Blog object
@@ -305,7 +305,7 @@ class Blog {
     }
 
     /**
-     * Delete blog post
+     * Delete blog post (Delete in CRUD)
      * @param {string} id - Blog post ID
      * @returns {Promise<boolean>} - true if successful
      */

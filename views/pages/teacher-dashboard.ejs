@@ -870,7 +870,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const coursesResponse = await fetch('/api/courses', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const allCourses = await coursesResponse.json();
+            let allCourses = await coursesResponse.json();
+
+            // Ensure allCourses is an array
+            if (!Array.isArray(allCourses)) {
+                console.error('Courses is not an array:', allCourses);
+                allCourses = [];
+            }
+
             // Admins see all courses, teachers see only their courses
             teacherCourses = (user.role === 'admin')
                 ? allCourses
@@ -886,13 +893,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             const gradesResponse = await fetch('/api/grades', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const allGrades = await gradesResponse.json();
+            let allGrades = await gradesResponse.json();
+
+            // Ensure allGrades is an array
+            if (!Array.isArray(allGrades)) {
+                console.error('Grades is not an array:', allGrades);
+                allGrades = [];
+            }
 
             // 3. Fetch all quizzes to get course associations
             const quizzesResponse = await fetch('/api/quizzes', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const allQuizzes = await quizzesResponse.json();
+            let allQuizzes = await quizzesResponse.json();
+
+            // Ensure allQuizzes is an array
+            if (!Array.isArray(allQuizzes)) {
+                console.error('Quizzes is not an array:', allQuizzes);
+                allQuizzes = [];
+            }
 
             // Create quiz map for quick lookup
             const quizMap = {};
@@ -904,7 +923,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const usersResponse = await fetch('/api/users', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const allUsers = await usersResponse.json();
+            let allUsers = await usersResponse.json();
+
+            // Ensure allUsers is an array
+            if (!Array.isArray(allUsers)) {
+                console.error('Users is not an array:', allUsers);
+                allUsers = [];
+            }
 
             // Create user map for quick lookup
             const userMap = {};

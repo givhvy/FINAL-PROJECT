@@ -188,7 +188,7 @@ class Payment {
     }
 
     /**
-     * Cập nhật payment
+     * Cập nhật payment  (Update in CRUD)
      * @param {string} id - Payment ID
      * @param {Object} updateData - Dữ liệu cần cập nhật
      * @returns {Promise<Payment>} - Payment object đã cập nhật
@@ -213,7 +213,7 @@ class Payment {
     }
 
     /**
-     * Xóa payment
+     * Xóa payment (Delete in CRUD)
      * @param {string} id - Payment ID
      * @returns {Promise<boolean>} - true nếu xóa thành công
      */
@@ -228,7 +228,7 @@ class Payment {
     }
 
     /**
-     * Cập nhật trạng thái payment
+     * Cập nhật trạng thái payment (Update in CRUD 2)
      * @param {string} id - Payment ID
      * @param {string} paymentStatus - Trạng thái mới
      * @returns {Promise<Payment>} - Payment object đã cập nhật
@@ -313,7 +313,7 @@ class Payment {
     }
 
     /**
-     * Hoàn tiền payment
+     * Hoàn tiền payment (Update in CRUD 3)
      * @param {string} id - Payment ID
      * @returns {Promise<Payment>} - Payment object đã cập nhật
      */

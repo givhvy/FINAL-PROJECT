@@ -1,7 +1,7 @@
 // server/controllers/certificateController.js
 
 const Certificate = require('../models/Certificate');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer'); // xài cho tạo PDF ngay trên browser rồi download dưới dạng html qua PDF cho browser về 
 
 // Auto-generate certificate on course completion
 exports.generateCertificate = async (req, res) => {
@@ -91,7 +91,7 @@ exports.getCertificateById = async (req, res) => {
     }
 };
 
-// Update certificate
+// Update certificate (Update in Controller)
 exports.updateCertificate = async (req, res) => {
     try {
         // Certificates shouldn't be updated after issuance

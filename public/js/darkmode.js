@@ -1,4 +1,4 @@
-// Dark Mode Toggle System
+// Dark Mode Toggle System (Nút chuyển đổi sáng và tối và set even default cho toggle)
 (function() {
     // Check for saved theme preference or default to 'light'
     const currentTheme = localStorage.getItem('theme') || 'light';

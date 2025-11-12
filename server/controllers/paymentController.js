@@ -1,4 +1,4 @@
-// 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env
+// 'npm install stripe' và đã thêm STRIPE_SECRET_KEY vào .env ,
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Payment = require('../models/Payment');
 const Order = require('../models/Order');
@@ -11,7 +11,7 @@ exports.createCheckoutSession = async (req, res) => {
         // Lấy thông tin cần thiết từ Frontend
         const { courseId, courseName, price, successUrl, cancelUrl, userId } = req.body;
         
-        // Kiểm tra khóa Stripe
+        // Kiểm tra .env của khóa Stripe
         if (!process.env.STRIPE_SECRET_KEY) {
             return res.status(500).json({ 
                 message: 'Stripe Secret Key is missing from .env configuration.',
@@ -65,7 +65,7 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             return res.status(400).json({ success: false, error: 'Session ID is required' });
         }
 
-        // Retrieve the Stripe session
+        // Retrieve the Stripe session (để vào cart nếu chưa xong)
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
         if (!session) {
@@ -164,11 +164,11 @@ exports.createPayment = async (req, res) => {
 
         const newPayment = await Payment.create(paymentData);
 
-        res.status(201).json({
+        res.status(201).json({ // trả về kết quả 
             success: true,
             data: newPayment.toJSON()
         });
-    } catch (err) {
+    } catch (err) { // bắt bugs
         console.error("Create Payment Error:", err);
         res.status(400).json({ success: false, error: err.message });
     }
@@ -194,7 +194,7 @@ exports.getPayments = async (req, res) => {
 
         const payments = await Payment.findAll(filters);
 
-        // Populate order data
+        // Populate order data // gộp chung các data liên quan 
         const populatedPayments = await Promise.all(payments.map(async (payment) => {
             const paymentData = payment.toJSON();
             let orderData = null;

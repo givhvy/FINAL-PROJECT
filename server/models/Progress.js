@@ -7,7 +7,7 @@ class Progress {
     }
 
     /**
-     * Update lesson progress
+     * Update lesson progress (update)
      */
     static async updateLessonProgress(userId, courseId, lessonId, completed = true) {
         const db = this.getDB();
@@ -137,7 +137,7 @@ class Progress {
     }
 
     /**
-     * Update enrollment progress percentage
+     * Update enrollment progress percentage (update)
      */
     static async updateEnrollmentProgress(userId, courseId) {
         const db = this.getDB();

@@ -1,7 +1,7 @@
 const Lesson = require('../models/Lesson');
 const Course = require('../models/Course');
 
-// Create a new lesson
+// Create a new lesson (checkpoint, Create in Controller)
 exports.createLesson = async (req, res, next) => {
   try {
     const lessonData = { ...req.body };
@@ -56,7 +56,7 @@ exports.getLessonById = async (req, res, next) => {
       return res.status(404).json({ error: 'Lesson not found' });
     }
 
-    // DEBUG: Log lesson data to see what fields exist
+    // DEBUG: Log lesson data to see what fields exist //debug in console
     console.log('=== LESSON DATA DEBUG ===');
     console.log('Lesson ID:', req.params.id);
     console.log('Lesson object:', JSON.stringify(lesson, null, 2));

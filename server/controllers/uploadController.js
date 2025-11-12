@@ -1,4 +1,4 @@
-const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary'); // 
 const User = require('../models/User');
 
 // Upload image to Cloudinary
@@ -68,7 +68,7 @@ exports.uploadVideo = async (req, res) => {
     }
 };
 
-// Upload profile picture to Cloudinary and update user
+// Upload profile picture to Cloudinary and update user avatarUrl cho student và teacher role
 exports.uploadProfilePicture = async (req, res) => {
     try {
         if (!req.file) {
@@ -96,7 +96,7 @@ exports.uploadProfilePicture = async (req, res) => {
             uploadStream.end(req.file.buffer);
         });
 
-        // Update user's avatarUrl in database
+        // Update user's avatarUrl in database (checkpoint)
         await User.update(userId, { avatarUrl: result.secure_url });
 
         res.status(200).json({
