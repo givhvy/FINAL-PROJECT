@@ -83,7 +83,8 @@ class Course {
             }
 
             if (filters.instructorId) {
-                query = query.where('instructorId', '==', filters.instructorId);
+                // Use snake_case field name for Firestore
+                query = query.where('teacher_id', '==', filters.instructorId);
             }
 
             // Sắp xếp

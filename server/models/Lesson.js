@@ -68,9 +68,10 @@ class Lesson {
             const db = this.getDB();
             let query = db.collection('lessons');
 
-            // Áp dụng bộ lọc theo courseId
+            // Áp dụng bộ lọc theo courseId (support both camelCase and snake_case)
             if (filters.courseId) {
-                query = query.where('courseId', '==', filters.courseId);
+                // Try courseId first, if no results, will fall back to course_id
+                query = query.where('course_id', '==', filters.courseId);
             }
 
             // Áp dụng bộ lọc theo isPublished

@@ -124,14 +124,12 @@ exports.getCourseById = async (req, res) => {
         const Quiz = require('../models/Quiz');
         const quizzes = await Quiz.findByCourseId(courseId);
 
+        // Return direct object for consistency with other endpoints (no wrapping)
         res.status(200).json({
-            success: true,
-            data: {
-                ...courseData,
-                teacher: teacherData,
-                lessons: lessons.map(l => l.toJSON()),
-                quizzes: quizzes.map(q => q.toJSON()),
-            }
+            ...courseData,
+            teacher: teacherData,
+            lessons: lessons.map(l => l.toJSON()),
+            quizzes: quizzes.map(q => q.toJSON()),
         });
     } catch (err) {
         console.error("Get Course By ID Error:", err);
@@ -206,63 +204,6 @@ exports.deleteCourse = async (req, res) => {
     } catch (err) {
         console.error("Delete Course Error:", err);
         res.status(500).json({ success: false, error: err.message });
-    }
-};
-
-// Approve course (Admin only) (to be removed)!
-exports.approveCourse = async (req, res) => {
-    try {
-        const courseId = req.params.id;
-        const { approvedBy } = req.body;
-
-        if (!approvedBy) {
-            return res.status(400).json({ error: 'Approved by user ID is required' });
-        }
-
-        const approvedCourse = await Course.approveCourse(courseId, approvedBy);
-        res.status(200).json({
-            message: 'Course approved successfully',
-            course: approvedCourse.toJSON()
-        });
-    } catch (err) {
-        console.error("Approve Course Error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// Reject course (Admin only) (to be removed)!
-exports.rejectCourse = async (req, res) => {
-    try {
-        const courseId = req.params.id;
-        const { reason } = req.body;
-
-        if (!reason) {
-            return res.status(400).json({ error: 'Rejection reason is required' });
-        }
-
-        const rejectedCourse = await Course.rejectCourse(courseId, reason);
-        res.status(200).json({
-            message: 'Course rejected',
-            course: rejectedCourse.toJSON()
-        });
-    } catch (err) {
-        console.error("Reject Course Error:", err);
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// Submit course for approval (Teacher) (to be removed)!
-exports.submitForApproval = async (req, res) => {
-    try {
-        const courseId = req.params.id;
-        const submittedCourse = await Course.submitForApproval(courseId);
-        res.status(200).json({
-            message: 'Course submitted for approval',
-            course: submittedCourse.toJSON()
-        });
-    } catch (err) {
-        console.error("Submit Course Error:", err);
-        res.status(500).json({ error: err.message });
     }
 };
 

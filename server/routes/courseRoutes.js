@@ -8,9 +8,6 @@ const {
     getCourseById,
     updateCourse,
     deleteCourse,
-    approveCourse,
-    rejectCourse,
-    submitForApproval,
     getCourseLessons,
     getCourseQuizzes
 } = require('../controllers/courseController');
@@ -31,11 +28,6 @@ router.put('/:id', updateCourse);
 
 // DELETE /api/courses/:id -> Xóa khóa học
 router.delete('/:id', deleteCourse);
-
-// Course approval routes
-router.put('/:id/approve', approveCourse);
-router.put('/:id/reject', rejectCourse);
-router.put('/:id/submit', submitForApproval);
 
 // Get course content
 router.get('/:id/lessons', getCourseLessons);

@@ -102,12 +102,10 @@ exports.getQuizById = async (req, res) => {
         // Get all questions for this quiz
         const questions = await Question.findByQuizId(quizId);
 
+        // Return unwrapped data for consistency with courses API
         res.status(200).json({
-            success: true,
-            data: {
-                ...quiz.toJSON(),
-                questions: questions.map(q => q.toJSON())
-            }
+            ...quiz.toJSON(),
+            questions: questions.map(q => q.toJSON())
         });
 
     } catch (err) {

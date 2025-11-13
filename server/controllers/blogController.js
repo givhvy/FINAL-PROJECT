@@ -122,10 +122,8 @@ const getBlogPostBySlug = async (req, res) => {
         // Re-fetch to get updated view count
         const updatedBlog = await Blog.findById(blog.id);
 
-        res.json({
-            success: true,
-            data: updatedBlog.toJSON()
-        });
+        // Return unwrapped data for consistency with course API
+        res.json(updatedBlog.toJSON());
     } catch (error) {
         console.error('Error fetching blog post:', error);
         res.status(500).json({ success: false, error: 'Failed to fetch blog post' });

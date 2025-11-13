@@ -73,9 +73,9 @@ class Question {
             // Try camelCase first (new schema)
             let query = db.collection('questions');
 
-            // Áp dụng bộ lọc theo quizId
+            // Áp dụng bộ lọc theo quizId (use snake_case for Firestore)
             if (filters.quizId) {
-                query = query.where('quizId', '==', filters.quizId);
+                query = query.where('quiz_id', '==', filters.quizId);
             }
 
             // Áp dụng bộ lọc theo questionType
