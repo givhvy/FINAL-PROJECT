@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const userTier = user.subscriptionTier || 'free';
             if (userTier === 'pro') {
                 tierBadgeElement.innerHTML = `
-                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full flex items-center gap-1 shadow-lg">
                         <i class="fas fa-crown"></i> PRO
                     </span>
                 `;
@@ -775,7 +775,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Determine tier badge display
             let tierBadge = '';
             if (userTier === 'pro') {
-                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-full">PRO ACCESS</span>';
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full shadow-lg">PRO ACCESS</span>';
             } else if (isEnrolled) {
                 tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full">ENROLLED</span>';
             } else if (canEnrollFree) {

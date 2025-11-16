@@ -217,12 +217,18 @@ exports.getLeaderboard = async (req, res) => {
             const userId = user.id;
             const userOrders = ordersByUser[userId] || [];
 
-            let completedCourses = 0;
+            // Track unique courses completed to avoid counting duplicates
+            const uniqueCoursesCompleted = new Set();
 
             // Calculate completed courses for this user
             for (const order of userOrders) {
                 const courseId = order.course_id;
                 if (!courseId) continue;
+
+                // Skip if we already counted this course
+                if (uniqueCoursesCompleted.has(courseId)) {
+                    continue;
+                }
 
                 // Get lessons for this course from our batch-fetched data
                 const courseLessons = lessonsByCourse[courseId] || [];
@@ -238,14 +244,17 @@ exports.getLeaderboard = async (req, res) => {
                 if (totalLessons > 0) {
                     percentage = Math.round((completedLessons / totalLessons) * 100);
                 } else {
-                    percentage = 100; // No lessons = complete
+                    // If no lessons exist yet, consider it 0% (skip it)
+                    percentage = 0;
                 }
 
                 // Only count if 100% complete AND has lessons
                 if (percentage >= 100 && totalLessons > 0) {
-                    completedCourses++;
+                    uniqueCoursesCompleted.add(courseId);
                 }
             }
+
+            const completedCourses = uniqueCoursesCompleted.size;
 
             // Calculate study points: 100 pts per completed course
             const studyPoints = completedCourses * 100;

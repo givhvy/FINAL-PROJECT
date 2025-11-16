@@ -458,17 +458,22 @@
                         
                         // Populate form fields
                         document.getElementById('lesson-title').value = lesson.title || '';
-                        document.getElementById('lesson-video-url').value = lesson.videoUrl || lesson.video_url || '';
+
+                        // Handle video URL from different field names
+                        // Old schema: video URL is in content_data, content is in content_data_html
+                        // New schema: video URL is in videoUrl or video_url, content is in content
+                        let videoUrl = lesson.videoUrl || lesson.video_url || '';
+                        if (!videoUrl && lesson.content_type === 'video' && lesson.content_data) {
+                            videoUrl = lesson.content_data;
+                        }
+                        document.getElementById('lesson-video-url').value = videoUrl;
 
                         // Load lesson content into Quill editor
-                        if (lesson.content) {
-                            // If content is HTML string, set it directly
-                            quill.root.innerHTML = lesson.content;
-                        } else if (lesson.content_data_html) {
+                        // Priority: content_data_html (old schema) > content (new schema) > empty
+                        if (lesson.content_data_html) {
                             quill.root.innerHTML = lesson.content_data_html;
-                        } else if (lesson.content_data) {
-                            // Fallback to plain text if no HTML
-                            quill.setText(lesson.content_data);
+                        } else if (lesson.content) {
+                            quill.root.innerHTML = lesson.content;
                         } else {
                             quill.setText('');
                         }
@@ -476,9 +481,11 @@
                         console.log('Loaded lesson for editing:', {
                             id: lesson.id,
                             title: lesson.title,
-                            videoUrl: lesson.videoUrl || lesson.video_url,
+                            videoUrl: videoUrl,
                             hasContent: !!lesson.content,
-                            hasContentDataHtml: !!lesson.content_data_html
+                            hasContentDataHtml: !!lesson.content_data_html,
+                            hasContentData: !!lesson.content_data,
+                            contentType: lesson.content_type
                         });
                         
                         // Scroll to form
