@@ -17,7 +17,7 @@
         .lesson-item:hover { background-color: #f0f4f8; }
         .lesson-item.active { border-left: 3px solid #3b82f6; background-color: #eef2ff; }
         .form-toggle-btn.active {
-            background-color: #4f46e5;
+            background-color: #2563eb;
             color: white;
             box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
         }
@@ -37,7 +37,7 @@
             
             <div class="w-full lg:w-1/3 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-100 p-6 flex flex-col sidebar-content">
                 
-                <div class="bg-indigo-50 border-l-4 border-indigo-300 p-4 rounded-lg mb-6 flex-shrink-0">
+                <div class="bg-blue-50 border-l-4 border-blue-300 p-4 rounded-lg mb-6 flex-shrink-0">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Course: <span id="course-title">Loading...</span></h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" id="course-description">Loading course details...</p>
                 </div>
@@ -70,11 +70,11 @@
 
                         <div>
                             <label for="lesson-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lesson Title</label>
-                            <input type="text" id="lesson-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" id="lesson-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
                             <label for="lesson-video-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Video URL (Optional)</label>
-                            <input type="text" id="lesson-video-url" placeholder="YouTube, Dropbox, Vimeo URL (e.g., https://www.dropbox.com/s/...)" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" id="lesson-video-url" placeholder="YouTube, Dropbox, Vimeo URL (e.g., https://www.dropbox.com/s/...)" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lesson Content (Notes, Code...)</label>
@@ -83,7 +83,7 @@
 
                         <div class="mt-6 flex justify-end space-x-3 pt-4">
                             <button type="button" id="cancel-lesson-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">Save Lesson</button>
+                            <button type="submit" class="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold">Save Lesson</button>
                         </div>
                     </form>
 
@@ -92,11 +92,11 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="quiz-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quiz Title</label>
-                                <input type="text" id="quiz-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" id="quiz-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             </div>
                             <div>
                                 <label for="quiz-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                <textarea id="quiz-description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                <textarea id="quiz-description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                             </div>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-8 mb-4 border-t pt-6">Questions</h3>
@@ -108,7 +108,7 @@
                             </button>
                             <div>
                                 <button type="button" id="cancel-quiz-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 ml-2 font-semibold">Save Quiz</button>
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 ml-2 font-semibold">Save Quiz</button>
                             </div>
                         </div>
                     </form>
@@ -224,8 +224,8 @@
                 allContent.forEach(item => {
                     const listItem = document.createElement('li');
                     const itemType = item.type;
-                    const iconClass = itemType === 'quiz' ? 'fa-puzzle-piece text-purple-600' : 'fa-book-open text-blue-600';
-                    const listClass = itemType === 'quiz' ? 'bg-purple-50' : 'bg-blue-50';
+                    const iconClass = itemType === 'quiz' ? 'fa-puzzle-piece text-blue-600' : 'fa-book-open text-blue-600';
+                    const listClass = itemType === 'quiz' ? 'bg-blue-50' : 'bg-blue-50';
 
                     listItem.className = `lesson-item p-3 border rounded-md flex justify-between items-center ${listClass}`;
 
@@ -235,7 +235,7 @@
                             <span class="font-medium text-gray-800 dark:text-gray-200">${item.title}</span>
                         </div>
                         <div class="space-x-3 flex-shrink-0">
-                            <button data-id="${item.id}" data-type="${itemType}" class="edit-content-btn text-sm font-medium text-indigo-600 hover:text-indigo-800">Edit</button>
+                            <button data-id="${item.id}" data-type="${itemType}" class="edit-content-btn text-sm font-medium text-blue-600 hover:text-blue-800">Edit</button>
                             <button data-id="${item.id}" data-type="${itemType}" class="delete-content-btn text-sm font-medium text-red-600 hover:text-red-800">Delete</button>
                         </div>
                     `;
@@ -458,8 +458,8 @@
                         
                         // Populate form fields
                         document.getElementById('lesson-title').value = lesson.title || '';
-                        document.getElementById('lesson-video-url').value = lesson.video_url || '';
-                        
+                        document.getElementById('lesson-video-url').value = lesson.videoUrl || lesson.video_url || '';
+
                         // Load lesson content into Quill editor
                         if (lesson.content) {
                             // If content is HTML string, set it directly
@@ -472,6 +472,14 @@
                         } else {
                             quill.setText('');
                         }
+
+                        console.log('Loaded lesson for editing:', {
+                            id: lesson.id,
+                            title: lesson.title,
+                            videoUrl: lesson.videoUrl || lesson.video_url,
+                            hasContent: !!lesson.content,
+                            hasContentDataHtml: !!lesson.content_data_html
+                        });
                         
                         // Scroll to form
                         lessonForm.scrollIntoView({ behavior: 'smooth', block: 'start' });

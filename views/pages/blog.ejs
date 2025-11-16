@@ -29,7 +29,7 @@
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+            background: linear-gradient(135deg, #3b82f6, #3b82f6, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -60,7 +60,7 @@
         }
         
         .category-active {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
             color: white;
         }
         
@@ -136,10 +136,10 @@
 
         /* Navigation Styles */
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
-        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #3b82f6; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
         /* Custom Logo Style */
-        .header-logo { color: #4f46e5; font-weight: 800; }
+        .header-logo { color: #2563eb; font-weight: 800; }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -155,9 +155,9 @@
     <!-- Blog List View -->
     <div id="blogList" class="pt-4">
         <!-- Header -->
-        <section class="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-gray-900 dark:to-black">
+        <section class="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-black dark:via-gray-900 dark:to-black">
             <div class="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full floating-element"></div>
-            <div class="absolute top-40 right-20 w-16 h-16 bg-purple-500/10 rounded-full floating-element" style="animation-delay: 1s;"></div>
+            <div class="absolute top-40 right-20 w-16 h-16 bg-blue-500/10 rounded-full floating-element" style="animation-delay: 1s;"></div>
 
             <div class="max-w-7xl mx-auto text-center">
                 <div class="fade-in-up">
@@ -172,7 +172,7 @@
                     <div class="max-w-2xl mx-auto mb-12">
                         <div class="relative">
                             <input type="text" id="searchInput" placeholder="Search articles..." class="w-full px-6 py-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-2xl text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 shadow-sm">
-                            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
+                            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-blue-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-blue-700 transition-all duration-300">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                                 </svg>
@@ -204,7 +204,7 @@
                 </div>
 
                 <div class="text-center mt-16">
-                    <button id="loadMoreBtn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl">
+                    <button id="loadMoreBtn" class="bg-gradient-to-r from-blue-600 to-blue-600 text-white px-10 py-4 rounded-xl hover:from-blue-700 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl">
                         Load More Articles
                     </button>
                 </div>
@@ -321,11 +321,11 @@
 
         function getGradientByCategory(category) {
             const gradientMap = {
-                'ai': 'from-blue-500 to-purple-600',
+                'ai': 'from-blue-500 to-blue-600',
                 'machine learning': 'from-cyan-500 to-blue-600',
                 'web': 'from-green-500 to-blue-600',
                 'web development': 'from-green-500 to-blue-600',
-                'mobile': 'from-purple-500 to-indigo-600',
+                'mobile': 'from-blue-500 to-blue-600',
                 'security': 'from-red-500 to-pink-600',
                 'cybersecurity': 'from-red-500 to-pink-600',
                 'blockchain': 'from-yellow-500 to-orange-600',

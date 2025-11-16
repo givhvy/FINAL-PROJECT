@@ -13,7 +13,7 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
         .progress-bar { height: 8px; border-radius: 4px; background-color: #e5e7eb; overflow: hidden; }
-        .progress-fill { height: 100%; border-radius: 4px; background-color: #4f46e5; transition: width 0.5s ease; }
+        .progress-fill { height: 100%; border-radius: 4px; background-color: #2563eb; transition: width 0.5s ease; }
         /* Styles cho thanh điều hướng mới */
         .nav-link {
             padding: 0.25rem 0.5rem;
@@ -24,7 +24,7 @@
         }
         .nav-link:hover {
             color: #1f2937; 
-            border-bottom-color: #6366f1;
+            border-bottom-color: #3b82f6;
         }
         .nav-link.active {
             color: #3b82f6;
@@ -32,10 +32,10 @@
             font-weight: 600;
         }
         /* Custom Logo Style */
-        .header-logo { color: #4f46e5; font-weight: 800; }
+        .header-logo { color: #2563eb; font-weight: 800; }
         /* Tab Styles (Main Tabs) */
         .tab-button { transition: color 0.2s; border-bottom: 2px solid transparent; }
-        .tab-button:hover { color: #4f46e5; }
+        .tab-button:hover { color: #2563eb; }
         .tab-button.active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 600; }
         
         /* New Quiz Card Styles */
@@ -74,7 +74,7 @@
             right: 0;
             bottom: 0;
             border: 12px solid transparent;
-            border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1;
+            border-image: linear-gradient(45deg, #3b82f6, #3b82f6, #ec4899) 1;
             pointer-events: none;
         }
         .certificate-name {
@@ -84,7 +84,7 @@
             color: #1e3a8a;
         }
         .certificate-title {
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(45deg, #3b82f6, #3b82f6);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -453,11 +453,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${quiz.title}</h3>
                         <p class="text-gray-600 dark:text-gray-400 text-sm">${quiz.description || 'Test your knowledge with this quiz.'}</p>
                         <p class="text-xs text-gray-500 mt-2">
-                             <i class="fas fa-question-circle mr-1 text-purple-400"></i> ${quiz.questions ? quiz.questions.length : 'N/A'} Questions
+                             <i class="fas fa-question-circle mr-1 text-blue-400"></i> ${quiz.questions ? quiz.questions.length : 'N/A'} Questions
                              ${quiz.lesson ? ` | <span class="text-blue-500">${quiz.lesson.course ? quiz.lesson.course.title : 'N/A Course'}</span>` : ''}
                         </p>
                     </div>
-                    <a href="/courses?quizId=${quiz.id}&courseId=${quiz.course_id}" class="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium">
+                    <a href="/courses?quizId=${quiz.id}&courseId=${quiz.course_id}" class="flex-shrink-0 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
                         Start Quiz
                     </a>
                 </div>
@@ -563,13 +563,13 @@ async function fetchAndRenderLearningProgress() {
 
         progressContainer.innerHTML = progressData.map(item => {
             const percent = item.percentage || 0;
-            const statusColor = item.isCompleted ? 'bg-green-500' : 'bg-indigo-500';
+            const statusColor = item.isCompleted ? 'bg-green-500' : 'bg-blue-500';
 
             return `
                 <div>
                     <div class="flex justify-between mb-1">
                         <span class="text-sm font-medium">${item.name}</span>
-                        <span class="text-sm font-medium text-indigo-600">${percent}%</span>
+                        <span class="text-sm font-medium text-blue-600">${percent}%</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill ${statusColor}" style="width: ${percent}%"></div>
@@ -603,8 +603,8 @@ async function fetchAndRenderLearningProgress() {
     // Render certificate HTML
     function renderCertificate(cert) {
         return `
-            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
-            <div class="absolute bottom-0 right-0 w-full h-16 bg-gradient-to-l from-blue-600/10 to-indigo-600/10"></div>
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-blue-600/10 to-blue-600/10"></div>
+            <div class="absolute bottom-0 right-0 w-full h-16 bg-gradient-to-l from-blue-600/10 to-blue-600/10"></div>
 
             <div class="text-center z-10 px-6">
                 <div class="mb-2">
@@ -637,7 +637,7 @@ async function fetchAndRenderLearningProgress() {
 
             <svg class="absolute bottom-6 right-10" style="width: 120px; height: 120px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
-                <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
                 <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/>
                 <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text>
                 <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text>
@@ -669,7 +669,7 @@ async function fetchAndRenderLearningProgress() {
 
             certificatesGrid.innerHTML = certificates.map(cert => `
                 <div class="certificate-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" onclick="viewCertificate('${cert.id}')">
-                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                         <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                         </svg>

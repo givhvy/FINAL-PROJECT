@@ -17,10 +17,10 @@
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         /* Navigation Styles */
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
-        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #3b82f6; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
         /* Custom Logo Style */
-        .header-logo { color: #4f46e5; font-weight: 800; }
+        .header-logo { color: #2563eb; font-weight: 800; }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -55,22 +55,22 @@
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Weekly Goal</span>
                             <div class="flex items-center gap-2">
-                                <span id="weekly-goal-count" class="text-sm font-bold text-indigo-600">0/3 courses</span>
+                                <span id="weekly-goal-count" class="text-sm font-bold text-blue-600">0/3 courses</span>
                                 <button id="adjust-goal-btn" class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 rounded transition-colors">
                                     <i class="fas fa-cog"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div id="weekly-goal-bar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div id="weekly-goal-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
                     </div>
 
                     <!-- Study Points Section -->
-                    <div class="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                    <div class="mb-4 p-4 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg border border-blue-100">
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Study Points</span>
-                            <span id="study-points" class="text-2xl font-bold text-purple-600">0</span>
+                            <span id="study-points" class="text-2xl font-bold text-blue-600">0</span>
                         </div>
                         <p class="text-xs text-gray-500 mt-1">100 points per completed course</p>
                     </div>
@@ -149,7 +149,7 @@
                     </div>
                     <div id="leaderboard-container">
                         <div class="text-center py-6">
-                            <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl"></i>
+                            <i class="fas fa-spinner fa-spin text-blue-500 text-3xl"></i>
                             <p class="text-sm text-gray-500 mt-2">Loading leaderboard...</p>
                         </div>
                     </div>
@@ -614,7 +614,7 @@
 
             if (points >= 1500) {
                 rankName = 'Sapphire';
-                rankColor = 'from-purple-200 to-purple-100';
+                rankColor = 'from-blue-200 to-blue-100';
                 rankBadge = RANK_BADGES.sapphire;
                 rankDesc = 'Elite learner! You\'ve mastered 15+ courses!';
             } else if (points >= 1000) {

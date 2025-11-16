@@ -19,7 +19,7 @@
         }
         .nav-link:hover {
             color: #1f2937;
-            border-bottom-color: #6366f1;
+            border-bottom-color: #3b82f6;
         }
         .modal { transition: opacity 0.3s ease, transform 0.3s ease; }
         .modal.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
@@ -40,7 +40,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">My Profile</h1>
                     <div class="flex gap-3">
-                        <button id="edit-profile-button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">Edit Profile</button>
+                        <button id="edit-profile-button" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Edit Profile</button>
                         <button id="delete-account-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors hidden">Delete Account</button>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 mb-6">
                     <div class="flex flex-col md:flex-row items-center">
                         <div class="md:w-1/4 flex justify-center mb-4 md:mb-0">
-                            <div id="main-avatar" class="h-32 w-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-5xl font-bold">HP</div>
+                            <div id="main-avatar" class="h-32 w-32 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-5xl font-bold">HP</div>
                         </div>
                         <div class="md:w-3/4 md:pl-8">
                             <h2 id="profile-name" class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1">Loading...</h2>
@@ -72,7 +72,7 @@
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Order History</h2>
 
                     <div id="order-history-loading" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                         <p class="mt-2 text-gray-600 dark:text-gray-400">Loading orders...</p>
                     </div>
 
@@ -99,18 +99,18 @@
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Picture</label>
                 <div class="flex items-center space-x-4">
-                    <div id="edit-avatar-display" class="h-20 w-20 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-2xl font-bold flex-shrink-0">HP</div>
+                    <div id="edit-avatar-display" class="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-2xl font-bold flex-shrink-0">HP</div>
                     <div class="flex-grow">
-                        <div id="avatar-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center cursor-pointer hover:border-indigo-500 transition-colors">
+                        <div id="avatar-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors">
                             <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Click to upload</span> or drag and drop
+                                <span class="text-blue-600 dark:text-blue-400 font-semibold">Click to upload</span> or drag and drop
                             </p>
                             <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
                         </div>
                         <div id="upload-progress" class="hidden mt-2">
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div id="upload-progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                <div id="upload-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                             </div>
                             <p id="upload-status" class="text-xs text-gray-600 dark:text-gray-400 mt-1">Uploading...</p>
                         </div>
@@ -120,7 +120,7 @@
 
             <div>
                 <label for="edit-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-                <input type="text" id="edit-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <input type="text" id="edit-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
             </div>
 
             <div>
@@ -130,7 +130,7 @@
 
             <div class="mt-6 flex justify-end space-x-3 pt-4">
                 <button type="button" id="cancel-edit-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">Save Changes</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold">Save Changes</button>
             </div>
         </form>
     </div>
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             avatarContainer.innerHTML = `<img src="${avatarImg}" alt="Avatar" class="h-32 w-32 rounded-full object-cover">`;
         } else {
              avatarContainer.innerHTML = initials;
-             avatarContainer.className = 'h-32 w-32 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-5xl font-bold';
+             avatarContainer.className = 'h-32 w-32 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-5xl font-bold';
         }
 
         // Cập nhật các trường thông tin
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
              display.innerHTML = `<img src="${user.avatarUrl}" alt="Avatar" class="h-20 w-20 rounded-full object-cover">`;
         } else {
              display.innerHTML = getUserInitials(user.name);
-             display.className = 'h-20 w-20 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-2xl font-bold flex-shrink-0';
+             display.className = 'h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-2xl font-bold flex-shrink-0';
         }
 
         profileModal.classList.remove('hidden');
@@ -313,16 +313,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Drag and drop events
     avatarDropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        avatarDropZone.classList.add('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900');
+        avatarDropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
     });
 
     avatarDropZone.addEventListener('dragleave', () => {
-        avatarDropZone.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900');
+        avatarDropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
     });
 
     avatarDropZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        avatarDropZone.classList.remove('border-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900');
+        avatarDropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
 
         const file = e.dataTransfer.files[0];
         if (file) {
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                     'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                     'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-                    'refunded': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                    'refunded': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
                 };
 
                 const statusColor = statusColors[order.status] || 'bg-gray-100 text-gray-800';
@@ -444,8 +444,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="flex-1">
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-shopping-cart text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-shopping-cart text-blue-600 dark:text-blue-400 text-xl"></i>
                                         </div>
                                     </div>
                                     <div class="flex-1">
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 </div>
                             </div>
                             <div class="flex flex-col items-end gap-2">
-                                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                                <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">
                                     $${parseFloat(order.price || 0).toFixed(2)}
                                 </span>
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColor}">

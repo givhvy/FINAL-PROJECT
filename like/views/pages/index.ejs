@@ -1,0 +1,752 @@
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  📄 FILE: index.ejs (TRANG CHỦ - LANDING PAGE)                              ║
+║  🎯 NGƯỜI DÙNG: Khách vãng lai & Students chưa đăng nhập                    ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  FILE NÀY LÀM GÌ? 🤔                                                         ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  Đây là trang đầu tiên mà mọi người thấy khi vào website UniLearn.          ║
+║  Trang này có mục đích:                                                      ║
+║                                                                              ║
+║  ✅ LÀM CHO NGƯỜI DÙNG BIẾT UNILEARN LÀ CÁI GÌ                              ║
+║     - Phần Hero lớn với Spline 3D background ấn tượng                       ║
+║     - Dòng tagline: "Transform Your Future Through Learning"                ║
+║     - 2 nút: "Start Learning Free" và "Join Community"                      ║
+║                                                                              ║
+║  ✅ THUYẾT PHỤC NGƯỜI DÙNG ĐĂNG KÝ                                          ║
+║     - Hiển thị 3 khóa học nổi bật (Web Dev, Data Science, UI/UX)          ║
+║     - Logo các trường đại học lớn (Harvard, MIT, Stanford...)              ║
+║     - 3 tính năng chính (Expert Instructors, Projects, Certificates)       ║
+║     - Thống kê uy tín (100k+ students, 4.8 rating)                         ║
+║                                                                              ║
+║  ✅ GIÚP NGƯỜI DÙNG ĐIỀU HƯỚNG ĐẾN CÁC TRANG KHÁC                          ║
+║     - Navigation bar: Courses, Community, Blog, Login, Sign up              ║
+║     - Footer với links: Privacy, Terms, Contact, etc.                       ║
+║                                                                              ║
+║  Giống như: Trang chủ của một siêu thị - bạn vào thấy:                      ║
+║    - Biểu ngữ quảng cáo sản phẩm (Hero section)                             ║
+║    - Các sản phẩm nổi bật ở giữa (3 courses)                                ║
+║    - Các lợi ích tại sao nên mua hàng ở đây (3 features)                    ║
+║    - Nút "Check Out" ở cuối (CTA section)                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+
+<!-- 💡 Khai báo trang HTML5 - Giống như nói "Này trình duyệt, đây là trang web mới nhé!" -->
+<!DOCTYPE html>
+
+<!-- 🌍 Tag <html> - Toàn bộ trang web nằm bên trong đây. lang="en" = ngôn ngữ tiếng Anh -->
+<html lang="en">
+<head>
+    <!-- 📝 UTF-8 = Bảng mã ký tự, giúp hiển thị được chữ Việt, emoji, ký tự đặc biệt -->
+    <meta charset="UTF-8">
+
+    <!-- 📱 Viewport = Làm cho trang web responsive (đẹp trên cả điện thoại và máy tính) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 📌 Tiêu đề trang web (hiển thị trên tab trình duyệt) -->
+    <title>UniLearn — Transform Your Future Through Learning</title>
+
+    <!-- 🔗 Preconnect = Kết nối trước tới Google Fonts để load font nhanh hơn -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- 🎨 Load font chữ "Inter" từ Google Fonts với các độ đậm khác nhau (300-800) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- 🎨 Load font chữ "Geist" - font hiện đại được dùng cho tiêu đề -->
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 🎭 Font Awesome = Thư viện icon (fa-bars, fa-star, fa-heart...) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 🎨 Tailwind CSS = Framework CSS giúp styling nhanh (bg-white, text-center...) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 🎨 Lucide = Thư viện icon SVG đẹp hơn Font Awesome -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- 🎨 CSS TÙY CHỈNH - Viết thẳng trong file HTML bằng tag <style> -->
+    <style>
+        /* 📝 Áp dụng font "Inter" cho toàn bộ trang */
+        body {
+            font-family: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden; /* Ẩn thanh scroll ngang (không cho cuộn ngang) */
+        }
+
+        /* 🎯 Class .font-geist = Dùng font Geist cho các element đặc biệt */
+        .font-geist {
+            font-family: 'Geist', sans-serif;
+        }
+
+        /* 🎬 3D SPLINE BACKGROUND - Background 3D động từ Spline.design */
+        #spline-bg {
+            position: fixed;    /* Cố định background, không cuộn theo trang */
+            top: 0;            /* Dính sát phía trên */
+            left: 0;           /* Dính sát bên trái */
+            width: 100%;       /* Rộng 100% màn hình */
+            height: 100vh;     /* Cao 100% viewport (toàn màn hình) */
+            z-index: 0;        /* Nằm dưới cùng (layer thấp nhất) */
+            pointer-events: none; /* Không bắt sự kiện chuột (ko click được vào background) */
+        }
+
+        /* 🖼️ Iframe chứa animation 3D từ Spline */
+        #spline-bg iframe {
+            width: 100%;       /* Iframe rộng 100% */
+            height: 100%;      /* Iframe cao 100% */
+            border: none;      /* Không có viền */
+        }
+
+        /* 📱 MOBILE RESPONSIVE - Chỉnh lại layout khi màn hình nhỏ (< 768px) */
+        @media (max-width: 768px) {
+            #spline-bg {
+                position: absolute; /* Đổi từ fixed sang absolute trên mobile */
+                top: 0;
+                height: 70vh;      /* Chỉ chiếm 70% màn hình (không phủ kín nữa) */
+                max-height: 500px; /* Tối đa 500px */
+            }
+
+            /* 🔍 Zoom in iframe 1.3 lần trên mobile để nhìn rõ hơn */
+            #spline-bg iframe {
+                transform: scale(1.3);
+                transform-origin: center center; /* Zoom từ trung tâm */
+            }
+
+            /* 📄 Main content nằm trên background (z-index cao hơn) */
+            main {
+                position: relative;
+                z-index: 10; /* Nằm trên background */
+            }
+
+            /* 🌑 Lớp phủ gradient đậm hơn trên mobile để chữ dễ đọc hơn */
+            .gradient-overlay {
+                background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.4) 0%,     /* Đen 40% ở trên */
+                    rgba(0, 0, 0, 0.6) 50%,    /* Đen 60% ở giữa */
+                    rgba(0, 0, 0, 0.9) 100%    /* Đen 90% ở dưới */
+                );
+            }
+        }
+
+        /* 🌑 LỚP PHỦ GRADIENT - Phủ lên background 3D để chữ trắng dễ đọc hơn */
+        .gradient-overlay {
+            position: fixed;   /* Cố định như background */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;        /* Nằm trên background nhưng dưới content */
+            pointer-events: none; /* Không bắt sự kiện chuột */
+            background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.3) 0%,   /* Đen 30% ở trên (nhẹ) */
+                rgba(0, 0, 0, 0.5) 50%,  /* Đen 50% ở giữa */
+                rgba(0, 0, 0, 0.8) 100%  /* Đen 80% ở dưới (đậm) */
+            );
+        }
+
+        /* ✨ BORDER GRADIENT EFFECT - Viền gradient đẹp cho các card */
+        .border-gradient {
+            position: relative;
+        }
+
+        /* 🎨 Tạo viền gradient bằng pseudo-element ::before */
+        .border-gradient::before {
+            content: "";       /* Nội dung rỗng */
+            position: absolute;
+            inset: 0;          /* Phủ toàn bộ parent element */
+            border-radius: inherit; /* Kế thừa border-radius của parent */
+            padding: 1px;      /* Độ dày viền = 1px */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; /* Chỉ hiển thị phần viền */
+            background: linear-gradient(225deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.0) 100%);
+            pointer-events: none;
+        }
+
+        /* 🎬 ANIMATION MARQUEE - Text chạy từ phải sang trái */
+        @keyframes marquee-left {
+            0% {
+                transform: translateX(0);    /* Bắt đầu ở vị trí gốc */
+            }
+            100% {
+                transform: translateX(-50%); /* Di chuyển sang trái 50% */
+            }
+        }
+
+        /* 🎬 FADE IN ANIMATION - Hiệu ứng hiện từ từ + trượt lên */
+        @keyframes fadeSlideIn {
+            0% {
+                opacity: 0;              /* Trong suốt hoàn toàn */
+                transform: translateY(20px); /* Ở dưới 20px */
+            }
+            100% {
+                opacity: 1;              /* Hiện rõ */
+                transform: translateY(0); /* Về vị trí ban đầu */
+            }
+        }
+
+        /* 🎨 Class để áp dụng animation fade-in */
+        .animate-fade-in {
+            animation: fadeSlideIn 0.8s ease-out forwards; /* Chạy trong 0.8 giây */
+        }
+
+        /* 🎯 HOVER EFFECT - Khi hover vào card thì nâng lên */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Chuyển động mượt */
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px); /* Nâng lên 8px khi hover */
+        }
+
+        /* 📱 MOBILE COURSE CARD - Chiều cao tối thiểu cho course card trên mobile */
+        @media (max-width: 640px) {
+            .mobile-course-card {
+                min-height: 300px; /* Tối thiểu 300px cao */
+            }
+        }
+
+        /* 🧭 NAVIGATION BAR - Thanh điều hướng với hiệu ứng blur */
+        .landing-nav {
+            background: rgba(0, 0, 0, 0.5); /* Nền đen trong suốt 50% */
+            backdrop-filter: blur(10px);     /* Hiệu ứng blur phía sau */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Viền dưới trắng mờ */
+        }
+    </style>
+</head>
+<!-- giờ head và style đã xong thì qua chính html codes -->
+<!-- 🎨 BODY - Nền đen, chữ trắng, font mượt mà -->
+<body class="bg-black text-white antialiased">
+
+    <!-- 🎬 3D SPLINE BACKGROUND - Background 3D động từ Spline.design -->
+    <div id="spline-bg">
+        <!-- 🖼️ Iframe nhúng animation 3D từ Spline (giống như nhúng video YouTube) -->
+        <iframe src="https://my.spline.design/aidatamodelinteraction-mdTL3FktFVHgDvFr5TKtnYDV" frameborder="0"></iframe>
+    </div>
+
+    <!-- 🌑 LỚP PHỦ GRADIENT - Phủ lên background để chữ dễ đọc -->
+    <div class="gradient-overlay"></div>
+
+    <!-- 🧭 NAVIGATION BAR - Thanh điều hướng ở trên cùng -->
+    <nav class="landing-nav sticky top-0 z-20"> <!-- sticky = dính ở top khi scroll -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- Container giới hạn width -->
+            <div class="flex justify-between items-center h-16"> <!-- Flexbox: 2 phần (logo vs menu) -->
+
+                <!-- 🏠 LOGO - Bên trái -->
+                <a href="/" class="flex items-center space-x-2"> <!-- Click vào logo về trang chủ -->
+                    <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8"> <!-- Icon -->
+                    <div class="text-xl sm:text-2xl font-bold text-white font-geist">UniLearn</div> <!-- Chữ -->
+                </a>
+
+                <!-- 🖥️ DESKTOP MENU - Chỉ hiện trên màn hình lớn (≥ md) -->
+                <div class="hidden md:flex items-center space-x-8"> <!-- hidden = ẩn, md:flex = hiện khi ≥ 768px -->
+                    <!-- 📚 Link tới trang Courses -->
+                    <a href="/courses" class="text-sm font-medium text-white/80 hover:text-white transition-colors font-geist">Courses</a>
+
+                    <!-- 👥 Link tới trang Community -->
+                    <a href="/community" class="text-sm font-medium text-white/80 hover:text-white transition-colors font-geist">Community</a>
+
+                    <!-- 📖 Link tới trang Blog -->
+                    <a href="/blog" class="text-sm font-medium text-white/80 hover:text-white transition-colors font-geist">Blog</a>
+
+                    <!-- 🔐 Link tới trang Login -->
+                    <a href="/login" class="text-sm font-medium text-white/80 hover:text-white transition-colors font-geist">Log in</a>
+
+                    <!-- ✨ NÚT SIGN UP - Nổi bật với nền trắng, chữ đen -->
+                    <a href="/signup" class="inline-flex items-center rounded-full bg-white text-black px-4 py-2 text-sm font-medium hover:bg-white/90 transition-colors font-geist">
+                        Sign up
+                    </a>
+                </div>
+
+                <!-- 📱 NÚT MENU MOBILE - Chỉ hiện trên mobile (< md) -->
+                <button type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/10 focus:outline-none" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-xl"></i> <!-- Icon 3 gạch ngang (hamburger menu) -->
+                </button>
+            </div>
+
+            <!-- 📱 MOBILE MENU - Dropdown khi click vào hamburger icon -->
+            <div class="md:hidden hidden" id="mobile-menu"> <!-- hidden = ẩn mặc định, JS sẽ toggle -->
+                <div class="px-2 pt-2 pb-3 space-y-1"> <!-- Padding và spacing -->
+                    <!-- 📚 Link Courses -->
+                    <a href="/courses" class="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-white/10 transition-colors font-geist">Courses</a>
+
+                    <!-- 👥 Link Community -->
+                    <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-white/10 transition-colors font-geist">Community</a>
+
+                    <!-- 📖 Link Blog -->
+                    <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-white/10 transition-colors font-geist">Blog</a>
+
+                    <!-- 🔐 Link Login -->
+                    <a href="/login" class="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-white/10 transition-colors font-geist">Log in</a>
+
+                    <!-- ✨ Link Sign up -->
+                    <a href="/signup" class="block px-3 py-2 rounded-md text-base font-medium bg-white text-black hover:bg-white/90 transition-colors font-geist text-center">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🎯 HERO SECTION - Phần lớn nhất ở trên cùng -->
+    <main class="relative z-10 pt-12"> <!-- z-10 = nằm trên background -->
+        <section class="mx-auto max-w-5xl px-4 sm:px-6 pt-8 sm:pt-12 md:pt-20 text-center"> <!-- Căn giữa, max-width 5xl -->
+
+            <!-- 🏷️ NEW BADGE - Badge "AI-Powered Learning" -->
+            <div class="inline-flex gap-2 text-xs text-white/80 bg-white/5 border-white/10 border rounded-full pt-1.5 pr-3 pb-1.5 pl-3 items-center animate-fade-in">
+                <!-- ⚡ Icon lightning bolt (SVG) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 text-white/80">
+                    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
+                </svg>
+
+                <!-- 📝 Text "AI-Powered Learning" -->
+                <span class="font-geist">AI-Powered Learning</span>
+
+                <!-- • Dấu chấm tròn -->
+                <span class="mx-1 h-1 w-1 rounded-full bg-white/40"></span>
+
+                <!-- ✅ Text "Available Now" -->
+                <span class="text-white/60 font-geist">Available Now</span>
+            </div>
+
+            <!-- 🎯 HERO TITLE - Tiêu đề chính siêu to -->
+            <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter font-geist mt-6"
+                style="mask-image: linear-gradient(150deg, transparent, black 30%, black 50%, transparent); -webkit-mask-image: linear-gradient(150deg, transparent, black 30%, black 50%, transparent);">
+                <!-- 💡 Responsive: text-4xl trên mobile, text-8xl trên desktop -->
+                <!-- 💡 mask-image = Hiệu ứng gradient fade ở 2 đầu -->
+                Transform Your Future Through Learning
+            </h1>
+
+            <!-- 📝 SUBTITLE - Mô tả ngắn -->
+            <p class="mt-5 text-sm sm:text-base md:text-lg text-white/70 max-w-2xl mx-auto font-geist px-4">
+                Join thousands of learners mastering in-demand skills with world-class courses. From web development to data science, start your journey today.
+            </p>
+
+            <!-- 🎯 CTA BUTTONS - 2 nút hành động chính -->
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
+                <!-- ✨ NÚT CHỦ ĐẠO - "Start Learning Free" với background gradient xanh -->
+                <a href="/courses" class="inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-sm font-medium text-white font-geist bg-gradient-to-b from-blue-400 to-blue-600 rounded-full pt-3 pr-6 pb-3 pl-6 shadow-lg w-full sm:w-auto"
+                   style="mask-image: linear-gradient(120deg, transparent, black 35%, black 65%, transparent); -webkit-mask-image: linear-gradient(120deg, transparent, black 35%, black 65%, transparent);">
+                    <!-- ⭐ Icon sparkles -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"></path>
+                    </svg>
+                    Start Learning Free
+                </a>
+
+                <!-- 👥 NÚT PHỤ - "Join Community" với nền trong suốt, viền gradient -->
+                <a href="/community" class="inline-flex items-center gap-2 rounded-full bg-white/5 px-5 py-3 text-sm text-white hover:bg-white/10 transition-colors font-medium font-geist border-gradient w-full sm:w-auto justify-center">
+                    <!-- 👥 Icon users (người dùng) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
+                    </svg>
+                    Join Community
+                </a>
+            </div>
+
+            <!-- ✅ TRUST INDICATORS - Các chỉ số uy tín (Free, 100k students, 4.8 rating) -->
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 text-white/70 text-xs sm:text-sm px-4">
+
+                <!-- ✅ "100% Free to Start" -->
+                <div class="inline-flex items-center gap-2">
+                    <!-- 🛡️ Icon shield với dấu tick -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    <span class="font-geist">100% Free to Start</span>
+                </div>
+
+                <!-- 👥 "100,000+ Students" -->
+                <div class="inline-flex items-center gap-2">
+                    <!-- 👤 Icon user -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span class="font-geist">100,000+ Students</span>
+                </div>
+
+                <!-- ⭐ "4.8/5 Rating" -->
+                <div class="inline-flex items-center gap-2">
+                    <!-- ⭐ Icon star -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                    </svg>
+                    <span class="font-geist">4.8/5 Rating</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📚 FEATURED COURSES SECTION - Hiển thị 3 khóa học nổi bật -->
+        <section class="mt-12 md:mt-16 relative">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+
+                <!-- 🏷️ SECTION HEADER - Tiêu đề section + nút "View All" -->
+                <div class="flex mb-6 sm:mb-8 items-end justify-between">
+                    <div>
+                        <!-- 📌 Label nhỏ "(01) Featured Courses" -->
+                        <p class="text-[11px] sm:text-xs uppercase text-white/50 tracking-widest font-geist">(01) Featured Courses</p>
+
+                        <!-- 📝 Tiêu đề lớn "Popular Right Now" -->
+                        <h3 class="mt-2 text-xl sm:text-2xl md:text-3xl tracking-tight font-geist font-medium">Popular Right Now</h3>
+                    </div>
+
+                    <!-- 🔗 Link "View All" - Chỉ hiện trên desktop (ẩn mobile) -->
+                    <a href="/courses" class="hidden sm:inline-flex items-center gap-2 border-gradient rounded-full bg-white/5 px-4 py-2 text-sm text-white/80 hover:bg-white/10 transition-colors font-geist">
+                        View All
+                        <!-- ↗️ Icon arrow up-right -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                            <path d="M7 7h10v10"></path>
+                            <path d="M7 17 17 7"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- 🎴 GRID 3 COURSE CARDS - Responsive: 1 cột mobile, 2 cột tablet, 3 cột desktop -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+                     style="mask-image: linear-gradient(180deg, black 0%, black 90%, transparent); -webkit-mask-image: linear-gradient(180deg, black 0%, black 90%, transparent);">
+
+                    <!-- 🎴 COURSE CARD 1 - Web Development -->
+                    <a href="/courses" class="border-gradient group relative overflow-hidden bg-white/5 rounded-2xl sm:rounded-3xl hover-lift mobile-course-card">
+                        <!-- 🖼️ Ảnh thumbnail khóa học -->
+                        <div class="aspect-[4/3] overflow-hidden"> <!-- aspect-ratio 4:3 -->
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
+                                 alt="Web Development"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"> <!-- Zoom 105% khi hover -->
+                        </div>
+
+                        <!-- 🌑 Lớp phủ gradient từ đen ở dưới lên trong suốt ở trên -->
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+                        <!-- 📝 Thông tin khóa học (nằm dưới cùng) -->
+                        <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
+                            <!-- 📚 Tiêu đề khóa học -->
+                            <h4 class="text-base sm:text-lg font-bold text-white mb-1">Web Development</h4>
+
+                            <!-- 📝 Mô tả ngắn -->
+                            <p class="text-[10px] sm:text-xs text-white/80 mb-3">Master HTML, CSS & JavaScript</p>
+
+                            <!-- 📊 Phần dưới: Category + Rating vs Arrow button -->
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <!-- 🏷️ Category "Development" -->
+                                    <p class="text-[10px] sm:text-xs text-white/70 font-geist">Development</p>
+
+                                    <!-- ⭐ Rating 4.9 (2.1k reviews) -->
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <!-- ⭐ Icon star (filled) -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                            <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                                        </svg>
+                                        <span class="text-[10px] sm:text-xs text-white/70 font-medium">4.9 (2.1k)</span>
+                                    </div>
+                                </div>
+
+                                <!-- ➡️ Nút arrow tròn (nền trắng, icon đen) -->
+                                <span class="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 text-neutral-900">
+                                    <!-- → Icon arrow right -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 sm:h-4 sm:w-4">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 🎴 COURSE CARD 2 - Data Science (cấu trúc giống card 1) -->
+                    <a href="/courses" class="border-gradient group relative overflow-hidden bg-white/5 rounded-2xl sm:rounded-3xl hover-lift mobile-course-card">
+                        <div class="aspect-[4/3] overflow-hidden">
+                            <img src="https://res.cloudinary.com/dxqrmxll4/image/upload/v1762938137/growtika-9WnjxT1NCoY-unsplash_rwjlkc.jpg"
+                                 alt="Data Science"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
+                            <h4 class="text-base sm:text-lg font-bold text-white mb-1">Data Science</h4>
+                            <p class="text-[10px] sm:text-xs text-white/80 mb-3">Python, ML & Analytics</p>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[10px] sm:text-xs text-white/70 font-geist">Data Science</p>
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                            <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                                        </svg>
+                                        <span class="text-[10px] sm:text-xs text-white/70 font-medium">4.8 (1.8k)</span>
+                                    </div>
+                                </div>
+                                <span class="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 text-neutral-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 sm:h-4 sm:w-4">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 🎴 COURSE CARD 3 - UI/UX Design (cấu trúc giống card 1) -->
+                    <a href="/courses" class="border-gradient group relative overflow-hidden bg-white/5 rounded-2xl sm:rounded-3xl hover-lift mobile-course-card">
+                        <div class="aspect-[4/3] overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80"
+                                 alt="UI/UX Design"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
+                            <h4 class="text-base sm:text-lg font-bold text-white mb-1">UI/UX Design</h4>
+                            <p class="text-[10px] sm:text-xs text-white/80 mb-3">Figma & Design Thinking</p>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[10px] sm:text-xs text-white/70 font-geist">Design</p>
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                            <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                                        </svg>
+                                        <span class="text-[10px] sm:text-xs text-white/70 font-medium">4.7 (1.5k)</span>
+                                    </div>
+                                </div>
+                                <span class="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/90 text-neutral-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 sm:h-4 sm:w-4">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- 🔗 NÚT "BROWSE ALL COURSES" - Dưới grid courses -->
+                <div class="mt-8 sm:mt-10 flex justify-center">
+                    <a href="/courses" class="border-gradient inline-flex items-center gap-2 rounded-full bg-white/5 px-5 py-3 text-sm text-white/80 hover:bg-white/10 transition-colors font-geist">
+                        Browse All Courses
+                        <!-- ↗️ Icon arrow up-right -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                            <path d="M7 7h10v10"></path>
+                            <path d="M7 17 17 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🏫 LOGO CLOUD SECTION - Logo các trường đại học chạy ngang (marquee) -->
+        <section class="z-10 sm:px-6 lg:px-8 lg:mt-32 max-w-7xl mt-24 mr-auto ml-auto pt-16 pr-4 pb-6 pl-4 relative">
+            <div class="text-center">
+                <!-- 📝 Tiêu đề "Trusted by learners from leading universities" -->
+                <p class="uppercase text-xs sm:text-sm font-medium text-slate-400 tracking-wide font-geist">
+                    Trusted by learners from leading universities
+                </p>
+            </div>
+
+            <!-- 🎬 Container với mask fade ở 2 đầu -->
+            <div class="overflow-hidden mt-6 relative">
+                <!-- 🌫️ Mask gradient: trong suốt ở 2 đầu, hiện rõ ở giữa -->
+                <div style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
+                    <!-- 🎬 Div chạy animation marquee (chạy từ phải sang trái) -->
+                    <div class="flex gap-6 will-change-transform animate-[marquee-left_30s_linear_infinite]">
+                        <!-- 🏫 Logo set 1 (6 trường) -->
+                        <div class="flex gap-12 sm:gap-20 shrink-0">
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[120px] sm:w-[150px] h-[40px]">HARVARD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] sm:w-[150px] h-[40px]">MIT</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[120px] sm:w-[150px] h-[40px]">STANFORD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] sm:w-[120px] h-[40px]">OXFORD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[120px] h-[40px]">CAMBRIDGE</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] sm:w-[150px] h-[40px]">YALE</div>
+                        </div>
+
+                        <!-- 🏫 Logo set 2 (duplicate để loop liên tục) -->
+                        <div class="flex shrink-0 gap-12 sm:gap-20">
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[120px] sm:w-[150px] h-[40px]">HARVARD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] sm:w-[150px] h-[40px]">MIT</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[120px] sm:w-[150px] h-[40px]">STANFORD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] h-[40px]">OXFORD</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] h-[40px]">CAMBRIDGE</div>
+                            <div class="inline-flex items-center justify-center text-white/40 text-base sm:text-lg font-bold w-[100px] sm:w-[150px] h-[40px]">YALE</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ✨ FEATURES SECTION - 3 tính năng nổi bật (Expert Instructors, Projects, Certificates) -->
+        <section class="mt-16 md:mt-24 relative">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+
+                <!-- 🏷️ Section header -->
+                <div class="mb-8">
+                    <p class="text-[11px] sm:text-xs uppercase text-white/50 tracking-widest font-geist">(02) Why UniLearn</p>
+                    <h3 class="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight font-geist font-medium">Everything you need to succeed</h3>
+                </div>
+
+                <!-- 🎴 Grid 3 cột tính năng -->
+                <div class="grid gap-6 lg:grid-cols-3">
+
+                    <!-- 🎯 FEATURE 1 - Expert Instructors -->
+                    <div class="border-gradient bg-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-sm hover-lift">
+                        <!-- 🎓 Icon graduation cap trong vòng tròn xanh -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+                                <i class="fas fa-graduation-cap text-blue-400 text-xl"></i>
+                            </div>
+                        </div>
+
+                        <!-- 📝 Tiêu đề + mô tả -->
+                        <h4 class="text-lg sm:text-xl font-medium tracking-tight text-white mb-3 font-geist">Expert Instructors</h4>
+                        <p class="text-white/70 text-sm font-geist">Learn from industry professionals with years of real-world experience in their fields.</p>
+                    </div>
+
+                    <!-- 💻 FEATURE 2 - Hands-On Projects -->
+                    <div class="border-gradient bg-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-sm hover-lift">
+                        <!-- 💻 Icon code trong vòng tròn xanh lá -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
+                                <i class="fas fa-code text-green-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-medium tracking-tight text-white mb-3 font-geist">Hands-On Projects</h4>
+                        <p class="text-white/70 text-sm font-geist">Build real-world projects that you can showcase in your portfolio to employers.</p>
+                    </div>
+
+                    <!-- 📜 FEATURE 3 - Certificates -->
+                    <div class="border-gradient bg-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-sm hover-lift">
+                        <!-- 📜 Icon certificate trong vòng tròn tím -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
+                                <i class="fas fa-certificate text-purple-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-medium tracking-tight text-white mb-3 font-geist">Certificates</h4>
+                        <p class="text-white/70 text-sm font-geist">Earn industry-recognized certificates upon completion of each course.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🎯 FINAL CTA SECTION - Call to action cuối trang "Start learning today" -->
+        <section class="mt-16 md:mt-24 mb-16 relative">
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 text-center">
+                <!-- 🎴 Card lớn với nền blur + border gradient -->
+                <div class="border-gradient bg-white/5 rounded-3xl pt-12 pr-6 sm:pr-12 pb-12 pl-6 sm:pl-12 backdrop-blur-sm">
+
+                    <!-- 🚀 Badge "Ready to get started?" -->
+                    <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80 mb-6">
+                        <i class="fas fa-rocket text-white/80"></i>
+                        <span class="font-geist">Ready to get started?</span>
+                    </div>
+
+                    <!-- 📝 Tiêu đề lớn -->
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-white mb-4 font-geist">
+                        Start learning today
+                    </h2>
+
+                    <!-- 📝 Subtitle -->
+                    <p class="text-white/70 text-sm sm:text-base md:text-lg mb-8 font-geist">
+                        Join thousands of students already mastering new skills
+                    </p>
+
+                    <!-- 🎯 2 CTA buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                        <!-- ✨ Nút chính "Create Free Account" -->
+                        <a href="/signup" class="inline-flex items-center rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:bg-white/90 transition-colors font-geist w-full sm:w-auto justify-center">
+                            Create Free Account
+                            <i class="fas fa-arrow-right ml-2"></i> <!-- → Icon arrow right -->
+                        </a>
+
+                        <!-- 📚 Nút phụ "Explore Courses" -->
+                        <a href="/courses" class="border-gradient inline-flex items-center gap-2 rounded-full bg-white/5 px-6 py-3 text-sm text-white hover:bg-white/10 transition-colors font-medium font-geist w-full sm:w-auto justify-center">
+                            <i class="fas fa-book"></i> <!-- 📖 Icon book -->
+                            Explore Courses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🦶 FOOTER - Phần chân trang với links và copyright -->
+        <footer class="relative border-t border-white/10"> <!-- Viền trên -->
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+
+                <!-- 🎴 Grid 4 cột: Logo + 3 cột links -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+
+                    <!-- 🏠 Cột 1 - Logo + tagline -->
+                    <div class="col-span-2 md:col-span-1">
+                        <!-- 🔗 Link về trang chủ -->
+                        <a href="/" class="flex items-center gap-2 mb-4">
+                            <img src="/images/e-learning.svg" alt="UniLearn" class="h-8 w-8">
+                            <span class="text-lg font-medium tracking-tight font-geist">UniLearn</span>
+                        </a>
+                        <p class="text-sm text-white/60 font-geist">Transform your future through learning.</p>
+                    </div>
+
+                    <!-- 📚 Cột 2 - Platform links -->
+                    <div>
+                        <h4 class="text-sm font-medium text-white mb-3 font-geist">Platform</h4>
+                        <ul class="space-y-2">
+                            <li><a href="/courses" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Courses</a></li>
+                            <li><a href="/community" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Community</a></li>
+                            <li><a href="/blog" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 🆘 Cột 3 - Support links -->
+                    <div>
+                        <h4 class="text-sm font-medium text-white mb-3 font-geist">Support</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Help Center</a></li>
+                            <li><a href="#" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- ⚖️ Cột 4 - Legal links -->
+                    <div>
+                        <h4 class="text-sm font-medium text-white mb-3 font-geist">Legal</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Privacy</a></li>
+                            <li><a href="#" class="text-sm text-white/60 hover:text-white transition-colors font-geist">Terms</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 📝 Copyright + Social icons -->
+                <div class="flex flex-col sm:flex-row items-center justify-between pt-8 border-t border-white/10">
+                    <!-- © Copyright -->
+                    <p class="text-sm text-white/60 font-geist">© 2025 UniLearn. All rights reserved.</p>
+
+                    <!-- 🔗 Social media links -->
+                    <div class="flex items-center gap-4 mt-4 sm:mt-0">
+                        <!-- 🐦 Twitter -->
+                        <a href="#" class="text-white/60 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <!-- 🐙 GitHub -->
+                        <a href="#" class="text-white/60 hover:text-white transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- 🎬 JAVASCRIPT CODE - Tương tác với trang -->
+    <script>
+        /* 📱 MOBILE MENU TOGGLE - Bật/tắt menu mobile khi click vào hamburger icon */
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu'); /* Lấy element menu mobile */
+            menu.classList.toggle('hidden'); /* Toggle class 'hidden' (ẩn/hiện) */
+        });
+
+        /* 🎨 INITIALIZE LUCIDE ICONS - Khởi tạo thư viện icon Lucide */
+        window.addEventListener('DOMContentLoaded', () => { /* Chạy sau khi DOM load xong */
+            if (typeof lucide !== 'undefined') { /* Kiểm tra xem Lucide đã load chưa */
+                lucide.createIcons(); /* Tạo tất cả Lucide icons trong trang */
+            }
+        });
+    </script>
+</body>
+</html>

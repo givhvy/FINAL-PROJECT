@@ -1,0 +1,230 @@
+<!-- Navigation -->
+<nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-20" style="font-family: 'Poppins', sans-serif;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="/" class="flex-shrink-0 flex items-center space-x-1">
+                    <img src="/images/e-learning.svg" alt="UniLearn Logo" class="h-8 w-8">
+                    <div class="text-2xl font-bold text-indigo-600 dark:text-white" style="font-weight: 800;">UniLearn</div>
+                </a>
+
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
+                    <a href="/courses" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Courses</a>
+                    <a href="/account" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">My Learning</a>
+                    <a href="/community" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Community</a>
+                    <a href="/blog" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Blog</a>
+                    <a href="/payment" id="upgrade-button" class="text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span>Upgrade</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Dark Mode Toggle - Moved to the right -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </span>
+                </label>
+                <!-- Mobile menu button -->
+                <button type="button" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" id="mobile-menu-button">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- Dashboard Button for Admin/Teacher Only -->
+                <button id="dashboard-button" class="hidden px-4 py-2 text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition-colors sm:flex items-center space-x-2">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span id="dashboard-text">Dashboard</span>
+                </button>
+
+                <!-- Shopping Cart Icon -->
+                <a href="/cart" id="cart-button" class="relative ml-3 hidden sm:block text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold hidden">0</span>
+                </a>
+
+                <!-- Subscription Tier Badge -->
+                <div id="user-tier-badge" class="hidden sm:block"></div>
+
+                <div class="ml-3 relative hidden sm:block">
+                    <button class="flex text-sm rounded-full focus:outline-none" id="user-menu-button">
+                        <div id="user-avatar" class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"></div>
+                    </button>
+                </div>
+                <button id="logout-button" class="ml-4 hidden sm:block text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Logout</button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="mobile-menu sm:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700" id="mobile-menu" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="/courses" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Courses</a>
+                <a href="/account" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">My Learning</a>
+                <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Community</a>
+                <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Blog</a>
+                <a href="/payment" id="mobile-upgrade-button" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+                    <i class="fas fa-star text-yellow-400 mr-2"></i>Upgrade
+                </a>
+                <button id="mobile-profile-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-user mr-2"></i>Profile
+                </button>
+                <button id="mobile-logout-button" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script src="/js/avatar-helper.js"></script>
+<script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+        const menu = document.getElementById('mobile-menu');
+        if (menu.style.maxHeight === '0px' || menu.style.maxHeight === '') {
+            menu.style.maxHeight = '500px';
+        } else {
+            menu.style.maxHeight = '0px';
+        }
+    });
+
+    // Mobile menu dark mode toggle
+    document.getElementById('darkModeToggleMobile')?.addEventListener('change', function() {
+        document.getElementById('darkModeToggle').checked = this.checked;
+        document.getElementById('darkModeToggle').dispatchEvent(new Event('change'));
+    });
+
+    // Mobile profile button click handler
+    document.getElementById('mobile-profile-button')?.addEventListener('click', function() {
+        window.location.href = '/profile';
+    });
+
+    // Dashboard button visibility and role-based UI setup - Universal for all pages
+    (function setupRoleBasedUI() {
+        const dashboardButton = document.getElementById('dashboard-button');
+        const dashboardText = document.getElementById('dashboard-text');
+        const upgradeButton = document.getElementById('upgrade-button');
+        const mobileUpgradeButton = document.getElementById('mobile-upgrade-button');
+        const cartButton = document.getElementById('cart-button');
+        const tierBadge = document.getElementById('user-tier-badge');
+        const userAvatar = document.getElementById('user-avatar');
+        const logoutButton = document.getElementById('logout-button');
+        const userMenuButton = document.getElementById('user-menu-button');
+        const mobileLogoutButton = document.getElementById('mobile-logout-button');
+        const mobileProfileButton = document.getElementById('mobile-profile-button');
+
+        try {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userRole = (user.role || '').toLowerCase(); // Case-insensitive
+
+            console.log('User role:', userRole); // Debug log
+            console.log('Token exists:', !!token); // Debug log
+
+            // Check if user is logged in
+            if (!token || !user || !user.email) {
+                // User is not logged in - hide all user-related elements
+                console.log('User not logged in, hiding user elements');
+
+                if (dashboardButton) dashboardButton.style.display = 'none';
+                if (upgradeButton) upgradeButton.style.display = 'none';
+                if (mobileUpgradeButton) mobileUpgradeButton.style.display = 'none';
+                if (cartButton) cartButton.style.display = 'none';
+                if (tierBadge) tierBadge.style.display = 'none';
+                if (userAvatar) userAvatar.parentElement.style.display = 'none';
+                if (logoutButton) logoutButton.style.display = 'none';
+                if (userMenuButton) userMenuButton.style.display = 'none';
+                if (mobileLogoutButton) mobileLogoutButton.style.display = 'none';
+                if (mobileProfileButton) mobileProfileButton.style.display = 'none';
+
+                return; // Exit early
+            }
+
+            // Handle dashboard button and role-specific UI
+            if (userRole === 'admin' || userRole === 'teacher') {
+                // Show dashboard button
+                if (dashboardButton) {
+                    dashboardButton.classList.remove('hidden');
+                    dashboardButton.style.display = 'flex';
+
+                    // Set appropriate text
+                    if (userRole === 'admin') {
+                        dashboardText.textContent = 'Admin Dashboard';
+                    } else if (userRole === 'teacher') {
+                        dashboardText.textContent = 'Teacher Dashboard';
+                    }
+
+                    // Add click event listener
+                    dashboardButton.addEventListener('click', function() {
+                        if (userRole === 'admin') {
+                            window.location.href = '/admin';
+                        } else if (userRole === 'teacher') {
+                            window.location.href = '/teacher';
+                        }
+                    });
+                }
+
+                // Hide upgrade button for teachers and admins
+                if (upgradeButton) {
+                    upgradeButton.style.display = 'none';
+                }
+                if (mobileUpgradeButton) {
+                    mobileUpgradeButton.style.display = 'none';
+                }
+
+                // Hide cart button for teachers and admins
+                if (cartButton) {
+                    cartButton.style.display = 'none';
+                }
+
+                // Set role-appropriate badge
+                if (tierBadge) {
+                    if (userRole === 'admin') {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                                <i class="fas fa-shield-alt"></i> ADMIN
+                            </span>
+                        `;
+                    } else if (userRole === 'teacher') {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full flex items-center gap-1">
+                                <i class="fas fa-chalkboard-teacher"></i> TEACHER
+                            </span>
+                        `;
+                    }
+                }
+            } else {
+                // Student role - hide dashboard button
+                if (dashboardButton) {
+                    dashboardButton.classList.add('hidden');
+                    dashboardButton.style.display = 'none';
+                }
+
+                // Show upgrade and cart buttons for students
+                if (upgradeButton) {
+                    upgradeButton.style.display = 'flex';
+                }
+                if (mobileUpgradeButton) {
+                    mobileUpgradeButton.style.display = 'block';
+                }
+                if (cartButton) {
+                    cartButton.style.display = 'block';
+                }
+
+                // Set student tier badge (handled by existing page logic)
+                console.log('Student UI setup complete');
+            }
+        } catch (error) {
+            console.error('Error setting up role-based UI:', error);
+            if (dashboardButton) {
+                dashboardButton.classList.add('hidden');
+                dashboardButton.style.display = 'none';
+            }
+        }
+    })();
+</script>

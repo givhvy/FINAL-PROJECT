@@ -12,8 +12,8 @@
         
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
         .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
-        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
-        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #3b82f6, #ec4899) 1; pointer-events: none; }
+        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #3b82f6); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; text-align: center; margin: 1.5rem 0; padding: 0 1rem; }
         .seal { position: absolute; bottom: 30px; right: 40px; width: 120px; height: 120px; }
         .sidebar { transition: all 0.3s ease; }
@@ -117,7 +117,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Students</p> <h3 id="total-students" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 12%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-users text-xl"></i> </div> </div> </div>
                         <div class="card bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Courses</p> <h3 id="total-courses" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 8%</span> from last month</p> </div> <div class="bg-green-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-book text-xl"></i> </div> </div> </div>
-                        <div class="card bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Enrollments</p> <h3 id="total-enrollments" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-purple-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-user-plus text-xl"></i> </div> </div> </div>
+                        <div class="card bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Total Enrollments</p> <h3 id="total-enrollments" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 15%</span> from last month</p> </div> <div class="bg-blue-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-user-plus text-xl"></i> </div> </div> </div>
                         <div class="card bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow p-5 text-white"> <div class="flex items-center justify-between"> <div> <p class="text-sm opacity-80">Avg Rating</p> <h3 id="avg-rating" class="text-2xl font-bold">-</h3> <p class="text-xs mt-1"><span class="text-green-300">↑ 5%</span> from last month</p> </div> <div class="bg-red-400 bg-opacity-30 p-3 rounded-full"> <i class="fas fa-star text-xl"></i> </div> </div> </div>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -212,10 +212,10 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
-                                        <p id="totalRevenue" class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">$0</p>
+                                        <p id="totalRevenue" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">$0</p>
                                     </div>
-                                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-dollar-sign text-purple-600 dark:text-purple-400 text-xl"></i>
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-dollar-sign text-blue-600 dark:text-blue-400 text-xl"></i>
                                     </div>
                                 </div>
                             </div>
@@ -259,7 +259,7 @@
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Certificate Database</h2>
                                 <div class="flex gap-3">
                                     <div class="relative">
-                                        <input type="text" id="certificate-search" placeholder="Search certificates..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <input type="text" id="certificate-search" placeholder="Search certificates..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                                     </div>
                                 </div>
@@ -297,7 +297,7 @@
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Course Management</h2>
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="relative">
-                        <input type="text" id="course-search" placeholder="Search courses..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="course-search" placeholder="Search courses..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                     </div>
                 </div>
@@ -335,7 +335,7 @@
                     <div class="mb-6">
                         <div class="flex items-center justify-between">
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Blog Management</h2>
-                            <button id="create-blog-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <button id="create-blog-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
                                 <i class="fas fa-plus w-5 h-5 mr-2"></i> Create New Post
                             </button>
                         </div>
@@ -353,7 +353,7 @@
                                     <option value="draft">Draft</option>
                                 </select>
                                 <div class="relative">
-                                    <input type="text" id="blog-search" placeholder="Search posts..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="text" id="blog-search" placeholder="Search posts..." class="border rounded-lg px-3 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <i class="fas fa-search absolute right-3 top-3 text-gray-400 text-sm"></i>
                                 </div>
                             </div>
@@ -396,17 +396,17 @@
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Users</h3>
                                 <div class="flex flex-col md:flex-row gap-3">
-                                    <select id="role-filter" class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <select id="role-filter" class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <option value="">All Roles</option>
                                         <option value="student">Students Only</option>
                                         <option value="teacher">Teachers Only</option>
                                         <option value="admin">Admins Only</option>
                                     </select>
                                     <div class="relative">
-                                        <input type="text" id="user-search" placeholder="Search users..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <input type="text" id="user-search" placeholder="Search users..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
                                     </div>
-                                    <button id="add-user-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center text-sm whitespace-nowrap">
+                                    <button id="add-user-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center text-sm whitespace-nowrap">
                                         <i class="fas fa-plus mr-2"></i> Add User
                                     </button>
                                 </div>
@@ -459,18 +459,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="user-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
-                            <input type="text" id="user-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter full name">
+                            <input type="text" id="user-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter full name">
                         </div>
                         <div>
                             <label for="user-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
-                            <input type="email" id="user-email" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter email">
+                            <input type="email" id="user-email" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter email">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="user-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role *</label>
-                            <select id="user-role" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <select id="user-role" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Role</option>
                                 <option value="student">Student</option>
                                 <option value="teacher">Teacher</option>
@@ -479,26 +479,26 @@
                         </div>
                         <div>
                             <label for="user-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
-                            <input type="password" id="user-password" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Leave blank to keep current">
+                            <input type="password" id="user-password" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Leave blank to keep current">
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Only fill if changing password</p>
                         </div>
                     </div>
 
                     <div>
                         <label for="user-phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                        <input type="tel" id="user-phone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter phone number">
+                        <input type="tel" id="user-phone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter phone number">
                     </div>
 
                     <div>
                         <label for="user-bio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
-                        <textarea id="user-bio" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter user bio"></textarea>
+                        <textarea id="user-bio" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter user bio"></textarea>
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4">
                         <button type="button" id="cancel-user-btn" class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                             <i class="fas fa-save mr-2"></i>Save Changes
                         </button>
                     </div>
@@ -515,12 +515,12 @@
                 <div class="space-y-6">
                     <div>
                         <label for="blog-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title *</label>
-                        <input type="text" id="blog-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter blog post title">
+                        <input type="text" id="blog-title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter blog post title">
                     </div>
 
                     <div>
                         <label for="blog-excerpt" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Excerpt</label>
-                        <textarea id="blog-excerpt" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Brief description (optional, will be auto-generated from content if empty)"></textarea>
+                        <textarea id="blog-excerpt" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Brief description (optional, will be auto-generated from content if empty)"></textarea>
                     </div>
 
                     <div>
@@ -532,12 +532,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="blog-featured-image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image URL</label>
-                            <input type="url" id="blog-featured-image" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://example.com/image.jpg">
+                            <input type="url" id="blog-featured-image" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="https://example.com/image.jpg">
                         </div>
 
                         <div>
                             <label for="blog-status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                            <select id="blog-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <select id="blog-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                 <option value="draft">Draft</option>
                                 <option value="published">Published</option>
                             </select>
@@ -546,14 +546,14 @@
 
                     <div>
                         <label for="blog-tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
-                        <input type="text" id="blog-tags" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., programming, tutorial, javascript (comma separated)">
+                        <input type="text" id="blog-tags" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., programming, tutorial, javascript (comma separated)">
                         <p class="text-xs text-gray-500 mt-1">Separate tags with commas</p>
                     </div>
                 </div>
 
                 <div class="mt-8 flex justify-end space-x-3">
                     <button type="button" id="cancel-blog-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Post</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Post</button>
                 </div>
             </form>
         </div>
@@ -564,12 +564,12 @@
             <h2 id="subscription-modal-title" class="text-2xl font-bold mb-6">Add New Plan</h2>
             <form id="subscription-form">
                 <div class="space-y-4">
-                    <div><label for="plan-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Plan Name</label><input type="text" id="plan-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Pro"></div>
-                    <div><label for="plan-monthly-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Monthly Price ($)</label><input type="number" id="plan-monthly-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="19.99"></div>
-                    <div><label for="plan-annual-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Annual Price ($)</label><input type="number" id="plan-annual-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="199.99"></div>
-                    <div><label for="plan-features" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Features (one per line)</label><textarea id="plan-features" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Access to all courses&#10;Priority support"></textarea></div>
+                    <div><label for="plan-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Plan Name</label><input type="text" id="plan-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Pro"></div>
+                    <div><label for="plan-monthly-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Monthly Price ($)</label><input type="number" id="plan-monthly-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="19.99"></div>
+                    <div><label for="plan-annual-price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Annual Price ($)</label><input type="number" id="plan-annual-price" required min="0" step="0.01" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="199.99"></div>
+                    <div><label for="plan-features" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Features (one per line)</label><textarea id="plan-features" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Access to all courses&#10;Priority support"></textarea></div>
                 </div>
-                <div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-subscription-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Plan</button></div>
+                <div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-subscription-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Plan</button></div>
             </form>
         </div>
     </div>
@@ -586,21 +586,21 @@
             <form id="admin-profile-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
-                    <input type="text" id="edit-admin-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="edit-admin-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Avatar Color</label>
                     <div class="flex gap-2">
                         <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-blue-500" data-color="blue-500"></button>
                         <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-green-500" data-color="green-500"></button>
-                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-purple-500" data-color="purple-500"></button>
+                        <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-blue-500" data-color="blue-500"></button>
                         <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-red-500" data-color="red-500"></button>
                         <button type="button" class="avatar-color-btn w-10 h-10 rounded-full bg-yellow-500" data-color="yellow-500"></button>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 pt-4">
                     <button type="button" id="cancel-profile-edit" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Changes</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -728,7 +728,7 @@
                 container.innerHTML = `
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Subscription Plans</h2>
-                        <button id="add-plan-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Add New Plan</button>
+                        <button id="add-plan-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add New Plan</button>
                     </div>
                     <div class="space-y-4">${plans.length > 0 ? plansHTML : '<p class="text-center py-4 text-gray-500">No subscription plans created yet.</p>'}</div>
                 `;
@@ -815,7 +815,7 @@
                     'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                     'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                     'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-                    'refunded': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
+                    'refunded': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
                 };
 
                 const statusColor = statusColors[order.status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
@@ -1028,7 +1028,7 @@ Dates:
                 return `
                     <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition course-row" data-course-id="${course.id}">
                         <td class="px-4 py-3">
-                            <button onclick="toggleCourseDetails('${course.id}')" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                            <button onclick="toggleCourseDetails('${course.id}')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">
                                 <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}"></i>
                             </button>
                         </td>
@@ -1638,7 +1638,7 @@ Dates:
                     <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <td class="px-4 py-3">
                             <div class="flex items-center">
-                                <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold mr-3">
+                                <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold mr-3">
                                     <span>${initials}</span>
                                 </div>
                                 <span class="font-medium">${user.name || 'Unknown'}</span>
@@ -1675,7 +1675,7 @@ Dates:
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button data-action="change-role" data-user-id="${user.id}" data-user-role="${user.role}"
-                                        class="user-action-btn text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 p-1 rounded"
+                                        class="user-action-btn text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 p-1 rounded"
                                         title="Change role">
                                     <i class="fas fa-user-cog"></i>
                                 </button>
@@ -2117,8 +2117,8 @@ Dates:
 
         document.querySelectorAll('.avatar-color-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.avatar-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-600'));
-                btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-600');
+                document.querySelectorAll('.avatar-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-600'));
+                btn.classList.add('ring-2', 'ring-offset-2', 'ring-blue-600');
                 selectedAvatarColor = btn.dataset.color;
             });
         });

@@ -1,0 +1,687 @@
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  📄 FILE: cart.ejs (TRANG GIỎ HÀNG - SHOPPING CART)                         ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  🎯 MỤC ĐÍCH: Quản lý giỏ hàng - xem và thanh toán các khóa học             ║
+║  👀 AI DÙNG: Students đã đăng nhập                                          ║
+║  💡 GHI CHÚ: Trang này có thể không dùng nữa (courses hiện là FREE/PRO)     ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  🔌 API CALLS (Front-end gọi Backend):                                       ║
+║     ✅ GET /api/cart → Lấy items trong giỏ hàng                            ║
+║     ✅ DELETE /api/cart/${itemId} → Xóa item khỏi giỏ hàng                 ║
+║     ✅ POST /api/orders → Tạo order mới khi checkout                       ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  📋 CHỨC NĂNG CHÍNH:                                                         ║
+║     ✅ Hiển thị danh sách khóa học trong giỏ hàng                           ║
+║     ✅ Hiển thị giá từng khóa học                                           ║
+║     ✅ Tính tổng tiền (subtotal, tax, total)                                ║
+║     ✅ Nút xóa item khỏi giỏ hàng                                           ║
+║     ✅ Nút "Proceed to Checkout" → chuyển đến payment                       ║
+║     ✅ Empty cart state (khi giỏ hàng trống)                                ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  💡 GIẢI THÍCH CHO TRẺ 5 TUỔI:                                              ║
+║     Trang này giống như GIỎ HÀNG Ở SIÊU THỊ 🛒                              ║
+║     - Xem các khóa học bạn muốn mua                                        ║
+║     - Xóa khóa học không thích nữa (Remove button)                         ║
+║     - Xem tổng cộng phải trả bao nhiêu tiền                                ║
+║     - Nhấn "Checkout" để đi thanh toán                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!-- 📝 Khai báo trang HTML5 - Bảo đảm trình duyệt hiểu đây là trang web hiện đại -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 📝 Bảng mã UTF-8: Giúp hiển thị đúng chữ Việt, emoji, ký tự đặc biệt -->
+    <meta charset="UTF-8">
+
+    <!-- 📱 Viewport: Làm cho trang web responsive (đẹp trên điện thoại và máy tính) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 📌 Tiêu đề trang web hiển thị trên tab trình duyệt -->
+    <title>Shopping Cart - UniLearn</title>
+
+    <!-- 🎨 Tailwind CSS: Framework CSS giúp viết CSS nhanh (bg-white, text-center, p-6 v.v.) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 🎨 Google Fonts: Tải font chữ "Poppins" từ Google (giúp chữ đẹp hơn) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 🎭 Font Awesome: Thư viện icon (fa-shopping-cart, fa-trash, fa-lock v.v.) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 🎨 CSS TÙY CHỈNH: Viết CSS trực tiếp bên trong tag <style> -->
+    <style>
+        /* 📝 Áp dụng font Poppins cho toàn bộ trang và set màu nền nhạt */
+        body { 
+            font-family: 'Poppins', sans-serif; /* Font chữ Poppins */
+            background-color: #f5f7fa; /* Màu nền: xám nhạt */
+        }
+
+        /* 🎬 ANIMATION: Khi hover vào item giỏ hàng thì trượt sang phải 5px */
+        .cart-item { 
+            transition: all 0.3s ease; /* Chuyển động mượt trong 0.3 giây */
+        }
+        .cart-item:hover { 
+            transform: translateX(5px); /* Khi hover: trượt phải 5px */
+        }
+
+        /* 🎬 ANIMATION: Nút xóa phóng to lên 1.1 lần khi hover */
+        .remove-btn:hover { 
+            transform: scale(1.1); /* Phóng to 10% khi hover */
+        }
+    </style>
+
+    <!-- 🌑 Dark Mode: Tải script để bật/tắt chế độ tối -->
+    <script src="/js/darkmode.js"></script>
+
+    <!-- ⚙️ Cấu hình Tailwind: Bật chế độ dark khi có class="dark" trên <html> -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class' /* 'class' = dùng class để toggle dark mode */
+        }
+    </script>
+
+    <!-- 🎨 CSS cho chế độ tối: Thêm màu sắc cho dark mode -->
+    <link rel="stylesheet" href="/css/darkmode-improved.css">
+</head>
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+        <%- include('../partials/header') %>
+
+    <div class="min-h-screen flex flex-col">
+        <main class="flex-grow container mx-auto py-8 px-4 md:px-6">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Shopping Cart</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Review your courses before checkout</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Cart Items Section -->
+                <div class="lg:w-2/3">
+                    <!-- Empty Cart State -->
+                    <div id="empty-cart" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+                        <i class="fas fa-shopping-cart text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h2>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6">Start adding courses to your cart!</p>
+                        <a href="/courses" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200">
+                            Browse Courses
+                        </a>
+                    </div>
+
+                    <!-- Cart Items List -->
+                    <div id="cart-items" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">
+                            <span id="cart-count-display">0</span> Course(s) in Cart
+                        </h2>
+                        <div id="cart-items-container" class="space-y-4">
+                            <!-- Cart items will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Section -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">Order Summary</h2>
+
+                        <div class="space-y-3 mb-6">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Tax (0%):</span>
+                                <span>$0.00</span>
+                            </div>
+                            <div class="border-t pt-3 flex justify-between font-semibold text-xl text-gray-800 dark:text-gray-200">
+                                <span>Total:</span>
+                                <span id="total">$0.00</span>
+                            </div>
+                        </div>
+
+                        <button id="checkout-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-lock mr-2"></i>
+                            Proceed to Checkout <!-- button -->
+                        </button>
+
+                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <h3 class="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">
+                                <i class="fas fa-info-circle text-blue-600 mr-2"></i>Why Choose UniLearn?
+                            </h3>
+                            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Lifetime access</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Certificate of completion</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>30-day money-back guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // Cart functionality
+        let cart = [];
+
+        // Load cart from localStorage
+        function loadCart() {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            renderCart();
+            updateSummary();
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Render cart items
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyCart = document.getElementById('empty-cart');
+            const cartItems = document.getElementById('cart-items');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (cart.length === 0) {
+                emptyCart.classList.remove('hidden');
+                cartItems.classList.add('hidden');
+                checkoutBtn.disabled = true;
+            } else {
+                emptyCart.classList.add('hidden');
+                cartItems.classList.remove('hidden');
+                checkoutBtn.disabled = false;
+
+                container.innerHTML = cart.map((item, index) => `
+<!-- 🎨 Body Tag: Phần body của HTML với transition color smooth cho dark mode -->
+<!-- class="transition-colors duration-300" = Chuyển đổi màu mượt trong 0.3 giây -->
+<!-- "bg-gray-50" = Màu nền xám nhạt ở chế độ sáng -->
+<!-- "dark:bg-gray-900" = Màu nền xám đen ở chế độ tối -->
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+        <!-- 📌 INCLUDE HEADER: Nhúng file header.ejs (chứa navbar, logo, menu v.v.) -->
+        <%- include('../partials/header') %>
+
+    <!-- 🎯 CONTAINER CHÍNH: Flex container với chiều cao tối thiểu là toàn màn hình -->
+    <!-- "min-h-screen" = Cao tối thiểu 100% viewport height (toàn màn hình) -->
+    <!-- "flex flex-col" = Xếp nội dung theo chiều dọc -->
+    <div class="min-h-screen flex flex-col">
+        <!-- 📄 MAIN CONTENT: Phần nội dung chính của trang -->
+        <!-- "flex-grow" = Lấp đầy không gian còn lại (đẩy footer xuống dưới cùng) -->
+        <!-- "container" = Độ rộng tối đa theo breakpoint của Tailwind (1024px v.v.) -->
+        <!-- "mx-auto" = Canh giữa theo chiều ngang (auto margin trái phải) -->
+        <!-- "py-8" = Padding trên dưới 2rem (32px) -->
+        <!-- "px-4 md:px-6" = Padding trái phải 1rem (4px), từ tablet trở lên là 1.5rem (24px) -->
+        <main class="flex-grow container mx-auto py-8 px-4 md:px-6">
+            <!-- 🎯 TIÊU ĐỀ TRANG: Phần đầu trang với tiêu đề lớn -->
+            <!-- "text-center" = Canh giữa text -->
+            <!-- "mb-8" = Margin dưới 2rem (32px) -->
+            <div class="text-center mb-8">
+                <!-- 📝 Tiêu đề chính "Shopping Cart" -->
+                <!-- "text-3xl" = Font size lớn (1.875rem / 30px) -->
+                <!-- "font-bold" = Font weight bold (700) -->
+                <!-- "text-gray-800" = Màu xám đậm ở chế độ sáng -->
+                <!-- "dark:text-gray-200" = Màu xám nhạt ở chế độ tối -->
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Shopping Cart</h1>
+
+                <!-- 📝 Tiêu đề phụ "Review your courses before checkout" -->
+                <!-- "text-gray-600" = Màu xám nhạt ở chế độ sáng -->
+                <!-- "dark:text-gray-400" = Màu xám tối hơn ở chế độ tối -->
+                <!-- "mt-2" = Margin trên 0.5rem (8px) -->
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Review your courses before checkout</p>
+            </div>
+
+            <!-- 🎯 LAYOUT 2 CỘT: Giỏ hàng ở trái (2/3 width), tổng tiền ở phải (1/3 width) -->
+            <!-- "flex flex-col" = Xếp thẳng đứng trên điện thoại -->
+            <!-- "lg:flex-row" = Xếp ngang trên desktop (breakpoint large) -->
+            <!-- "gap-8" = Khoảng cách giữa 2 cột: 2rem (32px) -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- 📦 GIỎ HÀNG (LEFT COLUMN): Phần danh sách khóa học -->
+                <!-- "lg:w-2/3" = Trên desktop: chiếm 2/3 chiều rộng -->
+                <div class="lg:w-2/3">
+                    <!-- 🛒 TRẠNG THÁI GIỎ TRỐNG: Hiển thị khi giỏ hàng không có gì -->
+                    <!-- id="empty-cart" = ID để JavaScript thao tác -->
+                    <!-- "hidden" = Ẩn mặc định (JavaScript sẽ hiển thị khi cần) -->
+                    <!-- "bg-white" = Nền trắng ở chế độ sáng -->
+                    <!-- "dark:bg-gray-800" = Nền xám tối ở chế độ tối -->
+                    <!-- "rounded-lg" = Góc bo tròn (border-radius) -->
+                    <!-- "shadow-md" = Bóng đổ vừa phải -->
+                    <!-- "p-12" = Padding 3rem (48px) trong -->
+                    <!-- "text-center" = Canh giữa text -->
+                    <div id="empty-cart" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+                        <!-- 🛒 ICON GIỎ HÀNG: Icon Font Awesome to 6xl (60px) -->
+                        <!-- "fas fa-shopping-cart" = Icon giỏ hàng -->
+                        <!-- "text-6xl" = Font size 3.75rem (60px) -->
+                        <!-- "text-gray-300" = Màu xám nhạt -->
+                        <!-- "dark:text-gray-600" = Màu xám tối ở dark mode -->
+                        <!-- "mb-4" = Margin dưới 1rem (16px) -->
+                        <i class="fas fa-shopping-cart text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+
+                        <!-- 📝 Text "Your cart is empty" -->
+                        <!-- "text-2xl" = Font size 1.5rem (24px) -->
+                        <!-- "font-semibold" = Font weight 600 (nửa đậm) -->
+                        <!-- "text-gray-700" = Màu xám -->
+                        <!-- "dark:text-gray-300" = Màu xám nhạt ở dark mode -->
+                        <!-- "mb-2" = Margin dưới 0.5rem (8px) -->
+                        <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Your cart is empty</h2>
+
+                        <!-- 📝 Text hướng dẫn -->
+                        <!-- "text-gray-500" = Màu xám nhạt hơn -->
+                        <!-- "dark:text-gray-400" = Màu xám tối hơn ở dark mode -->
+                        <!-- "mb-6" = Margin dưới 1.5rem (24px) -->
+                        <p class="text-gray-500 dark:text-gray-400 mb-6">Start adding courses to your cart!</p>
+
+                        <!-- 🔗 NÚT "Browse Courses": Link để quay về trang khóa học -->
+                        <!-- "inline-block" = Nút hiển thị như block nhưng chỉ chiếm không gian cần thiết -->
+                        <!-- "bg-indigo-600" = Nền xanh tím -->
+                        <!-- "text-white" = Chữ trắng -->
+                        <!-- "px-6 py-3" = Padding trái phải 1.5rem (24px), trên dưới 0.75rem (12px) -->
+                        <!-- "rounded-lg" = Góc bo tròn -->
+                        <!-- "font-medium" = Font weight 500 -->
+                        <!-- "hover:bg-indigo-700" = Nền xanh đậm hơn khi hover -->
+                        <!-- "transition duration-200" = Animation mượt trong 0.2 giây -->
+                        <a href="/courses" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200">
+                            Browse Courses
+                        </a>
+                    </div>
+
+                    <!-- 📦 DANH SÁCH KHÓA HỌC TRONG GIỎ: Container chứa các item trong giỏ -->
+                    <!-- id="cart-items" = ID để JavaScript thao tác -->
+                    <!-- "bg-white" = Nền trắng -->
+                    <!-- "dark:bg-gray-800" = Nền xám tối ở dark mode -->
+                    <!-- "rounded-lg" = Góc bo tròn -->
+                    <!-- "shadow-md" = Bóng đổ vừa phải -->
+                    <!-- "p-6" = Padding 1.5rem (24px) -->
+                    <div id="cart-items" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <!-- 🎓 TIÊU ĐỀ: Số lượng khóa học trong giỏ -->
+                        <!-- "text-xl" = Font size 1.25rem (20px) -->
+                        <!-- "font-semibold" = Font weight 600 -->
+                        <!-- "mb-4" = Margin dưới 1rem (16px) -->
+                        <!-- "text-gray-800" = Màu xám đậm -->
+                        <!-- "dark:text-gray-200" = Màu xám nhạt ở dark mode -->
+                        <!-- "border-b pb-2" = Viền dưới và padding dưới 0.5rem (8px) -->
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">
+                            <!-- 🔢 SPAN: Hiển thị số lượng khóa học (cập nhật bởi JavaScript) -->
+                            <!-- id="cart-count-display" = ID để JavaScript cập nhật số -->
+                            <span id="cart-count-display">0</span> Course(s) in Cart
+                        </h2>
+
+                        <!-- 📋 CONTAINER: Chứa danh sách các item trong giỏ -->
+                        <!-- id="cart-items-container" = ID để JavaScript nhúng danh sách -->
+                        <!-- "space-y-4" = Khoảng cách giữa các item: 1rem (16px) -->
+                        <div id="cart-items-container" class="space-y-4">
+                            <!-- 💡 Chú thích: Danh sách các item sẽ được JavaScript tạo động ở đây -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 💰 TÓM TẮT ĐƠN HÀNG (RIGHT COLUMN): Phần tính tổng tiền -->
+                <!-- "lg:w-1/3" = Trên desktop: chiếm 1/3 chiều rộng -->
+                <div class="lg:w-1/3">
+                    <!-- 📊 THẺ TÓM TẮT: Hiển thị subtotal, tax, total -->
+                    <!-- "bg-white" = Nền trắng -->
+                    <!-- "dark:bg-gray-800" = Nền xám tối ở dark mode -->
+                    <!-- "rounded-lg" = Góc bo tròn -->
+                    <!-- "shadow-md" = Bóng đổ -->
+                    <!-- "p-6" = Padding 1.5rem (24px) -->
+                    <!-- "sticky top-24" = Cố định ở vị trí dưới header (top 6rem / 96px) khi cuộn -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
+                        <!-- 📝 TIÊU ĐỀ: "Order Summary" -->
+                        <!-- "text-xl" = Font size 20px -->
+                        <!-- "font-semibold" = Font weight 600 -->
+                        <!-- "mb-4" = Margin dưới 16px -->
+                        <!-- "text-gray-800" = Màu xám đậm -->
+                        <!-- "dark:text-gray-200" = Màu xám nhạt ở dark mode -->
+                        <!-- "border-b pb-2" = Viền dưới, padding dưới 8px -->
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-b pb-2">Order Summary</h2>
+
+                        <!-- 💰 DANH SÁCH TÍNH TOÁN: Subtotal, Tax, Total -->
+                        <!-- "space-y-3" = Khoảng cách giữa các dòng: 0.75rem (12px) -->
+                        <!-- "mb-6" = Margin dưới 1.5rem (24px) -->
+                        <div class="space-y-3 mb-6">
+                            <!-- 📊 DÒNG 1: Subtotal (tổng giá khóa học) -->
+                            <!-- "flex justify-between" = Xếp 2 item đối diện nhau: trái-phải -->
+                            <!-- "text-gray-600" = Màu xám nhạt -->
+                            <!-- "dark:text-gray-400" = Màu xám tối ở dark mode -->
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <!-- Label "Subtotal:" -->
+                                <span>Subtotal:</span>
+
+                                <!-- Hiển thị giá trị Subtotal (cập nhật bởi JavaScript) -->
+                                <!-- id="subtotal" = ID để JavaScript cập nhật giá trị -->
+                                <span id="subtotal">$0.00</span>
+                            </div>
+
+                            <!-- 📊 DÒNG 2: Tax (thuế - hiện tại là 0%) -->
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <!-- Label "Tax (0%):" -->
+                                <span>Tax (0%):</span>
+
+                                <!-- Hiển thị thuế (hiện tại luôn là $0.00) -->
+                                <span>$0.00</span>
+                            </div>
+
+                            <!-- 📊 DÒNG 3: TOTAL (tổng cộng phải thanh toán) - IN ĐẬM -->
+                            <!-- "border-t pt-3" = Viền trên, padding trên 0.75rem (12px) -->
+                            <!-- "font-semibold text-xl" = Font đậm, size 20px -->
+                            <!-- "text-gray-800" = Màu xám đậm -->
+                            <!-- "dark:text-gray-200" = Màu xám nhạt ở dark mode -->
+                            <div class="border-t pt-3 flex justify-between font-semibold text-xl text-gray-800 dark:text-gray-200">
+                                <!-- Label "Total:" -->
+                                <span>Total:</span>
+
+                                <!-- Hiển thị tổng tiền cần thanh toán -->
+                                <!-- id="total" = ID để JavaScript cập nhật -->
+                                <span id="total">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- 🔗 NÚT "PROCEED TO CHECKOUT": Nút chính để thanh toán -->
+                        <!-- id="checkout-btn" = ID để JavaScript thao tác -->
+                        <!-- "w-full" = Chiều rộng 100% (lấp đầy container) -->
+                        <!-- "bg-indigo-600" = Nền xanh tím -->
+                        <!-- "text-white" = Chữ trắng -->
+                        <!-- "py-3 px-4" = Padding trên dưới 0.75rem, trái phải 1rem -->
+                        <!-- "rounded-lg" = Góc bo tròn -->
+                        <!-- "font-medium" = Font weight 500 -->
+                        <!-- "hover:bg-indigo-700" = Nền xanh đậm hơn khi hover -->
+                        <!-- "transition duration-200" = Animation mượt trong 0.2 giây -->
+                        <!-- "flex items-center justify-center" = Xếp icon+text giữa -->
+                        <!-- "disabled:opacity-50" = Độ mờ 50% khi button bị disable -->
+                        <!-- "disabled:cursor-not-allowed" = Con trỏ thành "không được phép" khi disable -->
+                        <!-- "disabled" = Mặc định button bị disable (cho tới khi có item trong giỏ) -->
+                        <button id="checkout-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <!-- 🔒 ICON KHÓA: Icon Font Awesome -->
+                            <!-- "fas fa-lock" = Icon khóa -->
+                            <!-- "mr-2" = Margin bên phải 0.5rem (8px) để cách text -->
+                            <i class="fas fa-lock mr-2"></i>
+                            <!-- 📝 Text nút: "Proceed to Checkout" -->
+                            Proceed to Checkout
+                        </button>
+
+                        <!-- ℹ️ THÔNG TIN THÊM: Tại sao chọn UniLearn -->
+                        <!-- "mt-6" = Margin trên 1.5rem (24px) -->
+                        <!-- "p-4" = Padding 1rem (16px) -->
+                        <!-- "bg-blue-50" = Nền xanh nhạt -->
+                        <!-- "dark:bg-blue-900/20" = Nền xanh đậm 20% ở dark mode -->
+                        <!-- "rounded-lg" = Góc bo tròn -->
+                        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <!-- 📝 TIÊU ĐỀ THỎ THÊM -->
+                            <!-- "font-semibold text-sm" = Font nửa đậm, size nhỏ -->
+                            <!-- "text-gray-800" = Màu xám đậm -->
+                            <!-- "dark:text-gray-200" = Màu xám nhạt ở dark mode -->
+                            <!-- "mb-2" = Margin dưới 0.5rem (8px) -->
+                            <h3 class="font-semibold text-sm text-gray-800 dark:text-gray-200 mb-2">
+                                <!-- 📘 ICON THÔNG TIN: Icon Font Awesome -->
+                                <!-- "fas fa-info-circle" = Icon i tròn (thông tin) -->
+                                <!-- "text-blue-600" = Màu xanh -->
+                                <!-- "mr-2" = Margin bên phải 0.5rem -->
+                                <i class="fas fa-info-circle text-blue-600 mr-2"></i>Why Choose UniLearn?
+                            </h3>
+
+                            <!-- 📋 DANH SÁCH LỢI ÍCH -->
+                            <!-- "text-sm" = Font size nhỏ -->
+                            <!-- "text-gray-600" = Màu xám nhạt -->
+                            <!-- "dark:text-gray-400" = Màu xám tối ở dark mode -->
+                            <!-- "space-y-1" = Khoảng cách giữa items: 0.25rem (4px) -->
+                            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <!-- ✅ Lợi ích 1: Lifetime access -->
+                                <!-- "fas fa-check" = Icon dấu tích -->
+                                <!-- "text-green-500" = Màu xanh lá -->
+                                <!-- "mr-2" = Margin bên phải -->
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Lifetime access</li>
+
+                                <!-- ✅ Lợi ích 2: Certificate of completion -->
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>Certificate of completion</li>
+
+                                <!-- ✅ Lợi ích 3: 30-day money-back guarantee -->
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>30-day money-back guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 📌 INCLUDE FOOTER: Nhúng file footer.ejs -->
+    <%- include('../partials/footer') %>
+
+    <!-- 🎯 SCRIPT JAVASCRIPT: Logic xử lý giỏ hàng -->
+    <script>
+        <!-- 📝 BIẾN TOÀN CỤC: Lưu danh sách khóa học trong giỏ hàng -->
+        let cart = [];
+
+        <!-- 📥 HÀM: Load giỏ hàng từ localStorage (bộ nhớ trình duyệt) -->
+        function loadCart() {
+            <!-- 💾 Lấy giỏ hàng từ localStorage bằng key 'cart' -->
+            const savedCart = localStorage.getItem('cart');
+
+            <!-- 🔄 Nếu có dữ liệu lưu: chuyển từ JSON sang object JavaScript -->
+            if (savedCart) {
+                cart = JSON.parse(savedCart); <!-- JSON.parse = chuyển string thành object -->
+            }
+
+            <!-- 🎨 Cập nhật giao diện: hiển thị items, tính toán tổng tiền -->
+            renderCart();
+            updateSummary();
+        }
+
+        <!-- 💾 HÀM: Lưu giỏ hàng vào localStorage (để không mất khi tắt trình duyệt) -->
+        function saveCart() {
+            <!-- 💾 Chuyển object JavaScript sang JSON string rồi lưu vào localStorage -->
+            localStorage.setItem('cart', JSON.stringify(cart)); <!-- JSON.stringify = chuyển object thành string -->
+        }
+
+        <!-- 🎨 HÀM: Hiển thị danh sách khóa học trong giỏ lên HTML -->
+        function renderCart() {
+            <!-- 🎯 Lấy các element HTML theo ID -->
+            const container = document.getElementById('cart-items-container'); <!-- Container chứa danh sách -->
+            const emptyCart = document.getElementById('empty-cart'); <!-- Thông báo giỏ trống -->
+            const cartItems = document.getElementById('cart-items'); <!-- Container giỏ hàng -->
+            const checkoutBtn = document.getElementById('checkout-btn'); <!-- Nút checkout -->
+
+            <!-- 🔍 KIỂM TRA: Giỏ hàng có trống không? -->
+            if (cart.length === 0) {
+                <!-- 🛒 Giỏ trống: Hiển thị thông báo -->
+                emptyCart.classList.remove('hidden'); <!-- Loại bỏ class 'hidden' để hiển thị -->
+                cartItems.classList.add('hidden'); <!-- Thêm class 'hidden' để ẩn danh sách -->
+                checkoutBtn.disabled = true; <!-- Disable nút checkout -->
+            } else {
+                <!-- 🛒 Giỏ có item: Hiển thị danh sách -->
+                emptyCart.classList.add('hidden'); <!-- Ẩn thông báo giỏ trống -->
+                cartItems.classList.remove('hidden'); <!-- Hiển thị danh sách -->
+                checkoutBtn.disabled = false; <!-- Kích hoạt nút checkout -->
+
+                <!-- 📋 RENDER: Tạo HTML cho từng item trong giỏ -->
+                <!-- cart.map = duyệt qua từng item, (item, index) = item + vị trí trong mảng -->
+                container.innerHTML = cart.map((item, index) => `
+                    <!-- 🛍️ CARD ITEM: Container cho mỗi khóa học trong giỏ -->
+                    <!-- "flex items-center gap-4" = Xếp theo hàng ngang, khoảng cách 16px -->
+                    <!-- "p-4" = Padding 16px -->
+                    <!-- "border border-gray-200" = Viền xám -->
+                    <!-- "dark:border-gray-700" = Viền xám tối ở dark mode -->
+                    <!-- "rounded-lg" = Góc bo tròn -->
+                    <div class="cart-item flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <!-- 🖼️ HÌNH ẢNH PLACEHOLDER: Hình chữ nhật gradient thay vì ảnh -->
+                        <!-- "flex-shrink-0" = Không co lại khi flex space nhỏ -->
+                        <!-- "w-24 h-24" = Chiều rộng + cao 6rem (96px) = hình vuông -->
+                        <!-- "bg-gradient-to-br" = Background gradient từ top-left tới bottom-right -->
+                        <!-- "from-indigo-500 to-purple-600" = Màu: xanh tím -> tím đậm -->
+                        <!-- "rounded-lg" = Góc bo tròn -->
+                        <!-- "flex items-center justify-center" = Canh giữa icon -->
+                        <div class="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <!-- 🎓 ICON KHÓA HỌC: Icon Font Awesome -->
+                            <!-- "fas fa-${item.icon || 'book'}" = Icon theo kiểu khóa học (hoặc default 'book') -->
+                            <!-- "text-white" = Màu trắng -->
+                            <!-- "text-3xl" = Font size 30px -->
+                            <i class="fas fa-${item.icon || 'book'} text-white text-3xl"></i>
+                        </div>
+
+                        <!-- 📝 THÔNG TIN KHÓA HỌC: Tên, danh mục, rating -->
+                        <!-- "flex-grow" = Lấp đầy không gian còn lại -->
+                        <div class="flex-grow">
+                            <!-- 📝 TÊN KHÓA HỌC -->
+                            <!-- "font-semibold text-lg" = Font nửa đậm, size 18px -->
+                            <!-- "text-gray-800" = Màu xám đậm -->
+                            <!-- "dark:text-gray-200" = Màu xám nhạt ở dark mode -->
+                            <!-- ${item.name} = Hiển thị tên khóa học từ dữ liệu -->
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">${item.name}</h3>
+
+                            <!-- 📚 DANH MỤC KHÓA HỌC -->
+                            <!-- "text-sm" = Font size nhỏ -->
+                            <!-- "text-gray-600" = Màu xám nhạt -->
+                            <!-- "dark:text-gray-400" = Màu xám tối ở dark mode -->
+                            <!-- ${item.category || 'Course'} = Hiển thị danh mục, nếu không có thì "Course" -->
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${item.category || 'Course'}</p>
+
+                            <!-- ⭐ RATING SÁCH: Hiển thị sao và số review -->
+                            <!-- "flex items-center mt-1" = Xếp theo hàng ngang, margin trên 4px -->
+                            <div class="flex items-center mt-1">
+                                <!-- ⭐ 5 SAO: Hiển thị 5 icon sao -->
+                                <!-- "flex text-yellow-400 text-sm" = Xếp 5 sao theo hàng, màu vàng, size nhỏ -->
+                                <!-- ${'<i class="fas fa-star"></i>'.repeat(5)} = Lặp icon sao 5 lần -->
+                                <div class="flex text-yellow-400 text-sm">
+                                    ${'<i class="fas fa-star"></i>'.repeat(5)}
+                                </div>
+
+                                <!-- 📊 SỐ REVIEW -->
+                                <!-- "ml-2" = Margin trái 0.5rem (8px) -->
+                                <!-- "text-sm text-gray-500" = Font nhỏ, màu xám -->
+                                <span class="ml-2 text-sm text-gray-500">4.8 (2,500+ reviews)</span>
+                            </div>
+                        </div>
+
+                        <!-- 💰 GIÁ TIỀN & NÚT XÓA -->
+                        <!-- "text-right" = Canh phải -->
+                        <div class="text-right">
+                            <!-- 💵 GIÁ KHÓA HỌC: Số tiền cần thanh toán -->
+                            <!-- "text-2xl" = Font size lớn 24px -->
+                            <!-- "font-bold" = Font weight 700 (đậm) -->
+                            <!-- "text-indigo-600" = Màu xanh tím -->
+                            <!-- parseFloat(item.price).toFixed(2) = Chuyển giá thành số thập phân 2 chữ số (ví dụ: $99.99) -->
+                            <p class="text-2xl font-bold text-indigo-600">$${parseFloat(item.price).toFixed(2)}</p>
+
+                            <!-- 🗑️ NÚT XÓA ITEM: Xóa khóa học khỏi giỏ -->
+                            <!-- "mt-2" = Margin trên 0.5rem -->
+                            <!-- "text-red-500" = Màu đỏ -->
+                            <!-- "hover:text-red-700" = Màu đỏ đậm hơn khi hover -->
+                            <!-- "transition-colors" = Animation chuyển màu mượt -->
+                            <!-- onclick="removeFromCart(${index})" = Khi click: gọi hàm removeFromCart với index của item -->
+                            <button onclick="removeFromCart(${index})" class="remove-btn mt-2 text-red-500 hover:text-red-700 transition-colors">
+                                <!-- 🗑️ ICON THÙNG RÁC -->
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join(''); <!-- .join('') = nối tất cả HTML thành 1 string -->
+            }
+
+            <!-- 🔢 CẬP NHẬT SỐ LƯỢNG: Hiển thị số item trong giỏ lên tiêu đề -->
+            document.getElementById('cart-count-display').textContent = cart.length;
+
+            <!-- 🔔 CẬP NHẬT BADGE HEADER: Hiển thị số lượng ở icon giỏ hàng trong header -->
+            const headerCartCount = document.getElementById('cart-count'); <!-- Lấy element badge cart ở header -->
+            if (headerCartCount) { <!-- Nếu element tồn tại -->
+                if (cart.length > 0) {
+                    headerCartCount.textContent = cart.length; <!-- Hiển thị số lượng -->
+                    headerCartCount.classList.remove('hidden'); <!-- Loại bỏ class 'hidden' để hiển thị -->
+                } else {
+                    headerCartCount.classList.add('hidden'); <!-- Thêm class 'hidden' để ẩn -->
+                }
+            }
+        }
+
+        <!-- 💰 HÀM: Tính tổng tiền và cập nhật giao diện -->
+        function updateSummary() {
+            <!-- 🔢 TÍNH SUBTOTAL: Cộng giá tất cả item trong giỏ -->
+            <!-- reduce((sum, item) => sum + parseFloat(item.price), 0) = duyệt item, cộng giá, bắt đầu từ 0 -->
+            const subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+            <!-- 💵 TÍNH TOTAL: Hiện tại tax = 0%, nên total = subtotal -->
+            const total = subtotal;
+
+            <!-- 📝 CẬP NHẬT SUBTOTAL LÊN HTML: Hiển thị tổng giá trước thuế -->
+            <!-- toFixed(2) = Giữ 2 chữ số thập phân (ví dụ: 99.99) -->
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+
+            <!-- 📝 CẬP NHẬT TOTAL LÊN HTML: Hiển thị tổng cộng phải thanh toán -->
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        <!-- 🗑️ HÀM: Xóa 1 item khỏi giỏ hàng -->
+        function removeFromCart(index) {
+            <!-- 📍 REMOVE: Xóa item ở vị trí 'index' (chỉ xóa 1 item) -->
+            <!-- splice(index, 1) = xóa 1 phần tử bắt đầu từ vị trí index -->
+            cart.splice(index, 1);
+
+            <!-- 💾 LƯU: Cập nhật dữ liệu vào localStorage -->
+            saveCart();
+
+            <!-- 🎨 RENDER LẠI: Cập nhật giao diện -->
+            renderCart();
+            updateSummary();
+        }
+
+        <!-- 🔗 EVENT: Khi click nút "Proceed to Checkout" -->
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            <!-- 🔍 KIỂM TRA: Nếu giỏ trống, không làm gì -->
+            if (cart.length === 0) return;
+
+            <!-- 📝 THÔNG BÁO: Hiển thị alert cho user -->
+            <!-- cart.length = số lượng khóa học trong giỏ -->
+            alert('Proceeding to checkout with ' + cart.length + ' course(s)');
+
+            <!-- 🔗 CHUYỂN TRANG: Đi tới trang payment để thanh toán -->
+            window.location.href = '/payment';
+        });
+
+        <!-- ⏰ EVENT: Khi trang load xong (DOM sẵn sàng) -->
+        document.addEventListener('DOMContentLoaded', function() {
+            <!-- 📥 LOAD GIỎ HÀNG: Tải dữ liệu giỏ hàng từ localStorage -->
+            loadCart();
+
+            <!-- 👤 CẤP NHẬT AVATAR: Hiển thị avatar người dùng ở header -->
+            <!-- 💾 Lấy thông tin user từ localStorage -->
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            <!-- 🎨 Nếu có user: hiển thị avatar (chữ cái đầu của tên) -->
+            if (user) {
+                const userAvatar = document.getElementById('user-avatar');
+                if (userAvatar) {
+                    <!-- 📝 Lấy chữ cái đầu của mỗi từ trong tên user -->
+                    <!-- user.name.split(' ') = tách tên thành mảng các từ -->
+                    <!-- .map(n => n[0]) = lấy chữ cái đầu của mỗi từ -->
+                    <!-- .join('').toUpperCase() = nối lại và convert thành chữ hoa -->
+                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+                    userAvatar.textContent = initials;
+                }
+            }
+
+            <!-- 🚪 EVENT: Khi click nút "Logout" ở header -->
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    <!-- 🗑️ XÓA DỮ LIỆU: Xóa toàn bộ dữ liệu lưu (user, cart...) -->
+                    localStorage.clear();
+
+                    <!-- 🔗 CHUYỂN TRANG: Về lại trang login -->
+                    window.location.href = '/login';
+                });
+            }
+
+            <!-- 👤 EVENT: Khi click avatar → đi tới trang profile -->
+            const userMenuBtn = document.getElementById('user-menu-button');
+            if (userMenuBtn) {
+                userMenuBtn.addEventListener('click', () => {
+                    <!-- 🔗 CHUYỂN TRANG: Đi tới profile page -->
+                    window.location.href = '/profile';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

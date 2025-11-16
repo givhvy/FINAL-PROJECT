@@ -135,16 +135,16 @@
 }
 
 /* Badge and tag colors - muted */
-.dark .bg-indigo-50 {
+.dark .bg-blue-50 {
     background-color: rgba(99, 102, 241, 0.15) !important;
     color: #a5b4fc !important;
 }
 
-.dark .bg-indigo-100 {
+.dark .bg-blue-100 {
     background-color: rgba(99, 102, 241, 0.2) !important;
 }
 
-.dark .text-indigo-600 {
+.dark .text-blue-600 {
     color: #a5b4fc !important;
 }
 

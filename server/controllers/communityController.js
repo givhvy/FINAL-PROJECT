@@ -198,7 +198,7 @@ exports.getLeaderboard = async (req, res) => {
             }))
         );
 
-        console.log(`✅ [LEADERBOARD] Fetched ${allProgress.size} total progress records`);
+        console.log(`✅ [LEADERBOARD] Fetched ${allProgress.length} total progress records`);
 
         // Group progress by user_id and course_id for quick lookup
         const progressByUserAndCourse = {};
@@ -262,7 +262,7 @@ exports.getLeaderboard = async (req, res) => {
                 hours: completedCourses, // Number of courses completed
                 points: studyPoints, // Study points based on courses completed
                 initials: initials.toUpperCase(),
-                color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
+                color: ['yellow-400', 'gray-400', 'orange-400', 'blue-400', 'green-400', 'blue-500', 'pink-400'][Math.floor(Math.random() * 7)]
             });
         }
 

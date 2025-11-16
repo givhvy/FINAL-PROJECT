@@ -34,8 +34,8 @@
 
         /* === Styles for Certificate === */
         .certificate { font-family: 'Playfair Display', serif; background-image: radial-gradient(#e6f0ff 1px, transparent 1px); background-size: 20px 20px; position: relative; overflow: hidden; }
-        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) 1; pointer-events: none; }
-        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .certificate::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 12px solid transparent; border-image: linear-gradient(45deg, #3b82f6, #3b82f6, #ec4899) 1; pointer-events: none; }
+        .certificate-title { font-family: 'Playfair Display', serif; background: linear-gradient(45deg, #3b82f6, #3b82f6); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .certificate-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2.5rem; color: #1e3a8a; }
         .seal { position: absolute; bottom: 30px; right: 40px; width: 120px; height: 120px; }
     </style>
@@ -91,7 +91,7 @@
 
         <!-- EDIT PROFILE SIDE PANEL -->
         <div id="edit-profile-panel" class="fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col">
-            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-6 flex justify-between items-center">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-600 text-white p-6 flex justify-between items-center">
                 <h2 class="text-xl font-bold">Edit Profile</h2>
                 <button id="close-profile-panel" class="text-white hover:bg-white dark:bg-gray-800/20 rounded-full p-2 transition-colors">
                     <i class="fas fa-times text-xl"></i>
@@ -103,15 +103,15 @@
                     <!-- Avatar Section -->
                     <div class="flex flex-col items-center">
                         <div class="relative mb-4">
-                            <img id="edit-avatar-preview" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-indigo-200">
-                            <label for="avatar-file-input" class="absolute bottom-0 right-0 bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors">
+                            <img id="edit-avatar-preview" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-blue-200">
+                            <label for="avatar-file-input" class="absolute bottom-0 right-0 bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors">
                                 <i class="fas fa-camera"></i>
                             </label>
                             <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
                         </div>
                         <div id="avatar-upload-progress" class="hidden w-full">
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div id="avatar-progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+                                <div id="avatar-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
                             </div>
                             <p class="text-xs text-gray-500 mt-1 text-center">Uploading...</p>
                         </div>
@@ -120,7 +120,7 @@
                     <!-- Name -->
                     <div>
                         <label for="edit-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-                        <input type="text" id="edit-name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        <input type="text" id="edit-name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                     </div>
 
                     <!-- Email (readonly) -->
@@ -132,18 +132,18 @@
                     <!-- Phone -->
                     <div>
                         <label for="edit-phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
-                        <input type="tel" id="edit-phone" placeholder="(555) 123-4567" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="tel" id="edit-phone" placeholder="(555) 123-4567" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
                     <!-- Location -->
                     <div>
                         <label for="edit-location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location</label>
-                        <input type="text" id="edit-location" placeholder="Ho Chi Minh City, Vietnam" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="text" id="edit-location" placeholder="Ho Chi Minh City, Vietnam" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
                     <!-- Save Button -->
                     <div class="pt-4">
-                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                             <i class="fas fa-save mr-2"></i> Save Changes
                         </button>
                     </div>
@@ -158,11 +158,11 @@
                     <div class="flex items-center justify-between p-4">
                         <h2 id="welcome-message" class="text-xl font-semibold text-gray-800 dark:text-gray-200">My Dashboard</h2>
                         <div class="flex items-center gap-3">
-                            <a href="/courses" class="flex items-center gap-2 px-4 py-2 text-indigo-600 bg-white dark:bg-gray-800 border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors font-medium">
+                            <a href="/courses" class="flex items-center gap-2 px-4 py-2 text-blue-600 bg-white dark:bg-gray-800 border-2 border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors font-medium">
                                 <i class="fas fa-tachometer-alt"></i>
                                 <span>Student's View</span>
                             </a>
-                            <button id="add-course-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <button id="add-course-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
                                 <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Course
                             </button>
 
@@ -223,7 +223,7 @@
                 <header class="bg-white dark:bg-gray-800 shadow-sm">
                     <div class="flex items-center justify-between p-4">
                         <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Study Groups Management</h2>
-                        <button id="create-group-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                        <button id="create-group-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
                             <i class="fas fa-plus w-5 h-5 mr-2"></i> Create Study Group
                         </button>
                     </div>
@@ -233,7 +233,7 @@
                         <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <!-- Study groups will be rendered here -->
                             <div class="text-center py-8 col-span-full">
-                                <i class="fas fa-spinner fa-spin text-indigo-500 text-3xl mb-4"></i>
+                                <i class="fas fa-spinner fa-spin text-blue-500 text-3xl mb-4"></i>
                                 <p class="text-gray-500">Loading study groups...</p>
                             </div>
                         </div>
@@ -313,8 +313,8 @@
                                     <p class="text-sm text-gray-600 dark:text-gray-400">This Month</p>
                                     <p id="monthly-certs" class="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-1">0</p>
                                 </div>
-                                <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full">
-                                    <i class="fas fa-calendar text-purple-600 dark:text-purple-400 text-2xl"></i>
+                                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+                                    <i class="fas fa-calendar text-blue-600 dark:text-blue-400 text-2xl"></i>
                                 </div>
                             </div>
                         </div>
@@ -357,23 +357,23 @@
                 <div class="space-y-4">
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course Title</label>
-                        <input type="text" id="title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="text" id="title" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                        <textarea id="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        <textarea id="description" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Course Access</label>
                         <div class="flex items-center space-x-6">
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="course-access" value="free" id="access-free" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                <input type="radio" name="course-access" value="free" id="access-free" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
                                     <i class="fas fa-unlock text-blue-500 mr-1"></i> Free Course
                                 </span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="course-access" value="locked" id="access-locked" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                <input type="radio" name="course-access" value="locked" id="access-locked" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
                                     <i class="fas fa-lock text-red-500 mr-1"></i> Pro Only (Locked)
                                 </span>
@@ -383,7 +383,7 @@
                     </div>
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                        <select id="category" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <select id="category" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             <option value="">-- Select Category --</option>
                             <option value="Development">💻 Development</option>
                             <option value="Design">🎨 Design</option>
@@ -395,7 +395,7 @@
                     </div>
                     <div>
                         <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Level</label>
-                        <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             <option>Beginner</option>
                             <option>Intermediate</option>
                             <option>Advanced</option>
@@ -404,17 +404,17 @@
                     <div>
                         <label for="imageUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course Image</label>
                         <div class="mt-1 space-y-2">
-                            <input type="file" id="imageFile" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <input type="file" id="imageFile" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs text-gray-500">or</span>
-                                <input type="text" id="imageUrl" placeholder="Enter image URL" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" id="imageUrl" placeholder="Enter image URL" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             </div>
                             <div id="image-preview" class="hidden mt-2">
                                 <img id="preview-img" class="h-32 w-full object-cover rounded-md border" alt="Preview">
                             </div>
                             <div id="upload-progress" class="hidden">
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full" style="width: 0%"></div>
+                                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
                                 </div>
                                 <p class="text-xs text-gray-500 mt-1">Uploading...</p>
                             </div>
@@ -423,7 +423,7 @@
                 </div>
                 <div class="mt-6 flex justify-end space-x-3">
                     <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save Course</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Course</button>
                 </div>
             </form>
         </div>
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const avatarContainer = teacherAvatar.parentElement;
         const initialsDiv = document.createElement('div');
         initialsDiv.id = 'teacher-avatar-initials';
-        initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm';
+        initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm';
         initialsDiv.textContent = getUserInitials(user.name);
         avatarContainer.insertBefore(initialsDiv, teacherAvatar);
     }
@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             coursesListDiv.innerHTML += `
             <div class="dashboard-card bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border-l-4 border-blue-500" data-course-id="${course.id}">
-                <div class="relative h-40 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+                <div class="relative h-40 overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
                     ${thumbnail && thumbnail.trim() !== '' ?
                         `<img src="${thumbnail}" alt="${course.title}" class="w-full h-full object-cover">` :
                         `<div class="w-full h-full flex items-center justify-center">
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <span class="text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">${course.level}</span>
-                        <a href="/lesson-management?courseId=${course.id}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Manage Lessons →</a>
+                        <a href="/lesson-management?courseId=${course.id}" class="text-sm font-medium text-blue-600 hover:text-blue-800">Manage Lessons →</a>
                     </div>
                 </div>
             </div>`;
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 h-10 w-10">
-                            <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold text-sm">
+                            <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold text-sm">
                                 ${getInitials(student.name)}
                             </div>
                         </div>
@@ -742,13 +742,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mr-2" style="width: 120px;">
-                            <div class="bg-indigo-600 h-2 rounded-full" style="width: ${overallProgress}%"></div>
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${overallProgress}%"></div>
                         </div>
                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300">${overallProgress}%</span>
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button data-student-id="${student.id}" class="view-progress-btn text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1">
+                    <button data-student-id="${student.id}" class="view-progress-btn text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1">
                         <i class="fas fa-chart-line"></i> View Progress
                     </button>
                 </td>
@@ -794,9 +794,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <p class="text-sm text-gray-600 dark:text-gray-400">Overall Progress</p>
                                 <p class="text-2xl font-bold text-green-600 dark:text-green-400">${student.overall_progress || 0}%</p>
                             </div>
-                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                                 <p class="text-sm text-gray-600 dark:text-gray-400">Completed Courses</p>
-                                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">${student.completed_courses?.length || 0}</p>
+                                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">${student.completed_courses?.length || 0}</p>
                             </div>
                         </div>
 
@@ -814,7 +814,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                                     <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${progress}%</span>
                                                 </div>
                                                 <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
                                                 </div>
                                             </div>
                                         `;
@@ -1005,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             html += `
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-600 px-6 py-4">
                         <h3 class="text-xl font-bold text-white">${courseName}</h3>
                     </div>
                     <div class="p-6 space-y-6">
@@ -1206,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-xs mr-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-xs mr-3">
                                 ${getInitials(cert.student_name)}
                             </div>
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-200">${cert.student_name}</div>
@@ -1359,7 +1359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div> 
                 <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> 
                     <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/> 
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5cf6" stroke-width="1.5"/> 
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#3b82f6" stroke-width="1.5"/> 
                     <path d="M50,15 L53,25 L63,25 L55,32 L58,42 L50,36 L42,42 L45,32 L37,25 L47,25 Z" fill="#3b82f6"/> 
                     <text x="50" y="65" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#1e3a8a">VERIFIED</text> 
                     <text x="50" y="75" text-anchor="middle" font-family="Montserrat" font-size="6" fill="#1e3a8a">AUTHENTIC</text> 
@@ -1645,7 +1645,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <defs>
                         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
                         </linearGradient>
                     </defs>
                     <circle cx="75" cy="75" r="75" fill="url(#grad)"/>
@@ -1761,7 +1761,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const avatarContainer = teacherAvatar.parentElement;
                     const initialsDiv = document.createElement('div');
                     initialsDiv.id = 'teacher-avatar-initials';
-                    initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm';
+                    initialsDiv.className = 'w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm';
                     initialsDiv.textContent = getUserInitials(user.name);
                     avatarContainer.insertBefore(initialsDiv, teacherAvatar);
                 } else {

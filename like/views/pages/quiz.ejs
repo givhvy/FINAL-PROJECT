@@ -1,0 +1,300 @@
+﻿<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  📄 FILE: quiz.ejs (TRANG QUIZ & ĐIỂM SỐ - QUIZ & GRADES)                  ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  🎯 MỤC ĐÍCH: Xem lại quiz đã làm và điểm số                                ║
+║  👀 AI DÙNG: Students đã đăng nhập                                          ║
+║  💡 GHI CHÚ: Khác với quiz trong courses.ejs (làm bài), đây là xem kết quả ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  🔌 API CALLS (Front-end gọi Backend):                                       ║
+║     ✅ GET /api/users/${userId}/grades → Lấy tất cả điểm quiz của user    ║
+║           Response: [{ quizId, quizTitle, score, date, courseName... }]     ║
+║     ✅ GET /api/quizzes/${quizId} → Xem lại quiz đã làm                    ║
+║     ✅ GET /api/grades/${gradeId} → Chi tiết điểm và câu trả lời          ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  📋 CHỨC NĂNG CHÍNH:                                                         ║
+║     ✅ My Grades Overview:                                                   ║
+║        - Danh sách tất cả quiz đã làm                                       ║
+║        - Hiển thị điểm từng quiz (score/percentage)                         ║
+║        - Pass/Fail status (≥70% = Pass)                                     ║
+║        - Date completed                                                      ║
+║                                                                              ║
+║     ✅ Grade Details:                                                        ║
+║        - Xem lại từng câu hỏi đã làm                                        ║
+║        - Đáp án đúng vs đáp án của mình                                     ║
+║        - Explanation (nếu có)                                                ║
+║        - Score breakdown                                                     ║
+║                                                                              ║
+║     ✅ Statistics:                                                           ║
+║        - Average quiz score                                                  ║
+║        - Total quizzes taken                                                 ║
+║        - Quizzes passed/failed                                               ║
+║        - Progress over time chart                                            ║
+║                                                                              ║
+║     ✅ Retake Option:                                                        ║
+║        - Nút "Retake Quiz" để làm lại (nếu fail)                           ║
+║        - View best attempt score                                             ║
+╟──────────────────────────────────────────────────────────────────────────────╢
+║  💡 GIẢI THÍCH CHO TRẺ 5 TUỔI:                                              ║
+║     Trang này giống như BẢNG ĐIỂM ỐNG ĐỒ MỞ XEM 📊                         ║
+║     - Xem tất cả bài kiểm tra đã làm (quiz history)                        ║
+║     - Xem điểm từng bài (scores)                                           ║
+║     - Xem đáp án đúng và đáp án mình chọn sai (review answers)            ║
+║     - Làm lại bài kiểm tra nếu điểm thấp (retake)                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html> <!-- checkpoint -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz & Grades | CodeMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 🎨 CSS STYLING - Quiz page */
+
+        /* 📝 Body - Global font & background */
+        body { 
+            font-family: 'Poppins', sans-serif;  /* Font Poppins - modern, friendly */
+            background-color: #f8fafc;          /* Nền xám rất nhạt */
+        }
+
+        /* 📋 TAB CONTENT - Ẩn/hiện tab content */
+        .tab-content { 
+            display: none;  /* Ẩn mặc định */
+        }
+        .tab-content.active { 
+            display: block;  /* Hiện khi có class 'active' */
+        }
+
+        /* 🎴 QUIZ CARD - Card display với hover effect */
+        .quiz-card:hover { 
+            transform: translateY(-4px);                                    /* Nâng lên 4px khi hover */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);                      /* Bóng tăng đậm */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;         /* Animation mượt 0.2s */
+        }
+
+        /* 🔗 NAV LINKS - Tab navigation buttons (Quizzes, Grades) */
+        .nav-link { 
+            padding: 0.25rem 0.5rem;                   /* Padding nhỏ */
+            color: #4b5563;                            /* Màu chữ xám */
+            transition: color 0.2s, border-color 0.2s; /* Chuyển màu mượt */
+            border-bottom: 2px solid transparent;      /* Viền dưới trong suốt (chưa active) */
+            font-weight: 500;                          /* Độ đậm chữ trung bình */
+        }
+        .nav-link:hover { 
+            color: #1f2937;                           /* Chữ đậm hơn (xám đen) */
+            border-bottom-color: #6366f1;             /* Viền dưới đổi xanh tím */
+        }
+        .nav-link.active { 
+            color: #3b82f6;                           /* Chữ xanh khi active */
+            border-bottom-color: #3b82f6;             /* Viền dưới xanh */
+            font-weight: 600;                         /* Chữ đậm hơn */
+        }
+    </style>
+    <script src="/js/darkmode.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="/css/darkmode-improved.css">
+</head>
+<body class="transition-colors duration-300 bg-gray-50 dark:bg-gray-900">
+    <%- include('../partials/header') %>
+    <div class="min-h-screen flex flex-col">
+        <!-- Header mới -->
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8 flex-grow">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">Quizzes & Grades</h2>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+                </div>
+
+            <!-- Quizzes Section -->
+            <div id="content-quizzes" class="tab-content active grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dữ liệu quiz sẽ được tải vào đây -->
+            </div>
+
+            <!-- Grades Section -->
+            <div id="content-grades" class="tab-content">
+                <!-- Dữ liệu điểm số sẽ được tải vào đây -->
+            </div>
+        </main>
+    </div>
+
+<script>
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  🎬 JAVASCRIPT - Quiz & Grades Interactive Logic                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+*/
+
+/* 🔄 BƯỚC 1: INITIALIZE KHI DOM LOAD XONG */
+document.addEventListener('DOMContentLoaded', async () => {
+    /* 
+    DOMContentLoaded = sự kiện kích hoạt khi HTML load xong
+    async = hàm chạy không đồng bộ (có await)
+    */
+
+    /* 🔐 BƯỚC 2: CHECK AUTHENTICATION */
+    const token = localStorage.getItem('token');           /* Token từ localStorage */
+    const user = JSON.parse(localStorage.getItem('user')); /* User info (JSON parse) */
+    
+    if (!token || !user) {
+        /* Nếu chưa login → redirect tới /login */
+        window.location.href = '/login';
+        return;  /* Dừng code, không chạy tiếp */
+    }
+    
+    /* 👤 FUNCTION: Lấy viết tắt tên (Nguyễn Văn A → NV) */
+    function getUserInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');          /* Cắt tên thành từng phần */
+        let initials = parts[0].charAt(0).toUpperCase(); /* Ký tự đầu từ 1 (viết hoa) */
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1].charAt(0).toUpperCase(); /* + Ký tự đầu từ cuối */
+        }
+        return initials;
+    }
+
+    const userAvatar = document.getElementById('user-avatar');
+    if (userAvatar) userAvatar.textContent = getUserInitials(user.name);
+
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.clear();  /* Xóa toàn bộ localStorage */
+        window.location.href = '/login'; /* Redirect to login */
+    });
+    
+    /* 🎴 BƯỚC 3: LẤY REFERENCE TỚI DOM ELEMENTS */
+    const quizzesTab = document.getElementById("tab-quizzes");
+    const gradesTab = document.getElementById("tab-grades");
+    const quizzesContent = document.getElementById("content-quizzes");
+    const gradesContent = document.getElementById("content-grades");
+
+    /* 🎬 FUNCTION: Render danh sách quiz có sẵn */
+    async function renderAvailableQuizzes() {
+        quizzesContent.innerHTML = `<p class="text-gray-500">Loading available quizzes...</p>`;
+        try {
+            /* 🌐 Gửi GET request tới /api/quizzes */
+            const response = await fetch('/api/quizzes', { 
+                headers: { 'Authorization': `Bearer ${token}` } 
+            });
+            if (!response.ok) throw new Error('Failed to fetch quizzes.');
+            const quizzes = await response.json();
+
+            if (quizzes.length === 0) {
+                quizzesContent.innerHTML = `<p class="text-gray-500">No quizzes available at the moment.</p>`;
+                return;
+            }
+
+            quizzesContent.innerHTML = '';
+            quizzes.forEach(quiz => {
+                const quizCard = document.createElement('div');
+                quizCard.className = 'quiz-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-indigo-500';
+                quizCard.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-2">${quiz.title}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 h-16">${quiz.description || 'Test your knowledge with this quiz.'}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">${quiz.questionCount || 'N/A'} Questions</span>
+                        <a href="/courses" onclick="localStorage.setItem('selectedCourseId', '${quiz.course_id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">Go to Course</a>
+                    </div>
+                `;
+                quizzesContent.appendChild(quizCard);
+            });
+        } catch (error) {
+            quizzesContent.innerHTML = `<p class="text-red-500">Error loading quizzes: ${error.message}</p>`;
+        }
+    }
+    
+    /* 📊 FUNCTION: Render bảng điểm (grades) của user */
+    async function renderMyGrades() {
+        gradesContent.innerHTML = `<p class="text-gray-500">Loading your grades...</p>`;
+        try {
+            /* 🌐 Gửi GET request tới /api/grades */
+            const response = await fetch('/api/grades', { 
+                headers: { 'Authorization': `Bearer ${token}` } 
+            });
+            if (!response.ok) throw new Error('Failed to fetch grades.');
+            const allGrades = await response.json();
+            
+            /* Filter: chỉ lấy grade của user hiện tại */
+            const myGrades = allGrades.filter(grade => grade.user && grade.user.id === user.id);
+            
+            if (myGrades.length === 0) {
+                gradesContent.innerHTML = `<p class="text-gray-500">You haven't completed any quizzes yet.</p>`;
+                return;
+            }
+
+            /* Tạo table rows từ myGrades data */
+            let tableRows = myGrades.map(grade => {
+                const statusClass = grade.score >= 70 ? 'text-green-600' : 'text-red-600'; /* Xanh (pass) hay đỏ (fail) */
+                const statusText = grade.score >= 70 ? 'Passed' : 'Failed'; /* Text status */
+                return `
+                    <tr class="hover:bg-gray-50 dark:bg-gray-700">
+                        <td class="px-6 py-4 font-medium">${grade.quiz ? grade.quiz.title : 'Quiz not found'}</td>
+                        <td class="px-6 py-4 font-bold ${statusClass}">${grade.score}%</td>
+                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400">${new Date(grade.createdAt).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 font-semibold ${statusClass}">${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            gradesContent.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Quiz</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Score</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } catch (error) {
+            gradesContent.innerHTML = `<p class="text-red-500">Error loading grades: ${error.message}</p>`;
+        }
+    }
+
+    /* 🔀 FUNCTION: Chuyển đổi giữa tabs (Quizzes vs Grades) */
+    function activateTab(tab) {
+        if (tab === "quizzes") {
+            /* Hiện quizzes tab, ẩn grades tab */
+            quizzesContent.classList.add("active");
+            gradesContent.classList.remove("active");
+            quizzesTab.classList.add("border-indigo-600", "text-indigo-600");
+            quizzesTab.classList.remove("text-gray-500", "border-transparent");
+            gradesTab.classList.add("text-gray-500", "border-transparent");
+            gradesTab.classList.remove("border-indigo-600", "text-indigo-600");
+            renderAvailableQuizzes();
+        } else {
+            /* Hiện grades tab, ẩn quizzes tab */
+            gradesContent.classList.add("active");
+            quizzesContent.classList.remove("active");
+            gradesTab.classList.add("border-indigo-600", "text-indigo-600");
+            gradesTab.classList.remove("text-gray-500", "border-transparent");
+            quizzesTab.classList.add("text-gray-500", "border-transparent");
+            quizzesTab.classList.remove("border-indigo-600", "text-indigo-600");
+            renderMyGrades();
+        }
+    }
+
+    /* 🔘 Add event listeners to tab buttons */
+    quizzesTab.addEventListener("click", () => activateTab("quizzes"));
+    gradesTab.addEventListener("click", () => activateTab("grades"));
+
+    /* ⏪ INITIAL LOAD: Hiển thị quizzes tab khi load page */
+    activateTab("quizzes");
+});
+</script>
+    <%- include('../partials/footer') %>
+</body>
+</html>

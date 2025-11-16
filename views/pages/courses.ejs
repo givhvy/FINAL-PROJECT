@@ -27,7 +27,7 @@
             border: 5px solid #e5e7eb; 
             border-radius: 50%; 
             border-top: 5px solid #3b82f6; 
-            border-right: 5px solid #8b5cf6;
+            border-right: 5px solid #3b82f6;
             width: 60px; 
             height: 60px; 
             animation: spin 0.8s linear infinite; 
@@ -48,7 +48,7 @@
         /* Progress Bar Styles for Cards */
         .progress-bar-container { height: 6px; border-radius: 3px; background-color: #e5e7eb; overflow: hidden; }
         .progress-fill-blue { background-color: #3b82f6; }
-        .progress-fill-purple { background-color: #8b5cf6; }
+        .progress-fill-purple { background-color: #3b82f6; }
         .progress-fill-red { background-color: #ef4444; }
         .progress-fill-green { background-color: #10b981; }
         .progress-fill-yellow { background-color: #f59e0b; }
@@ -116,16 +116,16 @@
         /* FILTER & NAV STYLES */
         .filter-btn { padding: 0.5rem 1rem; border-radius: 9999px; transition: all 0.2s; cursor: pointer; font-weight: 500; color: #4b5563; background-color: #f3f4f6; }
         .filter-btn:hover:not(.active) { background-color: #e5e7eb; }
-        .filter-btn.active { background-color: #4f46e5; color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3); }
+        .filter-btn.active { background-color: #2563eb; color: white; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3); }
         
         .category-gallery-item { aspect-ratio: 16/9; background-size: cover; background-position: center; position: relative; cursor: pointer; transition: transform 0.3s ease; }
         .category-gallery-item:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
 
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
-        .nav-link:hover { color: #1f2937; border-bottom-color: #6366f1; }
+        .nav-link:hover { color: #1f2937; border-bottom-color: #3b82f6; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
         /* Custom Logo Style */
-        .header-logo { color: #4f46e5; font-weight: 800; }
+        .header-logo { color: #2563eb; font-weight: 800; }
 
         /* Mobile Menu Styles */
         .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
@@ -133,7 +133,7 @@
 
         /* Progress indicator animation */
         .progress-indicator {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ef4444, #10b981);
+            background: linear-gradient(90deg, #3b82f6, #3b82f6, #ef4444, #10b981);
             background-size: 400% 400%;
             animation: gradientShift 3s ease infinite;
         }
@@ -220,36 +220,21 @@
 
             <!-- ALL COURSES SECTION -->
             <div id="all-courses" class="mb-12">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">
-                        📚 All Courses
-                    </h2>
-                </div>
-
-                <div class="mb-8 pb-2 border-b border-gray-200 dark:border-gray-700">
-                    <!-- Category Filters -->
+                <!-- Title and Filters on Same Line -->
+                <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex flex-wrap gap-4 items-center justify-between mb-4">
-                        <div class="flex items-center space-x-3 overflow-x-auto">
-                            <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
-                            <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
-                                <button data-filter="All" class="filter-btn active">All</button>
-                                <button data-filter="Development" class="filter-btn">💻 Development</button>
-                                <button data-filter="Design" class="filter-btn">🎨 Design</button>
-                                <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
-                                <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
-                                <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
-                                <button data-filter="Business" class="filter-btn">💼 Business</button>
-                            </div>
-                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 flex-shrink-0">
+                            📚 All Courses
+                        </h2>
+
+                        <!-- Search Bar -->
                         <div class="relative flex-shrink-0">
-                            <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <input type="text" id="course-search" placeholder="Search courses..." class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-64">
                             <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
                         </div>
-                    </div>
 
-                    <!-- Advanced Filters (FR2.4: Tier & Instructor) -->
-                    <div class="flex flex-wrap gap-4 items-center">
-                        <div class="flex items-center space-x-2">
+                        <!-- Access Tier Filter -->
+                        <div class="flex items-center space-x-2 flex-shrink-0">
                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Access Tier:</label>
                             <select id="tier-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
                                 <option value="all">All Tiers</option>
@@ -257,13 +242,31 @@
                                 <option value="pro">Pro Tier</option>
                             </select>
                         </div>
-                        <div class="flex items-center space-x-2">
+
+                        <!-- Instructor Filter -->
+                        <div class="flex items-center space-x-2 flex-shrink-0">
                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instructor:</label>
-                            <input type="text" id="instructor-filter" placeholder="Filter by instructor..." class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
+                            <input type="text" id="instructor-filter" placeholder="Filter by instructor..." class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200 w-48">
                         </div>
-                        <button id="clear-filters-btn" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+
+                        <!-- Clear Filters Button -->
+                        <button id="clear-filters-btn" class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium flex-shrink-0">
                             Clear Filters
                         </button>
+                    </div>
+
+                    <!-- Category Filters -->
+                    <div class="flex items-center space-x-3 overflow-x-auto">
+                        <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-shrink-0">Explore:</div>
+                        <div id="category-filter-buttons" class="flex space-x-3 flex-shrink-0">
+                            <button data-filter="All" class="filter-btn active">All</button>
+                            <button data-filter="Development" class="filter-btn">💻 Development</button>
+                            <button data-filter="Design" class="filter-btn">🎨 Design</button>
+                            <button data-filter="Data Science" class="filter-btn">📈 Data Science</button>
+                            <button data-filter="Marketing" class="filter-btn">📢 Marketing</button>
+                            <button data-filter="AI & ML" class="filter-btn">🤖 AI & ML</button>
+                            <button data-filter="Business" class="filter-btn">💼 Business</button>
+                        </div>
                     </div>
                 </div>
             
@@ -360,7 +363,7 @@
             <p id="cert-course-title" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4"></p>
             <p class="text-gray-600 dark:text-gray-400 mb-8">Your certificate has been generated and is ready to view!</p>
             <div class="flex gap-4 justify-center">
-                <button id="view-my-certificate-btn" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                <button id="view-my-certificate-btn" class="bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
                     <i class="fas fa-certificate mr-2"></i>View My Certificate
                 </button>
                 <button id="close-cert-popup" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-3 px-8 rounded-lg transition">
@@ -430,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const userTier = user.subscriptionTier || 'free';
             if (userTier === 'pro') {
                 tierBadgeElement.innerHTML = `
-                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center gap-1">
+                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-full flex items-center gap-1">
                         <i class="fas fa-crown"></i> PRO
                     </span>
                 `;
@@ -502,7 +505,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             title: 'Master Web Development 2025',
             subtitle: 'Become a professional Full Stack Developer with React, Node.js, and modern databases.',
             buttonText: 'Get Started →',
-            color: 'from-blue-600 to-indigo-700'
+            color: 'from-blue-600 to-blue-700'
         },
         { 
             image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200', 
@@ -518,7 +521,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             title: 'UI/UX Design Principles',
             subtitle: 'Learn to create beautiful and effective user interfaces with Figma.',
             buttonText: 'Learn More →',
-            color: 'from-purple-600 to-pink-600'
+            color: 'from-blue-600 to-pink-600'
         },
         { 
             image: 'https://res.cloudinary.com/dxqrmxll4/image/upload/v1758951586/Pastel_Purple_Pastel_Green_3D_Choice_Board_Education_Website_1_nqncb7.png', 
@@ -526,7 +529,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             title: 'Artificial Intelligence Mastery',
             subtitle: 'Master AI and Machine Learning with TensorFlow, PyTorch and advanced algorithms.',
             buttonText: 'Explore AI →',
-            color: 'from-indigo-600 to-purple-600'
+            color: 'from-blue-600 to-blue-600'
         }
     ];
     let currentImageIndex = 0;
@@ -541,7 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-white/90 px-2 sm:px-3 py-1 bg-gradient-to-r ${currentBanner.color} rounded-full mb-2 sm:mb-3 inline-block">${currentBanner.tag}</span>
             <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 sm:mb-3 leading-tight">${currentBanner.title}</h2>
             <p class="text-xs sm:text-sm md:text-base text-white/80 mb-3 sm:mb-6 max-w-lg line-clamp-2 sm:line-clamp-none">${currentBanner.subtitle}</p>
-            <a href="#" class="bg-white/90 hover:bg-white text-indigo-700 dark:bg-gray-800/20 dark:backdrop-blur-sm dark:text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded-lg dark:hover:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30 shadow-lg text-xs sm:text-sm md:text-base">
+            <a href="#" class="bg-white/90 hover:bg-white text-blue-700 dark:bg-gray-800/20 dark:backdrop-blur-sm dark:text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded-lg dark:hover:bg-gray-800/30 transition-all duration-300 inline-flex items-center border border-white/30 shadow-lg text-xs sm:text-sm md:text-base">
                 ${currentBanner.buttonText}
             </a>`;
 
@@ -682,7 +685,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="relative h-40 overflow-hidden">
                     ${courseImage && courseImage.trim() !== '' ?
                         `<img src="${courseImage}" alt="${course.title}" class="w-full h-full object-cover">` :
-                        `<div class="bg-gradient-to-br from-blue-500 to-purple-600 w-full h-full flex items-center justify-center">
+                        `<div class="bg-gradient-to-br from-blue-500 to-blue-600 w-full h-full flex items-center justify-center">
                             <i class="fas ${iconClass} text-white text-5xl opacity-80"></i>
                         </div>`
                     }
@@ -772,7 +775,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Determine tier badge display
             let tierBadge = '';
             if (userTier === 'pro') {
-                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full">PRO ACCESS</span>';
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-full">PRO ACCESS</span>';
             } else if (isEnrolled) {
                 tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full">ENROLLED</span>';
             } else if (canEnrollFree) {
@@ -825,7 +828,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="flex-shrink-0">
                                 ${course.teacher.avatarUrl ?
                                     `<img src="${course.teacher.avatarUrl}" alt="${course.teacher.name}" class="h-6 w-6 rounded-full object-cover">` :
-                                    `<div class="h-6 w-6 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-semibold">
+                                    `<div class="h-6 w-6 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-semibold">
                                         ${course.teacher.name ? course.teacher.name.charAt(0).toUpperCase() : 'T'}
                                     </div>`
                                 }
@@ -1007,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const hasAccess = isTeacherOrAdmin || !courseIsLocked || userTier === 'pro';
 
                 const icon = isQuiz
-                    ? `<i class="fas fa-puzzle-piece text-purple-500 w-5 text-center mr-3"></i>`
+                    ? `<i class="fas fa-puzzle-piece text-blue-500 w-5 text-center mr-3"></i>`
                     : `<i class="fas fa-book-open text-blue-500 w-5 text-center mr-3"></i>`;
                 const checkmark = isCompleted
                     ? `<i class="fas fa-check-circle text-green-500 ml-auto lesson-checkmark"></i>`
@@ -1041,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div class="lg:col-span-1">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden sticky top-24">
-                        <div class="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+                        <div class="p-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
                             <h2 class="text-xl font-bold mb-2">${course.title}</h2>
                             <p class="text-sm font-medium mb-3">By ${course.teacher?.name || course.instructor || 'Unknown Instructor'}</p>
                             <div class="mt-3">
@@ -1356,7 +1359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                     </div>
                     <form id="quiz-form">${questionsHTML}
-                        <button type="submit" class="w-full mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                        <button type="submit" class="w-full mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
                             <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
                         </button>
                     </form>
