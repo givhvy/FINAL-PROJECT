@@ -207,13 +207,13 @@ app.get('/profile', (req, res) => {
   res.render('pages/profile', { title: 'Profile' });
 });
 
-app.get('/account', (req, res) => {
+app.get('/mylearning', (req, res) => {
   res.render('pages/mylearning', { title: 'My Learning' });
 });
 
-// Redirect old /mylearning route to /account for consistency
-app.get('/mylearning', (req, res) => {
-  res.redirect('/account');
+// Redirect old /account route to /mylearning for consistency
+app.get('/account', (req, res) => {
+  res.redirect('/mylearning');
 });
 
 // E-commerce pages

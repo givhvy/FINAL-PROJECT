@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!DOCTYPE html> <!-- checkpoint -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -59,16 +59,8 @@
                                     <p id="profile-email">N/A</p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500">Phone</p>
-                                    <p id="profile-phone">(555) 123-4567</p>
-                                </div>
-                                <div>
                                     <p class="text-sm text-gray-500">Location</p>
                                     <p id="profile-location">Ho Chi Minh City, Vietnam</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Member Since</p>
-                                    <p id="profile-created-date">N/A</p>
                                 </div>
                             </div>
                         </div>
@@ -134,11 +126,6 @@
             <div>
                 <label for="edit-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email (Cannot be changed)</label>
                 <input type="email" id="edit-email" disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-100 dark:bg-gray-700 cursor-not-allowed">
-            </div>
-
-            <div>
-                <label for="edit-phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
-                <input type="text" id="edit-phone" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
             </div>
 
             <div class="mt-6 flex justify-end space-x-3 pt-4">
@@ -209,9 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('profile-name').textContent = userData.name || 'Student';
         document.getElementById('profile-role').textContent = (userData.role || 'student').charAt(0).toUpperCase() + (userData.role || 'student').slice(1);
         document.getElementById('profile-email').textContent = userData.email || 'N/A';
-        document.getElementById('profile-phone').textContent = userData.phone || '(555) 123-4567';
-        document.getElementById('profile-created-date').textContent = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A';
-        
+
         // Cập nhật localStorage
         localStorage.setItem('user', JSON.stringify(userData));
         user = userData; // Cập nhật biến global
@@ -222,8 +207,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('edit-user-id').value = user.id;
         document.getElementById('edit-name').value = user.name || '';
         document.getElementById('edit-email').value = user.email || '';
-        // Sử dụng giá trị phone hiện tại hoặc giá trị mặc định
-        document.getElementById('edit-phone').value = user.phone || '(555) 123-4567';
 
         // Reset uploaded avatar URL
         uploadedAvatarUrl = user.avatarUrl || null;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!DOCTYPE html> <!-- checkpoint -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -98,18 +98,11 @@
                 </div>
             </div>
 
-            <!-- Billing Toggle -->
-            <div class="flex justify-center mb-12">
-                <div class="bg-gray-100 dark:bg-gray-700 p-1 rounded-full inline-flex items-center">
-                    <button id="monthly-btn" class="px-6 py-2 rounded-full bg-indigo-600 text-white font-medium">Monthly</button>
-                    <button id="annual-btn" class="px-6 py-2 rounded-full text-gray-700 dark:text-gray-300 font-medium">Annual (Save 20%)</button>
-                </div>
-            </div>
 
             <!-- Subscription Plans -->
-            <div id="plans-container" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Các gói subscription sẽ được tải vào đây bằng JavaScript -->
-                 <div class="col-span-3 text-center text-gray-500">Loading plans...</div>
+            <div id="plans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                <!-- Subscription plans will be loaded here by JavaScript -->
+                 <div class="col-span-full text-center text-gray-500">Loading plans...</div>
             </div>
             
             <!-- FAQ Section -->
@@ -130,12 +123,9 @@
 
             // --- UI ELEMENTS ---
             const plansContainer = document.getElementById('plans-container');
-            const monthlyBtn = document.getElementById('monthly-btn');
-            const annualBtn = document.getElementById('annual-btn');
             const studentForm = document.getElementById('student-verification-form');
             const studentEmailInput = document.getElementById('student-email');
             const verificationResult = document.getElementById('verification-result');
-            let isAnnual = false;
             let allPlans = [];
 
             // --- FUNCTIONS ---
@@ -211,10 +201,9 @@
                         user.studentEmail = email;
                         localStorage.setItem('user', JSON.stringify(user));
 
-                        // Hide plans section sau 2 giây
+                        // Hide plans section after 2 seconds
                         setTimeout(() => {
                             document.getElementById('plans-container').style.display = 'none';
-                            document.querySelector('.flex.justify-center.mb-12').style.display = 'none';
                         }, 2000);
 
                     } else {
@@ -245,47 +234,123 @@
             }
 
             function renderPlans() {
-                if (allPlans.length === 0) {
-                    plansContainer.innerHTML = `<p class="col-span-3 text-center text-gray-500">No subscription plans are available at the moment.</p>`;
-                    return;
-                }
-                
                 plansContainer.innerHTML = '';
-                allPlans.forEach((plan, index) => {
-                    const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
-                    const billingPeriod = isAnnual ? '/year' : '/month';
-                    const isPopular = index === 1; // Giả sử plan thứ 2 là popular nhất
 
-                    const featuresHTML = plan.features.map(f => `<li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>${f}</li>`).join('');
-
-                    const planCard = document.createElement('div');
-                    planCard.className = `plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative ${isPopular ? 'border-2 border-indigo-600 transform scale-105' : ''}`;
-                    planCard.innerHTML = `
-                        ${isPopular ? '<div class="badge bg-indigo-600 text-white px-4 py-1 rounded-full font-medium text-sm">Most Popular</div>' : ''}
-                        <div class="p-8">
-                            <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">${plan.name}</h3>
-                            <div class="flex items-end mb-6">
-                                <span class="text-4xl font-bold ${isPopular ? 'text-indigo-600' : 'text-gray-800 dark:text-gray-200'}">$${price.toFixed(2)}</span>
-                                <span class="text-gray-500 ml-2">${billingPeriod}</span>
-                            </div>
-                            <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">${featuresHTML}</ul>
+                // Free Tier Card
+                const freeCard = document.createElement('div');
+                freeCard.className = 'plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative';
+                freeCard.innerHTML = `
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Free</h3>
+                        <div class="flex items-end mb-6">
+                            <span class="text-4xl font-bold text-gray-800 dark:text-gray-200">$0</span>
+                            <span class="text-gray-500 ml-2">/month</span>
                         </div>
-                        <div class="px-8 pb-8">
-                            <button data-plan-id="${plan.id}" data-plan-name="${plan.name}" data-plan-price="${price}" class="select-plan-btn w-full py-3 px-4 ${isPopular ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-gray-200'} font-medium rounded-lg transition-colors">
-                                Select Plan
-                            </button>
-                        </div>
-                    `;
-                    plansContainer.appendChild(planCard);
-                });
+                        <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Access to 3 courses</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Basic learning materials</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Community access</li>
+                            <li class="flex items-center"><i class="fas fa-times-circle text-gray-400 mr-3"></i>Certificates</li>
+                            <li class="flex items-center"><i class="fas fa-times-circle text-gray-400 mr-3"></i>Premium content</li>
+                        </ul>
+                    </div>
+                    <div class="px-8 pb-8">
+                        <button disabled class="w-full py-3 px-4 bg-gray-200 text-gray-600 font-medium rounded-lg cursor-not-allowed">
+                            Current Plan
+                        </button>
+                    </div>
+                `;
+                plansContainer.appendChild(freeCard);
 
-                // Gán lại sự kiện cho các nút "Select Plan"
+                // Pro Monthly Card
+                const proMonthly = document.createElement('div');
+                proMonthly.className = 'plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative';
+                proMonthly.innerHTML = `
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Pro - Monthly</h3>
+                        <div class="flex items-end mb-6">
+                            <span class="text-4xl font-bold text-indigo-600">$19.99</span>
+                            <span class="text-gray-500 ml-2">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Unlimited courses</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>All learning materials</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Certificates</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Premium content</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="px-8 pb-8">
+                        <button data-plan-id="pro_monthly" data-plan-name="Pro Learning - Monthly" data-plan-price="19.99" data-billing="Monthly" class="select-plan-btn w-full py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-colors">
+                            Select Plan
+                        </button>
+                    </div>
+                `;
+                plansContainer.appendChild(proMonthly);
+
+                // Pro Quarterly Card (Save 20%)
+                const proQuarterly = document.createElement('div');
+                proQuarterly.className = 'plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative border-2 border-indigo-600 transform scale-105';
+                proQuarterly.innerHTML = `
+                    <div class="badge bg-indigo-600 text-white px-4 py-1 rounded-full font-medium text-sm">Save 20%</div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Pro - Quarterly</h3>
+                        <div class="flex items-end mb-2">
+                            <span class="text-4xl font-bold text-indigo-600">$47.97</span>
+                            <span class="text-gray-500 ml-2">/3 months</span>
+                        </div>
+                        <p class="text-sm text-green-600 font-semibold mb-4">$15.99/month (save $12)</p>
+                        <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Unlimited courses</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>All learning materials</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Certificates</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Premium content</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="px-8 pb-8">
+                        <button data-plan-id="pro_quarterly" data-plan-name="Pro Learning - Quarterly" data-plan-price="47.97" data-billing="Quarterly" class="select-plan-btn w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">
+                            Select Plan
+                        </button>
+                    </div>
+                `;
+                plansContainer.appendChild(proQuarterly);
+
+                // Pro Yearly Card (Save 40%)
+                const proYearly = document.createElement('div');
+                proYearly.className = 'plan-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative';
+                proYearly.innerHTML = `
+                    <div class="badge bg-green-600 text-white px-4 py-1 rounded-full font-medium text-sm">Save 40%</div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Pro - Yearly</h3>
+                        <div class="flex items-end mb-2">
+                            <span class="text-4xl font-bold text-green-600">$143.88</span>
+                            <span class="text-gray-500 ml-2">/year</span>
+                        </div>
+                        <p class="text-sm text-green-600 font-semibold mb-4">$11.99/month (save $96)</p>
+                        <ul class="space-y-3 mb-8 text-gray-600 dark:text-gray-400">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Unlimited courses</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>All learning materials</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Certificates</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Premium content</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i>Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="px-8 pb-8">
+                        <button data-plan-id="pro_yearly" data-plan-name="Pro Learning - Yearly" data-plan-price="143.88" data-billing="Yearly" class="select-plan-btn w-full py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-colors">
+                            Select Plan
+                        </button>
+                    </div>
+                `;
+                plansContainer.appendChild(proYearly);
+
+                // Attach event listeners to Select Plan buttons
                 document.querySelectorAll('.select-plan-btn').forEach(button => {
                     button.addEventListener('click', async (e) => {
                         const planId = e.target.dataset.planId;
                         const planName = e.target.dataset.planName;
                         const planPrice = parseFloat(e.target.dataset.planPrice);
-                        const billing = isAnnual ? 'Annually' : 'Monthly';
+                        const billing = e.target.dataset.billing;
 
                         // Save plan to localStorage for potential cart recovery
                         const plan = {
@@ -359,48 +424,18 @@
                 });
             }
 
-            async function fetchPlans() {
-                try {
-                    const response = await fetch('/api/subscriptions', { headers: { 'Authorization': `Bearer ${token}` } });
-                    if (!response.ok) throw new Error('Failed to fetch subscription plans.');
-                    allPlans = await response.json();
-                    renderPlans();
-                } catch (error) {
-                    console.error('Fetch Plans Error:', error);
-                    plansContainer.innerHTML = `<p class="col-span-3 text-center text-red-500">${error.message}</p>`;
-                }
-            }
-            
             // --- EVENT LISTENERS ---
             const userAvatar = document.getElementById('user-avatar');
             if (userAvatar) userAvatar.textContent = getUserInitials(user);
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.clear(); window.location.href = '/login';
             });
-            
-            monthlyBtn.addEventListener('click', () => {
-                isAnnual = false;
-                monthlyBtn.classList.add('bg-indigo-600', 'text-white');
-                monthlyBtn.classList.remove('text-gray-700 dark:text-gray-300');
-                annualBtn.classList.remove('bg-indigo-600', 'text-white');
-                annualBtn.classList.add('text-gray-700 dark:text-gray-300');
-                renderPlans();
-            });
-
-            annualBtn.addEventListener('click', () => {
-                isAnnual = true;
-                annualBtn.classList.add('bg-indigo-600', 'text-white');
-                annualBtn.classList.remove('text-gray-700 dark:text-gray-300');
-                monthlyBtn.classList.remove('bg-indigo-600', 'text-white');
-                monthlyBtn.classList.add('text-gray-700 dark:text-gray-300');
-                renderPlans();
-            });
 
             // Student verification form
             studentForm.addEventListener('submit', handleStudentVerification);
 
             // --- INITIALIZATION ---
-            fetchPlans();
+            renderPlans();
         });
     </script>
 

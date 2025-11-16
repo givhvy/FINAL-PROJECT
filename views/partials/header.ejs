@@ -10,7 +10,7 @@
 
                 <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-8 h-full items-center">
                     <a href="/courses" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Courses</a>
-                    <a href="/account" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">My Learning</a>
+                    <a href="/mylearning" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">My Learning</a>
                     <a href="/community" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Community</a>
                     <a href="/blog" class="nav-link px-3 py-2 text-sm font-medium text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Blog</a>
                     <a href="/payment" id="upgrade-button" class="text-sm font-medium text-gray-900 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-full px-4 py-2 flex items-center space-x-2 transition-colors">
@@ -64,7 +64,7 @@
         <div class="mobile-menu sm:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700" id="mobile-menu" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="/courses" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Courses</a>
-                <a href="/account" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">My Learning</a>
+                <a href="/mylearning" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">My Learning</a>
                 <a href="/community" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Community</a>
                 <a href="/blog" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Blog</a>
                 <a href="/payment" id="mobile-upgrade-button" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-white bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
@@ -219,6 +219,11 @@
                 // Set student tier badge (handled by existing page logic)
                 console.log('Student UI setup complete');
             }
+
+            // Update cart count badge for students
+            if (userRole === 'student' || !userRole || userRole === '') {
+                updateCartCount();
+            }
         } catch (error) {
             console.error('Error setting up role-based UI:', error);
             if (dashboardButton) {
@@ -227,4 +232,34 @@
             }
         }
     })();
+
+    // Function to update cart count from localStorage
+    function updateCartCount() {
+        try {
+            const cartCountElement = document.getElementById('cart-count');
+            if (!cartCountElement) return;
+
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.length;
+
+            if (count > 0) {
+                cartCountElement.textContent = count;
+                cartCountElement.classList.remove('hidden');
+            } else {
+                cartCountElement.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    }
+
+    // Update cart count on storage change (when items are added from other tabs/windows)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'cart') {
+            updateCartCount();
+        }
+    });
+
+    // Update cart count periodically in case items are added via JavaScript
+    setInterval(updateCartCount, 1000);
 </script>
