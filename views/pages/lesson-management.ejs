@@ -159,19 +159,24 @@
         // --- CORE UI FUNCTIONS ---
         function setActiveForm(formId) {
             const isLesson = formId === 'lesson';
-            
+
             // Toggle form visibility
             lessonForm.classList.toggle('hidden', !isLesson);
             quizForm.classList.toggle('hidden', isLesson);
 
             // Toggle button active state
-            document.getElementById('show-lesson-form-btn').classList.toggle('active', isLesson);
-            document.getElementById('show-lesson-form-btn').classList.toggle('bg-gray-200', !isLesson);
-            document.getElementById('show-lesson-form-btn').classList.toggle('text-gray-700 dark:text-gray-300', !isLesson);
+            const lessonBtn = document.getElementById('show-lesson-form-btn');
+            const quizBtn = document.getElementById('show-quiz-form-btn');
 
-            document.getElementById('show-quiz-form-btn').classList.toggle('active', !isLesson);
-            document.getElementById('show-quiz-form-btn').classList.toggle('bg-gray-200', isLesson);
-            document.getElementById('show-quiz-form-btn').classList.toggle('text-gray-700 dark:text-gray-300', isLesson);
+            lessonBtn.classList.toggle('active', isLesson);
+            lessonBtn.classList.toggle('bg-gray-200', !isLesson);
+            lessonBtn.classList.toggle('text-gray-700', !isLesson);
+            lessonBtn.classList.toggle('dark:text-gray-300', !isLesson);
+
+            quizBtn.classList.toggle('active', !isLesson);
+            quizBtn.classList.toggle('bg-gray-200', isLesson);
+            quizBtn.classList.toggle('text-gray-700', isLesson);
+            quizBtn.classList.toggle('dark:text-gray-300', isLesson);
 
             // Reset forms and state
             if (isLesson) {
