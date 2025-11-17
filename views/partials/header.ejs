@@ -205,13 +205,19 @@
                     dashboardButton.style.display = 'none';
                 }
 
-                // Show upgrade and cart buttons for students
+                // Check if user is Pro tier
+                const userTier = user.subscriptionTier || 'free';
+                const isPro = userTier === 'pro';
+
+                // Hide upgrade button for Pro users, show for free tier
                 if (upgradeButton) {
-                    upgradeButton.style.display = 'flex';
+                    upgradeButton.style.display = isPro ? 'none' : 'flex';
                 }
                 if (mobileUpgradeButton) {
-                    mobileUpgradeButton.style.display = 'block';
+                    mobileUpgradeButton.style.display = isPro ? 'none' : 'block';
                 }
+
+                // Show cart button for all students
                 if (cartButton) {
                     cartButton.style.display = 'block';
                 }

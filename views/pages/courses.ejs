@@ -1016,8 +1016,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ? `<i class="fas fa-check-circle text-green-500 ml-auto lesson-checkmark"></i>`
                     : '';
 
+                // Add gray background for completed lessons
+                const completedClass = isCompleted ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700';
+
                 return `
-                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200 ${!hasAccess ? 'opacity-60' : ''}"
+                    <li class="lesson-card p-3 rounded-md cursor-pointer flex items-center transition-all duration-200 ${completedClass} ${!hasAccess ? 'opacity-60' : ''}"
                         data-id="${item.id}"
                         data-type="${item.contentType}"
                         data-has-access="${hasAccess}">
@@ -1238,29 +1241,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Ensure user is enrolled before marking lesson complete
             await autoEnrollUser(courseId);
 
-            const response = await fetch('/api/progress/complete', {
+            const response = await fetch('/api/progress/lesson', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({
                     user_id: user.id,
                     lesson_id: lessonId,
-                    course_id: courseId
+                    course_id: courseId,
+                    completed: true
                 })
             });
 
-            if (!response.ok) throw new Error('Failed to save progress.');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Failed to save progress.');
+            }
 
             const result = await response.json();
 
             button.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Completed!';
             button.className = 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center';
 
-            // Add checkmark to sidebar lesson
+            // Add checkmark and gray background to sidebar lesson
             const sidebarCard = document.querySelector(`#content-list-sidebar [data-id="${lessonId}"][data-type="lesson"]`);
-            if (sidebarCard && !sidebarCard.querySelector('.lesson-checkmark')) {
-                const checkmark = document.createElement('i');
-                checkmark.className = 'fas fa-check-circle text-green-500 ml-auto lesson-checkmark';
-                sidebarCard.appendChild(checkmark);
+            if (sidebarCard) {
+                // Add completed styling
+                sidebarCard.classList.add('bg-gray-200', 'dark:bg-gray-700');
+                sidebarCard.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+
+                // Add checkmark if not already present
+                if (!sidebarCard.querySelector('.lesson-checkmark')) {
+                    const checkmark = document.createElement('i');
+                    checkmark.className = 'fas fa-check-circle text-green-500 ml-auto lesson-checkmark';
+                    sidebarCard.appendChild(checkmark);
+                }
             }
 
             // Refresh progress bar - get updated progress

@@ -37,7 +37,7 @@
             
             <div class="lg:col-span-1 space-y-6">
                 <div id="progress-card" class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200">My Progress Today</h3>
+                    <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200">My Progress</h3>
 
                     <!-- Course Completed Section -->
                     <div class="mb-5">
@@ -140,7 +140,7 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">🏆 Weekly Leaderboard</h3>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">🏆 Leaderboard</h3>
                     </div>
                     <div id="leaderboard-container">
                         <div class="text-center py-6">
@@ -475,6 +475,7 @@
         // Render My Progress Today - Updated to track completed courses
         async function renderUserProgress() {
             const userId = user.id;
+            console.log('🔍 [MY PROGRESS] Loading progress for user:', { userId, userName: user.name, userEmail: user.email });
 
             try {
                 const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/users/${userId}/progress`, {
@@ -484,6 +485,7 @@
                 if (!response.ok) throw new Error('Failed to fetch progress details.');
 
                 const progressData = await response.json();
+                console.log('📊 [MY PROGRESS] Received progress data:', progressData.length, 'courses');
 
                 // Calculate completed courses
                 const completedCourses = progressData.filter(item => item.isCompleted).length;
@@ -662,13 +664,30 @@
                 if (!response.ok) throw new Error('Failed to fetch leaderboard.');
                 const leaderboard = await response.json();
 
+                console.log('📊 [FRONTEND] Received leaderboard data:', leaderboard);
+
+                // Debug: Log first entry details
+                if (leaderboard.length > 0) {
+                    console.log('📊 [FRONTEND] First entry:', leaderboard[0]);
+                }
+
+                if (leaderboard.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                            <p class="text-lg font-semibold">No leaderboard data yet</p>
+                            <p class="text-sm mt-2">Start completing courses to appear on the leaderboard!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
                 container.innerHTML = leaderboard.map(entry => {
-                    // Giả định Alex Chen là người dùng hiện tại nếu user.name không có
-                    const isCurrentUser = entry.name.includes(user.name || "Alex Chen"); 
-                    const bgColor = isCurrentUser ? 'bg-orange-50 border border-orange-300' : 'bg-gray-50 dark:bg-gray-700';
+                    // Check if current user
+                    const isCurrentUser = user && user.name && entry.name.includes(user.name);
+                    const bgColor = isCurrentUser ? 'bg-orange-50 border border-orange-300 dark:bg-orange-900/20' : 'bg-gray-50 dark:bg-gray-700';
                     const rankEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank;
                     const rankColor = entry.rank <= 3 ? 'text-2xl' : 'text-lg text-gray-400';
-                    const pointColor = entry.change > 0 ? 'text-green-600' : 'text-gray-500';
 
                     return `
                         <div class="flex items-center justify-between p-3 ${bgColor} rounded-lg card-hover">
@@ -678,7 +697,7 @@
                                     ${entry.initials}
                                 </div>
                                 <div>
-                                    <div class="font-semibold">${entry.name} ${isCurrentUser ? '(You)' : ''}</div>
+                                    <div class="font-semibold text-gray-800 dark:text-gray-200">${entry.name} ${isCurrentUser ? '(You)' : ''}</div>
                                     <div class="text-sm text-gray-600 dark:text-gray-400">${entry.hours} ${entry.hours === 1 ? 'course' : 'courses'} completed</div>
                                 </div>
                             </div>

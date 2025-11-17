@@ -282,7 +282,8 @@
 
     <script>
         // --- AUTH & SETUP ---
-        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community'; 
+        console.log('🚀 [COMMUNITY] Using LIKE folder version - timestamp:', new Date().toISOString());
+        const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community';
         const user = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
         
@@ -732,9 +733,12 @@
         async function renderLeaderboard() {
             const container = document.getElementById('leaderboard-container');
             try {
+                console.log('📊 [LEADERBOARD] Fetching from:', `${API_BASE}/leaderboard`);
                 const response = await fetch(`${API_BASE}/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } });
+                console.log('📊 [LEADERBOARD] Response status:', response.status);
                 if (!response.ok) throw new Error('Failed to fetch leaderboard.');
                 const leaderboard = await response.json();
+                console.log('📊 [LEADERBOARD] Received data:', leaderboard);
 
                 container.innerHTML = leaderboard.map(entry => {
                     // Giả định Alex Chen là người dùng hiện tại nếu user.name không có

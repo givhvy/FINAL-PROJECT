@@ -1,22 +1,9 @@
 const { getFirestore } = require('firebase-admin/firestore');
 const User = require('../models/User');
-const Order = require('../models/Order');
-const Lesson = require('../models/Lesson');
 const Progress = require('../models/Progress');
 
 /**
- * Community Controller
- * Handles leaderboard and user progress tracking only
- *
- * NOTE: Study Groups, Challenges, and Forum functionality have been moved to:
- * - groupController.js - For study group CRUD operations
- * - challengeController.js - For challenge management (will soon removed)
- * - groupMessageController.js - For study group forum/messages
- */
-
-/**
  * Get user progress with study data and points
- * OPTIMIZED: Uses Progress model's getUserOverallProgress() to avoid N+1 queries
  */
 exports.getUserProgress = async (req, res) => {
     try {
@@ -28,34 +15,23 @@ exports.getUserProgress = async (req, res) => {
 
         console.log(`\n🔍 [PROGRESS] Fetching progress for user: ${userId}`);
 
-        // Use Progress model "methods" for daily and weekly progress
         const dailyLessons = await Progress.getDailyProgress(userId);
         const weeklyLessons = await Progress.getWeeklyProgress(userId);
-
-        // Use Progress model's optimized method to get overall progress
-        // This internally batches queries efficiently
         const overallProgress = await Progress.getUserOverallProgress(userId);
 
-        // Calculate completed courses (courses with 100% completion)
         const completedCourses = overallProgress.filter(p => p.completionPercentage === 100).length;
         const totalEnrolledCourses = overallProgress.length;
-
-        // Calculate total lessons completed across all courses
         const totalLessonsCompleted = overallProgress.reduce((sum, p) => sum + p.completedLessons, 0);
 
         console.log(`📊 [PROGRESS] ${completedCourses}/${totalEnrolledCourses} courses, ${totalLessonsCompleted} lessons completed`);
 
-        // Estimate study time (assuming 30 minutes per lesson)
-        const dailyStudyTime = dailyLessons * 0.5; // 0.5 hours per lesson
+        const dailyStudyTime = dailyLessons * 0.5;
         const weeklyStudyTime = weeklyLessons * 0.5;
-
-        // Calculate study points using Progress model method
         const studyPoints = Progress.calculateStudyPoints(totalLessonsCompleted, completedCourses);
 
-        // Set goals (these could be stored in user preferences in the future)
-        const dailyGoal = 2; // 2 hours per day
-        const coursesGoal = Math.max(3, totalEnrolledCourses); // At least 3 or number of enrolled courses
-        const weeklyGoal = 14; // 14 hours per week
+        const dailyGoal = 2;
+        const coursesGoal = Math.max(3, totalEnrolledCourses);
+        const weeklyGoal = 14;
 
         const progressData = {
             studyTime: {
@@ -84,30 +60,17 @@ exports.getUserProgress = async (req, res) => {
 };
 
 /**
- * Get leaderboard with real user data
- * OPTIMIZED: Reduces 501 queries (for 50 users) to just 4-5 queries using batch fetching
- *
- * BEFORE: N+1 Query Explosion
- * - Get all users: 1 query
- * - For each user (50): Get orders: 1 query
- *   - For each order (3 per user): Get lessons: 1 query, Get progress: 1 query
- * - Total: 1 + 50 + (50 × 3 × 2) = 351 queries minimum!
- *
- * AFTER: Batch Query Optimization
- * 1. Get all student users: 1 query
- * 2. Get all completed orders at once: 1 query
- * 3. Batch get all lessons for unique courses: 1 query (using Lesson.findByCourseIds)
- * 4. Batch get all progress records: 1 query
- * 5. Join data in memory (fast!)
- * Total: 4-5 queries regardless of user count!
+ * Get leaderboard using Progress model to track course completions
+ * Points System: 100 points per completed course
  */
 exports.getLeaderboard = async (req, res) => {
     try {
         const db = getFirestore();
+        const Progress = require('../models/Progress');
 
         console.log('\n🔍 [LEADERBOARD] Starting optimized leaderboard fetch...');
 
-        // QUERY 1: Get all student users at once
+        // STEP 1: Get all student users
         const usersSnapshot = await db.collection('users')
             .where('role', '==', 'student')
             .get();
@@ -123,156 +86,113 @@ exports.getLeaderboard = async (req, res) => {
             ...doc.data()
         }));
 
-        const userIds = users.map(u => u.id);
+        console.log(`🔄 [LEADERBOARD] Calculating progress for each user...`);
 
-        // QUERY 2: Batch fetch ALL completed orders for all users at once
-        // Using 'in' operator for batch query (Firestore limits to 10 per query, so chunk if needed)
-        const chunkSize = 10;
-        const userIdChunks = [];
-        for (let i = 0; i < userIds.length; i += chunkSize) {
-            userIdChunks.push(userIds.slice(i, i + chunkSize));
-        }
+        // STEP 2: Get progress for each user using Order model (same as /api/users/:id/progress)
+        const Order = require('../models/Order');
+        const Course = require('../models/Course');
+        const Lesson = require('../models/Lesson');
 
-        console.log(`🔄 [LEADERBOARD] Fetching orders in ${userIdChunks.length} batch(es)...`);
-
-        const orderPromises = userIdChunks.map(chunk =>
-            db.collection('orders')
-                .where('user_id', 'in', chunk)
-                .where('status', '==', 'completed')
-                .get()
-        );
-
-        const orderSnapshots = await Promise.all(orderPromises);
-        const allOrders = orderSnapshots.flatMap(snapshot =>
-            snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-        );
-
-        console.log(`📦 [LEADERBOARD] Found ${allOrders.length} total completed orders`);
-
-        // Group orders by user_id for quick lookup
-        const ordersByUser = {};
-        allOrders.forEach(order => {
-            if (!ordersByUser[order.user_id]) {
-                ordersByUser[order.user_id] = [];
-            }
-            ordersByUser[order.user_id].push(order);
-        });
-
-        // Extract unique course IDs
-        const uniqueCourseIds = [...new Set(allOrders.map(o => o.course_id).filter(Boolean))];
-        console.log(`📚 [LEADERBOARD] Found ${uniqueCourseIds.length} unique courses`);
-
-        // QUERY 3: Batch fetch ALL lessons for all courses at once
-        // Using Lesson model's optimized findByCourseIds method
-        const allLessons = await Lesson.findByCourseIds(uniqueCourseIds);
-        console.log(`📖 [LEADERBOARD] Fetched ${allLessons.length} total lessons`);
-
-        // Group lessons by course_id for quick lookup
-        const lessonsByCourse = {};
-        allLessons.forEach(lesson => {
-            const courseId = lesson.courseId || lesson.course_id;
-            if (!lessonsByCourse[courseId]) {
-                lessonsByCourse[courseId] = [];
-            }
-            lessonsByCourse[courseId].push(lesson);
-        });
-
-        // QUERY 4: Batch fetch ALL progress records for all users at once
-        console.log(`🔄 [LEADERBOARD] Fetching progress records in ${userIdChunks.length} batch(es)...`);
-
-        const progressPromises = userIdChunks.map(chunk =>
-            db.collection('user_progress')
-                .where('user_id', 'in', chunk)
-                .where('progress_type', '==', 'lesson_completed')
-                .get()
-        );
-
-        const progressSnapshots = await Promise.all(progressPromises);
-        const allProgress = progressSnapshots.flatMap(snapshot =>
-            snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-        );
-
-        console.log(`✅ [LEADERBOARD] Fetched ${allProgress.length} total progress records`);
-
-        // Group progress by user_id and course_id for quick lookup
-        const progressByUserAndCourse = {};
-        allProgress.forEach(prog => {
-            const key = `${prog.user_id}_${prog.course_id}`;
-            if (!progressByUserAndCourse[key]) {
-                progressByUserAndCourse[key] = [];
-            }
-            progressByUserAndCourse[key].push(prog);
-        });
-
-        // DATA JOINING IN MEMORY (FAST!)
         const leaderboardData = [];
 
         for (const user of users) {
             const userId = user.id;
-            const userOrders = ordersByUser[userId] || [];
 
-            // Track unique courses completed to avoid counting duplicates
-            const uniqueCoursesCompleted = new Set();
+            try {
+                // Use the EXACT same logic as getUserProgressDetails
+                // Get all user's orders to find enrolled courses
+                const userOrders = await Order.findByUserId(userId);
+                const processedCourses = new Set();
+                let completedCourses = 0;
+                let totalEnrolledCourses = 0;
 
-            // Calculate completed courses for this user
-            for (const order of userOrders) {
-                const courseId = order.course_id;
-                if (!courseId) continue;
+                for (const order of userOrders) {
+                    const courseId = order.courseId;
 
-                // Skip if we already counted this course
-                if (uniqueCoursesCompleted.has(courseId)) {
-                    continue;
+                    // Skip invalid or duplicate courses
+                    if (!courseId || courseId === 'undefined' || processedCourses.has(courseId)) {
+                        continue;
+                    }
+
+                    processedCourses.add(courseId);
+                    totalEnrolledCourses++;
+
+                    // Get course details
+                    const course = await Course.findById(courseId);
+                    if (!course || !course.title) continue;
+
+                    // Get lessons for this course
+                    const lessons = await Lesson.findByCourseId(courseId);
+                    const totalLessons = lessons.length;
+
+                    // Get completed lessons count
+                    const completedLessonsSnapshot = await db.collection('user_progress')
+                        .where('user_id', '==', userId)
+                        .where('course_id', '==', courseId)
+                        .where('progress_type', '==', 'lesson_completed')
+                        .get();
+
+                    const completedLessonsCount = completedLessonsSnapshot.size;
+
+                    // Handle edge cases
+                    let percentage = 0;
+                    if (totalLessons === 0) {
+                        // If course has no lessons but user has progress, count as 100% if they completed any
+                        percentage = completedLessonsCount > 0 ? 100 : 0;
+                    } else {
+                        // Normal case: calculate percentage
+                        // Cap at 100% even if completedLessons > totalLessons (data inconsistency)
+                        percentage = Math.min(100, Math.round((completedLessonsCount / totalLessons) * 100));
+                    }
+
+                    // Check if course is completed (100%)
+                    if (percentage === 100) {
+                        completedCourses++;
+                    }
                 }
 
-                // Get lessons for this course from our batch-fetched data
-                const courseLessons = lessonsByCourse[courseId] || [];
-                const totalLessons = courseLessons.length;
+                // Calculate study points: SIMPLE - 100 pts per completed course
+                const studyPoints = completedCourses * 100;
 
-                // Get progress for this user+course from our batch-fetched data
-                const progressKey = `${userId}_${courseId}`;
-                const courseProgress = progressByUserAndCourse[progressKey] || [];
-                const completedLessons = courseProgress.length;
-
-                // Calculate percentage
-                let percentage = 0;
-                if (totalLessons > 0) {
-                    percentage = Math.round((completedLessons / totalLessons) * 100);
-                } else {
-                    // If no lessons exist yet, consider it 0% (skip it)
-                    percentage = 0;
+                // Debug log for first few users
+                if (leaderboardData.length < 3) {
+                    console.log(`🔍 [LEADERBOARD] User ${user.name}:`);
+                    console.log(`   - Enrolled in ${totalEnrolledCourses} courses`);
+                    console.log(`   - Completed courses: ${completedCourses}`);
+                    console.log(`   - Study points: ${studyPoints} pts (100 pts per completed course)`);
                 }
 
-                // Only count if 100% complete AND has lessons
-                if (percentage >= 100 && totalLessons > 0) {
-                    uniqueCoursesCompleted.add(courseId);
-                }
+                // Create initials from name
+                const nameParts = (user.name || 'User').split(' ');
+                const initials = nameParts.length > 1
+                    ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+                    : nameParts[0][0] + (nameParts[0][1] || '');
+
+                leaderboardData.push({
+                    id: userId,
+                    name: user.name || 'Unknown User',
+                    hours: completedCourses, // Number of courses completed
+                    points: studyPoints, // Study points based on courses completed
+                    initials: initials.toUpperCase(),
+                    color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
+                });
+            } catch (error) {
+                console.error(`⚠️ [LEADERBOARD] Error fetching progress for user ${user.name}:`, error.message);
+                // Still add user to leaderboard with 0 points if there's an error
+                const nameParts = (user.name || 'User').split(' ');
+                const initials = nameParts.length > 1
+                    ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+                    : nameParts[0][0] + (nameParts[0][1] || '');
+
+                leaderboardData.push({
+                    id: userId,
+                    name: user.name || 'Unknown User',
+                    hours: 0,
+                    points: 0,
+                    initials: initials.toUpperCase(),
+                    color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
+                });
             }
-
-            const completedCourses = uniqueCoursesCompleted.size;
-
-            // Calculate study points: 100 pts per completed course
-            const studyPoints = completedCourses * 100;
-
-            // Create initials from name
-            const nameParts = (user.name || 'User').split(' ');
-            const initials = nameParts.length > 1
-                ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
-                : nameParts[0][0] + (nameParts[0][1] || '');
-
-            leaderboardData.push({
-                id: userId,
-                name: user.name || 'Unknown User',
-                hours: completedCourses, // Number of courses completed
-                points: studyPoints, // Study points based on courses completed
-                initials: initials.toUpperCase(),
-                color: ['yellow-400', 'gray-400', 'orange-400', 'blue-400', 'green-400', 'blue-500', 'pink-400'][Math.floor(Math.random() * 7)]
-            });
         }
 
         console.log(`📊 [LEADERBOARD] Processed ${leaderboardData.length} students`);
@@ -293,7 +213,7 @@ exports.getLeaderboard = async (req, res) => {
             console.log(`   ${entry.rank}. ${entry.name}: ${entry.hours} courses, ${entry.points} pts`);
         });
 
-        console.log('✅ [LEADERBOARD] Query optimization complete! Total queries: ~4-5 (vs 351+ before)\n');
+        console.log('✅ [LEADERBOARD] Query optimization complete!\n');
 
         res.status(200).json(top10);
     } catch (err) {
@@ -304,7 +224,6 @@ exports.getLeaderboard = async (req, res) => {
 
 /**
  * Get friends status (mock data for now)
- * TODO: Implement real friends system with database(toned
  */
 exports.getFriendsStatus = async (req, res) => {
     try {
@@ -323,25 +242,3 @@ exports.getFriendsStatus = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch friends status.' });
     }
 };
-
-/**
- * NOTE: The following functionality has been removed from this controller
- * to eliminate code duplication and improve maintainability:
- *
- * STUDY GROUPS (Lines 265-462 removed):
- * - createStudyGroup, getStudyGroups, joinStudyGroup, getUserStudyGroups, deleteStudyGroup
- * - Use groupController.js instead
- *
- * CHALLENGES (Lines 464-599 removed):
- * - createChallenge, getActiveChallenges, getChallengeById, updateChallenge, deleteChallenge
- * - Use challengeController.js instead
- *
- * GROUP MESSAGES/FORUM (Lines 604-690 removed):
- * - getGroupMessages, postGroupMessage
- * - Use groupMessageController.js instead
- *
- * This controller now focuses ONLY on:
- * - User progress tracking
- * - Leaderboard generation
- * Both with optimized batch queries to eliminate N+1 problems!
- */

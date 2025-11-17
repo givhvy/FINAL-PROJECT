@@ -211,21 +211,21 @@ exports.getUserProgress = async (req, res) => {
 // ============================================================================
 /**
  * Get leaderboard with real user data
- * OPTIMIZED: Reduces 501 queries (for 50 users) to just 4-5 queries using batch fetching
+ * OPTIMIZED: Reduces 501 queries (for 50 users) to just 4 queries using batch fetching
  *
  * BEFORE: N+1 Query Explosion
  * - Get all users: 1 query
- * - For each user (50): Get orders: 1 query
- *   - For each order (3 per user): Get lessons: 1 query, Get progress: 1 query
- * - Total: 1 + 50 + (50 × 3 × 2) = 351 queries minimum!
+ * - For each user (50): Get enrollments: 1 query
+ * - Total: 1 + 50 = 51+ queries minimum!
  *
  * AFTER: Batch Query Optimization
  * 1. Get all student users: 1 query
- * 2. Get all completed orders at once: 1 query
- * 3. Batch get all lessons for unique courses: 1 query (using Lesson.findByCourseIds)
- * 4. Batch get all progress records: 1 query
- * 5. Join data in memory (fast!)
- * Total: 4-5 queries regardless of user count!
+ * 2. Batch get all enrollments for all users: 1 query (checks completed field)
+ * 3. Join data in memory (fast!)
+ * Total: ~2 queries regardless of user count!
+ *
+ * Points System: 100 points per completed course
+ * Completion criteria: enrollment.completed === true OR enrollment.progress === 100
  */
 exports.getLeaderboard = async (req, res) => {
 // - Function PHỨC TẠP NHẤT về optimization!
@@ -266,12 +266,12 @@ exports.getLeaderboard = async (req, res) => {
 
         const userIds = users.map(u => u.id);
         // - Lấy array chỉ chứa IDs: ['user1', 'user2', 'user3', ...]
-        // - Dùng để query orders theo user_id
+        // - Dùng để query enrollments theo userId
 
         // ========================================================================
         // STEP 2: CHUNKING - CHIA NHỎ ARRAY ĐỂ QUERY BATCH
         // ========================================================================
-        // QUERY 2: Batch fetch ALL completed orders for all users at once
+        // QUERY 2: Batch fetch ALL enrollments for all users at once
         // Using 'in' operator for batch query (Firestore limits to 10 per query, so chunk if needed)
         const chunkSize = 10;
         // - Firestore giới hạn 'IN' operator chỉ 10 giá trị
@@ -285,138 +285,65 @@ exports.getLeaderboard = async (req, res) => {
             // - Ví dụ: userIds có 50 items → 5 chunks × 10 items
         }
 
-        console.log(`🔄 [LEADERBOARD] Fetching orders in ${userIdChunks.length} batch(es)...`);
-
         // ========================================================================
         // STEP 3: PROMISE.ALL - CHẠY NHIỀU QUERIES ĐỒNG THỜI
         // ========================================================================
-        const orderPromises = userIdChunks.map(chunk =>
-        // - `.map()` duyệt qua từng chunk, tạo Promise cho mỗi chunk
-        // - Kết quả: array of Promises
-            db.collection('orders')
-                .where('user_id', 'in', chunk)
-                // - `.where('user_id', 'in', chunk)` = SQL: WHERE user_id IN (...)
-                // - Lấy orders của TẤT CẢ users trong chunk CÙ LÚC
-                .where('status', '==', 'completed')
-                // - Chỉ lấy orders đã completed
-                .get()
-        );
-        // - `orderPromises` = array of Promises: [Promise1, Promise2, Promise3, ...]
+        console.log(`🔄 [LEADERBOARD] Fetching enrollments in ${userIdChunks.length} batch(es)...`);
 
-        const orderSnapshots = await Promise.all(orderPromises);
-        // - `Promise.all()` = chạy TẤT CẢ Promises ĐỒNG THỜI (parallel)
-        // - `await` = đợi TẤT CẢ hoàn thành
-        // - Nhanh hơn await từng cái một (sequential)
-        // - Ví dụ: 5 queries × 100ms = 500ms (sequential) vs 100ms (parallel)
-        const allOrders = orderSnapshots.flatMap(snapshot =>
-        // - `.flatMap()` = map + flatten
-        // - Giống .map() nhưng flatten kết quả (gộp nested arrays thành 1 array)
-        // - Input: [[order1, order2], [order3, order4]] → Output: [order1, order2, order3, order4]
+        // Try both camelCase and snake_case for enrollments
+        const enrollmentPromises = userIdChunks.flatMap(chunk => [
+            db.collection('enrollments').where('userId', 'in', chunk).get(),
+            db.collection('enrollments').where('user_id', 'in', chunk).get()
+        ]);
+
+        const enrollmentSnapshots = await Promise.all(enrollmentPromises);
+        const allEnrollments = enrollmentSnapshots.flatMap(snapshot =>
             snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }))
         );
 
-        console.log(`📦 [LEADERBOARD] Found ${allOrders.length} total completed orders`);
+        console.log(`✅ [LEADERBOARD] Fetched ${allEnrollments.length} total enrollments`);
 
-        // Group orders by user_id for quick lookup
-        const ordersByUser = {};
-        allOrders.forEach(order => {
-            if (!ordersByUser[order.user_id]) {
-                ordersByUser[order.user_id] = [];
+        // Debug: Log sample enrollment to see structure
+        if (allEnrollments.length > 0) {
+            console.log('📋 [LEADERBOARD] Sample enrollment:', JSON.stringify(allEnrollments[0], null, 2));
+        }
+
+        // Group enrollments by user_id for quick lookup
+        const enrollmentsByUser = {};
+        allEnrollments.forEach(enrollment => {
+            const userId = enrollment.userId || enrollment.user_id;
+            if (!enrollmentsByUser[userId]) {
+                enrollmentsByUser[userId] = [];
             }
-            ordersByUser[order.user_id].push(order);
+            enrollmentsByUser[userId].push(enrollment);
         });
 
-        // Extract unique course IDs
-        const uniqueCourseIds = [...new Set(allOrders.map(o => o.course_id).filter(Boolean))];
-        console.log(`📚 [LEADERBOARD] Found ${uniqueCourseIds.length} unique courses`);
-
-        // QUERY 3: Batch fetch ALL lessons for all courses at once
-        // Using Lesson model's optimized findByCourseIds method
-        const allLessons = await Lesson.findByCourseIds(uniqueCourseIds);
-        console.log(`📖 [LEADERBOARD] Fetched ${allLessons.length} total lessons`);
-
-        // Group lessons by course_id for quick lookup
-        const lessonsByCourse = {};
-        allLessons.forEach(lesson => {
-            const courseId = lesson.courseId || lesson.course_id;
-            if (!lessonsByCourse[courseId]) {
-                lessonsByCourse[courseId] = [];
-            }
-            lessonsByCourse[courseId].push(lesson);
-        });
-
-        // QUERY 4: Batch fetch ALL progress records for all users at once
-        console.log(`🔄 [LEADERBOARD] Fetching progress records in ${userIdChunks.length} batch(es)...`);
-
-        const progressPromises = userIdChunks.map(chunk =>
-            db.collection('user_progress')
-                .where('user_id', 'in', chunk)
-                .where('progress_type', '==', 'lesson_completed')
-                .get()
-        );
-
-        const progressSnapshots = await Promise.all(progressPromises);
-        const allProgress = progressSnapshots.flatMap(snapshot =>
-            snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-        );
-
-        console.log(`✅ [LEADERBOARD] Fetched ${allProgress.size} total progress records`);
-
-        // Group progress by user_id and course_id for quick lookup
-        const progressByUserAndCourse = {};
-        allProgress.forEach(prog => {
-            const key = `${prog.user_id}_${prog.course_id}`;
-            if (!progressByUserAndCourse[key]) {
-                progressByUserAndCourse[key] = [];
-            }
-            progressByUserAndCourse[key].push(prog);
-        });
+        console.log(`👥 [LEADERBOARD] Enrollments grouped for ${Object.keys(enrollmentsByUser).length} users`);
 
         // DATA JOINING IN MEMORY (FAST!)
         const leaderboardData = [];
 
         for (const user of users) {
             const userId = user.id;
-            const userOrders = ordersByUser[userId] || [];
 
-            let completedCourses = 0;
+            // Get user's enrollments
+            const userEnrollments = enrollmentsByUser[userId] || [];
 
-            // Calculate completed courses for this user
-            for (const order of userOrders) {
-                const courseId = order.course_id;
-                if (!courseId) continue;
-
-                // Get lessons for this course from our batch-fetched data
-                const courseLessons = lessonsByCourse[courseId] || [];
-                const totalLessons = courseLessons.length;
-
-                // Get progress for this user+course from our batch-fetched data
-                const progressKey = `${userId}_${courseId}`;
-                const courseProgress = progressByUserAndCourse[progressKey] || [];
-                const completedLessons = courseProgress.length;
-
-                // Calculate percentage
-                let percentage = 0;
-                if (totalLessons > 0) {
-                    percentage = Math.round((completedLessons / totalLessons) * 100);
-                } else {
-                    percentage = 100; // No lessons = complete
-                }
-
-                // Only count if 100% complete AND has lessons
-                if (percentage >= 100 && totalLessons > 0) {
-                    completedCourses++;
-                }
-            }
+            // Count completed courses (enrollments with completed: true or progress: 100)
+            const completedCourses = userEnrollments.filter(enrollment => {
+                return enrollment.completed === true || enrollment.progress === 100;
+            }).length;
 
             // Calculate study points: 100 pts per completed course
             const studyPoints = completedCourses * 100;
+
+            // Debug log for first few users
+            if (leaderboardData.length < 3) {
+                console.log(`🔍 [LEADERBOARD] User ${user.name}: ${userEnrollments.length} enrollments, ${completedCourses} completed, ${studyPoints} pts`);
+            }
 
             // Create initials from name
             const nameParts = (user.name || 'User').split(' ');
@@ -452,7 +379,7 @@ exports.getLeaderboard = async (req, res) => {
             console.log(`   ${entry.rank}. ${entry.name}: ${entry.hours} courses, ${entry.points} pts`);
         });
 
-        console.log('✅ [LEADERBOARD] Query optimization complete! Total queries: ~4-5 (vs 351+ before)\n');
+        console.log('✅ [LEADERBOARD] Query optimization complete! Total queries: ~2 (vs 51+ before)\n');
 
         res.status(200).json(top10);
     } catch (err) {
