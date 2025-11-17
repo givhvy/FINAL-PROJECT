@@ -27,6 +27,7 @@ class Course {
         this.rejectionReason = data.rejectionReason || null;
         this.approvedBy = data.approvedBy || null;
         this.approvedAt = data.approvedAt || null;
+        this.locked = data.locked !== undefined ? data.locked : false; // PRO/FREE access
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
     }
@@ -160,6 +161,7 @@ class Course {
                 rejectionReason: newCourse.rejectionReason,
                 approvedBy: newCourse.approvedBy,
                 approvedAt: newCourse.approvedAt,
+                locked: newCourse.locked,
                 createdAt: newCourse.createdAt,
                 updatedAt: newCourse.updatedAt
             });
@@ -445,6 +447,7 @@ class Course {
                 rejectionReason: course.rejectionReason,
                 approvedBy: course.approvedBy,
                 approvedAt: course.approvedAt,
+                locked: course.locked,
                 createdAt: course.createdAt,
                 updatedAt: course.updatedAt,
                 // Enriched data
