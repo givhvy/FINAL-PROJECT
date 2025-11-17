@@ -981,15 +981,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const allContent = [...lessons, ...quizzes];
         allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-        // Fetch completed lessons for this course
+        // Fetch completed lessons for this course from user_progress collection
         let completedLessonIds = new Set();
         try {
-            const progressRes = await fetch(`/api/progress/user/${user.id}/course/${course.id}`, {
+            // The getCourseSummary only returns count, not lesson IDs
+            // We need to get completed lessons directly from the database
+            // Since there's no direct endpoint, we'll fetch from /api/progress/user/:userId
+            // and filter by courseId on the client side
+            const progressRes = await fetch(`/api/progress/user/${user.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (progressRes.ok) {
-                const progressData = await progressRes.json();
-                completedLessonIds = new Set(progressData.map(p => p.lessonId || p.lesson_id));
+                const allProgress = await progressRes.json();
+                console.log('Fetched all progress data:', allProgress);
+                // Filter for this course and extract lesson IDs
+                const courseProgress = allProgress.filter(p =>
+                    (p.courseId === course.id || p.course_id === course.id) &&
+                    (p.progressType === 'lesson_completed' || p.progress_type === 'lesson_completed')
+                );
+                completedLessonIds = new Set(courseProgress.map(p => p.lessonId || p.lesson_id));
+                console.log('Completed lesson IDs:', Array.from(completedLessonIds));
             }
         } catch (error) {
             console.warn('Could not fetch completed lessons:', error);
@@ -1245,9 +1256,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({
-                    user_id: user.id,
-                    lesson_id: lessonId,
-                    course_id: courseId,
+                    userId: user.id,
+                    lessonId: lessonId,
+                    courseId: courseId,
                     completed: true
                 })
             });
@@ -1277,8 +1288,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // Refresh progress bar - get updated progress
-            await updateCourseProgressBar(courseId);
+            // Reload the current course to refresh progress
+            await viewCourse(courseId);
 
             // Check if certificate was generated
             if (result.certificateGenerated) {
