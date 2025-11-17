@@ -233,16 +233,6 @@
                             <i class="fas fa-search text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 text-sm"></i>
                         </div>
 
-                        <!-- Access Tier Filter -->
-                        <div class="flex items-center space-x-2 flex-shrink-0">
-                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Access Tier:</label>
-                            <select id="tier-filter" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:text-gray-200">
-                                <option value="all">All Tiers</option>
-                                <option value="free">Free Tier</option>
-                                <option value="pro">Pro Tier</option>
-                            </select>
-                        </div>
-
                         <!-- Instructor Filter -->
                         <div class="flex items-center space-x-2 flex-shrink-0">
                             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Instructor:</label>
@@ -720,7 +710,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadingSpinner.style.display = 'none';
         coursesGrid.innerHTML = '';
         const searchTerm = document.getElementById('course-search').value.toLowerCase();
-        const tierFilter = document.getElementById('tier-filter').value;
         const instructorFilter = document.getElementById('instructor-filter').value.toLowerCase();
 
         const filteredCourses = allCoursesData.filter(course => {
@@ -737,19 +726,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const searchMatch = course.title.toLowerCase().includes(searchTerm) ||
                                 (course.description && course.description.toLowerCase().includes(searchTerm));
 
-            // Tier filter - currently not filtering by tier since all courses are available to all tiers
-            // (Free tier can access 3 courses, Pro tier unlimited)
-            let tierMatch = true;
-            // You can implement tier-based filtering logic here if needed in the future
-
-            // FR2.4: Instructor filter
+            // Instructor filter
             let instructorMatch = true;
             if (instructorFilter) {
                 const instructorName = course.teacher?.name?.toLowerCase() || course.instructor?.toLowerCase() || '';
                 instructorMatch = instructorName.includes(instructorFilter);
             }
 
-            return categoryMatch && searchMatch && tierMatch && instructorMatch;
+            return categoryMatch && searchMatch && instructorMatch;
         });
 
         if (filteredCourses.length === 0) {
@@ -1556,8 +1540,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('course-search').addEventListener('input', debouncedRenderCourses);
 
-    // FR2.4: Event listeners for new filters
-    document.getElementById('tier-filter').addEventListener('change', renderCourses);
+    // Event listener for instructor filter
     document.getElementById('instructor-filter').addEventListener('input', debouncedRenderCourses);
 
     // Clear all filters button
@@ -1566,9 +1549,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentFilter = 'All';
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector('.filter-btn[data-filter="All"]').classList.add('active');
-
-        // Reset tier filter
-        document.getElementById('tier-filter').value = 'all';
 
         // Reset instructor filter
         document.getElementById('instructor-filter').value = '';
