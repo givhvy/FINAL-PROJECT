@@ -768,6 +768,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const userTier = user.subscriptionTier || 'free';
             const isEnrolled = actualProgress > 0; // If user has progress, they're enrolled
 
+            // Check if course is locked (requires PRO)
+            const courseIsLocked = course.locked !== false;
+
             // Count total enrollments to determine if free tier limit is reached
             const enrollmentCount = Object.keys(userProgressData).length;
             const canEnrollFree = enrollmentCount < 3;
@@ -778,6 +781,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full shadow-lg">PRO ACCESS</span>';
             } else if (isEnrolled) {
                 tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full">ENROLLED</span>';
+            } else if (courseIsLocked) {
+                // Course requires PRO subscription
+                tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full flex items-center gap-1"><i class="fas fa-crown text-xs"></i> PRO ONLY</span>';
             } else if (canEnrollFree) {
                 tierBadge = '<span class="text-xs font-bold px-3 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full">FREE TIER</span>';
             } else {
