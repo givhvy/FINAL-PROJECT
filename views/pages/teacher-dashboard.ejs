@@ -394,14 +394,6 @@
                         </select>
                     </div>
                     <div>
-                        <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Level</label>
-                        <select id="level" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                            <option>Beginner</option>
-                            <option>Intermediate</option>
-                            <option>Advanced</option>
-                        </select>
-                    </div>
-                    <div>
                         <label for="imageUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course Image</label>
                         <div class="mt-1 space-y-2">
                             <input type="file" id="imageFile" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
@@ -599,7 +591,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('title').value = course.title;
             document.getElementById('description').value = course.description;
             document.getElementById('category').value = course.category || '';
-            document.getElementById('level').value = course.level;
             document.getElementById('imageUrl').value = course.imageUrl || course.thumbnail || '';
 
             // Set locked/free radio buttons
@@ -1401,7 +1392,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             description: document.getElementById('description').value,
             locked: isLocked,
             category: document.getElementById('category').value,
-            level: document.getElementById('level').value,
             teacher_id: user.id,
             imageUrl: uploadedImageUrl || document.getElementById('imageUrl').value
         };
