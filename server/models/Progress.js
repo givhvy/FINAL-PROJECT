@@ -15,17 +15,17 @@ class Progress {
             throw new ValidationError('userId, courseId, and lessonId are required');
         }
 
-        // Use composite key for progress document
+        // Save to user_progress collection (snake_case to match existing data)
         const progressId = `${userId}_${courseId}_${lessonId}`;
-        const progressRef = db.collection('progress').doc(progressId);
+        const progressRef = db.collection('user_progress').doc(progressId);
 
         const progressData = {
-            userId,
-            courseId,
-            lessonId,
-            completed,
-            completedAt: completed ? new Date() : null,
-            updatedAt: new Date()
+            user_id: userId,
+            course_id: courseId,
+            lesson_id: lessonId,
+            progress_type: 'lesson_completed',
+            completed_at: completed ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString()
         };
 
         await progressRef.set(progressData, { merge: true });

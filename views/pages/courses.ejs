@@ -1288,8 +1288,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // Reload the current course to refresh progress
-            await viewCourse(courseId);
+            // Update progress bar manually
+            const progressText = document.querySelector('.progress-text');
+            const progressBarFill = document.querySelector('.progress-bar-fill');
+
+            if (progressText && progressBarFill && result.completion !== undefined) {
+                progressText.textContent = `${result.completion}%`;
+                progressBarFill.style.width = `${result.completion}%`;
+            }
 
             // Check if certificate was generated
             if (result.certificateGenerated) {
