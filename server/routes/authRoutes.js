@@ -60,13 +60,15 @@ router.get('/google/callback',
         { expiresIn: '7d' }
       );
 
-      // Redirect to frontend with token
-      res.redirect(`/?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      // Redirect to frontend with token stored in URL params
+      // The frontend will extract and save to localStorage
+      res.redirect(`/auth-success?token=${token}&user=${encodeURIComponent(JSON.stringify({
         id: req.user.id,
         email: req.user.email,
         name: req.user.name,
         role: req.user.role,
-        avatarUrl: req.user.avatarUrl
+        avatarUrl: req.user.avatarUrl,
+        subscriptionTier: req.user.subscriptionTier || 'free'
       }))}`);
     } catch (error) {
       console.error('OAuth callback error:', error);

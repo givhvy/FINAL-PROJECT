@@ -599,11 +599,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch courses.');
             allCoursesData = await response.json();
-            console.log('📚 [FRONTEND] Fetched courses:', allCoursesData.length);
-            if (allCoursesData.length > 0) {
-                console.log('📚 [FRONTEND] Sample course:', allCoursesData[0]);
-                console.log('📚 [FRONTEND] Sample course lessons:', allCoursesData[0].lessons);
-            }
 
             // Fetch user progress
             try {
@@ -998,14 +993,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             if (progressRes.ok) {
                 const allProgress = await progressRes.json();
-                console.log('Fetched all progress data:', allProgress);
                 // Filter for this course and extract lesson IDs
                 const courseProgress = allProgress.filter(p =>
                     (p.courseId === course.id || p.course_id === course.id) &&
                     (p.progressType === 'lesson_completed' || p.progress_type === 'lesson_completed')
                 );
                 completedLessonIds = new Set(courseProgress.map(p => p.lessonId || p.lesson_id));
-                console.log('Completed lesson IDs:', Array.from(completedLessonIds));
             }
         } catch (error) {
             console.warn('Could not fetch completed lessons:', error);

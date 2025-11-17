@@ -45,7 +45,7 @@ class Progress {
     static async getLessonProgress(userId, courseId, lessonId) {
         const db = this.getDB();
         const progressId = `${userId}_${courseId}_${lessonId}`;
-        const doc = await db.collection('progress').doc(progressId).get();
+        const doc = await db.collection('user_progress').doc(progressId).get();
 
         if (!doc.exists) return null;
 
@@ -57,23 +57,21 @@ class Progress {
 
     /**
      * Get all progress for a user's enrollment in a course
+     * If courseId is not provided, returns all progress for the user
      */
-    static async getByEnrollment(userId, courseId) {
+    static async getByEnrollment(userId, courseId = null) {
         const db = this.getDB();
 
-        // Try camelCase first (new schema)
-        let snapshot = await db.collection('progress')
-            .where('userId', '==', userId)
-            .where('courseId', '==', courseId)
-            .get();
+        // Query user_progress collection (where lesson completion is stored)
+        let query = db.collection('user_progress')
+            .where('user_id', '==', userId);
 
-        // If empty, try snake_case (old schema)
-        if (snapshot.empty) {
-            snapshot = await db.collection('progress')
-                .where('user_id', '==', userId)
-                .where('course_id', '==', courseId)
-                .get();
+        // Add courseId filter if provided
+        if (courseId) {
+            query = query.where('course_id', '==', courseId);
         }
+
+        const snapshot = await query.get();
 
         return snapshot.docs.map(doc => ({
             id: doc.id,

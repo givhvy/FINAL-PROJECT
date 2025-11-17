@@ -175,6 +175,10 @@ app.get('/signup', (req, res) => {
   res.render('pages/signup', { title: 'Sign Up' });
 });
 
+app.get('/auth-success', (req, res) => {
+  res.render('pages/auth-success', { title: 'Login Successful' });
+});
+
 // Dashboard pages
 app.get('/admin', (req, res) => {
   res.render('pages/admin-dashboard', { title: 'Admin Dashboard' });

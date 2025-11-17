@@ -222,7 +222,23 @@
                     cartButton.style.display = 'block';
                 }
 
-                // Set student tier badge (handled by existing page logic)
+                // Set student tier badge
+                if (tierBadge) {
+                    if (isPro) {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full flex items-center gap-1 shadow-lg">
+                                <i class="fas fa-crown"></i> PRO
+                            </span>
+                        `;
+                    } else {
+                        tierBadge.innerHTML = `
+                            <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
+                                FREE
+                            </span>
+                        `;
+                    }
+                }
+
                 console.log('Student UI setup complete');
             }
 
