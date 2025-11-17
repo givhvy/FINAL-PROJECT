@@ -135,19 +135,30 @@ class Lesson {
                 chunks.push(uniqueIds.slice(i, i + chunkSize));
             }
 
-            // Fetch all chunks in parallel (without orderBy to avoid index requirement)
-            const promises = chunks.map(chunk =>
+            // Fetch all chunks in parallel for both courseId and course_id fields
+            // This handles both old (course_id) and new (courseId) schema
+            const promises = chunks.flatMap(chunk => [
                 db.collection('lessons')
                     .where('courseId', 'in', chunk)
+                    .get(),
+                db.collection('lessons')
+                    .where('course_id', 'in', chunk)
                     .get()
-            );
+            ]);
 
             const snapshots = await Promise.all(promises);
 
-            // Flatten results and sort in memory
-            const lessons = snapshots.flatMap(snapshot =>
-                snapshot.docs.map(doc => new Lesson({ id: doc.id, ...doc.data() }))
-            );
+            // Flatten results, remove duplicates, and sort in memory
+            const lessonMap = new Map();
+            snapshots.forEach(snapshot => {
+                snapshot.docs.forEach(doc => {
+                    if (!lessonMap.has(doc.id)) {
+                        lessonMap.set(doc.id, new Lesson({ id: doc.id, ...doc.data() }));
+                    }
+                });
+            });
+
+            const lessons = Array.from(lessonMap.values());
 
             // Sort by order in memory
             lessons.sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -175,6 +186,7 @@ class Lesson {
 
             const docRef = await db.collection('lessons').add({
                 courseId: newLesson.courseId,
+                course_id: newLesson.courseId, // Store both for backwards compatibility
                 title: newLesson.title,
                 description: newLesson.description,
                 content: newLesson.content,

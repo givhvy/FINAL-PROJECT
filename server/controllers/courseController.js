@@ -69,16 +69,24 @@ exports.getCourses = async (req, res) => {
         // Fetch lessons for each course (batch by courseIds)
         if (courses.length > 0) {
             const courseIds = courses.map(c => c.id);
+            console.log('📚 [GET COURSES] Fetching lessons for course IDs:', courseIds);
             const allLessons = await Lesson.findByCourseIds(courseIds);
+            console.log('📚 [GET COURSES] Total lessons found:', allLessons.length);
+            if (allLessons.length > 0) {
+                console.log('📚 [GET COURSES] Sample lesson:', allLessons[0]);
+            }
 
             // Group lessons by courseId
             const lessonsByCourse = {};
             allLessons.forEach(lesson => {
-                if (!lessonsByCourse[lesson.courseId]) {
-                    lessonsByCourse[lesson.courseId] = [];
+                const cId = lesson.courseId || lesson.course_id;
+                if (!lessonsByCourse[cId]) {
+                    lessonsByCourse[cId] = [];
                 }
-                lessonsByCourse[lesson.courseId].push(lesson);
+                lessonsByCourse[cId].push(lesson);
             });
+
+            console.log('📚 [GET COURSES] Lessons grouped by course:', Object.keys(lessonsByCourse).map(id => ({ courseId: id, count: lessonsByCourse[id].length })));
 
             // Attach lessons to courses
             courses = courses.map(course => ({

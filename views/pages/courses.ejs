@@ -599,6 +599,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch('/api/courses', { headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) throw new Error('Failed to fetch courses.');
             allCoursesData = await response.json();
+            console.log('📚 [FRONTEND] Fetched courses:', allCoursesData.length);
+            if (allCoursesData.length > 0) {
+                console.log('📚 [FRONTEND] Sample course:', allCoursesData[0]);
+                console.log('📚 [FRONTEND] Sample course lessons:', allCoursesData[0].lessons);
+            }
 
             // Fetch user progress
             try {
