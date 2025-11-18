@@ -28,6 +28,13 @@
         .modal.hidden { pointer-events: none; opacity: 0; }
         .modal-content { transition: transform 0.3s ease; }
         .modal.hidden .modal-content { transform: translateY(-20px); }
+
+        /* Role filter button active state */
+        .role-filter-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -394,14 +401,17 @@
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
                         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Users</h3>
+                                <div class="flex items-center gap-3">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Users</h3>
+                                    <!-- Role Filter Buttons -->
+                                    <div class="flex gap-2">
+                                        <button data-role="" class="role-filter-btn px-3 py-1 text-sm rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active">All</button>
+                                        <button data-role="student" class="role-filter-btn px-3 py-1 text-sm rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Students</button>
+                                        <button data-role="teacher" class="role-filter-btn px-3 py-1 text-sm rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Teachers</button>
+                                        <button data-role="admin" class="role-filter-btn px-3 py-1 text-sm rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Admins</button>
+                                    </div>
+                                </div>
                                 <div class="flex flex-col md:flex-row gap-3">
-                                    <select id="role-filter" class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">All Roles</option>
-                                        <option value="student">Students Only</option>
-                                        <option value="teacher">Teachers Only</option>
-                                        <option value="admin">Admins Only</option>
-                                    </select>
                                     <div class="relative">
                                         <input type="text" id="user-search" placeholder="Search users..." class="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
@@ -1569,13 +1579,28 @@ Dates:
             setupUserFilters();
         }
 
+        let currentRoleFilter = '';
+
         function setupUserFilters() {
-            const roleFilter = document.getElementById('role-filter');
+            const roleFilterBtns = document.querySelectorAll('.role-filter-btn');
             const userSearch = document.getElementById('user-search');
 
-            if (roleFilter) {
-                roleFilter.addEventListener('change', filterUsers);
-            }
+            // Setup role filter buttons
+            roleFilterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    roleFilterBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-blue-600', 'text-white', 'dark:bg-blue-600');
+                        b.classList.add('border-gray-300', 'dark:border-gray-600');
+                    });
+                    // Add active class to clicked button
+                    btn.classList.add('active', 'bg-blue-600', 'text-white', 'dark:bg-blue-600');
+                    btn.classList.remove('border-gray-300', 'dark:border-gray-600');
+
+                    currentRoleFilter = btn.dataset.role;
+                    filterUsers();
+                });
+            });
 
             if (userSearch) {
                 userSearch.addEventListener('input', filterUsers);
@@ -1583,11 +1608,10 @@ Dates:
         }
 
         function filterUsers() {
-            const roleFilter = document.getElementById('role-filter')?.value || '';
             const searchTerm = document.getElementById('user-search')?.value.toLowerCase() || '';
 
             filteredUsers = allUsers.filter(user => {
-                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesRole = !currentRoleFilter || user.role === currentRoleFilter;
                 const matchesSearch = !searchTerm ||
                     (user.name && user.name.toLowerCase().includes(searchTerm)) ||
                     (user.email && user.email.toLowerCase().includes(searchTerm));
