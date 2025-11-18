@@ -491,13 +491,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const score = grade.score || 0;
                 const isPassed = score >= 70;
                 const scoreColor = isPassed ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100';
-                
+
+                // Format date properly
+                let dateStr = 'N/A';
+                try {
+                    if (grade.createdAt) {
+                        // Handle both Firestore Timestamp and ISO string
+                        const date = grade.createdAt.toDate ? grade.createdAt.toDate() : new Date(grade.createdAt);
+                        dateStr = date.toLocaleDateString();
+                    }
+                } catch (e) {
+                    console.error('Error formatting date:', e);
+                }
+
                 return `
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 quiz-card flex justify-between items-center">
                         <div class="flex-grow pr-4">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${grade.quiz ? grade.quiz.title : 'Quiz Deleted'}</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Course: ${grade.quiz && grade.quiz.lesson && grade.quiz.lesson.course ? grade.quiz.lesson.course.title : 'N/A'}</p>
-                            <p class="text-xs text-gray-500 mt-2">Completed on: ${new Date(grade.createdAt).toLocaleDateString()}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Quiz ID: ${grade.quiz_id || 'N/A'}</p>
+                            <p class="text-xs text-gray-500 mt-2">Completed on: ${dateStr}</p>
                         </div>
                         <div class="grade-score text-right">
                             <span class="font-bold text-xl px-3 py-1 rounded-full ${scoreColor}">${score}%</span>

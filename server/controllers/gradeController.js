@@ -1,4 +1,5 @@
 const Grade = require('../models/Grade');
+const Quiz = require('../models/Quiz');
 
 // Create a new grade (checkpoint, Create in Controller)
 exports.createGrade = async (req, res) => {
@@ -39,7 +40,24 @@ exports.getGrades = async (req, res) => {
       });
     }
 
-    res.status(200).json(grades);
+    // Populate quiz information for each grade
+    const gradesWithQuiz = await Promise.all(grades.map(async (grade) => {
+      try {
+        const quiz = await Quiz.findById(grade.quiz_id);
+        return {
+          ...grade,
+          quiz: quiz ? quiz.toJSON() : null
+        };
+      } catch (err) {
+        console.error(`Error fetching quiz ${grade.quiz_id}:`, err);
+        return {
+          ...grade,
+          quiz: null
+        };
+      }
+    }));
+
+    res.status(200).json(gradesWithQuiz);
   } catch (err) {
     console.error("Get Grades Error:", err);
     res.status(500).json({ error: err.message });
