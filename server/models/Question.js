@@ -20,8 +20,10 @@ class Question {
 
         this.options = data.options || []; // Array of options for multiple-choice
 
-        this.correctAnswer = data.correctAnswer || data.correct_answer;
-        this.correct_answer = data.correct_answer || data.correctAnswer;
+        // Support correctAnswer, correct_answer, AND correctAnswerIndex
+        this.correctAnswer = data.correctAnswer || data.correct_answer || data.correctAnswerIndex;
+        this.correct_answer = data.correct_answer || data.correctAnswer || data.correctAnswerIndex;
+        this.correctAnswerIndex = data.correctAnswerIndex || data.correctAnswer || data.correct_answer;
 
         this.points = data.points || 1;
         this.explanation = data.explanation || ''; // Giải thích đáp án

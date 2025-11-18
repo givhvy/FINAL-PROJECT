@@ -1475,12 +1475,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Debug: log the question object to see what fields exist
             console.log('Question object:', q);
             console.log('Available fields:', Object.keys(q));
+            console.log('q.correctAnswer:', q.correctAnswer);
+            console.log('q.correct_answer:', q.correct_answer);
+            console.log('q.options:', q.options);
 
             // Support all possible field names for correct answer
-            const correctAnswerIndex = q.correctAnswer !== undefined ? q.correctAnswer :
-                                      (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index);
+            const correctAnswerIndex = q.correctAnswerIndex !== undefined ? q.correctAnswerIndex :
+                                      (q.correctAnswer !== undefined ? q.correctAnswer :
+                                      (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index));
 
-            console.log('correctAnswerIndex:', correctAnswerIndex);
+            console.log('Final correctAnswerIndex:', correctAnswerIndex);
             console.log('User answer:', userAnswers[index]);
 
             const optionsHTML = (q.options || []).map((option, i) => {
