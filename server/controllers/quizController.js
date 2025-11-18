@@ -123,17 +123,61 @@ exports.getQuizById = async (req, res) => {
 exports.updateQuiz = async (req, res) => {
     try {
         const quizId = req.params.id;
+        const { title, description, questions } = req.body;
 
-        const updatedQuiz = await Quiz.update(quizId, req.body);
+        // Update quiz metadata
+        const updateData = {
+            title,
+            description,
+            questionCount: questions ? questions.length : undefined
+        };
+
+        const updatedQuiz = await Quiz.update(quizId, updateData);
 
         if (!updatedQuiz) {
             return res.status(404).json({ success: false, error: 'Quiz not found' });
         }
 
-        res.status(200).json({
-            success: true,
-            data: updatedQuiz.toJSON()
-        });
+        // If questions are provided, update them
+        if (questions && Array.isArray(questions)) {
+            // Delete all existing questions for this quiz
+            const existingQuestions = await Question.findByQuizId(quizId);
+            for (const question of existingQuestions) {
+                await Question.delete(question.id);
+            }
+
+            // Create new questions
+            const createdQuestions = [];
+            for (const q of questions) {
+                const questionData = {
+                    quizId: quizId,
+                    quiz_id: quizId,
+                    questionText: q.question_text || q.questionText,
+                    question_text: q.question_text || q.questionText,
+                    options: q.options,
+                    correctAnswer: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer,
+                    correctAnswerIndex: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswerIndex,
+                    correct_answer_index: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer
+                };
+                const createdQuestion = await Question.create(questionData);
+                createdQuestions.push(createdQuestion);
+            }
+
+            // Return updated quiz with new questions
+            res.status(200).json({
+                success: true,
+                message: 'Quiz updated successfully!',
+                data: {
+                    ...updatedQuiz.toJSON(),
+                    questions: createdQuestions.map(q => q.toJSON())
+                }
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                data: updatedQuiz.toJSON()
+            });
+        }
     } catch (err) {
         console.error("Update Quiz Error:", err);
         if (err.message.includes('not found')) {

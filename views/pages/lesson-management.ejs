@@ -645,20 +645,19 @@
                     // Quiz editing logic
                     setActiveForm('quiz');
                     quizFormTitle.textContent = 'Edit Quiz';
-                    quizForm.querySelector('button[type="submit"]').textContent = 'Update Quiz (Not fully supported)';
+                    quizForm.querySelector('button[type="submit"]').textContent = 'Update Quiz';
                     currentEditingContentId = id;
                      try {
                         const res = await fetch(`/api/quizzes/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
                         if (!res.ok) throw new Error('Could not fetch quiz details.');
                         const quiz = await res.json();
-                        
+
                         document.getElementById('quiz-title').value = quiz.title;
                         document.getElementById('quiz-description').value = quiz.description;
                         questionsContainer.innerHTML = ''; // Clear previous questions
-                        
+
                         // Populate questions
                         (quiz.questions || []).forEach(q => addQuestionField(q));
-                        alert('Editing Quizzes is not fully supported yet. Changes may not save correctly. Use Delete and Re-Create for complex updates.');
                     } catch (error) {
                         alert('Error fetching quiz: ' + error.message);
                     }

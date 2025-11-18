@@ -57,6 +57,13 @@ exports.getGrades = async (req, res) => {
       }
     }));
 
+    // Sort by createdAt descending (most recent first)
+    gradesWithQuiz.sort((a, b) => {
+      const dateA = a.createdAt?.toDate?.() || a.createdAt || new Date(0);
+      const dateB = b.createdAt?.toDate?.() || b.createdAt || new Date(0);
+      return dateB - dateA;
+    });
+
     res.status(200).json(gradesWithQuiz);
   } catch (err) {
     console.error("Get Grades Error:", err);
