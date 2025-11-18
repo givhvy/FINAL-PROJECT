@@ -547,9 +547,10 @@
                 description: document.getElementById('quiz-description').value,
                 course_id: courseId,
                 questions: questions,
-                type: 'quiz', 
+                type: 'quiz',
             };
-            
+
+
             // XÁC ĐỊNH API ENDPOINT VÀ METHOD
             const apiUrl = isEditing ? `/api/quizzes/${currentEditingContentId}` : '/api/quizzes';
             const method = isEditing ? 'PUT' : 'POST';
@@ -574,7 +575,11 @@
                 
                 alert(`Quiz ${isEditing ? 'updated' : 'created'} successfully!`);
                 setActiveForm('lesson'); // Chuyển về Add Lesson/Reset form
-                fetchAndRenderCourseDetails(); // Refresh list
+
+                // Add delay to allow Firestore write to propagate
+                setTimeout(() => {
+                    fetchAndRenderCourseDetails(); // Refresh list
+                }, 500);
             } catch (error) {
                 console.error("Quiz Save Error:", error);
                 alert(`Error: Failed to ${isEditing ? 'update' : 'create'} quiz.\nDetails: ${error.message}`);
@@ -657,12 +662,8 @@
                         questionsContainer.innerHTML = ''; // Clear previous questions
 
                         // Populate questions
-                        console.log('Quiz object:', quiz);
-                        console.log('Questions array:', quiz.questions);
                         if (quiz.questions && quiz.questions.length > 0) {
                             quiz.questions.forEach(q => addQuestionField(q));
-                        } else {
-                            console.warn('No questions found for this quiz. You can add new questions.');
                         }
                     } catch (error) {
                         alert('Error fetching quiz: ' + error.message);

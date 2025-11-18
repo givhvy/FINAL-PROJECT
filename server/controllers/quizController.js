@@ -103,10 +103,6 @@ exports.getQuizById = async (req, res) => {
         const questions = await Question.findByQuizId(quizId);
 
         // DEBUG: Log raw question data
-        console.log('=== DEBUG: Question data from Firestore ===');
-        if (questions.length > 0) {
-            console.log('First question raw data:', JSON.stringify(questions[0], null, 2));
-        }
 
         // Return unwrapped data for consistency with courses API
         res.status(200).json({
@@ -125,12 +121,6 @@ exports.updateQuiz = async (req, res) => {
         const quizId = req.params.id;
         const { title, description, questions } = req.body;
 
-        console.log('=== UPDATE QUIZ DEBUG ===');
-        console.log('Quiz ID:', quizId);
-        console.log('Request body:', JSON.stringify(req.body, null, 2));
-        console.log('Questions received:', questions);
-        console.log('Questions count:', questions ? questions.length : 0);
-
         // Update quiz metadata
         const updateData = {
             title,
@@ -146,11 +136,8 @@ exports.updateQuiz = async (req, res) => {
 
         // If questions are provided, update them
         if (questions && Array.isArray(questions) && questions.length > 0) {
-            console.log('Updating questions...');
-
             // Delete all existing questions for this quiz
             const existingQuestions = await Question.findByQuizId(quizId);
-            console.log(`Deleting ${existingQuestions.length} existing questions`);
             for (const question of existingQuestions) {
                 await Question.delete(question.id);
             }
@@ -159,8 +146,6 @@ exports.updateQuiz = async (req, res) => {
             const createdQuestions = [];
             for (let i = 0; i < questions.length; i++) {
                 const q = questions[i];
-                console.log(`Creating question ${i + 1}:`, q);
-
                 const questionData = {
                     quizId: quizId,
                     quiz_id: quizId,
@@ -173,11 +158,8 @@ exports.updateQuiz = async (req, res) => {
                     order: i
                 };
                 const createdQuestion = await Question.create(questionData);
-                console.log('Question created with ID:', createdQuestion.id);
                 createdQuestions.push(createdQuestion);
             }
-
-            console.log(`Successfully created ${createdQuestions.length} questions`);
 
             // Return updated quiz with new questions
             res.status(200).json({
