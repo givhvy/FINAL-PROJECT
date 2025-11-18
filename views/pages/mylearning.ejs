@@ -761,8 +761,16 @@ async function fetchAndRenderLearningProgress() {
     // --- INITIALIZATION ---
 
     // 1. Setup Listeners
-    document.getElementById('user-avatar').textContent = getUserInitials(user.name);
-    
+    // Set header avatar with profile picture support
+    const headerAvatar = document.getElementById('user-avatar');
+    if (headerAvatar) {
+        if (user.avatarUrl) {
+            headerAvatar.innerHTML = `<img src="${user.avatarUrl}" alt="Avatar" class="h-8 w-8 rounded-full object-cover">`;
+        } else {
+            headerAvatar.textContent = getUserInitials(user.name);
+        }
+    }
+
     document.getElementById('user-menu-button').addEventListener('click', () => {
         window.location.href = '/profile';
     });

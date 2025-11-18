@@ -203,13 +203,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadCart();
 
-            // Setup user avatar
+            // Setup user avatar with profile picture support
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
                 const userAvatar = document.getElementById('user-avatar');
                 if (userAvatar) {
-                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
-                    userAvatar.textContent = initials;
+                    if (user.avatarUrl) {
+                        userAvatar.innerHTML = `<img src="${user.avatarUrl}" alt="Avatar" class="h-8 w-8 rounded-full object-cover">`;
+                    } else {
+                        const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+                        userAvatar.textContent = initials;
+                    }
                 }
             }
 
