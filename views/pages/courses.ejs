@@ -1140,13 +1140,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Lesson data:', lesson);
 
             // Check if lesson is already completed
-            const progressCheckRes = await fetch(`/api/progress/user/${user.id}/course/${courseId}`, {
+            const progressCheckRes = await fetch(`/api/progress/course/${user.id}/${courseId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             let isCompleted = false;
             if (progressCheckRes.ok) {
                 const progressData = await progressCheckRes.json();
-                isCompleted = progressData.some(p => p.lesson_id === lessonId);
+                console.log('Progress data for lesson check:', progressData);
+                console.log('Looking for lesson:', lessonId);
+                isCompleted = progressData.some(p => p.lesson_id === lessonId || p.lessonId === lessonId);
+                console.log('Is lesson completed?', isCompleted);
+            } else {
+                console.error('Failed to fetch progress:', progressCheckRes.status);
             }
             
             let videoHTML = '';
@@ -1353,7 +1358,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const quizRes = await fetch(`/api/quizzes/${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             if (!quizRes.ok) throw new Error('Could not fetch quiz details.');
             const quiz = await quizRes.json();
-            
+
+            console.log('Quiz data:', quiz);
+            console.log('Questions:', quiz.questions);
+
             const questions = quiz.questions || [];
             const quizTitle = quiz.title || 'Untitled Quiz';
             const quizDescription = quiz.description || '';
@@ -1398,14 +1406,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
 
-            document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions));
+            document.getElementById('quiz-form').addEventListener('submit', (e) => handleQuizSubmission(e, quizId, questions, quiz.courseId || quiz.course_id));
         } catch (error) {
             contentArea.innerHTML = `<div class="p-8 text-red-500 bg-white dark:bg-gray-800 rounded-xl shadow-lg">Error loading quiz: ${error.message}</div>`;
         }
     }
 
     // Enhanced quiz submission handling
-    async function handleQuizSubmission(event, quizId, questions) {
+    async function handleQuizSubmission(event, quizId, questions, courseId) {
         event.preventDefault();
         const form = event.target;
         const submitButton = form.querySelector('button[type="submit"]');
@@ -1440,15 +1448,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         const percentage = Math.round((score / questions.length) * 100);
 
         try {
-            await fetch('/api/grades', {
+            const gradeResponse = await fetch('/api/grades', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({
-                    user_id: user.id,
-                    quiz_id: quizId,
-                    score: percentage
+                    userId: user.id,  // Use camelCase
+                    quizId: quizId,   // Use camelCase
+                    courseId: courseId, // Add courseId
+                    score: percentage,
+                    totalQuestions: questions.length,
+                    correctAnswers: score
                 })
             });
+
+            if (!gradeResponse.ok) {
+                const errorText = await gradeResponse.text();
+                console.error("Failed to save grade:", errorText);
+            } else {
+                console.log("Grade saved successfully");
+            }
         } catch (error) {
             console.error("Failed to save grade:", error);
         }
@@ -1461,20 +1479,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         const contentArea = document.getElementById('content-main');
 
         let feedbackHTML = questions.map((q, index) => {
+            // Debug: log the question object to see what fields exist
+            console.log('Question object:', q);
+            console.log('Available fields:', Object.keys(q));
+
+            // Support all possible field names for correct answer
+            const correctAnswerIndex = q.correctAnswer !== undefined ? q.correctAnswer :
+                                      (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index);
+
+            console.log('correctAnswerIndex:', correctAnswerIndex);
+            console.log('User answer:', userAnswers[index]);
+
             const optionsHTML = (q.options || []).map((option, i) => {
                 let classes = 'block p-3 border rounded-md transition-colors';
-                if (i === q.correct_answer_index) {
+                if (i === correctAnswerIndex) {
                     classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
                 }
-                if (i === userAnswers[index] && i !== q.correct_answer_index) {
+                if (i === userAnswers[index] && i !== correctAnswerIndex) {
                     classes += ' bg-red-100 border-red-300 text-red-800';
                 }
                 return `<div class="${classes}">${option}</div>`;
             }).join('');
-            
-            // Support both correctAnswer and correct_answer, and correct_answer_index
-            const correctAnswerIndex = q.correctAnswer !== undefined ? q.correctAnswer :
-                                      (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index);
+
             const isCorrect = userAnswers[index] === correctAnswerIndex;
 
             // Get the correct answer text
