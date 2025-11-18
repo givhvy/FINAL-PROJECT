@@ -15,9 +15,9 @@ class Grade {
         const db = this.getDB();
         const gradeRef = db.collection('grades').doc();
         const grade = {
-            userId: gradeData.userId,
-            quizId: gradeData.quizId,
-            courseId: gradeData.courseId,
+            user_id: gradeData.userId,      // Store as snake_case for Firestore queries
+            quiz_id: gradeData.quizId,      // Store as snake_case for Firestore queries
+            course_id: gradeData.courseId,  // Store as snake_case for Firestore queries
             score: gradeData.score,
             totalQuestions: gradeData.totalQuestions || 0,
             correctAnswers: gradeData.correctAnswers || 0,
