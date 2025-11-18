@@ -6,11 +6,11 @@
     <title>Content Management | CodeMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f5f7fb; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f5f7fb; }
         .two-column-layout { min-height: calc(100vh - 64px); }
         .sidebar-content { max-height: 100%; overflow-y: auto; }
         .lesson-item { cursor: pointer; transition: background-color 0.1s; }
@@ -131,6 +131,15 @@
         if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
             window.location.href = '/login';
             return;
+        }
+
+        // Setup logout button
+        const logoutBtn = document.getElementById('logout-button');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = '/login';
+            });
         }
 
         const urlParams = new URLSearchParams(window.location.search);
