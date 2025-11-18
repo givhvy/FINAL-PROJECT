@@ -966,6 +966,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     
+    // Global variable to track completed lessons
+    let completedLessonIds = new Set();
+
     // Enhanced lesson page rendering
     async function renderLessonPage(course) {
         const lessons = (course.lessons || []).map(item => ({...item, contentType: 'lesson'}));
@@ -975,7 +978,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         // Fetch completed lessons for this course from user_progress collection
-        let completedLessonIds = new Set();
+        completedLessonIds = new Set();
         try {
             // The getCourseSummary only returns count, not lesson IDs
             // We need to get completed lessons directly from the database
