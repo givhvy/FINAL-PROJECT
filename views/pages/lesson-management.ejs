@@ -488,7 +488,11 @@
                 
                 alert(`Lesson ${isEditing ? 'updated' : 'added'} successfully!`);
                 setActiveForm('lesson'); // Reset form
-                fetchAndRenderCourseDetails(); // Refresh list
+
+                // Add delay to allow Firestore write to propagate
+                setTimeout(() => {
+                    fetchAndRenderCourseDetails(); // Refresh list
+                }, 500);
             } catch (error) {
                 console.error("Lesson Save Error:", error);
                 alert(`Error: Failed to ${isEditing ? 'update' : 'add'} lesson.\nDetails: ${error.message}`);
