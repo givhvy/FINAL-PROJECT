@@ -1139,20 +1139,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const lesson = await res.json();
             console.log('Lesson data:', lesson);
 
-            // Check if lesson is already completed
-            const progressCheckRes = await fetch(`/api/progress/course/${user.id}/${courseId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            let isCompleted = false;
-            if (progressCheckRes.ok) {
-                const progressData = await progressCheckRes.json();
-                console.log('Progress data for lesson check:', progressData);
-                console.log('Looking for lesson:', lessonId);
-                isCompleted = progressData.some(p => p.lesson_id === lessonId || p.lessonId === lessonId);
-                console.log('Is lesson completed?', isCompleted);
-            } else {
-                console.error('Failed to fetch progress:', progressCheckRes.status);
-            }
+            // Check if lesson is already completed by checking if it's in the completedLessonIds set
+            let isCompleted = completedLessonIds.has(lessonId);
+            console.log('Looking for lesson:', lessonId);
+            console.log('Is lesson completed?', isCompleted);
             
             let videoHTML = '';
             // Check if lesson has a video URL (videoUrl or video_url for backwards compatibility)
