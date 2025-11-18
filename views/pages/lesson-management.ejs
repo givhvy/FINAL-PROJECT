@@ -657,7 +657,13 @@
                         questionsContainer.innerHTML = ''; // Clear previous questions
 
                         // Populate questions
-                        (quiz.questions || []).forEach(q => addQuestionField(q));
+                        console.log('Quiz object:', quiz);
+                        console.log('Questions array:', quiz.questions);
+                        if (quiz.questions && quiz.questions.length > 0) {
+                            quiz.questions.forEach(q => addQuestionField(q));
+                        } else {
+                            console.warn('No questions found for this quiz. You can add new questions.');
+                        }
                     } catch (error) {
                         alert('Error fetching quiz: ' + error.message);
                     }
