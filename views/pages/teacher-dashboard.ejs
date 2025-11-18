@@ -704,11 +704,49 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">Loading student data...</td></tr>';
+
+        // Fetch enrollment and progress data for all students
+        const studentsWithData = await Promise.all(allStudents.map(async (student) => {
+            try {
+                // Fetch enrollments
+                const enrollRes = await fetch(`/api/enrollments?userId=${student.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const enrollments = enrollRes.ok ? await enrollRes.json() : [];
+
+                // Fetch progress
+                const progressRes = await fetch(`/api/users/${student.id}/progress`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const progressData = progressRes.ok ? await progressRes.json() : {};
+
+                // Calculate overall progress
+                const courseProgresses = Object.values(progressData);
+                const overallProgress = courseProgresses.length > 0
+                    ? Math.round(courseProgresses.reduce((sum, p) => sum + (p.percentage || 0), 0) / courseProgresses.length)
+                    : 0;
+
+                return {
+                    ...student,
+                    enrolledCourses: enrollments.length,
+                    overallProgress: overallProgress
+                };
+            } catch (error) {
+                console.error(`Error fetching data for student ${student.id}:`, error);
+                return {
+                    ...student,
+                    enrolledCourses: 0,
+                    overallProgress: 0
+                };
+            }
+        }));
+
         tableBody.innerHTML = '';
-        allStudents.forEach(student => {
+        studentsWithData.forEach(student => {
             // Calculate student statistics
-            const enrolledCourses = student.enrolled_courses?.length || 0;
-            const overallProgress = student.overall_progress || 0;
+            const enrolledCourses = student.enrolledCourses || 0;
+            const overallProgress = student.overallProgress || 0;
 
             const studentRow = document.createElement('tr');
             studentRow.className = 'hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors';
