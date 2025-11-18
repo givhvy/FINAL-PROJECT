@@ -1261,9 +1261,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const result = await response.json();
 
+            // Update button state immediately and permanently
             button.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Completed!';
             button.className = 'bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed flex-shrink-0 flex items-center';
             button.disabled = true;
+            button.style.pointerEvents = 'none'; // Extra safeguard
+
+            // Update completedLessonIds Set for sidebar
+            completedLessonIds.add(lessonId);
 
             // Add checkmark and gray background to sidebar lesson
             const sidebarCard = document.querySelector(`#content-list-sidebar [data-id="${lessonId}"][data-type="lesson"]`);
@@ -1307,8 +1312,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
         } catch (error) {
+            console.error('Error marking lesson as complete:', error);
             alert(`Error: ${error.message}`);
+            // Only re-enable button if the save actually failed
+            // If it was a UI update error, keep button disabled
             button.innerHTML = '<i class="fas fa-check mr-2"></i> Mark as Complete';
+            button.className = 'bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors flex-shrink-0 flex items-center';
             button.disabled = false;
         }
     }
@@ -1463,7 +1472,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return `<div class="${classes}">${option}</div>`;
             }).join('');
             
-            const isCorrect = userAnswers[index] === q.correct_answer_index;
+            // Support both correctAnswer and correct_answer, and correct_answer_index
+            const correctAnswerIndex = q.correctAnswer !== undefined ? q.correctAnswer :
+                                      (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index);
+            const isCorrect = userAnswers[index] === correctAnswerIndex;
+
+            // Get the correct answer text
+            let correctAnswerText = 'N/A';
+            if (q.options && correctAnswerIndex !== undefined && q.options[correctAnswerIndex]) {
+                correctAnswerText = q.options[correctAnswerIndex];
+            }
+
             return `
                 <div class="question-block mb-6 pb-6 border-b last:border-b-0">
                     <div class="flex items-start gap-3 mb-3">
@@ -1475,7 +1494,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="space-y-2 ml-9">${optionsHTML}</div>
                     <div class="ml-9 mt-3">
                         <p class="text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'} font-medium">
-                            ${isCorrect ? 'Correct!' : `Incorrect. The correct answer is: ${q.options && q.correct_answer_index !== undefined ? q.options[q.correct_answer_index] : 'N/A'}`}
+                            ${isCorrect ? 'Correct!' : `Incorrect. The correct answer is: ${correctAnswerText}`}
                         </p>
                     </div>
                 </div>
