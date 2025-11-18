@@ -102,6 +102,12 @@ exports.getQuizById = async (req, res) => {
         // Get all questions for this quiz
         const questions = await Question.findByQuizId(quizId);
 
+        // DEBUG: Log raw question data
+        console.log('=== DEBUG: Question data from Firestore ===');
+        if (questions.length > 0) {
+            console.log('First question raw data:', JSON.stringify(questions[0], null, 2));
+        }
+
         // Return unwrapped data for consistency with courses API
         res.status(200).json({
             ...quiz.toJSON(),

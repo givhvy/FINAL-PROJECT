@@ -20,10 +20,11 @@ class Question {
 
         this.options = data.options || []; // Array of options for multiple-choice
 
-        // Support correctAnswer, correct_answer, AND correctAnswerIndex
-        this.correctAnswer = data.correctAnswer || data.correct_answer || data.correctAnswerIndex;
-        this.correct_answer = data.correct_answer || data.correctAnswer || data.correctAnswerIndex;
-        this.correctAnswerIndex = data.correctAnswerIndex || data.correctAnswer || data.correct_answer;
+        // Support correctAnswer, correct_answer, correctAnswerIndex, AND correct_answer_index
+        this.correctAnswer = data.correctAnswer || data.correct_answer || data.correctAnswerIndex || data.correct_answer_index;
+        this.correct_answer = data.correct_answer || data.correctAnswer || data.correctAnswerIndex || data.correct_answer_index;
+        this.correctAnswerIndex = data.correctAnswerIndex || data.correctAnswer || data.correct_answer || data.correct_answer_index;
+        this.correct_answer_index = data.correct_answer_index || data.correctAnswerIndex || data.correctAnswer || data.correct_answer;
 
         this.points = data.points || 1;
         this.explanation = data.explanation || ''; // Giải thích đáp án
@@ -158,6 +159,7 @@ class Question {
                 questionType: newQuestion.questionType,
                 options: newQuestion.options,
                 correctAnswer: newQuestion.correctAnswer,
+                correctAnswerIndex: newQuestion.correctAnswerIndex,
                 points: newQuestion.points,
                 explanation: newQuestion.explanation,
                 order: newQuestion.order,
