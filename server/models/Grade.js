@@ -10,6 +10,9 @@ class Grade {
      * Create a new grade (create in crud) (checkpoint)
      */
     static async create(gradeData) {
+        console.log('\n=== GRADE CREATE ===');
+        console.log('Input gradeData:', gradeData);
+        
         this.validate(gradeData);
 
         const db = this.getDB();
@@ -27,12 +30,18 @@ class Grade {
             updatedAt: new Date()
         };
 
+        console.log('Saving grade to Firestore:', grade);
         await gradeRef.set(grade);
 
-        return {
+        const result = {
             id: gradeRef.id,
             ...grade
         };
+        
+        console.log('Grade created successfully with ID:', gradeRef.id);
+        console.log('=== GRADE CREATE END ===\n');
+
+        return result;
     }
 
     /**

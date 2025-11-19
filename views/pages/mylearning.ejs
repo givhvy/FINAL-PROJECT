@@ -475,49 +475,88 @@ document.addEventListener('DOMContentLoaded', async () => {
         gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">Loading your grades...</p>';
 
         try {
+            console.log('=== FETCH GRADES START ===');
+            console.log('User ID:', user.id);
+            
             const gradesResponse = await fetch(`/api/grades?userId=${user.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            
+            console.log('Response status:', gradesResponse.status);
+            console.log('Response ok:', gradesResponse.ok);
+            
             if (!gradesResponse.ok) throw new Error('Failed to fetch grades.');
             const myGrades = await gradesResponse.json(); 
 
+            console.log('Total grades received:', myGrades.length);
+            console.log('Grades data:', myGrades);
+
             // Filter out grades for deleted quizzes
             const validGrades = myGrades.filter(grade => grade.quiz !== null && grade.quiz !== undefined);
+
+            console.log('Valid grades after filter:', validGrades.length);
+            console.log('Valid grades:', validGrades);
 
             if (validGrades.length === 0) {
                 gradesListDiv.innerHTML = '<p class="text-gray-500 text-center py-4">You have not completed any quizzes yet.</p>';
                 return;
             }
 
-            gradesListDiv.innerHTML = validGrades.map(grade => {
+            console.log('Rendering HTML for', validGrades.length, 'grades');
+
+            gradesListDiv.innerHTML = validGrades.map((grade, index) => {
+                console.log(`Rendering grade ${index + 1}:`, {
+                    id: grade.id,
+                    quiz_id: grade.quiz_id,
+                    quizTitle: grade.quiz?.title,
+                    score: grade.score,
+                    createdAt: grade.createdAt
+                });
+
                 const score = grade.score || 0;
                 const isPassed = score >= 70;
                 const scoreColor = isPassed ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100';
 
-                // Format date properly
+                // Format date properly - Handle Firestore Timestamp
                 let dateStr = 'N/A';
                 try {
                     if (grade.createdAt) {
-                        // Handle both Firestore Timestamp and ISO string
-                        const date = grade.createdAt.toDate ? grade.createdAt.toDate() : new Date(grade.createdAt);
-                        dateStr = date.toLocaleDateString();
+                        // Firestore Timestamp has _seconds property
+                        if (grade.createdAt._seconds) {
+                            const date = new Date(grade.createdAt._seconds * 1000);
+                            dateStr = date.toLocaleDateString();
+                        } else if (grade.createdAt.toDate) {
+                            // Firestore Timestamp with toDate method
+                            const date = grade.createdAt.toDate();
+                            dateStr = date.toLocaleDateString();
+                        } else {
+                            // ISO string or Date object
+                            const date = new Date(grade.createdAt);
+                            dateStr = date.toLocaleDateString();
+                        }
                     }
                 } catch (e) {
-                    console.error('Error formatting date:', e);
+                    console.error('Error formatting date for grade:', grade.id, e);
                 }
 
+                const quizTitle = grade.quiz?.title || 'Quiz Deleted';
+                const quizId = grade.quiz_id || 'N/A';
+
                 return `
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 quiz-card flex justify-between items-center">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 dark:border-gray-700 quiz-card flex justify-between items-center">
                         <div class="flex-grow pr-4">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${grade.quiz ? grade.quiz.title : 'Quiz Deleted'}</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Quiz ID: ${grade.quiz_id || 'N/A'}</p>
-                            <p class="text-xs text-gray-500 mt-2">Completed on: ${dateStr}</p>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${quizTitle}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Quiz ID: ${quizId}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Completed on: ${dateStr}</p>
                         </div>
                         <div class="grade-score text-right">
                             <span class="font-bold text-xl px-3 py-1 rounded-full ${scoreColor}">${score}%</span>
-                            <p class="text-xs text-gray-500 mt-1">${isPassed ? 'Passed' : 'Failed'}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${isPassed ? 'Passed' : 'Failed'}</p>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            console.log('HTML rendering complete');
+            console.log('=== FETCH GRADES END ===');
 
         } catch (error) {
             console.error('Fetch Grades Error:', error);

@@ -17,13 +17,21 @@ exports.getGrades = async (req, res) => {
   try {
     const { userId, quizId } = req.query;
 
+    console.log('\n=== GET GRADES ===');
+    console.log('Query params:', { userId, quizId });
+
     let grades;
     if (userId) {
+      console.log(`Fetching grades for user: ${userId}`);
       grades = await Grade.findByStudent(userId);
+      console.log(`Found ${grades.length} grades for user ${userId}`);
     } else if (quizId) {
+      console.log(`Fetching grades for quiz: ${quizId}`);
       grades = await Grade.findByQuiz(quizId);
+      console.log(`Found ${grades.length} grades for quiz ${quizId}`);
     } else {
       // Fetch all grades for admin/teacher dashboard
+      console.log('Fetching all grades');
       const db = Grade.getDB();
       const snapshot = await db.collection('grades').get();
 
@@ -31,6 +39,8 @@ exports.getGrades = async (req, res) => {
         id: doc.id,
         ...doc.data()
       }));
+
+      console.log(`Found ${grades.length} total grades`);
 
       // Sort by createdAt descending
       grades.sort((a, b) => {
@@ -41,9 +51,11 @@ exports.getGrades = async (req, res) => {
     }
 
     // Populate quiz information for each grade
+    console.log('Populating quiz information for grades...');
     const gradesWithQuiz = await Promise.all(grades.map(async (grade) => {
       try {
         const quiz = await Quiz.findById(grade.quiz_id);
+        console.log(`Grade ${grade.id}: quiz_id=${grade.quiz_id}, quiz found=${!!quiz}`);
         return {
           ...grade,
           quiz: quiz ? quiz.toJSON() : null
@@ -63,6 +75,9 @@ exports.getGrades = async (req, res) => {
       const dateB = b.createdAt?.toDate?.() || b.createdAt || new Date(0);
       return dateB - dateA;
     });
+
+    console.log(`Returning ${gradesWithQuiz.length} grades with quiz info`);
+    console.log('=== GET GRADES END ===\n');
 
     res.status(200).json(gradesWithQuiz);
   } catch (err) {

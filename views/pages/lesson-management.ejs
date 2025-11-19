@@ -388,15 +388,27 @@
 
         // --- QUIZ MANAGEMENT FUNCTIONS ---
         function addQuestionField(question = {}) {
+            console.log('addQuestionField called with:', question);
+            console.log('question_text:', question.question_text || question.questionText);
+            console.log('options:', question.options);
+            console.log('correct_answer_index:', question.correct_answer_index || question.correctAnswerIndex || question.correctAnswer);
+
             const questionIndex = questionsContainer.children.length;
             const field = document.createElement('div');
             field.className = 'question-field bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-700 p-4 rounded-lg';
+
+            // Support both field name formats
+            const questionText = question.question_text || question.questionText || '';
+            const correctAnswerIndex = question.correct_answer_index !== undefined ? question.correct_answer_index :
+                                      (question.correctAnswerIndex !== undefined ? question.correctAnswerIndex :
+                                      (question.correctAnswer !== undefined ? question.correctAnswer : 0));
+
             field.innerHTML = `
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-medium text-gray-800 dark:text-gray-200">Question ${questionIndex + 1}</h4>
                     <button type="button" class="remove-question-btn text-red-500 hover:text-red-700 text-sm font-medium">Remove</button>
                 </div>
-                <textarea class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2" rows="2" placeholder="Enter question text..." name="question_text" required>${question.question_text || ''}</textarea>
+                <textarea class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mb-2" rows="2" placeholder="Enter question text..." name="question_text" required>${questionText}</textarea>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                     ${Array(4).fill(0).map((_, i) => `
                         <input type="text" name="option_${i}" placeholder="Option ${i + 1}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md" value="${question.options ? question.options[i] || '' : ''}" required>
@@ -410,10 +422,10 @@
                     </select>
                 </div>
             `;
-            
+
             // Set correct answer if editing
-            if (question.correct_answer_index !== undefined) {
-                 field.querySelector('select[name="correct_answer_index"]').value = question.correct_answer_index;
+            if (correctAnswerIndex !== undefined) {
+                 field.querySelector('select[name="correct_answer_index"]').value = correctAnswerIndex;
             }
 
             questionsContainer.appendChild(field);
@@ -490,9 +502,11 @@
                 setActiveForm('lesson'); // Reset form
 
                 // Add delay to allow Firestore write to propagate
+                console.log('Lesson saved, waiting 1.5 seconds before refreshing...');
                 setTimeout(() => {
+                    console.log('Refreshing course details now...');
                     fetchAndRenderCourseDetails(); // Refresh list
-                }, 500);
+                }, 1500);
             } catch (error) {
                 console.error("Lesson Save Error:", error);
                 alert(`Error: Failed to ${isEditing ? 'update' : 'add'} lesson.\nDetails: ${error.message}`);
@@ -581,9 +595,11 @@
                 setActiveForm('lesson'); // Chuyển về Add Lesson/Reset form
 
                 // Add delay to allow Firestore write to propagate
+                console.log('Quiz saved, waiting 1.5 seconds before refreshing...');
                 setTimeout(() => {
+                    console.log('Refreshing course details now...');
                     fetchAndRenderCourseDetails(); // Refresh list
-                }, 500);
+                }, 1500);
             } catch (error) {
                 console.error("Quiz Save Error:", error);
                 alert(`Error: Failed to ${isEditing ? 'update' : 'create'} quiz.\nDetails: ${error.message}`);
@@ -661,15 +677,25 @@
                         if (!res.ok) throw new Error('Could not fetch quiz details.');
                         const quiz = await res.json();
 
+                        console.log('Fetched quiz for editing:', quiz);
+                        console.log('Questions:', quiz.questions);
+
                         document.getElementById('quiz-title').value = quiz.title;
                         document.getElementById('quiz-description').value = quiz.description;
                         questionsContainer.innerHTML = ''; // Clear previous questions
 
                         // Populate questions
                         if (quiz.questions && quiz.questions.length > 0) {
-                            quiz.questions.forEach(q => addQuestionField(q));
+                            console.log(`Populating ${quiz.questions.length} questions`);
+                            quiz.questions.forEach((q, index) => {
+                                console.log(`Question ${index + 1}:`, q);
+                                addQuestionField(q);
+                            });
+                        } else {
+                            console.log('No questions found in quiz');
                         }
                     } catch (error) {
+                        console.error('Error fetching quiz:', error);
                         alert('Error fetching quiz: ' + error.message);
                     }
                 }

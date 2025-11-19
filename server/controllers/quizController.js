@@ -93,6 +93,8 @@ exports.getQuizById = async (req, res) => {
     try {
         const quizId = req.params.id;
 
+        console.log(`\n=== GET QUIZ BY ID: ${quizId} ===`);
+
         const quiz = await Quiz.findById(quizId);
 
         if (!quiz) {
@@ -102,7 +104,19 @@ exports.getQuizById = async (req, res) => {
         // Get all questions for this quiz
         const questions = await Question.findByQuizId(quizId);
 
-        // DEBUG: Log raw question data
+        console.log(`Found ${questions.length} questions for quiz ${quizId}`);
+        if (questions.length > 0) {
+            questions.forEach((q, i) => {
+                console.log(`Question ${i + 1}:`, {
+                    id: q.id,
+                    quiz_id: q.quiz_id,
+                    questionText: q.questionText || q.question_text,
+                    optionsCount: q.options?.length
+                });
+            });
+        } else {
+            console.log('No questions found - this quiz has no questions in Firestore');
+        }
 
         // Return unwrapped data for consistency with courses API
         res.status(200).json({
@@ -121,6 +135,19 @@ exports.updateQuiz = async (req, res) => {
         const quizId = req.params.id;
         const { title, description, questions } = req.body;
 
+        console.log(`\n=== UPDATE QUIZ: ${quizId} ===`);
+        console.log('Title:', title);
+        console.log('Description:', description);
+        console.log('Questions received:', questions ? questions.length : 0);
+
+        if (questions && questions.length > 0) {
+            console.log('First question preview:', {
+                question_text: questions[0].question_text || questions[0].questionText,
+                options: questions[0].options,
+                correct_answer_index: questions[0].correct_answer_index
+            });
+        }
+
         // Update quiz metadata
         const updateData = {
             title,
@@ -134,8 +161,11 @@ exports.updateQuiz = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Quiz not found' });
         }
 
+        console.log('Quiz metadata updated successfully');
+
         // If questions are provided, update them
         if (questions && Array.isArray(questions) && questions.length > 0) {
+            console.log(`Processing ${questions.length} questions...`);
             // Delete all existing questions for this quiz
             const existingQuestions = await Question.findByQuizId(quizId);
             for (const question of existingQuestions) {

@@ -141,7 +141,9 @@ class Quiz {
 
             const docRef = await db.collection('quizzes').add({
                 courseId: newQuiz.courseId,
+                course_id: newQuiz.courseId,  // Add snake_case for Firestore queries
                 lessonId: newQuiz.lessonId,
+                lesson_id: newQuiz.lessonId,  // Add snake_case for Firestore queries
                 title: newQuiz.title,
                 description: newQuiz.description,
                 duration: newQuiz.duration,

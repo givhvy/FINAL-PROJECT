@@ -145,6 +145,13 @@ class Question {
      */
     static async create(questionData) {
         try {
+            console.log('Question.create called with:', {
+                quizId: questionData.quizId || questionData.quiz_id,
+                questionText: questionData.questionText || questionData.question_text,
+                optionsCount: questionData.options?.length,
+                correctAnswer: questionData.correctAnswer || questionData.correct_answer_index
+            });
+
             const db = this.getDB();
 
             const newQuestion = new Question({
@@ -154,17 +161,25 @@ class Question {
             });
 
             const docRef = await db.collection('questions').add({
+                // Store both formats for compatibility
                 quizId: newQuestion.quizId,
+                quiz_id: newQuestion.quizId,
                 questionText: newQuestion.questionText,
+                question_text: newQuestion.questionText,
                 questionType: newQuestion.questionType,
+                question_type: newQuestion.questionType,
                 options: newQuestion.options,
                 correctAnswer: newQuestion.correctAnswer,
+                correct_answer: newQuestion.correctAnswer,
                 correctAnswerIndex: newQuestion.correctAnswerIndex,
+                correct_answer_index: newQuestion.correctAnswerIndex,
                 points: newQuestion.points,
                 explanation: newQuestion.explanation,
                 order: newQuestion.order,
                 createdAt: newQuestion.createdAt,
-                updatedAt: newQuestion.updatedAt
+                created_at: newQuestion.createdAt,
+                updatedAt: newQuestion.updatedAt,
+                updated_at: newQuestion.updatedAt
             });
 
             newQuestion.id = docRef.id;
@@ -273,7 +288,34 @@ class Question {
      * @returns {Object} - Question object
      */
     toJSON() {
-        return { ...this };
+        // Return object with both camelCase and snake_case for compatibility
+        return {
+            id: this.id,
+            // Both formats for quiz ID
+            quizId: this.quizId,
+            quiz_id: this.quizId,
+            // Both formats for question text
+            questionText: this.questionText,
+            question_text: this.questionText,
+            // Both formats for question type
+            questionType: this.questionType,
+            question_type: this.questionType,
+            // Options array
+            options: this.options,
+            // Both formats for correct answer
+            correctAnswer: this.correctAnswer,
+            correct_answer: this.correctAnswer,
+            correctAnswerIndex: this.correctAnswerIndex,
+            correct_answer_index: this.correctAnswerIndex,
+            // Other fields
+            points: this.points,
+            explanation: this.explanation,
+            order: this.order,
+            createdAt: this.createdAt,
+            created_at: this.createdAt,
+            updatedAt: this.updatedAt,
+            updated_at: this.updatedAt
+        };
     }
 }
 

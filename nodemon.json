@@ -1,0 +1,4 @@
+{
+  "ignore": ["views/**/*.ejs", "*.ejs"],
+  "ext": "js,json"
+}
