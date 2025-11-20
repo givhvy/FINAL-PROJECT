@@ -59,10 +59,54 @@ function chunkArray(array, size) {
     return chunks;
 }
 
+/**
+ * Check if document exists
+ * @param {string} collection - Collection name
+ * @param {string} docId - Document ID
+ * @returns {boolean} True if exists
+ */
+async function docExists(collection, docId) {
+    const db = getFirestore();
+    const doc = await db.collection(collection).doc(docId).get();
+    return doc.exists;
+}
+
+/**
+ * Batch delete documents
+ * @param {string} collection - Collection name
+ * @param {Array} docIds - Array of document IDs to delete
+ */
+async function batchDelete(collection, docIds) {
+    if (!docIds || docIds.length === 0) return;
+
+    const db = getFirestore();
+    const batch = db.batch();
+    docIds.forEach(id => {
+        batch.delete(db.collection(collection).doc(id));
+    });
+
+    await batch.commit();
+}
+
+/**
+ * Transaction wrapper with error handling
+ * @param {Function} callback - Transaction callback function
+ * @returns {*} Transaction result
+ */
+async function transactionWrapper(callback) {
+    const db = getFirestore();
+    return await db.runTransaction(async (transaction) => {
+        return await callback(transaction);
+    });
+}
+
 module.exports = {
     NotFoundError,
     ValidationError,
     getDocOrThrow,
     batchGetByIds,
-    chunkArray
+    chunkArray,
+    docExists,
+    batchDelete,
+    transactionWrapper
 };
