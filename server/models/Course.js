@@ -241,33 +241,6 @@ class Course {
     }
 
     /**
-     * Cập nhật rating của khóa học
-     * @param {string} id - Course ID
-     * @param {number} newRating - Rating mới
-     * @returns {Promise<Course>} - Course object đã cập nhật
-     */
-    static async updateRating(id, newRating) {
-        try {
-            const db = this.getDB();
-            const courseRef = db.collection('courses').doc(id);
-            const doc = await courseRef.get();
-
-            if (!doc.exists) {
-                throw new Error('Course not found');
-            }
-
-            await courseRef.update({
-                rating: newRating,
-                updatedAt: new Date().toISOString()
-            });
-
-            return await this.findById(id);
-        } catch (error) {
-            throw new Error(`Error updating rating: ${error.message}`);
-        }
-    }
-
-    /**
      * Publish/Unpublish khóa học
      * @param {string} id - Course ID
      * @param {boolean} isPublished - Trạng thái publish
