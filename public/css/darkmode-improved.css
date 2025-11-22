@@ -217,7 +217,3 @@
     border-top-color: var(--border-color) !important;
 }
 
-/* Newsletter Section */
-.dark #newsletter-section {
-    background: #000000 !important;
-}

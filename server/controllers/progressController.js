@@ -95,6 +95,8 @@ exports.resetCourseProgress = async (req, res) => {
   }
 };
 
+
+
 // Bulk update lessons progress
 exports.bulkUpdateProgress = async (req, res) => {
   try {

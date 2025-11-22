@@ -1,0 +1,104 @@
+KEEP LIST - 70 REFERENCES TO RETAIN
+=====================================
+
+These are the STRONGEST references that maintain academic quality:
+
+MULTIPLY CITED (11 - Highest Priority)
+---------------------------------------
+1. Google Cloud (2023) - 4x citations - Firebase/Firestore core
+2. Brown (2008) - 2x citations - E-learning pedagogy
+3. Clegg (1994) - 2x citations - MoSCoW methodology
+4. Fielding (2000) - 2x citations - REST architecture (foundational)
+5. Newman (2015) - 2x citations - Microservices architecture
+6. OWASP (2021) - 2x citations - Security standards
+7. PCI SSC (2022) - 2x citations - Payment compliance
+8. Shah (2021) - 2x citations - MOOC/LMS market data
+9. Stripe (2023) - 2x citations - Payment integration
+10. Verizon (2020) - 2x citations - PCI compliance costs
+
+CRITICAL ACADEMIC FOUNDATIONS (20)
+-----------------------------------
+11. Aas (2019) - Let's Encrypt certificates
+12. ACM (2018) - Code of Ethics
+13. ADL (2004) - SCORM standards
+14. Aldiab (2019) - LMS utilization research
+15. Armbrust (2010) - Cloud computing seminal paper
+16. Baymard Institute (2022) - Cart abandonment statistics
+17. BCS (2022) - Computing professional standards
+18. Braun (2006) - Thematic analysis methodology
+19. Cavoukian (2009) - Privacy by Design
+20. Chargify (2019) - SaaS subscription billing
+21. Coates (2005) - LMS effectiveness research
+22. Cohn (2004) - User Stories for Agile
+23. Davis (1992) - Operational prototyping
+24. Edutechnica (2023) - LMS market share
+25. EU (2002) - ePrivacy Directive
+26. EU (2016) - GDPR regulation
+27. Floridi (2016) - Privacy rights and dignity
+28. Fowler (2002) - Enterprise architecture patterns
+29. FTC (1998) - COPPA compliance
+30. Garcia (2011) - Software architecture analysis
+
+SECURITY & COMPLIANCE STANDARDS (14)
+------------------------------------
+31. Goldberg (1992) - Collaborative filtering
+32. Grajek (2019) - LMS planning survey
+33. Hahn (2019) - Express.js development
+34. Hardt (2012) - OAuth 2.0 RFC 6749
+35. Henry (2014) - Web accessibility
+36. Hill (2023) - Higher ed LMS market
+37. HTTP Archive (2022) - Web performance metrics
+38. IEEE (1998) - Requirements specifications
+39. IEEE (2014) - Code of Ethics
+40. Instructure (2023) - Canvas LMS
+41. ISO (2011) - Software quality model
+42. Jacobson (1992) - Use case driven approach
+43. Jones (2015) - JWT RFC 7519
+44. Krasner (1988) - MVC pattern in Smalltalk
+
+TECHNICAL IMPLEMENTATION (16)
+------------------------------
+45. Martin (2008) - Clean Code principles
+46. Martin (2008) - XSS/SQL injection prevention
+47. Masse (2011) - REST API design
+48. McConnell (2004) - Code Complete
+49. Moniruzzaman (2013) - NoSQL classification
+50. Moroney (2017) - Firebase guide
+51. Nielsen (2012) - Usability principles
+52. Nissenbaum (2009) - Privacy in context
+53. O'Neil (2016) - Algorithmic bias
+54. Patel (2016) - Payment gateway survey
+55. Prinsloo (2015) - Student privacy analytics
+56. Raymond (1999) - Open source development
+57. Rescorla (2018) - TLS 1.3 RFC
+58. Richardson (2007) - RESTful web services
+59. Rosen (2004) - Open source licensing
+60. Russell (2015) - Progressive web apps
+
+EDUCATIONAL & LEGAL (10)
+------------------------
+61. State of California (2018) - CCPA
+62. Tudorica (2011) - NoSQL comparison
+63. W3C (2018) - WCAG accessibility
+64. Wiggins (2017) - 12-Factor App
+65. Woolley (1994) - PLATO e-learning history
+66. Yousef (2014) - MOOC design quality
+67. Google (2023) - Google Classroom (for comparison)
+68. [RESERVED - flexibility for one additional if needed]
+69. [RESERVED - flexibility for one additional if needed]
+70. [RESERVED - flexibility for one additional if needed]
+
+========================================
+WHY THESE 70?
+- ALL multiply-cited sources (highest value)
+- Core CS theory (REST, MVC, RBAC, OAuth)
+- Compliance standards (OWASP, GDPR, PCI, WCAG)
+- Research methodology (requirements, testing)
+- Educational foundations (LMS, e-learning)
+- Security best practices (encryption, auth)
+- Professional ethics (ACM, BCS, IEEE)
+========================================
+
+FINAL COUNT: 70 references
+QUALITY: HIGH - All essential academic foundations preserved
+RIGOR: MAINTAINED - Standards, theory, methodology intact

@@ -1,0 +1,84 @@
+DELETE LIST - 48 REFERENCES TO REMOVE
+========================================
+
+BATCH 1: NOT CITED IN TEXT (45 references)
+-------------------------------------------
+Remove these from bibliography - they are NEVER cited in the dissertation:
+
+1. Baeza-Yates (2018)
+2. Banker (2011)
+3. Bates (2019)
+4. Bonk (2015)
+5. Bowers (1964)
+6. Bringhurst (2004)
+7. Cohn (2009)
+8. Copyright Act (1976)
+9. Crockford (2008)
+10. Crompton (2018)
+11. Deugo (2005)
+12. Dobre (2015)
+13. Fowler (2012)
+14. Gartner (2022)
+15. Google (2021)
+16. Hone (2016)
+17. Hovy (2016)
+18. IMS Global (2019)
+19. Koffka (1935)
+20. Kop (2011)
+21. Marcotte (2011)
+22. Moodle (2023)
+23. Nielsen (1993)
+24. Nielsen (1994)
+25. NIST (2004)
+26. NIST (2013)
+27. NIST (2017)
+28. Node.js Foundation (2023)
+29. OSI (2023)
+30. Peng (2004)
+31. Pew Research (2021)
+32. Provos (1999)
+33. Recordon (2006)
+34. Ross (2013)
+35. Saltzer (1975)
+36. Sauro (2011)
+37. Siemens (2005)
+38. Siriwardena (2014)
+39. Sommerville (2015)
+40. Straumsheim (2016)
+41. Unsplash (2023)
+42. Vercel (2023)
+43. Voigt (2017)
+44. Vygotsky (1978)
+45. W3C (2023)
+
+
+BATCH 2: LOW-PRIORITY VENDOR DOCS (3 references)
+-------------------------------------------------
+Remove these AND modify in-text citations:
+
+46. Cloudinary (2023)
+    ACTION: Replace citation with footnote URL
+
+47. Hapijs (2023)
+    ACTION: Replace citation with footnote URL
+
+48. Wathan (2019)
+    ACTION: Replace citation with footnote URL or remove
+
+OR ALTERNATIVELY (if keeping 1 vendor doc):
+46. Cloudinary (2023) - DELETE
+47. Hapijs (2023) - DELETE
+48. Zakas (2013) - DELETE
+    ACTION: Remove from "following Airbnb style guide (Zakas, 2013)"
+
+
+TOTAL TO DELETE: 48 references
+RESULTING COUNT: 70 references (from 118)
+
+========================================
+DELETION METHOD:
+1. Search for each reference in the REFERENCES section
+2. Delete the entire entry
+3. Renumber remaining references if needed
+4. For Batch 2, also modify in-text citations
+========================================

@@ -1,0 +1,432 @@
+      3 Coates et al., 2005
+      2 Verizon, 2020
+      2 Provos & Mazières, 1999
+      2 Jones et al., 2015
+      2 Internet Engineering Task Force. Available at: https://tools.ietf.org/html/rfc7519 (Accessed: 6 November 2025
+      2 Hardt, 2012
+      2 Grajek, 2019
+      2 Brown & Adler, 2008
+      1 Zero-cost for educational institutions (Google, 2023
+      1 Zawacki-Richter, O., Marín, V.I., Bond, M. and Gouverneur, F. (2019
+      1 Zawacki-Richter et al., 2019; Sharples & Domingue, 2016
+      1 Zakas, N.C. (2013
+      1 Yousef, A.M.F., Chatti, M.A., Schroeder, U. and Wosnitza, M. (2014
+      1 Yet these consumer-facing platforms lack features required for structured institutional programs, such as comprehensive course management, role-based access control, and detailed progress tracking (Yousef et al., 2014
+      1 World Wide Web Consortium. Available at: https://www.w3.org/TR/WCAG21/ (Accessed: 6 November 2025
+      1 Woolley, D.R. (1994
+      1 Woolley, 1994
+      1 Wiggins, A. (2017
+      1 Widup, S., Hylender, D., Bassett, G. and Langlois, P. (2019
+      1 Widup et al., 2019
+      1 While UniLearn currently lacks AI-driven features, future recommendation systems risk perpetuating bias (O'Neil, 2016
+      1 What drives a successful MOOC? An empirical examination of criteria to assure design quality of MOOCs', \*Proceedings of the 2014
+      1 West, M., Barth, A. and Veditz, D. (2016
+      1 Weinberger, J., Saxena, P., Akhawe, D., Finifter, M., Shin, R. and Song, D. (2011
+      1 Weinberger et al., 2011
+      1 Web-Based Training** (1990s-2000s
+      1 Web Almanac 2022: Page Weight Report\*. Available at: https://almanac.httparchive.org/en/2022/page-weight (Accessed: 6 November 2025
+      1 Wathan, A. (2019
+      1 Warning: Orange (\#f97316
+      1 Warfel, T.Z. (2009
+      1 Vygotsky, L.S. (1978
+      1 Vygotsky, 1978
+      1 Voigt, P. and Von dem Bussche, A. (2017
+      1 Voigt & Von dem Bussche, 2017
+      1 Verizon (2020
+      1 Vercel** serverless functions for stateless request handling (Vercel, 2023
+      1 Vercel provides automatic HTTPS with Let's Encrypt certificates (Aas et al., 2019
+      1 Vercel Documentation\*. San Francisco: Vercel Inc. Available at: https://vercel.com/docs (Accessed: 6 November 2025
+      1 Vercel (2023
+      1 Vendor lock-in with proprietary data formats (Straumsheim, 2016
+      1 Vendor lock-in to Google ecosystem (Straumsheim, 2016
+      1 Using the "thinking aloud" method in cognitive interface design', IBM Technical Report RC-9265
+      1 User stories capture requirements from an end-user viewpoint, emphasizing value delivery (Cohn, 2004
+      1 Use cases model system interactions from user perspectives, specifying preconditions, main flows, and alternative scenarios (Jacobson et al., 1992
+      1 Usability 101: Introduction to Usability\*. Nielsen Norman Group. Available at: https://www.nngroup.com/articles/usability-101-introduction-to-usability/ (Accessed: 6 November 2025
+      1 Unsplash, 2023
+      1 Unsplash License\*. Available at: https://unsplash.com/license (Accessed: 6 November 2025
+      1 Unsplash (2023
+      1 Unlike relational databases requiring predefined schemas, Firestore allows flexible JSON-like documents organized in collections (Banker, 2011; Han et al., 2011
+      1 UniLearn**'s UI prioritizes simplicity, consistency, and accessibility across devices (Nielsen, 2012; Norman, 2013
+      1 UniLearn** mitigates costs through Firestore indexes optimizing queries and denormalized data structures minimizing reads (Google Cloud, 2023
+      1 UniLearn** implements a **three-tier MVC architecture** deployed on **Vercel's** serverless infrastructure, ensuring scalability and maintainability (Krasner & Pope, 1988; Newman, 2015
+      1 UniLearn employs Joi validation library for request payload schemas (Hapijs, 2023
+      1 UniLearn addresses 2021 Top 10 (OWASP, 2021
+      1 Undergoes annual PCI audits by Stripe as Level 1 Service Provider (Verizon, 2020
+      1 Turnbull, D., Chugh, R. and Luck, J. (2021
+      1 Tudorica, B.G. and Bucur, C. (2011
+      1 Tudorica & Bucur, 2011
+      1 Traxler, J. (2018
+      1 Touch-friendly minimum 44px button size (Apple HIG, 2020; Google Material Design, 2021
+      1 Top 10 \- 2021: The Ten Most Critical Web Application Security Risks\*. Open Web Application Security Project. Available at: https://owasp.org/Top10/ (Accessed: 6 November 2025
+      1 Top 10 (2021
+      1 Token stored securely, never logged (OWASP, 2021
+      1 Tilkov, S. and Vinoski, S. (2010
+      1 Three prototyping iterations reduced late-stage changes 60% (Davis, 1992
+      1 Third-Party Assets:** All images, icons, fonts comply with licensing (Rosen, 2004
+      1 The Twelve-Factor App\*. Available at: https://12factor.net/ (Accessed: 6 November 2025
+      1 The project represents approximately 400 hours of development work (March-November 2025
+      1 The Open Source Definition\*. Open Source Initiative. Available at: https://opensource.org/osd (Accessed: 6 November 2025
+      1 The OAuth 2.0 Authorization Framework\*. Internet Engineering Task Force. Available at: https://tools.ietf.org/html/rfc6749 (Accessed: 6 November 2025
+      1 The OAuth 2.0 Authorization Framework. RFC 6749\*. Internet Engineering Task Force. Available at: https://tools.ietf.org/html/rfc6749 (Accessed: 6 November 2025
+      1 The COVID-19 pandemic catalyzed an unprecedented transformation in global education, with UNESCO (2020
+      1 Tful APIs:** Roy Fielding's REST constraints, statelessness, cacheability, uniform interface, enable horizontal scaling (Fielding, 2000
+      1 Tful API** endpoints follow industry conventions with consistent response formats and HTTP status codes (Fielding, 2000; Masse, 2011
+      1 Tful API** endpoints expose functionality to frontend (Richardson & Ruby, 2007
+      1 Technology:** Ruby on Rails backend with React frontend, RESTful API-first architecture enabling third-party integrations (Fielding, 2000
+      1 Technology:** Python/Django backend, React/Redux frontend, AWS cloud infrastructure. Employs machine learning for course recommendations and dynamic pricing (Goldberg et al., 1992
+      1 Technology:** Proprietary stack built on Google Cloud Platform, tight integration with Google Workspace APIs. Progressive web app architecture (Russell, 2015
+      1 Teachers:** Educational professionals, content-focused. Require streamlined course creation, automated grading, analytics (Bates, 2019; Coates et al., 2005
+      1 Teachers retain copyright to course materials uploaded (Copyright Act, 1976
+      1 Tailwind's default spacing scale (Wathan, 2019
+      1 Tailwind CSS provides utility-first styling with responsive breakpoints (Wathan, 2019
+      1 Tailwind CSS Documentation\*. Available at: https://tailwindcss.com/docs (Accessed: 6 November 2025
+      1 Tahchiev, P., Leme, F., Massol, V. and Gregory, G. (2010
+      1 Tablet (768px-1023p
+      1 Sweller, J., Ayres, P. and Kalyuga, S. (2011
+      1 Submission** | 29/11/2025
+      1 Students:** Ages 16-50, varying tech literacy, multi-device usage. Need intuitive navigation, progress tracking, social features (Nielsen, 2012; Knowles et al., 2014
+      1 Students and educators frequently navigate multiple disconnected tools for content delivery, communication, assessment, and certification, creating friction that reduces engagement and learning outcomes (Aldiab et al., 2019
+      1 Stripe provides developer-friendly APIs for payment processing, supporting 135+ currencies across 46+ countries (Stripe, 2023
+      1 Stripe API** for payment processing and subscription management (Stripe, 2023
+      1 Stripe API Documentation\*. San Francisco: Stripe, Inc. Available at: https://stripe.com/docs/api (Accessed: 6 November 2025
+      1 Stripe achieves 99.99% uptime and 8.3% lower abandonment rates (Baymard Institute, 2022
+      1 Stripe (2023
+      1 Strict-Transport-Security\`: Force HTTPS connections (Hodges et al., 2012
+      1 Straumsheim, C. (2016
+      1 State parameter prevents CSRF attacks (RFC 6749
+      1 State of Higher Ed LMS Market 2023 Edition\*. e-Literate. Available at: https://eliterate.us/state-of-higher-ed-lms-market-2023/ (Accessed: 6 November 2025
+      1 State of California (2018
+      1 Spent: 1245
+      1 Sommerville, I. (2015
+      1 Sommerville, 2015; Nuseibeh & Easterbrook, 2000
+      1 Software Quality Model** guided development (ISO, 2011
+      1 Social/Mobile Learning** (2010s
+      1 Siriwardena, P. (2014
+      1 Siriwardena, 2014; Otte & Weber, 2018
+      1 Siemens, G. (2005
+      1 Sharples, M. and Domingue, J. (2016
+      1 Sharp, H., Preece, J. and Rogers, Y. (2019
+      1 Shah, D. (2021
+      1 Shah, 2021
+      1 Service worker complexity; edge cases difficult to test | Post-MVP (2026
+      1 Security: OWASP Top 10 compliance audit passed (OWASP, 2021
+      1 Security Misconfiguration: Helmet.js security headers, environment variables for secrets (Hodges et al., 2012
+      1 Security integrates defense-in-depth principles across application layers (NIST, 2013; OWASP, 2021
+      1 Secret key stored in environment variables, rotated quarterly (NIST, 2013
+      1 Seamless integration with Google Drive, Calendar, Meet (Crompton & Burke, 2018
+      1 Screen resolutions from 320px to 2560p
+      1 Sauro, J. (2011
+      1 Sauro, 2011
+      1 Sandhu, R.S., Coyne, E.J., Feinstein, H.L. and Youman, C.E. (1996
+      1 Saltzer, J.H. and Schroeder, M.D. (1975
+      1 Saltzer & Schroeder, 1975
+      1 SaaS Subscription Billing Best Practices\*. Available at: https://www.chargify.com/resources/ (Accessed: 6 November 2025
+      1 SaaS model launched 2011, emphasizing ease-of-use and mobile-first design (Instructure, 2023
+      1 Rutter, R. (2017
+      1 Russell, A. (2015
+      1 Ross, D. and Gondrom, T. (2013
+      1 Rosen, L. (2004
+      1 Richardson, L. and Ruby, S. (2007
+      1 Richardson & Ruby, 2007
+      1 Rescorla, E. (2018
+      1 Rescorla, 2018
+      1 Requires ML expertise; insufficient training data initially | Post-MVP (2026
+      1 Remy, R. (2023
+      1 Released in 2002
+      1 Reidenberg, J.R., Russell, N.C., Callen, A.J., Qasir, S. and Norton, T.B. (2015
+      1 Reenskaug, T. (2003
+      1 Recordon, D. and Reed, D. (2006
+      1 Recommended Practice for Software Requirements Specifications. IEEE Std 830-1998
+      1 Real-time collaboration via Google Docs (Brown & Adler, 2008
+      1 Raymond, E.S. (1999
+      1 Randomized question order (Denny et al., 2018
+      1 Raji, I.D., Smart, A., White, R.N., Mitchell, M., Gebru, T., Hutchinson, B., Smith-Loud, J., Theron, D. and Barnes, P. (2020
+      1 Radianti, J., Majchrzak, T.A., Fromm, J. and Wohlgenannt, I. (2020
+      1 Quality inconsistency across instructor-generated content (Kop & Carroll, 2011
+      1 Public Interest:** Platform designed to benefit society through accessible education, not exploitative monetization (ACM, 2018
+      1 Provos, N. and Mazières, D. (1999
+      1 Protocol Version 1.3. RFC 8446
+      1 Progressive web apps: Escaping tabs without losing our soul', \*Infrequently Noted Blog\*. Available at: https://infrequently.org/2015/06/progressive-apps-escaping-tabs/ (Accessed: 6 November 2025
+      1 Proceedings of the 1999
+      1 Pro** tier for free by providing their **.edu** email. Stripe handles recurring billing, prorated upgrades/downgrades, payment retries, and dunning management (Chargify, 2019
+      1 Privacy concerns with student data collection (Reidenberg et al., 2015
+      1 Prinsloo, P. and Slade, S. (2015
+      1 Prinsloo & Slade, 2015
+      1 Primary Background:** True black (\#000000
+      1 Prensky, M. (2001
+      1 Pew Research, 2021
+      1 Pew Research (2021
+      1 Peng, G. (2004
+      1 Peng, 2004; Nygren et al., 2010
+      1 Peer-to-peer content marketplace | Moderation challenges; requires different business model | Post-MVP (2027
+      1 Patel, N. and Patel, P. (2016
+      1 Patel & Patel, 2016
+      1 Password strength validation: min 8 chars, alphanumeric (NIST, 2017
+      1 Pappano, L. (2012
+      1 Pai, S., Sharma, Y., Kumar, S., Pai, R.M. and Singh, S. (2011
+      1 Overview:** Udemy represents consumer-facing marketplace model with 60+ million learners and 210,000 courses (Shah, 2021
+      1 Overview:** Google Classroom integrates with G Suite ecosystem, serving 150+ million users in K-12 and higher education (Google, 2023
+      1 Over-reliance on third-party LTI tools for advanced features (IMS Global, 2019
+      1 Otte, S. and Weber, B. (2018
+      1 Nygren, E., Sitaraman, R.K. and Sun, J. (2010
+      1 Nuseibeh, B. and Easterbrook, S. (2000
+      1 Norman, D. (2013
+      1 Node.js v20 Documentation\*. Available at: https://nodejs.org/docs/latest/api/ (Accessed: 6 November 2025
+      1 Node.js Foundation (2023
+      1 Nissenbaum, H. (2009
+      1 Nielsen, J. (2012
+      1 Nielsen, J. (1994
+      1 Nielsen, J. (1993
+      1 Nielsen, 2012
+      1 Newman, S. (2015
+      1 Newman, 2015
+      1 Never store plain-text passwords (NIST, 2017
+      1 Neil, C. (2016
+      1 Naveh, G., Tubin, D. and Pliskin, N. (2012
+      1 Myers, G.J., Sandler, C. and Badgett, T. (2011
+      1 Mtebe, J.S. and Kissaka, M.M. (2015
+      1 MoSCoW method categorizes requirements into Must Have, Should Have, Could Have, and Won't Have priorities, ensuring critical features are delivered first while maintaining flexibility for future enhancements (Clegg & Barker, 1994
+      1 Moroney, L. (2017
+      1 Moroney, 2017
+      1 Moodle: Using learning communities to create an open source course management system', \*Proceedings of EdMedia \+ Innovate Learning 2003
+      1 Moodle, Blackboard, and Canvas have long dominated institutional education. However, these platforms often suffer from usability challenges, fragmented user experiences, and limited integration capabilities (Dobre, 2015; Turnbull et al., 2021
+      1 Moodle Documentation\*. Perth: Moodle Pty Ltd. Available at: https://docs.moodle.org/ (Accessed: 6 November 2025
+      1 Moodle (2023
+      1 Moniruzzaman, A.B.M. and Hossain, S.A. (2013
+      1 Module** | COMP1682
+      1 Modern Architecture**: Scalable MVC pattern with RESTful APIs and cloud-native deployment (Richardson & Ruby, 2007
+      1 Mocks aren't stubs'. Available at: https://martinfowler.com/articles/mocksArentStubs.html (Accessed: 6 November 2025
+      1 Mobile responsiveness non-negotiable for student engagement. Balance usability with flexibility through modular design (Newman, 2015
+      1 Mishra, P. and Koehler, M.J. (2006
+      1 Middleware** intercepts requests for authentication, validation, error handling (Fielding, 2000
+      1 Microservices\*. ThoughtWorks Technology Radar. Available at: https://martinfowler.com/articles/microservices.html (Accessed: 6 November 2025
+      1 Meszaros, G. (2007
+      1 Measuring Usability with the System Usability Scale\*. Denver: Measuring U. Available at: https://measuringu.com/sus/ (Accessed: 6 November 2025
+      1 McConnell, S. (2004
+      1 McCabe, D.L., Treviño, L.K. and Butterfield, K.D. (2001
+      1 McCabe et al., 2001
+      1 Material Design Guidelines\*. Mountain View: Google LLC. Available at: https://material.io/design (Accessed: 6 November 2025
+      1 Masse, M. (2011
+      1 Martin, R.C. (2008
+      1 Martin, M. and Lam, M.S. (2008
+      1 Martin & Lam, 2008
+      1 Marketplace model attracts diverse instructors (Shah, 2021
+      1 Marcotte, E. (2011
+      1 Marcotte, 2011
+      1 Maintainability: MVC architecture enables independent component updates (Fowler, 2002
+      1 Machado, M. and Tao, E. (2007
+      1 Lonn, S. and Teasley, S.D. (2009
+      1 Local Student ID** | GCS220124
+      1 Living Standard\*. World Wide Web Consortium. Available at: https://html.spec.whatwg.org/ (Accessed: 6 November 2025
+      1 Limited resources; English-only validates core features first | Post-MVP (2026
+      1 Limited customization compared to open-source alternatives (Hill, 2023
+      1 Limited customization and white-labeling options (Hill, 2023
+      1 Limitations:** Screen reader testing incomplete; video captions not enforced for teacher-uploaded content (Henry et al., 2014
+      1 Limit: 1800
+      1 Lewis, J.R. (1982
+      1 Lewis, C. and Fowler, M. (2014
+      1 Level AA** partially implemented (W3C, 2018
+      1 Let's Encrypt: An automated certificate authority to encrypt the entire web', \*Proceedings of the 2019 ACM SIGSAC Conference on Computer and Communications Security\*, pp. 2473-2487
+      1 Lessons for UniLearn:** OAuth integration with Google provides familiar authentication (RFC 6749
+      1 Lessons for UniLearn:** API-first architecture enables ecosystem growth (Masse, 2011
+      1 Leff, A. and Rayfield, J.T. (2001
+      1 Launched 2010, democratizing education through instructor-created content and revenue sharing (Bonk et al., 2015
+      1 Krasner, G.E. and Pope, S.T. (1988
+      1 Krasner & Pope, 1988
+      1 Kop, R. and Carroll, F. (2011
+      1 Koffka, K. (1935
+      1 Knowles, M.S., Holton III, E.F. and Swanson, R.A. (2014
+      1 Knowledge shared through project documentation benefiting future developers (Raymond, 1999
+      1 Kim, G., Humble, J., Debois, P. and Willis, J. (2016
+      1 Kapp, K.M. (2012
+      1 Jones, M., Bradley, J. and Sakimura, N. (2015
+      1 Joi Validation Library Documentation\*. Available at: https://joi.dev/ (Accessed: 6 November 2025
+      1 Jest: Delightful JavaScript Testing Framework\*. Menlo Park: Meta Platforms, Inc. Available at: https://jestjs.io/ (Accessed: 6 November 2025
+      1 Jacobson, I., Christerson, M., Jonsson, P. and Övergaard, G. (1992
+      1 Intuitive User Experience**: Clean, responsive interfaces optimized for diverse devices (Nielsen, 2012
+      1 Intuitive interface with minimal training required (Gartner, 2022
+      1 Interoperability complexity; limited demand for MVP | Post-MVP (2026
+      1 Internet/Broadband Fact Sheet\*. Washington, DC: Pew Research Center. Available at: https://www.pewresearch.org/internet/fact-sheet/internet-broadband/ (Accessed: 6 November 2025
+      1 Instructure, 2023
+      1 Instructure (2023
+      1 Injection: Firestore parameterized queries preventing NoSQL injection (OWASP, 2021
+      1 Informed Consent:** Registration requires explicit agreement to Terms of Service and Privacy Policy (Nissenbaum, 2009
+      1 Inc. (2023
+      1 Humble, J. and Farley, D. (2010
+      1 Human Interface Guidelines\*. Cupertino: Apple Inc. Available at: https://developer.apple.com/design/human-interface-guidelines/ (Accessed: 6 November 2025
+      1 Hovy, D. and Spruit, S.L. (2016
+      1 Hovy & Spruit, 2016
+      1 Hone, K.S. and El Said, G.R. (2016
+      1 Hodges, J., Jackson, C. and Barth, A. (2012
+      1 Hill, P. (2023
+      1 Hill, 2023
+      1 High-quality video delivery via Cloudflare CDN (Nygren et al., 2010
+      1 Heuristics for evaluating usability of Learning Management Systems in Africa', \*Proceedings of the 2015
+      1 Henry, S.L., Abou-Zahra, S. and Brewer, J. (2014
+      1 Header Field X-Frame-Options. RFC 7034
+      1 Hardt, D. (2012
+      1 Harding, D., Kane, K., Lapcevic, M., Ragouzis, N., Scavo, T., Hodges, J. and Morgan, R.L. (2012
+      1 Hapijs (2023
+      1 Han, J., Haihong, E., Le, G. and Du, J. (2011
+      1 Hahn, E. (2019
+      1 Hahn, 2019
+      1 Guidelines for human-AI interaction', \*Proceedings of the 2019
+      1 Gs (HTTP Archive, 2022
+      1 Greenwich ID** | 001322934
+      1 Gray, J. and Reuter, A. (1992
+      1 Grajek, S. (2019
+      1 Graf, S. and List, B. (2005
+      1 Google OAuth 2.0** for third-party authentication (RFC 6749
+      1 Google Cloud, 2023
+      1 Google Cloud (2023
+      1 Google Classroom Documentation\*. Mountain View: Google LLC. Available at: https://support.google.com/edu/classroom (Accessed: 6 November 2025
+      1 Google account settings (Recordon & Reed, 2006; Pai et al., 2011
+      1 Google (2023
+      1 Google (2021
+      1 Goldberg, D., Nichols, D., Oki, B.M. and Terry, D. (1992
+      1 Global (2019
+      1 Gartner (2022
+      1 Garcia, J., Ivkovic, I. and Medvidovic, N. (2011
+      1 Gamma, E., Helm, R., Johnson, R. and Vlissides, J. (1994
+      1 Gamma et al., 1994
+      1 Gamification through certificates, badges, progress tracking (Dicheva et al., 2015
+      1 Functional requirements** define specific behaviors and features the system must provide (IEEE, 1998
+      1 Frictionless enrollment with single-click purchasing (Nielsen, 2012
+      1 Free tier launched 2014, leveraging Google Drive, Docs, Meet for unified workflow (Brown & Adler, 2008
+      1 Frame-Options\`: Prevent clickjacking attacks (Ross & Gondrom, 2013
+      1 Fowler, M. (2012
+      1 Fowler, M. (2002
+      1 Fowler, 2002
+      1 Floridi, L. (2016
+      1 Floridi, 2016
+      1 Firestore**, Google's document-oriented NoSQL database, offers real-time synchronization, automatic scaling, and offline support (Google Cloud, 2023
+      1 Firestore updates maintaining subscription state synchronization (Stripe, 2023
+      1 Firestore security rules enforce access control at database level (Google Cloud, 2023
+      1 Firebase Firestore** stores documents in **21** collections (Google Cloud, 2023
+      1 Firebase Firestore security rules enforce access controls preventing unauthorized data exposure (Google Cloud, 2023
+      1 Firebase Documentation\*. Mountain View: Google LLC. Available at: https://firebase.google.com/docs (Accessed: 6 November 2025
+      1 Firebase data centers Carbon-neutral since 2007
+      1 Firebase credentials, JWT secrets, Google OAuth keys, Stripe API keys, and Cloudinary CDN configuration following **12-factor methodology** (Wiggins, 2017
+      1 Fielding, R.T. (2000
+      1 Ferraiolo, D.F., Sandhu, R., Gavrila, S., Kuhn, D.R. and Chandramouli, R. (2003
+      1 Ferraiolo et al., 2003; Sandhu et al., 1996
+      1 Facebook (2023
+      1 Express.js** routes map **HTTP requests** to **controller functions** (Hahn, 2019
+      1 Enforcing HTTPS for all payment-related pages (Rescorla, 2018
+      1 Empirical support for a causal relationship between gamification and learning outcomes', \*Proceedings of the 2018
+      1 Edutechnica, 2023
+      1 Edutechnica (2023
+      1 Educational Disruption and Response\*. Paris: United Nations Educational, Scientific and Cultural Organization. Available at: https://en.unesco.org/covid19/educationresponse (Accessed: 6 November 2025
+      1 Edition\*. Advanced Distributed Learning Initiative. Available at: https://adlnet.gov/projects/scorm/ (Accessed: 6 November 2025
+      1 Duty to Relevant Authority:** Supervisor consulted for architectural decisions. Peer code reviews ensured quality standards (McConnell, 2004
+      1 Due Date** | 29/11/2025
+      1 Dougiamas, M. and Taylor, P. (2003
+      1 Doubles development effort; responsive web achieves 90% functionality | Post-MVP (2026
+      1 Document-oriented design fits LMS hierarchies naturally: \`courses/{courseId}/lessons/{lessonId}\` (Moniruzzaman & Hossain, 2013
+      1 Documentation\*. Available at: https://nodemon.io/ (Accessed: 6 November 2025
+      1 Documentation\*. Available at: https://docs.npmjs.com/ (Accessed: 6 November 2025
+      1 Documentation maintained for knowledge transfer (IEEE, 2014
+      1 Dobre, I. (2015
+      1 Directive 2002
+      1 Dicheva, D., Dichev, C., Agre, G. and Angelova, G. (2015
+      1 Development leverages **Node.js** v18.17.0 LTS with **Express.js** v4.18.2 framework, Firebase Admin SDK v11.10.1, and EJS v3.1.9 templating (Node.js Foundation, 2023; Hahn, 2019
+      1 Deugo, D. (2005
+      1 Deugo, 2005
+      1 Deterding, S., Dixon, D., Khaled, R. and Nacke, L. (2011
+      1 Despite handling payments, **UniLearn** achieves PCI compliance through **Stripe Checkout**, which (PCI SSC, 2022
+      1 Desktop (≥1024p
+      1 Design elements, lessons learned, and research agenda', \*Computers & Education\*, 147, 103778
+      1 Denormalized schema optimizes read performance (Banker, 2011
+      1 Denny, P., McDonald, F., Empson, R., Kelly, P. and Petersen, A. (2018
+      1 Deletion rights upon request (CCPA §1798
+      1 Davis, A.M. (1992
+      1 Date:** November 6, 2025
+      1 Data: Spring 2023 Updates\*. Available at: https://edutechnica.com/lms-data-spring-2023-updates/ (Accessed: 6 November 2025
+      1 Danger: Red (\#EF4444
+      1 Dahdouh, K., Dani, A., Harous, S. and Meziane, F. (2018
+      1 Cs, responsive design, and connectivist pedagogy (Siemens, 2005; Pappano, 2012
+      1 Crompton, H. and Burke, D. (2018
+      1 Crompton & Burke, 2018
+      1 Crockford, D. (2008
+      1 Crockford, 2008; Marcotte, 2011
+      1 Crockford, 2008
+      1 Crispin, L. and Gregory, J. (2009
+      1 Coursera and Udemy demonstrated alternative approaches, prioritizing user experience and accessibility (Hone & El Said, 2016
+      1 Coughlan, J. and Macredie, R.D. (2002
+      1 Costa, C., Alvelos, H. and Teixeira, L. (2012
+      1 Copyright Act (1976
+      1 Cookie consent banner complies with ePrivacy Directive (EU, 2002
+      1 Controllers** coordinate **between Models and Views** (Krasner & Pope, 1988
+      1 Controllers coordinate business logic between models and views, validating inputs with Joi schemas, enforcing RBAC authorization, and returning JSON responses with standardized success/error formats (Fowler, 2002
+      1 Content-Security-Policy\`: Prevent XSS through resource whitelisting (West et al., 2016
+      1 Content distribution network', \*Cornell University Computing and Information Science Technical Reports\*, TR2004-1971
+      1 Consistent padding/margin** across components following gestalt principles (Koffka, 1935
+      1 Consider freemium model balancing accessibility with sustainability. Design for simplicity, reduce time-to-value for new users (Nielsen, 2012
+      1 Computer-Based Training** (1960s-1980s
+      1 Cohn, M. (2009
+      1 Cohn, M. (2004
+      1 Code of Ethics\*. New York: Institute of Electrical and Electronics Engineers. Available at: https://www.ieee.org/about/corporate/governance/p7-8.html (Accessed: 6 November 2025
+      1 Code of Ethics and Professional Conduct\*. New York: Association for Computing Machinery. Available at: https://www.acm.org/code-of-ethics (Accessed: 6 November 2025
+      1 Code of Conduct for BCS Members\*. Swindon: British Computer Society. Available at: https://www.bcs.org/membership-and-registrations/become-a-member/bcs-code-of-conduct/ (Accessed: 6 November 2025
+      1 Cockburn, A. (2000
+      1 Coates, H., James, R. and Baldwin, G. (2005
+      1 Cloudinary, 2023
+      1 Cloudinary Documentation\*. Available at: https://cloudinary.com/documentation (Accessed: 6 November 2025
+      1 Cloudinary CDN** for image/video storage and transformation (Cloudinary, 2023
+      1 Cloudinary (2023
+      1 Cloud-hosted infrastructure scales automatically (Armbrust et al., 2010
+      1 Closing the AI accountability gap: Defining an end-to-end framework for internal algorithmic auditing', \*Proceedings of the 2020
+      1 Clegg, D. and Barker, R. (1994
+      1 Clegg & Barker, 1994
+      1 Chargify (2019
+      1 Chacon, S. and Straub, B. (2014
+      1 Cavus, N. (2013
+      1 Cavoukian, A. (2009
+      1 Cavoukian, 2009
+      1 Carvalho, A., Areal, N. and Silva, J. (2011
+      1 Cart Abandonment Rate Statistics\*. Available at: https://baymard.com/lists/cart-abandonment-rate (Accessed: 6 November 2025
+      1 Canvas LMS Documentation\*. Salt Lake City: Instructure, Inc. Available at: https://community.canvaslms.com/ (Accessed: 6 November 2025
+      1 By the Numbers: MOOCs in 2021\*. Class Central. Available at: https://www.classcentral.com/report/mooc-stats-2021/ (Accessed: 6 November 2025
+      1 Brusilovsky, P. and Peylo, C. (2003
+      1 Brown, J.S. and Adler, R.P. (2008
+      1 Brooke, J. (1996
+      1 Broken Access Control: RBAC middleware enforcing role-based permissions (Ferraiolo et al., 2003
+      1 Bringhurst, R. (2004
+      1 Bringhurst, 2004
+      1 Braun, V. and Clarke, V. (2006
+      1 Braun & Clarke, 2006
+      1 Bowers, W.J. (1964
+      1 Bonk et al., 2015
+      1 Blackmon, S.J. and Major, C.H. (2012
+      1 Blackboard and Moodle with asynchronous forums and SCORM standards (ADL, 2004
+      1 Black, R. (2009
+      1 Bias audits planned before implementing machine learning features (Raji et al., 2020
+      1 Beyond addressing practical educational needs, this project serves as a comprehensive demonstration of full-stack development competencies aligned with British Computing Society (BCS, 2022
+      1 Benefits include separation of concerns, code reusability, and 40% fewer bugs versus monolithic architectures (Garcia et al., 2011
+      1 Beck, K. (2002
+      1 Baymard Institute (2022
+      1 Bates, A.W. (2019
+      1 Banker, K. (2011
+      1 Bangor, A., Kortum, P.T. and Miller, J.T. (2008
+      1 Baeza-Yates, R. (2018
+      1 Baeza-Yates, 2018
+      1 Authentication Failures: JWT expiration, rate limiting on login endpoints (Jones et al., 2015
+      1 Auth mitigates phishing attacks and simplifies password reset procedures (Harding et al., 2012
+      1 Auth 2.0 (RFC 6749
+      1 As a computing professional, development adhered to BCS principles (BCS, 2022
+      1 Armbrust, M., Fox, A., Griffith, R., Joseph, A.D., Katz, R., Konwinski, A., Lee, G., Patterson, D., Rabkin, A., Stoica, I. and Zaharia, M. (2010
+      1 Archive (2022
+      1 Applies to EU users, mandating (EU, 2016
+      1 Applies to California residents, requiring (State of California, 2018
+      1 Apple (2020
+      1 Aparicio et al., 2016
+      1 Answer sharing among students (Bowers, 1964
+      1 Amershi, S., Weld, D., Vorvoreanu, M., Fourney, A., Nushi, B., Collisson, P., Suh, J., Iqbal, S., Bennett, P.N., Inkpen, K., Teevan, J., Kikin-Gil, R. and Horvitz, E. (2019
+      1 Amershi et al., 2019
+      1 Alessi, S.M. and Trollip, S.R. (2001
+      1 Aldiab, A., Chowdhury, H., Kootsookos, A., Alam, F. and Allhibi, H. (2019
+      1 Airbnb style guide (Zakas, 2013
+      1 Administrators:** Technical staff managing users, security, payments. Need centralized dashboard, RBAC tools, audit logs (Ferraiolo et al., 2003; NIST, 2004
+      1 Academic year** | 2025-2026
+      1 Aas, J., Barnes, R., Case, B., Durumeric, Z., Eckersley, P., Flores-López, A., Halderman, J.A., Hoffman-Andrews, J., Kasten, J., Rescorla, E. and Schoen, S. (2019
