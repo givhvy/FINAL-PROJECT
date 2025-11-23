@@ -719,13 +719,35 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="blog-featured-image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image URL</label>
-                            <input type="url" id="blog-featured-image" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="https://example.com/image.jpg">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Featured Image</label>
+                            <!-- Drag & Drop Upload Area -->
+                            <div id="blog-image-dropzone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                <div id="blog-image-placeholder" class="space-y-2">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
+                                    <p class="text-sm text-gray-500">Drag & drop an image here or click to browse</p>
+                                    <p class="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                                <div id="blog-image-preview-container" class="hidden">
+                                    <img id="blog-image-preview" class="max-h-32 mx-auto rounded-lg" alt="Preview">
+                                    <button type="button" id="blog-remove-image" class="mt-2 text-sm text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times mr-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="file" id="blog-image-file" accept="image/*" class="hidden">
+                            <input type="hidden" id="blog-featured-image">
+                            <!-- Upload Progress -->
+                            <div id="blog-upload-progress" class="hidden mt-2">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="blog-progress-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Uploading...</p>
+                            </div>
                         </div>
 
                         <div>
-                            <label for="blog-status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-                            <select id="blog-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <label for="blog-status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                            <select id="blog-status" class="block w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-gray-700">
                                 <option value="draft">Draft</option>
                                 <option value="published">Published</option>
                             </select>
@@ -1641,9 +1663,17 @@ Dates:
                         blogEditor.setContents(delta, 'silent');
                     }
 
-                    document.getElementById('blog-featured-image').value = post.featured_image || '';
+                    document.getElementById('blog-featured-image').value = post.featured_image || post.featuredImage || '';
                     document.getElementById('blog-status').value = post.status || 'draft';
                     document.getElementById('blog-tags').value = (post.tags || []).join(', ');
+
+                    // Show image preview if exists
+                    const imageUrl = post.featured_image || post.featuredImage;
+                    if (imageUrl) {
+                        showBlogImagePreview(imageUrl);
+                    } else {
+                        resetBlogImageUpload();
+                    }
                 }
             } else {
                 blogModalTitle.textContent = 'Create New Blog Post';
@@ -1651,6 +1681,8 @@ Dates:
                 if (blogEditor) {
                     blogEditor.setText('');
                 }
+                // Reset image upload
+                resetBlogImageUpload();
             }
 
             blogModal.classList.remove('hidden');
@@ -1659,6 +1691,130 @@ Dates:
         // Close blog modal
         function closeBlogModal() {
             blogModal.classList.add('hidden');
+            resetBlogImageUpload();
+        }
+
+        // --- BLOG IMAGE UPLOAD FUNCTIONS ---
+        let blogUploadedImageUrl = null;
+
+        // Blog image upload elements
+        const blogImageDropzone = document.getElementById('blog-image-dropzone');
+        const blogImageFileInput = document.getElementById('blog-image-file');
+        const blogImagePlaceholder = document.getElementById('blog-image-placeholder');
+        const blogImagePreviewContainer = document.getElementById('blog-image-preview-container');
+        const blogImagePreview = document.getElementById('blog-image-preview');
+        const blogRemoveImageBtn = document.getElementById('blog-remove-image');
+        const blogUploadProgress = document.getElementById('blog-upload-progress');
+        const blogProgressBar = document.getElementById('blog-progress-bar');
+
+        // Show image preview
+        function showBlogImagePreview(url) {
+            blogImagePreview.src = url;
+            blogImagePlaceholder.classList.add('hidden');
+            blogImagePreviewContainer.classList.remove('hidden');
+            document.getElementById('blog-featured-image').value = url;
+            blogUploadedImageUrl = url;
+        }
+
+        // Reset image upload
+        function resetBlogImageUpload() {
+            blogImagePlaceholder.classList.remove('hidden');
+            blogImagePreviewContainer.classList.add('hidden');
+            blogUploadProgress.classList.add('hidden');
+            blogProgressBar.style.width = '0%';
+            blogImageFileInput.value = '';
+            document.getElementById('blog-featured-image').value = '';
+            blogUploadedImageUrl = null;
+        }
+
+        // Upload image to Cloudinary
+        async function uploadBlogImage(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            blogUploadProgress.classList.remove('hidden');
+            blogProgressBar.style.width = '30%';
+
+            try {
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                blogProgressBar.style.width = '70%';
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Upload failed');
+                }
+
+                const data = await response.json();
+                blogProgressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    blogUploadProgress.classList.add('hidden');
+                    showBlogImagePreview(data.url);
+                }, 500);
+
+            } catch (error) {
+                console.error('Blog image upload error:', error);
+                alert('Failed to upload image: ' + error.message);
+                blogUploadProgress.classList.add('hidden');
+                blogProgressBar.style.width = '0%';
+            }
+        }
+
+        // Dropzone click handler
+        if (blogImageDropzone) {
+            blogImageDropzone.addEventListener('click', (e) => {
+                if (e.target.id !== 'blog-remove-image' && !e.target.closest('#blog-remove-image')) {
+                    blogImageFileInput.click();
+                }
+            });
+
+            // Drag & Drop handlers
+            blogImageDropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                blogImageDropzone.classList.add('border-blue-500', 'bg-blue-50');
+            });
+
+            blogImageDropzone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                blogImageDropzone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+
+            blogImageDropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                blogImageDropzone.classList.remove('border-blue-500', 'bg-blue-50');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    uploadBlogImage(files[0]);
+                } else {
+                    alert('Please drop an image file (PNG, JPG, GIF)');
+                }
+            });
+        }
+
+        // File input change handler
+        if (blogImageFileInput) {
+            blogImageFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    uploadBlogImage(file);
+                }
+            });
+        }
+
+        // Remove image button handler
+        if (blogRemoveImageBtn) {
+            blogRemoveImageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resetBlogImageUpload();
+            });
         }
 
         // Edit blog post
