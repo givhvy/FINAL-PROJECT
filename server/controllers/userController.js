@@ -297,7 +297,7 @@ exports.verifyStudent = async (req, res) => {
         if (err.message.includes('not found')) {
             return res.status(404).json({ error: err.message });
         }
-        if (err.message.includes('does not match') || err.message.includes('educational')) {
+        if (err.message.includes('educational')) {
             return res.status(400).json({ error: err.message });
         }
 

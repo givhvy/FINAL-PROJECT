@@ -196,10 +196,21 @@
                         `;
                         verificationResult.classList.remove('hidden');
 
-                        // Update user in localStorage
+                        // Update user in localStorage with Pro tier
                         user.isStudent = true;
                         user.studentEmail = email;
+                        user.subscriptionTier = 'pro';
                         localStorage.setItem('user', JSON.stringify(user));
+
+                        // Update subscription badge in header immediately
+                        const tierBadge = document.getElementById('user-tier-badge');
+                        if (tierBadge) {
+                            tierBadge.innerHTML = `
+                                <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full flex items-center gap-1 shadow-lg">
+                                    <i class="fas fa-crown"></i> PRO
+                                </span>
+                            `;
+                        }
 
                         // Hide plans section after 2 seconds
                         setTimeout(() => {

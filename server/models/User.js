@@ -259,7 +259,7 @@ class User {
     /**
      * Verify user as student by checking email and updating to Pro tier
      * @param {string} userId - User ID
-     * @param {string} email - Email to verify
+     * @param {string} email - Student email to verify (can be different from account email)
      * @returns {Promise<User>} - Updated user with Pro tier
      */
     static async verifyAsStudent(userId, email) {
@@ -270,18 +270,17 @@ class User {
                 throw new Error('User not found');
             }
 
-            // Check if email matches user's email
-            if (user.email !== email) {
-                throw new Error('Email does not match user account');
-            }
-
             // Check if email is educational
             if (!this.isEducationalEmail(email)) {
                 throw new Error('Email must be from an educational institution (.edu, .ac, etc.)');
             }
 
-            // Update user to Pro tier
-            return await this.upgradeToProTier(userId);
+            // Update user to Pro tier and save student email
+            return await this.update(userId, {
+                subscriptionTier: 'pro',
+                studentEmail: email,
+                studentVerifiedAt: new Date().toISOString()
+            });
         } catch (error) {
             throw new Error(`Error verifying student: ${error.message}`);
         }
