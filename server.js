@@ -57,6 +57,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Phục vụ static files từ thư mục public
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Phục vụ uploaded files (videos, etc.)
 
 // Session middleware for Passport
 const session = require('express-session');

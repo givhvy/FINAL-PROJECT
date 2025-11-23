@@ -1184,9 +1184,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!embedUrl.startsWith('http://') && !embedUrl.startsWith('https://')) {
                         embedUrl = 'https://' + embedUrl;
                     }
+                } else if (data.startsWith('/uploads/') || data.includes('cloudinary.com')) {
+                    // Handle local uploads or Cloudinary direct video URLs
+                    videoHTML = `
+                        <div class="aspect-video bg-black rounded-lg mb-6 shadow-xl">
+                            <video class="w-full h-full rounded-lg" controls>
+                                <source src="${data}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>`;
                 }
 
-                if (embedUrl) {
+                if (embedUrl && !videoHTML) {
                     videoHTML = `
                         <div class="aspect-video bg-black rounded-lg mb-6 shadow-xl">
                             <iframe class="w-full h-full rounded-lg" src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>

@@ -1,8 +1,7 @@
 # Dependencies
 /node_modules
 
-# Environment Variables
-.env
+# Environment Variables (.env should be here but for other people to test I will leave it out)
 .env.local
 .env.production
 
@@ -26,3 +25,7 @@ nul
 
 # Vercel
 .vercel
+
+# Uploaded videos (keep folder structure but ignore video files)
+/uploads/videos/*
+!/uploads/videos/.gitkeep

@@ -29,9 +29,26 @@ const profileUpload = multer({
     }
 });
 
+// Configure multer for local video upload (no file size limit for local storage)
+const localVideoUpload = multer({
+    storage: storage,
+    limits: {
+        fileSize: Infinity // No limit for local storage
+    },
+    fileFilter: (req, file, cb) => {
+        // Only accept video files
+        if (file.mimetype.startsWith('video/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only video files are allowed'));
+        }
+    }
+});
+
 // Upload routes (protected by authentication)
 router.post('/image', authMiddleware, upload.single('file'), uploadController.uploadImage);
 router.post('/video', authMiddleware, upload.single('file'), uploadController.uploadVideo);
+router.post('/video-local', authMiddleware, localVideoUpload.single('file'), uploadController.uploadVideoLocal); // Upload to server disk (no size limit)
 router.post('/profile-picture', authMiddleware, profileUpload.single('file'), uploadController.uploadProfilePicture);
 
 module.exports = router;
