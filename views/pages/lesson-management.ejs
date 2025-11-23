@@ -546,8 +546,8 @@
 
             if (videoSource === 'url') {
                 videoUrl = document.getElementById('lesson-video-url').value;
-                // Auto-fix URL if missing protocol
-                if (videoUrl && !videoUrl.startsWith('http://') && !videoUrl.startsWith('https://')) {
+                // Auto-fix URL if missing protocol (but NOT for local uploads starting with /)
+                if (videoUrl && !videoUrl.startsWith('http://') && !videoUrl.startsWith('https://') && !videoUrl.startsWith('/')) {
                     videoUrl = 'https://' + videoUrl;
                 }
             } else if (videoSource === 'upload' || videoSource === 'local') {
@@ -570,9 +570,13 @@
             const lessonData = {
                 title: document.getElementById('lesson-title').value,
                 content_type: videoUrl ? 'video' : 'text',
-                content_data: videoUrl, // URL
-                content_data_html: quill.root.innerHTML, // HTML content from Quill
-                course_id: courseId
+                content_data: videoUrl, // URL (old schema)
+                content_data_html: quill.root.innerHTML, // HTML content from Quill (old schema)
+                // New schema fields - these are what courses.ejs uses to display
+                content: quill.root.innerHTML, // HTML content
+                videoUrl: videoUrl, // Video URL
+                course_id: courseId,
+                courseId: courseId
             };
             
             const isEditing = !!currentEditingContentId;

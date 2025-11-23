@@ -1148,8 +1148,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Is lesson completed?', isCompleted);
             
             let videoHTML = '';
-            // Check if lesson has a video URL (videoUrl or video_url for backwards compatibility)
-            const videoUrl = lesson.videoUrl || lesson.video_url || '';
+            // Check if lesson has a video URL (support multiple field names for backwards compatibility)
+            // Priority: videoUrl (new) > video_url > content_data (old schema)
+            let videoUrl = lesson.videoUrl || lesson.video_url || lesson.content_data || '';
+
+            // Fix corrupted URLs like "https:///uploads/..." -> "/uploads/..."
+            if (videoUrl && videoUrl.includes('/uploads/')) {
+                const uploadsIndex = videoUrl.indexOf('/uploads/');
+                videoUrl = videoUrl.substring(uploadsIndex);
+            }
+
+            console.log('Video URL debug:', { videoUrl: lesson.videoUrl, video_url: lesson.video_url, content_data: lesson.content_data, final: videoUrl });
             if (videoUrl && videoUrl.trim() !== '') {
                 const data = videoUrl;
                 let embedUrl = '';
