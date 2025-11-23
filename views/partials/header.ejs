@@ -222,9 +222,9 @@
                     mobileUpgradeButton.style.display = isPro ? 'none' : 'block';
                 }
 
-                // Show cart button for all students
+                // Show cart button only for FREE tier students (Pro users have access to all courses)
                 if (cartButton) {
-                    cartButton.style.display = 'block';
+                    cartButton.style.display = isPro ? 'none' : 'block';
                 }
 
                 // Set student tier badge
