@@ -130,9 +130,22 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         await Payment.create(paymentData);
 
         // Check if this is a subscription purchase (no specific courseId or subscription plan)
-        // If it's a subscription, upgrade user to Pro tier
+        // If it's a subscription, upgrade user to Pro tier with plan details
         if (!courseId || courseName.toLowerCase().includes('pro') || courseName.toLowerCase().includes('subscription')) {
-            await User.upgradeToProTier(userId);
+            // Determine subscription plan from courseName
+            let subscriptionPlan = 'monthly';
+            if (courseName.toLowerCase().includes('quarterly') || courseName.toLowerCase().includes('3 month')) {
+                subscriptionPlan = 'quarterly';
+            } else if (courseName.toLowerCase().includes('yearly') || courseName.toLowerCase().includes('year') || courseName.toLowerCase().includes('12 month')) {
+                subscriptionPlan = 'yearly';
+            }
+
+            // Upgrade user with subscription details
+            await User.update(userId, {
+                subscriptionTier: 'pro',
+                subscriptionPlan: subscriptionPlan,
+                subscriptionStartDate: new Date().toISOString()
+            });
         }
 
         res.status(201).json({

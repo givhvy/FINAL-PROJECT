@@ -54,6 +54,9 @@
                     if (response.ok) {
                         console.log('Order created successfully:', data);
 
+                        // Clear the cart after successful payment
+                        localStorage.removeItem('cart');
+
                         // Update user in localStorage if tier was upgraded
                         const user = JSON.parse(localStorage.getItem('user'));
                         if (user) {

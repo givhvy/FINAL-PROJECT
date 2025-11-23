@@ -189,14 +189,63 @@
             updateSummary();
         }
 
-        // Checkout
-        document.getElementById('checkout-btn').addEventListener('click', function() {
+        // Checkout - Direct to Stripe
+        document.getElementById('checkout-btn').addEventListener('click', async function() {
             if (cart.length === 0) return;
 
-            // For now, just redirect to payment page
-            // In a real app, you'd create an order first
-            alert('Proceeding to checkout with ' + cart.length + ' course(s)');
-            window.location.href = '/payment';
+            const checkoutBtn = this;
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+
+            if (!user || !token) {
+                alert('Please login to proceed with checkout');
+                window.location.href = '/login';
+                return;
+            }
+
+            // Disable button and show loading
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+
+            try {
+                // For subscription plans in cart, create Stripe checkout session
+                const cartItem = cart[0]; // Get first item (usually subscription)
+
+                const response = await fetch('/api/payments/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        courseId: cartItem.id || null,
+                        courseName: cartItem.name || cartItem.title || 'Pro Subscription',
+                        price: cartItem.price,
+                        userId: user.id,
+                        successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+                        cancelUrl: `${window.location.origin}/cart`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Failed to create checkout session');
+                }
+
+                // Redirect to Stripe Checkout
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Failed to proceed to checkout: ' + error.message);
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Proceed to Checkout';
+            }
         });
 
         // Initialize cart on page load
