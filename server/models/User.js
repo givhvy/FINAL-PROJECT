@@ -321,6 +321,33 @@ class User {
     }
 
     /**
+     * Cancel subscription - revert to free tier and clear subscription data
+     * @param {string} id - User ID
+     * @returns {Promise<User>} - Updated user
+     */
+    static async cancelSubscription(id) {
+        try {
+            const user = await this.findById(id);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Clear all subscription-related fields
+            return await this.update(id, {
+                subscriptionTier: 'free',
+                studentEmail: null,
+                isStudent: false,
+                studentVerifiedAt: null,
+                subscriptionPlan: null,
+                subscriptionStartDate: null,
+                subscriptionEndDate: null
+            });
+        } catch (error) {
+            throw new Error(`Error canceling subscription: ${error.message}`);
+        }
+    }
+
+    /**
      * Chuyển đổi thành object đơn giản (loại bỏ password)
      * @returns {Object} - User object không có password
      */

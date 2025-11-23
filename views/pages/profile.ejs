@@ -67,6 +67,44 @@
                     </div>
                 </div>
 
+                <!-- Subscription Section -->
+                <div id="subscription-section" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Subscription</h2>
+
+                    <div id="subscription-loading" class="text-center py-4">
+                        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                        <p class="mt-2 text-gray-600 dark:text-gray-400 text-sm">Loading subscription info...</p>
+                    </div>
+
+                    <div id="subscription-content" class="hidden">
+                        <!-- Current Tier Badge -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-4">
+                                <div id="tier-icon" class="w-16 h-16 rounded-full flex items-center justify-center">
+                                    <!-- Icon will be inserted here -->
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Current Plan</p>
+                                    <h3 id="tier-name" class="text-2xl font-bold text-gray-800 dark:text-gray-200">Loading...</h3>
+                                </div>
+                            </div>
+                            <div id="tier-badge">
+                                <!-- Badge will be inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Subscription Details -->
+                        <div id="subscription-details" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <!-- Details will be inserted here based on subscription type -->
+                        </div>
+
+                        <!-- Cancel/Upgrade Actions -->
+                        <div id="subscription-actions" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <!-- Actions will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Order History Section -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Order History</h2>
@@ -537,8 +575,267 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // --- SUBSCRIPTION MANAGEMENT ---
+    function renderSubscription(userData) {
+        const loadingEl = document.getElementById('subscription-loading');
+        const contentEl = document.getElementById('subscription-content');
+        const tierIcon = document.getElementById('tier-icon');
+        const tierName = document.getElementById('tier-name');
+        const tierBadge = document.getElementById('tier-badge');
+        const detailsEl = document.getElementById('subscription-details');
+        const actionsEl = document.getElementById('subscription-actions');
+
+        loadingEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+
+        const isPro = userData.subscriptionTier === 'pro';
+        const isStudent = userData.studentEmail || userData.isStudent;
+
+        if (isPro) {
+            // PRO Tier
+            tierIcon.innerHTML = '<i class="fas fa-crown text-3xl text-yellow-500"></i>';
+            tierIcon.className = 'w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900 dark:to-amber-900';
+            tierName.textContent = 'Pro Plan';
+            tierBadge.innerHTML = `
+                <span class="px-4 py-2 text-sm font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white rounded-full flex items-center gap-2 shadow-lg">
+                    <i class="fas fa-crown"></i> PRO
+                </span>
+            `;
+
+            // Check subscription type
+            if (isStudent) {
+                // Student/Educational subscription
+                detailsEl.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Subscription Type</p>
+                            <p class="font-semibold text-green-600 dark:text-green-400 flex items-center gap-2">
+                                <i class="fas fa-graduation-cap"></i> Educational Benefits
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Student Email</p>
+                            <p class="font-semibold text-gray-800 dark:text-gray-200">${userData.studentEmail || 'Verified'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Verified On</p>
+                            <p class="font-semibold text-gray-800 dark:text-gray-200">${userData.studentVerifiedAt ? new Date(userData.studentVerifiedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Expiration</p>
+                            <p class="font-semibold text-green-600 dark:text-green-400">Never (while enrolled)</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                        <p class="text-sm text-green-700 dark:text-green-300">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            As a verified student, you have free access to all Pro features! Your subscription remains active as long as you maintain your student status.
+                        </p>
+                    </div>
+                `;
+
+                actionsEl.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="cancel-subscription-btn" class="px-4 py-2 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors">
+                            <i class="fas fa-times-circle mr-2"></i>Cancel Student Benefits
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                        Canceling will revert your account to Free tier and remove educational benefits.
+                    </p>
+                `;
+            } else {
+                // Paid subscription
+                const subscriptionPlan = userData.subscriptionPlan || 'monthly';
+                const subscriptionStartDate = userData.subscriptionStartDate ? new Date(userData.subscriptionStartDate) : new Date();
+                let expirationDate;
+                let planLabel;
+
+                switch (subscriptionPlan) {
+                    case 'quarterly':
+                        expirationDate = new Date(subscriptionStartDate);
+                        expirationDate.setMonth(expirationDate.getMonth() + 3);
+                        planLabel = '3 Months (Quarterly)';
+                        break;
+                    case 'yearly':
+                        expirationDate = new Date(subscriptionStartDate);
+                        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+                        planLabel = '12 Months (Yearly)';
+                        break;
+                    default: // monthly
+                        expirationDate = new Date(subscriptionStartDate);
+                        expirationDate.setMonth(expirationDate.getMonth() + 1);
+                        planLabel = '1 Month (Monthly)';
+                }
+
+                const daysRemaining = Math.ceil((expirationDate - new Date()) / (1000 * 60 * 60 * 24));
+                const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
+                const isExpired = daysRemaining <= 0;
+
+                detailsEl.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Subscription Plan</p>
+                            <p class="font-semibold text-gray-800 dark:text-gray-200">${planLabel}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Started On</p>
+                            <p class="font-semibold text-gray-800 dark:text-gray-200">${subscriptionStartDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Expires On</p>
+                            <p class="font-semibold ${isExpired ? 'text-red-600' : isExpiringSoon ? 'text-yellow-600' : 'text-gray-800 dark:text-gray-200'}">
+                                ${expirationDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                ${isExpired ? '<span class="text-xs ml-2">(Expired)</span>' : ''}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Days Remaining</p>
+                            <p class="font-semibold ${isExpired ? 'text-red-600' : isExpiringSoon ? 'text-yellow-600' : 'text-green-600'}">
+                                ${isExpired ? 'Expired' : daysRemaining + ' days'}
+                            </p>
+                        </div>
+                    </div>
+                    ${isExpiringSoon ? `
+                        <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                            <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Your subscription is expiring soon! Renew to continue enjoying Pro benefits.
+                            </p>
+                        </div>
+                    ` : ''}
+                    ${isExpired ? `
+                        <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                            <p class="text-sm text-red-700 dark:text-red-300">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                Your subscription has expired. Renew now to restore Pro access.
+                            </p>
+                        </div>
+                    ` : ''}
+                `;
+
+                actionsEl.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="/payment" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Renew Subscription
+                        </a>
+                        <button id="cancel-subscription-btn" class="px-4 py-2 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors">
+                            <i class="fas fa-times-circle mr-2"></i>Cancel Subscription
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                        Canceling will revert your account to Free tier at the end of your billing period.
+                    </p>
+                `;
+            }
+        } else {
+            // FREE Tier
+            tierIcon.innerHTML = '<i class="fas fa-user text-3xl text-gray-500"></i>';
+            tierIcon.className = 'w-16 h-16 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700';
+            tierName.textContent = 'Free Plan';
+            tierBadge.innerHTML = `
+                <span class="px-4 py-2 text-sm font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
+                    FREE
+                </span>
+            `;
+
+            detailsEl.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Access Level</p>
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">Limited (3 courses)</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Certificates</p>
+                        <p class="font-semibold text-gray-500">Not Available</p>
+                    </div>
+                </div>
+                <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                    <p class="text-sm text-blue-700 dark:text-blue-300">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Upgrade to Pro for unlimited courses, certificates, and premium content!
+                    </p>
+                </div>
+            `;
+
+            actionsEl.innerHTML = `
+                <a href="/payment" class="inline-block px-6 py-3 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all">
+                    <i class="fas fa-crown mr-2"></i>Upgrade to Pro
+                </a>
+            `;
+        }
+
+        // Attach cancel subscription event
+        const cancelBtn = document.getElementById('cancel-subscription-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', handleCancelSubscription);
+        }
+    }
+
+    async function handleCancelSubscription() {
+        const isStudent = user.studentEmail || user.isStudent;
+
+        const confirmMsg = isStudent
+            ? '⚠️ Are you sure you want to cancel your student benefits?\n\nThis will:\n- Revert your account to Free tier\n- Remove access to premium courses\n- You can re-verify later with a valid .edu email'
+            : '⚠️ Are you sure you want to cancel your Pro subscription?\n\nThis will:\n- Revert your account to Free tier immediately\n- Remove access to premium courses and certificates';
+
+        if (!confirm(confirmMsg)) return;
+
+        const cancelBtn = document.getElementById('cancel-subscription-btn');
+        cancelBtn.disabled = true;
+        cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Canceling...';
+
+        try {
+            const response = await fetch('/api/users/cancel-subscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ user_id: user.id })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to cancel subscription');
+            }
+
+            // Update local user data
+            user.subscriptionTier = 'free';
+            user.studentEmail = null;
+            user.isStudent = false;
+            user.studentVerifiedAt = null;
+            user.subscriptionPlan = null;
+            user.subscriptionStartDate = null;
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // Update UI
+            renderSubscription(user);
+
+            // Update header badge
+            const headerBadge = document.getElementById('user-tier-badge');
+            if (headerBadge) {
+                headerBadge.innerHTML = `
+                    <span class="px-3 py-1 text-xs font-bold bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-full">
+                        FREE
+                    </span>
+                `;
+            }
+
+            alert('Subscription cancelled successfully. Your account has been reverted to Free tier.');
+
+        } catch (error) {
+            console.error('Cancel subscription error:', error);
+            alert('Error canceling subscription: ' + error.message);
+            cancelBtn.disabled = false;
+            cancelBtn.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Cancel Subscription';
+        }
+    }
+
     // --- INITIALIZATION ---
     renderProfile(user); // Khởi tạo giao diện với dữ liệu hiện tại
+    renderSubscription(user); // Render subscription info
     loadOrderHistory(); // Load order history
 });
 </script>

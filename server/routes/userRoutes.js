@@ -13,5 +13,7 @@ router.delete('/:id', userController.deleteUser);
 router.get('/:id/progress', userController.getUserProgressDetails);
 // NEW: POST /api/users/verify-student -> Xác thực student email
 router.post('/verify-student', userController.verifyStudent);
+// NEW: POST /api/users/cancel-subscription -> Hủy subscription
+router.post('/cancel-subscription', userController.cancelSubscription);
 
 module.exports = router;

@@ -304,3 +304,32 @@ exports.verifyStudent = async (req, res) => {
         res.status(500).json({ error: 'Failed to verify student status. Please try again later.' });
     }
 };
+
+// Cancel subscription - revert to free tier
+exports.cancelSubscription = async (req, res) => {
+    try {
+        const { user_id } = req.body;
+
+        if (!user_id) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+
+        // Cancel subscription using User model
+        const updatedUser = await User.cancelSubscription(user_id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Subscription cancelled successfully',
+            user: updatedUser.toJSON()
+        });
+
+    } catch (err) {
+        console.error("Cancel Subscription Error:", err);
+
+        if (err.message.includes('not found')) {
+            return res.status(404).json({ error: err.message });
+        }
+
+        res.status(500).json({ error: 'Failed to cancel subscription. Please try again later.' });
+    }
+};
