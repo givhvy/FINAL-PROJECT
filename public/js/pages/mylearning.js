@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     setupEventListeners();
-    setActiveTab('dashboard');
+    setActiveTab('content-dashboard');
 });
 
 // ==================== EVENT LISTENERS ====================
@@ -48,27 +48,33 @@ function setupEventListeners() {
 
 // ==================== TAB MANAGEMENT ====================
 function setActiveTab(targetId) {
+    // Hide all content sections
+    document.querySelectorAll('[id^="content-"]').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Remove active class from all buttons
     document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
-        const contentId = `content-${btn.dataset.target}`;
-        const contentEl = document.getElementById(contentId);
-        if (contentEl) contentEl.classList.add('hidden');
     });
 
+    // Activate the selected button
     const activeBtn = document.querySelector(`.tab-button[data-target="${targetId}"]`);
     if (activeBtn) activeBtn.classList.add('active');
     
-    const activeContent = document.getElementById(`content-${targetId}`);
+    // Show the selected content
+    const activeContent = document.getElementById(targetId);
     if (activeContent) activeContent.classList.remove('hidden');
 
-    if (targetId === 'dashboard') {
+    // Load appropriate data based on tab
+    if (targetId === 'content-dashboard') {
         fetchAndRenderLearningProgress();
         fetchAndRenderEnrolledCourses();
-    } else if (targetId === 'quizzes') {
+    } else if (targetId === 'content-quizzes') {
         fetchAndRenderAvailableQuizzes();
-    } else if (targetId === 'grades') {
+    } else if (targetId === 'content-grades') {
         fetchAndRenderMyGrades();
-    } else if (targetId === 'certificates') {
+    } else if (targetId === 'content-certificates') {
         fetchAndRenderCertificates();
     }
 }
@@ -336,3 +342,22 @@ async function fetchAndRenderCertificates() {
 window.viewCertificate = function(certificateId) {
     window.location.href = `/certificate?id=${certificateId}`;
 };
+
+// ==================== UTILITY FUNCTIONS ====================
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+        // Handle Firestore Timestamp objects
+        if (dateString._seconds) {
+            const date = new Date(dateString._seconds * 1000);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        // Handle regular date strings/timestamps
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'N/A';
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return 'N/A';
+    }
+}

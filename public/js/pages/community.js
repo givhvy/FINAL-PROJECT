@@ -193,19 +193,36 @@ async function renderUserProgress() {
 }
 
 function updateRankBadge(completedCourses) {
-    let rank = { name: 'Beginner', color: '#9CA3AF', description: 'Complete 5 courses to rank up!' };
+    let rank = { 
+        name: 'Beginner', 
+        color: '#9CA3AF', 
+        description: 'Complete 5 courses to rank up!'
+    };
     
     if (completedCourses >= 20) {
-        rank = { name: 'Master', color: '#F59E0B', description: 'You are a master learner!' };
+        rank = { 
+            name: 'Master', 
+            color: '#F59E0B', 
+            description: 'You are a master learner!'
+        };
     } else if (completedCourses >= 10) {
-        rank = { name: 'Expert', color: '#10B981', description: 'Impressive progress! 10 more to Master!' };
+        rank = { 
+            name: 'Expert', 
+            color: '#10B981', 
+            description: 'Impressive! 10 more to Master!'
+        };
     } else if (completedCourses >= 5) {
-        rank = { name: 'Intermediate', color: '#3B82F6', description: '5 more courses to Expert!' };
+        rank = { 
+            name: 'Intermediate', 
+            color: '#3B82F6', 
+            description: '5 more courses to Expert!'
+        };
     }
 
     const rankName = document.getElementById('rank-name');
     const rankDescription = document.getElementById('rank-description');
     const rankBadge = document.getElementById('rank-badge');
+    const rankContainer = document.getElementById('rank-container');
 
     if (rankName) {
         rankName.textContent = rank.name;
@@ -214,13 +231,35 @@ function updateRankBadge(completedCourses) {
         rankDescription.textContent = rank.description;
     }
     if (rankBadge) {
+        // SVG hexagon badge with number in center - similar to old design
         rankBadge.innerHTML = `
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="${rank.color}" opacity="0.2"/>
-                <circle cx="50" cy="50" r="40" fill="${rank.color}"/>
-                <text x="50" y="60" font-size="30" fill="white" text-anchor="middle" font-weight="bold">${completedCourses}</text>
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                <defs>
+                    <linearGradient id="grad-${completedCourses}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${rank.color};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${rank.color};stop-opacity:0.7" />
+                    </linearGradient>
+                </defs>
+                <!-- Hexagon shape -->
+                <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="url(#grad-${completedCourses})" stroke="${rank.color}" stroke-width="3"/>
+                <!-- Number in center -->
+                <text x="50" y="60" font-size="32" font-weight="bold" fill="white" text-anchor="middle">${completedCourses}</text>
             </svg>
         `;
+    }
+    
+    // Update container color based on rank
+    if (rankContainer) {
+        rankContainer.className = 'p-4 rounded-lg border-2';
+        if (completedCourses >= 20) {
+            rankContainer.classList.add('bg-gradient-to-br', 'from-yellow-50', 'to-orange-50', 'border-yellow-300');
+        } else if (completedCourses >= 10) {
+            rankContainer.classList.add('bg-gradient-to-br', 'from-green-50', 'to-emerald-50', 'border-green-300');
+        } else if (completedCourses >= 5) {
+            rankContainer.classList.add('bg-gradient-to-br', 'from-blue-50', 'to-indigo-50', 'border-blue-300');
+        } else {
+            rankContainer.classList.add('bg-gradient-to-br', 'from-gray-50', 'to-gray-100', 'border-gray-300');
+        }
     }
 }
 
@@ -253,21 +292,37 @@ async function renderLeaderboard() {
         }
 
         container.innerHTML = '';
-        leaderboard.slice(0, 5).forEach((entry, index) => {
+        leaderboard.slice(0, 10).forEach((entry, index) => {
             const item = document.createElement('div');
             item.className = 'flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700';
+            
+            // Medal icons for top 3
+            let rankDisplay = `<span class="font-bold text-gray-500 text-lg w-8">${index + 1}</span>`;
+            if (index === 0) {
+                rankDisplay = `<span class="text-2xl w-8">🥇</span>`;
+            } else if (index === 1) {
+                rankDisplay = `<span class="text-2xl w-8">🥈</span>`;
+            } else if (index === 2) {
+                rankDisplay = `<span class="text-2xl w-8">🥉</span>`;
+            }
+            
+            // Use 'hours' field from backend (which contains completed courses count)
+            const coursesCompleted = entry.hours || 0;
+            const userName = entry.name || entry.userName || 'Unknown';
+            const userInitials = entry.initials || getInitials(userName);
+            
             item.innerHTML = `
                 <div class="flex items-center gap-3">
-                    <span class="font-bold ${index < 3 ? 'text-yellow-500' : 'text-gray-500'} text-lg w-6">${index + 1}</span>
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">
-                        ${getInitials(entry.name || entry.userName)}
+                    ${rankDisplay}
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm">
+                        ${userInitials}
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(entry.name || entry.userName)}</p>
-                        <p class="text-xs text-gray-500">${entry.coursesCompleted || 0} courses</p>
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(userName)}${entry.rank === 1 ? ' <span class="text-xs">(You)</span>' : ''}</p>
+                        <p class="text-xs text-gray-500">${coursesCompleted} courses completed</p>
                     </div>
                 </div>
-                <span class="font-bold text-blue-600">${entry.points || 0} pts</span>
+                <span class="font-bold ${index < 3 ? 'text-orange-500' : 'text-blue-600'}">${entry.points || 0} pts</span>
             `;
             container.appendChild(item);
         });
@@ -305,15 +360,33 @@ async function renderMyStudyGroups() {
         container.innerHTML = '';
         groups.forEach(group => {
             const groupCard = document.createElement('div');
-            groupCard.className = 'card-hover bg-white dark:bg-gray-700 rounded-lg p-4 shadow-sm cursor-pointer';
-            groupCard.onclick = () => openGroupForum(group.id, group.name);
+            groupCard.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow mb-3';
+            
+            const statusBadge = group.status ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">${escapeHtml(group.status)}</span>` : '';
+            const teacherInfo = group.teacher ? `<div class="text-xs text-gray-500 mb-3">Teacher: ${escapeHtml(group.teacher.name || group.teacher.email)}</div>` : '';
+            const subject = group.subject || 'General';
+            const memberCount = group.member_count || group.memberCount || 0;
+            
             groupCard.innerHTML = `
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between mb-3">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(group.name)}</h4>
-                    <span class="online-indicator w-2 h-2 bg-green-500 rounded-full"></span>
+                    ${statusBadge}
                 </div>
-                <p class="text-xs text-gray-500 mb-2">${group.memberCount || 0} members</p>
-                <p class="text-sm text-gray-600 dark:text-gray-300">${escapeHtml(group.description || 'No description')}</p>
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">${escapeHtml(group.description || 'No description')}</div>
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">📚 ${escapeHtml(subject)}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">👥 ${memberCount} members</span>
+                </div>
+                ${teacherInfo}
+                <div class="flex space-x-2">
+                    <button onclick="openGroupForum('${group.id}', '${escapeHtml(group.name)}')"
+                            class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors">
+                        💬 Forum
+                    </button>
+                    <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                        📋 Details
+                    </button>
+                </div>
             `;
             container.appendChild(groupCard);
         });
