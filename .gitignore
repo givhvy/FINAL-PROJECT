@@ -2,8 +2,10 @@
 /node_modules
 
 # Environment Variables (.env should be here but for other people to test I will leave it out)
+.env
 .env.local
 .env.production
+
 
 # Firebase Service Account Key
 serviceAccountKey.json
