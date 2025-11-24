@@ -706,21 +706,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         containerEl.classList.remove('hidden');
     }
 
-    // Filter handler
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('quiz-filter-course')?.addEventListener('change', (e) => {
-            const courseId = e.target.value;
-            if (courseId === 'all') {
-                renderQuizGradesTable(allQuizGrades);
-            } else {
-                const filtered = allQuizGrades.filter(g => g.quiz?.course_id === courseId);
-                renderQuizGradesTable(filtered);
-            }
-        });
+    // Filter handler - Already inside DOMContentLoaded
+    document.getElementById('quiz-filter-course')?.addEventListener('change', (e) => {
+        const courseId = e.target.value;
+        if (courseId === 'all') {
+            renderQuizGradesTable(allQuizGrades);
+        } else {
+            const filtered = allQuizGrades.filter(g => g.quiz?.course_id === courseId);
+            renderQuizGradesTable(filtered);
+        }
+    });
 
-        document.getElementById('refresh-grades-btn')?.addEventListener('click', () => {
-            fetchQuizGrades();
-        });
+    document.getElementById('refresh-grades-btn')?.addEventListener('click', () => {
+        fetchQuizGrades();
     });
 
     // === CERTIFICATE FUNCTIONS ===
@@ -1056,6 +1054,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(`Error: Failed to ${isEditing ? 'update' : 'add'} course.\nDetails: ${error.message}`);
         }
     });
+    } // Close if (courseForm) check
 
     // Edit/Delete buttons on course cards
     document.getElementById('courses-list').addEventListener('click', async (e) => {
@@ -1406,5 +1405,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- INITIALIZATION ---
     fetchInitialData();
 });
-</script>
-</body>
