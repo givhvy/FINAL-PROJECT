@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- checkpoint -->
+<!DOCTYPE html> <!-- checkpoint -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -165,103 +165,11 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Lấy các element cần thiết từ DOM
-            const form = document.getElementById('signupForm');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            const passwordInput = document.getElementById('password');
-            const passwordStrength = document.getElementById('passwordStrength');
-            const passwordFeedback = document.getElementById('passwordFeedback');
-            const togglePassword = document.getElementById('togglePassword');
-            
-            // --- LOGIC CHO GIAO DIỆN (GIỮ NGUYÊN TỪ CODE CŨ) ---
+    <!-- Shared Utilities -->
+    <script src="/js/shared/common-utils.js"></script>
 
-            // Hiện/ẩn mật khẩu
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-            });
-            
-            // Đo độ mạnh mật khẩu
-            passwordInput.addEventListener('input', function() {
-                const password = passwordInput.value;
-                let strength = 0;
-                if (password.length >= 8) strength += 25;
-                if (/[a-z]/.test(password)) strength += 25;
-                if (/[A-Z]/.test(password)) strength += 25;
-                if (/[0-9!@#$%^&*()]/.test(password)) strength += 25;
-                
-                let color = '#ef4444'; // red-500
-                let feedback = 'Weak';
-                if (strength > 75) {
-                    color = '#059669'; // emerald-600
-                    feedback = 'Strong';
-                } else if (strength > 50) {
-                    color = '#10b981'; // emerald-500
-                    feedback = 'Good';
-                } else if (strength > 25) {
-                    color = '#f59e0b'; // amber-500
-                    feedback = 'Moderate';
-                }
-                
-                passwordStrength.style.width = strength + '%';
-                passwordStrength.style.backgroundColor = color;
-                passwordFeedback.textContent = `Password strength: ${feedback}`;
-                passwordFeedback.style.color = color;
-            });
-            
-            // --- LOGIC GỬI DỮ LIỆU ĐẾN SERVER (CODE MỚI) ---
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Ẩn các thông báo cũ
-                successMessage.classList.add('hidden');
-                errorMessage.classList.add('hidden');
+    <!-- Page Script -->
+    <script src="/js/pages/signup.js"></script>
 
-                // Lấy dữ liệu từ form
-                const firstName = document.getElementById('firstName').value;
-                const lastName = document.getElementById('lastName').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                
-                // Gộp first name và last name thành full name để gửi đi
-                const name = `${firstName} ${lastName}`;
-
-                const API_URL = 'http://localhost:5000/api/auth/register';
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ name, email, password, role: 'student' })
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(data.error || 'Failed to create account.');
-                    }
-
-                    // --- XỬ LÝ KHI ĐĂNG KÝ THÀNH CÔNG ---
-                    form.classList.add('hidden');
-                    successMessage.classList.remove('hidden');
-
-                    // Tự động chuyển đến trang đăng nhập sau 2 giây
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
-
-                } catch (error) {
-                    console.error('Signup Error:', error);
-                    errorMessage.querySelector('p').textContent = 'Signup failed: ' + error.message;
-                    errorMessage.classList.remove('hidden');
-                }
-            });
-        });
-    </script>
 </body>
 </html>

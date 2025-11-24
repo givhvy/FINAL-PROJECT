@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- checkpoint -->
+<!DOCTYPE html> <!-- checkpoint -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -79,117 +79,14 @@
         </main>
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-    // Auth Guard
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
+    <!-- Shared Utilities -->
+    <script src="/js/shared/common-utils.js"></script>
+    <script src="/js/shared/auth-utils.js"></script>
+    <script src="/js/shared/api-utils.js"></script>
 
-    // Lấy lessonId từ URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const lessonId = urlParams.get('lessonId');
-    if (!lessonId) {
-        alert('No lesson selected.');
-        window.location.href = '/teacher';
-        return;
-    }
+    <!-- Page Script -->
+    <script src="/js/pages/quiz-management.js"></script>
 
-    const questionsListUl = document.getElementById('questions-list');
-    let quizId = null;
-
-    // Hàm để tìm hoặc tạo Quiz cho bài học
-    async function findOrCreateQuizForLesson() {
-        // (Trong một ứng dụng thực tế, bạn sẽ có API để lấy quiz theo lessonId)
-        // Giả sử mỗi lesson có một quiz, chúng ta sẽ tạo/lấy quiz dựa trên lessonId
-        // Hiện tại, chúng ta sẽ giả định quizId chính là lessonId để đơn giản hóa
-        
-        // Lấy thông tin bài học để hiển thị tên
-        const lessonRes = await fetch(`/api/lessons/${lessonId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        const lesson = await lessonRes.json();
-        document.getElementById('lesson-title').textContent = lesson.title;
-
-        // Đây là nơi bạn sẽ gọi API để lấy quizId thật
-        // Ví dụ: const quizRes = await fetch(`/api/quizzes?lessonId=${lessonId}`);
-        // const quizzes = await quizRes.json();
-        // if (quizzes.length > 0) { quizId = quizzes[0].id; } else { /* tạo quiz mới */ }
-        
-        // Để demo, ta giả định quizId bằng lessonId
-        quizId = lessonId; 
-        
-        fetchAndRenderQuestions();
-    }
-
-    async function fetchAndRenderQuestions() {
-        if (!quizId) return;
-        questionsListUl.innerHTML = `<li>Loading questions...</li>`;
-        try {
-            // API này chưa tồn tại, chúng ta sẽ tạo nó ở backend
-            const response = await fetch(`/api/questions?quizId=${quizId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error('Could not fetch questions');
-            const questions = await response.json();
-            
-            if (questions.length > 0) {
-                questionsListUl.innerHTML = '';
-                questions.forEach(q => {
-                    const questionItem = document.createElement('li');
-                    questionItem.className = 'p-3 border rounded-md flex justify-between items-center bg-gray-50 dark:bg-gray-700';
-                    questionItem.innerHTML = `
-                        <span class="font-medium text-gray-800 dark:text-gray-200">${q.text}</span>
-                        <button data-question-id="${q.id}" class="delete-question-btn text-sm text-red-600 hover:text-red-800">Delete</button>
-                    `;
-                    questionsListUl.appendChild(questionItem);
-                });
-            } else {
-                questionsListUl.innerHTML = `<li>No questions have been added to this quiz yet.</li>`;
-            }
-        } catch (error) {
-            questionsListUl.innerHTML = `<li><p class="text-red-500">Failed to load questions.</p></li>`;
-        }
-    }
-
-    // Xử lý form thêm câu hỏi mới
-    document.getElementById('add-question-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (!quizId) {
-            alert('Could not determine the quiz. Please try again.');
-            return;
-        }
-
-        const questionData = {
-            text: document.getElementById('question-text').value,
-            options: {
-                A: document.getElementById('option-a').value,
-                B: document.getElementById('option-b').value,
-                C: document.getElementById('option-c').value,
-                D: document.getElementById('option-d').value,
-            },
-            correctAnswer: document.getElementById('correct-answer').value,
-            quiz_id: quizId
-        };
-
-        try {
-            const response = await fetch('/api/questions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(questionData)
-            });
-            if (!response.ok) throw new Error('Failed to create question.');
-            
-            alert('Question added successfully!');
-            e.target.reset();
-            fetchAndRenderQuestions();
-        } catch (error) {
-            alert('Error: ' + error.message);
-        }
-    });
-    
-    // Tải dữ liệu ban đầu
-    findOrCreateQuizForLesson();
-});
-</script>
     <%- include('../partials/footer') %>
 </body>
 </html>

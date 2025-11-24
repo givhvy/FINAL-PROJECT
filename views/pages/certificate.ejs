@@ -154,66 +154,8 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default date to today
-            const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-            document.getElementById('date').value = formattedDate;
-            
-            // Generate certificate
-            document.getElementById('generate').addEventListener('click', function() {
-                const name = document.getElementById('name').value.trim();
-                const course = document.getElementById('course').value.trim();
-                const date = document.getElementById('date').value;
-                
-                if (!name) {
-                    alert('Please enter a name');
-                    return;
-                }
-                
-                if (!course) {
-                    alert('Please enter a course name');
-                    return;
-                }
-                
-                // Format date
-                const dateObj = new Date(date);
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                const formattedDate = dateObj.toLocaleDateString('en-US', options);
-                
-                // Update certificate
-                document.getElementById('certificate-name').textContent = name;
-                document.getElementById('certificate-course').textContent = course;
-                document.getElementById('certificate-date').textContent = formattedDate;
-                
-                // Show certificate
-                document.getElementById('certificate-container').classList.remove('hidden');
-                document.getElementById('certificate-container').scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            // Back button
-            document.getElementById('back').addEventListener('click', function() {
-                document.getElementById('certificate-container').classList.add('hidden');
-            });
-            
-            // Download certificate
-            document.getElementById('download').addEventListener('click', function() {
-                const name = document.getElementById('name').value.trim();
-                const fileName = `certificate-${name.replace(/\s+/g, '-').toLowerCase()}.png`;
-                
-                // Alert for demo purposes
-                alert(`In a real implementation, this would download the certificate as "${fileName}". For this demo, you can take a screenshot of the certificate.`);
-                
-                // In a real implementation, you would use html2canvas or similar library
-                // html2canvas(document.getElementById('certificate')).then(canvas => {
-                //     const link = document.createElement('a');
-                //     link.download = fileName;
-                //     link.href = canvas.toDataURL('image/png');
-                //     link.click();
-                // });
-            });
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94ee9ea300da9f95',t:'MTc0OTc4NjU4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <!-- Page Script -->
+    <script src="/js/pages/certificate.js"></script>
+
+</body>
 </html>
