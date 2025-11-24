@@ -11,6 +11,7 @@ let quill; // Quill editor instance
 let courseId = null;
 let currentEditingContentId = null;
 let uploadedVideoUrl = null;
+let uploadedVideoLocalUrl = null; // For local server uploads
 
 // ==================== AUTH GUARD ====================
 if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
@@ -66,6 +67,9 @@ function setupEventListeners() {
 
     // Video upload button
     document.getElementById('upload-video-btn').addEventListener('click', handleVideoUpload);
+    
+    // Local video upload button
+    document.getElementById('upload-video-local-btn').addEventListener('click', handleVideoLocalUpload);
 
     // Form toggle buttons
     document.getElementById('show-lesson-form-btn').addEventListener('click', () => setActiveForm('lesson'));
@@ -122,7 +126,7 @@ async function handleVideoUpload() {
     }
 
     const formData = new FormData();
-    formData.append('video', file);
+    formData.append('file', file);
 
     try {
         uploadProgress.classList.remove('hidden');
@@ -144,6 +148,46 @@ async function handleVideoUpload() {
         uploadSuccess.textContent = `Upload successful! URL: ${uploadedVideoUrl}`;
     } catch (error) {
         console.error('Upload error:', error);
+        uploadProgress.classList.add('hidden');
+        alert('Upload failed: ' + error.message);
+    }
+}
+
+// ==================== LOCAL VIDEO UPLOAD ====================
+async function handleVideoLocalUpload() {
+    const videoFileInputEl = document.getElementById('lesson-video-local-file');
+    const uploadProgress = document.getElementById('upload-local-progress');
+    const uploadSuccess = document.getElementById('upload-local-success');
+
+    const file = videoFileInputEl.files[0];
+    if (!file) {
+        alert('Please select a video file first');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        uploadProgress.classList.remove('hidden');
+        uploadSuccess.classList.add('hidden');
+
+        const response = await fetch('/api/upload/video-local', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Local video upload failed');
+
+        const data = await response.json();
+        uploadedVideoLocalUrl = data.path || data.url;
+
+        uploadProgress.classList.add('hidden');
+        uploadSuccess.classList.remove('hidden');
+        uploadSuccess.textContent = `Upload successful! Path: ${uploadedVideoLocalUrl}`;
+    } catch (error) {
+        console.error('Local upload error:', error);
         uploadProgress.classList.add('hidden');
         alert('Upload failed: ' + error.message);
     }
@@ -253,7 +297,7 @@ async function handleLessonSubmit(e) {
     } else if (videoSourceUpload.checked) {
         videoUrl = uploadedVideoUrl || '';
     } else if (videoSourceLocal.checked) {
-        videoUrl = document.getElementById('lesson-video-local').value.trim();
+        videoUrl = uploadedVideoLocalUrl || '';
     }
 
     const lessonData = {

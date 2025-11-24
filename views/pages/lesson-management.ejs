@@ -121,12 +121,16 @@
                                     <input type="file" id="lesson-video-local-file" accept="video/*" class="block w-full text-sm text-gray-700 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:file:bg-green-900 dark:file:text-green-300">
                                     <button type="button" id="upload-video-local-btn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium whitespace-nowrap">Upload Local</button>
                                 </div>
-                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Kh�ng gi?i h?n dung lu?ng. Video s? luu tr�n ? c?ng m�y ch? c?a b?n.</p>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Không giới hạn dung lượng. Video sẽ lưu trên ổ cứng máy chủ của bạn.</p>
                                 <div id="upload-local-progress" class="hidden mt-2">
                                     <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         <span id="upload-local-progress-text">Uploading to server...</span>
                                     </div>
+                                </div>
+                                <div id="upload-local-success" class="hidden mt-2 flex items-center gap-2 text-sm text-green-600">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Video uploaded to server successfully!</span>
                                 </div>
                                 <div id="upload-local-success" class="hidden mt-2 flex items-center gap-2 text-sm text-green-600">
                                     <i class="fas fa-check-circle"></i>
