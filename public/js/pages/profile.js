@@ -433,6 +433,7 @@ function renderProSubscription(userData, isStudent) {
     console.log('\n🔵 renderProSubscription called');
     console.log('userData.subscriptionPlan:', userData.subscriptionPlan);
     console.log('userData.subscriptionEndDate:', userData.subscriptionEndDate);
+    console.log('userData.studentEmail:', userData.studentEmail);
     console.log('isStudent:', isStudent);
     
     const tierIcon = document.getElementById('tier-icon');
@@ -455,7 +456,8 @@ function renderProSubscription(userData, isStudent) {
         `;
     }
     
-    if (isStudent) {
+    // Check if this is a student with edu email (prioritize student verification)
+    if (isStudent && userData.studentEmail) {
         renderStudentSubscription(userData, detailsEl, actionsEl);
     } else {
         renderPaidSubscription(userData, detailsEl, actionsEl);
@@ -482,7 +484,7 @@ function renderStudentSubscription(userData, detailsEl, actionsEl) {
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Expiration</p>
-                    <p class="font-semibold text-green-600 dark:text-green-400">Never (while enrolled)</p>
+                    <p class="font-semibold text-green-600 dark:text-green-400">Free Forever</p>
                 </div>
             </div>
             <div class="mt-4 p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
@@ -622,9 +624,6 @@ function renderPaidSubscription(userData, detailsEl, actionsEl) {
     if (actionsEl) {
         actionsEl.innerHTML = `
             <div class="flex flex-col sm:flex-row gap-3">
-                <a href="/payment" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center">
-                    <i class="fas fa-sync-alt mr-2"></i>Renew Subscription
-                </a>
                 <button id="cancel-subscription-btn" class="px-4 py-2 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors">
                     <i class="fas fa-times-circle mr-2"></i>Cancel Subscription
                 </button>

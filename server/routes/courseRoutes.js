@@ -33,4 +33,32 @@ router.delete('/:id', deleteCourse);
 router.get('/:id/lessons', getCourseLessons);
 router.get('/:id/quizzes', getCourseQuizzes);
 
+// POST /api/courses/:id/enroll -> Enroll user in course
+router.post('/:id/enroll', async (req, res) => {
+    try {
+        const Enrollment = require('../models/Enrollment');
+        const { userId } = req.body;
+        const courseId = req.params.id;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'userId is required' });
+        }
+
+        // Create enrollment
+        const enrollment = await Enrollment.create({
+            userId,
+            courseId,
+            status: 'active'
+        });
+
+        res.status(201).json({
+            success: true,
+            enrollment
+        });
+    } catch (error) {
+        console.error('Enrollment error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

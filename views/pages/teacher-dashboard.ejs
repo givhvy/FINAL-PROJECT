@@ -475,6 +475,56 @@
         </div>
     </div>
 
+    <!-- Group Forum Modal -->
+    <div id="group-forum-modal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden flex items-center justify-center z-[100] p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-comments text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 id="forum-group-title" class="text-xl font-bold text-gray-900 dark:text-white">Group Forum</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Active discussion</p>
+                    </div>
+                </div>
+                <button id="close-forum-modal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="forum-messages-container" class="flex-1 overflow-y-auto p-8 space-y-6 bg-gray-50 dark:bg-gray-900">
+                <!-- Messages will be loaded here -->
+            </div>
+
+            <!-- Message Input -->
+            <div class="p-6 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div class="flex items-end space-x-4">
+                    <div class="flex-1">
+                        <textarea 
+                            id="new-message-input" 
+                            rows="2" 
+                            placeholder="Type your message... (Shift+Enter for new line)" 
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 resize-none placeholder-gray-400"
+                        ></textarea>
+                    </div>
+                    <button 
+                        id="send-message-btn" 
+                        class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2 min-w-[100px] justify-center"
+                    >
+                        <span>Send</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i> Press Enter to send, Shift+Enter for new line
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Shared Utilities -->
     <script src="/js/shared/common-utils.js"></script>
     <script src="/js/shared/auth-utils.js"></script>

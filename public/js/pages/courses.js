@@ -616,6 +616,7 @@ window.loadCourseDetails = function (courseId) {
 // ==================== AUTO-ENROLLMENT ====================
 async function autoEnrollUser(courseId) {
     try {
+        // Check if already enrolled
         const checkResponse = await fetchWithAuth(`/api/users/${user.id}/progress`);
         if (checkResponse.ok) {
             const progressData = await checkResponse.json();
@@ -623,15 +624,12 @@ async function autoEnrollUser(courseId) {
             if (isEnrolled) return;
         }
 
-        const enrollResponse = await fetchWithAuth('/api/orders', {
+        // Create enrollment using the new endpoint
+        const enrollResponse = await fetchWithAuth(`/api/courses/${courseId}/enroll`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                user_id: user.id,
-                course_id: courseId,
-                amount: 0,
-                status: 'completed',
-                order_date: new Date().toISOString()
+                userId: user.id
             })
         });
 
@@ -639,6 +637,8 @@ async function autoEnrollUser(courseId) {
             console.warn('Auto-enrollment failed, but continuing with course access');
         } else {
             console.log('User auto-enrolled in course:', courseId);
+            // Refresh progress data
+            await fetchAllCourses();
         }
     } catch (error) {
         console.warn('Auto-enrollment error:', error);

@@ -18,6 +18,8 @@ class User {
         this.subscriptionPlan = data.subscriptionPlan || null; // 'monthly', 'quarterly', 'yearly'
         this.subscriptionStartDate = data.subscriptionStartDate || null;
         this.subscriptionEndDate = data.subscriptionEndDate || null;
+        this.studentEmail = data.studentEmail || null; // Educational email for student verification
+        this.studentVerifiedAt = data.studentVerifiedAt || null; // When student was verified
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
         this.resetPasswordCode = data.resetPasswordCode || null;
@@ -171,9 +173,12 @@ class User {
 
             updateData.updatedAt = new Date().toISOString();
 
+            console.log('🔵 User.update() - updateData:', updateData);
             await userRef.update(updateData);
 
-            return await this.findById(id);
+            const updatedUser = await this.findById(id);
+            console.log('✅ User.update() - Updated user:', updatedUser.toJSON());
+            return updatedUser;
         } catch (error) {
             throw new Error(`Error updating user: ${error.message}`);
         }

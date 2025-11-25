@@ -75,7 +75,7 @@ async function handleStudentVerification(e) {
         
         if (response.ok && data.success) {
             showVerificationSuccess(verificationResult, email);
-            updateUserToProTier(email);
+            await updateUserToProTier(email, data.user);
             hideStudentForm();
         } else {
             showVerificationError(verificationResult, data.error || 'Verification failed. Please try again.');
@@ -116,12 +116,20 @@ function showVerificationError(container, message) {
     container.classList.remove('hidden');
 }
 
-function updateUserToProTier(email) {
-    // Update user in localStorage with Pro tier
-    user.isStudent = true;
-    user.studentEmail = email;
-    user.subscriptionTier = 'pro';
-    localStorage.setItem('user', JSON.stringify(user));
+function updateUserToProTier(email, updatedUserData) {
+    // Update user in localStorage with fresh data from backend
+    if (updatedUserData) {
+        user = updatedUserData;
+        localStorage.setItem('user', JSON.stringify(updatedUserData));
+        console.log('✅ User updated with student verification:', updatedUserData);
+    } else {
+        // Fallback: manual update (not recommended but keeps backward compatibility)
+        user.studentEmail = email;
+        user.subscriptionTier = 'pro';
+        user.studentVerifiedAt = new Date().toISOString();
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log('⚠️ User updated manually (should fetch from backend)');
+    }
     
     // Update subscription badge in header
     const tierBadge = document.getElementById('user-tier-badge');

@@ -310,6 +310,7 @@ async function renderLeaderboard() {
             const coursesCompleted = entry.hours || 0;
             const userName = entry.name || entry.userName || 'Unknown';
             const userInitials = entry.initials || getInitials(userName);
+            const isCurrentUser = entry.userId === user.id || entry.email === user.email;
             
             item.innerHTML = `
                 <div class="flex items-center gap-3">
@@ -318,7 +319,7 @@ async function renderLeaderboard() {
                         ${userInitials}
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(userName)}${entry.rank === 1 ? ' <span class="text-xs">(You)</span>' : ''}</p>
+                        <p class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(userName)}${isCurrentUser ? ' <span class="text-xs">(You)</span>' : ''}</p>
                         <p class="text-xs text-gray-500">${coursesCompleted} courses completed</p>
                     </div>
                 </div>
@@ -344,7 +345,7 @@ function getInitials(name) {
 async function renderMyStudyGroups() {
     const container = document.getElementById('my-study-groups-container');
     try {
-        const response = await fetch(`${API_BASE}/community/users/${user.id}/groups`, {
+        const response = await fetch(`${API_BASE}/users/${user.id}/groups`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -398,13 +399,18 @@ async function renderMyStudyGroups() {
 
 async function showAvailableGroups() {
     const modal = document.getElementById('available-groups-modal');
-    const container = document.getElementById('available-groups-list');
+    const container = document.getElementById('available-groups-container');
+    
+    if (!container) {
+        console.error('available-groups-container not found');
+        return;
+    }
     
     modal.classList.remove('hidden');
     container.innerHTML = '<p class="text-gray-500">Loading groups...</p>';
 
     try {
-        const response = await fetch(`${API_BASE}/community/groups`, {
+        const response = await fetch(`${API_BASE}/groups`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -438,7 +444,7 @@ async function showAvailableGroups() {
 
 window.joinGroup = async function(groupId) {
     try {
-        const response = await fetch(`${API_BASE}/community/groups/${groupId}/join`, {
+        const response = await fetch(`${API_BASE}/groups/${groupId}/join`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -526,6 +532,9 @@ async function openGroupForum(groupId, groupName) {
         messagesContainer.innerHTML = '<p class="text-red-500 text-center">Error loading messages.</p>';
     }
 }
+
+// Export function for use from teacher dashboard
+window.openGroupForum = openGroupForum;
 
 async function sendForumMessage() {
     const input = document.getElementById('new-message-input');

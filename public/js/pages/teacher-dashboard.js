@@ -1165,6 +1165,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span>📅 Created ${new Date(group.created_at).toLocaleDateString()}</span>
                     </div>
                     <div class="flex space-x-2">
+                        <button onclick="openGroupForum('${group.id}', '${group.name.replace(/'/g, "\\'")}')"
+                                class="px-3 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors">
+                            💬 Access Forum
+                        </button>
                         <button onclick="viewGroupDetails('${group.id}')"
                                 class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded">
                             View Details
@@ -1401,6 +1405,123 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Event listeners for panel
     document.getElementById('profile-header').addEventListener('click', openProfilePanel);
     document.getElementById('close-profile-panel').addEventListener('click', closeProfilePanel);
+
+    // --- FORUM MODAL FUNCTIONS ---
+    let currentGroupId = null;
+
+    // Open forum modal
+    window.openGroupForum = async function(groupId, groupName) {
+        currentGroupId = groupId;
+        const modal = document.getElementById('group-forum-modal');
+        const titleEl = document.getElementById('forum-group-title');
+        
+        if (titleEl) titleEl.textContent = groupName || 'Group Forum';
+        modal.classList.remove('hidden');
+        
+        await loadForumMessages(groupId);
+    };
+
+    // Close forum modal
+    const closeForumBtn = document.getElementById('close-forum-modal');
+    if (closeForumBtn) {
+        closeForumBtn.addEventListener('click', () => {
+            document.getElementById('group-forum-modal').classList.add('hidden');
+            currentGroupId = null;
+        });
+    }
+
+    // Load forum messages
+    async function loadForumMessages(groupId) {
+        const container = document.getElementById('forum-messages-container');
+        container.innerHTML = '<p class="text-gray-500 text-center">Loading messages...</p>';
+
+        try {
+            const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community';
+            const response = await fetch(`${API_BASE}/groups/${groupId}/messages`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to load messages');
+            
+            const messages = await response.json();
+
+            if (!messages || messages.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">No messages yet. Start the conversation!</p>';
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isMyMessage = msg.user_id === user.id || msg.userId === user.id;
+                const userName = msg.user_name || msg.userName || 'Unknown';
+                const timestamp = msg.created_at || msg.createdAt;
+
+                return `
+                    <div class="${isMyMessage ? 'flex justify-end' : 'flex justify-start'}">
+                        <div class="${isMyMessage ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} max-w-md px-4 py-3 rounded-lg">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-sm">${userName}</span>
+                                <span class="text-xs opacity-70">${new Date(timestamp).toLocaleString()}</span>
+                            </div>
+                            <p class="text-sm">${msg.message || msg.content}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            container.innerHTML = '<p class="text-red-500 text-center">Error loading messages</p>';
+        }
+    }
+
+    // Send message
+    const sendMessageBtn = document.getElementById('send-message-btn');
+    const messageInput = document.getElementById('new-message-input');
+
+    if (sendMessageBtn) {
+        sendMessageBtn.addEventListener('click', sendMessage);
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+
+    async function sendMessage() {
+        if (!currentGroupId) return;
+
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        try {
+            const API_BASE = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community';
+            const response = await fetch(`${API_BASE}/groups/${currentGroupId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: user.id,
+                    message: message
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to send message');
+
+            messageInput.value = '';
+            await loadForumMessages(currentGroupId);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            notify.error('Failed to send message');
+        }
+    }
 
     // --- INITIALIZATION ---
     fetchInitialData();

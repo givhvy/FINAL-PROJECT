@@ -102,21 +102,29 @@ async function fetchAndRenderEnrolledCourses() {
     enrolledListDiv.innerHTML = '<p class="text-gray-500">Loading your enrolled courses...</p>';
 
     try {
-        const ordersResponse = await fetchWithAuth(`/api/orders?userId=${user.id}`);
-        if (!ordersResponse.ok) throw new Error('Failed to fetch orders.');
-        const orders = await ordersResponse.json();
-
-        if (!Array.isArray(orders) || orders.length === 0) {
+        // Fetch user progress with percentage
+        const progressResponse = await fetchWithAuth(`/api/users/${user.id}/progress`);
+        if (!progressResponse.ok) {
             enrolledListDiv.innerHTML = '<p class="text-gray-500">You are not enrolled in any courses yet. <a href="/courses" class="text-blue-600 hover:underline">Browse courses</a></p>';
             return;
         }
 
-        const enrolledCourseIds = [...new Set(orders.map(order => order.courseId || order.course_id))];
+        const progressData = await progressResponse.json();
 
+        if (!Array.isArray(progressData) || progressData.length === 0) {
+            enrolledListDiv.innerHTML = '<p class="text-gray-500">You are not enrolled in any courses yet. <a href="/courses" class="text-blue-600 hover:underline">Browse courses</a></p>';
+            return;
+        }
+
+        // Get enrolled course IDs
+        const enrolledCourseIds = progressData.map(p => p.courseId);
+
+        // Fetch all courses
         const coursesResponse = await fetchWithAuth('/api/courses');
         if (!coursesResponse.ok) throw new Error('Failed to fetch courses.');
         const allCourses = await coursesResponse.json();
 
+        // Filter enrolled courses
         const enrolledCourses = allCourses.filter(course => enrolledCourseIds.includes(course.id));
 
         if (enrolledCourses.length === 0) {
@@ -126,22 +134,35 @@ async function fetchAndRenderEnrolledCourses() {
 
         enrolledListDiv.innerHTML = '';
         enrolledCourses.slice(0, 3).forEach(course => {
+            const progressInfo = progressData.find(p => p.courseId === course.id);
+            const percentage = progressInfo ? progressInfo.percentage : 0;
+            const progressColor = percentage === 100 ? 'green' : percentage >= 50 ? 'blue' : percentage > 0 ? 'yellow' : 'gray';
+
             const courseItem = document.createElement('div');
             courseItem.className = 'quiz-card border rounded-lg p-4 hover:shadow-md transition-shadow';
             courseItem.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mr-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center flex-1">
+                        <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
                             <i class="fas fa-book text-blue-600 text-xl"></i>
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-800">${escapeHtml(course.title)}</h4>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-800 truncate">${escapeHtml(course.title)}</h4>
                             <p class="text-sm text-gray-500">${course.lessons ? course.lessons.length : 0} lessons</p>
                         </div>
                     </div>
-                    <button onclick="window.location.href='/courses#lesson/${course.id}'" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <button onclick="window.location.href='/courses#lesson/${course.id}'" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition ml-3 flex-shrink-0">
                         Continue
                     </button>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Progress</span>
+                        <span class="text-${progressColor}-600 font-medium">${percentage}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="h-full progress-fill-${progressColor}" style="width: ${percentage}%"></div>
+                    </div>
                 </div>
             `;
             enrolledListDiv.appendChild(courseItem);

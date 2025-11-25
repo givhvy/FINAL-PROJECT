@@ -70,9 +70,10 @@ exports.getUserProgress = async (req, res) => {
     const { userId } = req.params;
     const { courseId } = req.query;
 
-    const progress = await Progress.getByEnrollment(userId, courseId);
+    // Get enrollments with progress percentage
+    const enrollments = await Progress.getUserEnrollmentsWithProgress(userId, courseId);
 
-    res.status(200).json(progress);
+    res.status(200).json(enrollments);
   } catch (error) {
     console.error('Error fetching user progress:', error);
     res.status(500).json({ error: error.message });

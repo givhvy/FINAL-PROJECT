@@ -289,6 +289,75 @@ class Progress {
     }
 
     /**
+     * Get user's enrollments with progress percentage
+     * Returns array of {courseId, userId, percentage, completedLessons, totalLessons}
+     */
+    static async getUserEnrollmentsWithProgress(userId, courseId = null) {
+        const db = this.getDB();
+
+        // Get all enrollments for this user
+        let query = db.collection('enrollments')
+            .where('userId', '==', userId);
+
+        if (courseId) {
+            query = query.where('courseId', '==', courseId);
+        }
+
+        const enrollmentsSnapshot = await query.get();
+
+        if (enrollmentsSnapshot.empty) {
+            // Try snake_case (old schema)
+            query = db.collection('enrollments')
+                .where('user_id', '==', userId);
+            
+            if (courseId) {
+                query = query.where('course_id', '==', courseId);
+            }
+
+            const oldEnrollmentsSnapshot = await query.get();
+            if (oldEnrollmentsSnapshot.empty) {
+                return [];
+            }
+            
+            // Process old schema
+            const results = await Promise.all(
+                oldEnrollmentsSnapshot.docs.map(async (doc) => {
+                    const enrollment = doc.data();
+                    const cId = enrollment.course_id;
+                    const percentage = await this.calculateCompletion(userId, cId);
+                    
+                    return {
+                        courseId: cId,
+                        userId: userId,
+                        percentage: percentage,
+                        enrollmentId: doc.id
+                    };
+                })
+            );
+            
+            return results;
+        }
+
+        // Process new schema
+        const results = await Promise.all(
+            enrollmentsSnapshot.docs.map(async (doc) => {
+                const enrollment = doc.data();
+                const cId = enrollment.courseId;
+                const percentage = await this.calculateCompletion(userId, cId);
+                
+                return {
+                    courseId: cId,
+                    userId: userId,
+                    percentage: percentage,
+                    enrollmentId: doc.id
+                };
+            })
+        );
+
+        return results;
+    }
+
+    /**
      * Get daily progress count (lessons completed today)
      * @param {string} userId - User ID
      * @returns {Promise<number>} - Count of lessons completed today
