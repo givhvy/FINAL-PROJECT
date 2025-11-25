@@ -123,7 +123,7 @@ async function fetchAndRenderEnrolledCourses() {
         }
 
         enrolledListDiv.innerHTML = '';
-        enrollments.slice(0, 3).forEach(enrollment => {
+        enrollments.forEach(enrollment => {
             const percentage = enrollment.percentage || 0;
             const progressColor = percentage === 100 ? 'green' : percentage >= 50 ? 'blue' : percentage > 0 ? 'yellow' : 'gray';
 
