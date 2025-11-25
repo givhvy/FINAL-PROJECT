@@ -66,9 +66,10 @@ exports.getUserProgress = async (req, res) => {
 exports.getLeaderboard = async (req, res) => {
     try {
         const db = getFirestore();
+        const Enrollment = require('../models/Enrollment');
         const Progress = require('../models/Progress');
 
-        console.log('\n🔍 [LEADERBOARD] Starting optimized leaderboard fetch...');
+        console.log('\n🔍 [LEADERBOARD] Starting enrollment-based leaderboard fetch...');
 
         // STEP 1: Get all student users
         const usersSnapshot = await db.collection('users')
@@ -88,70 +89,33 @@ exports.getLeaderboard = async (req, res) => {
 
         console.log(`🔄 [LEADERBOARD] Calculating progress for each user...`);
 
-        // STEP 2: Get progress for each user using Order model (same as /api/users/:id/progress)
-        const Order = require('../models/Order');
-        const Course = require('../models/Course');
-        const Lesson = require('../models/Lesson');
-
         const leaderboardData = [];
 
         for (const user of users) {
             const userId = user.id;
 
             try {
-                // Use the EXACT same logic as getUserProgressDetails
-                // Get all user's orders to find enrolled courses
-                const userOrders = await Order.findByUserId(userId);
-                const processedCourses = new Set();
+                // Get all enrollments for this user
+                const enrollments = await Enrollment.findByUserId(userId);
+                
                 let completedCourses = 0;
-                let totalEnrolledCourses = 0;
+                const totalEnrolledCourses = enrollments.length;
 
-                for (const order of userOrders) {
-                    const courseId = order.courseId;
+                // For each enrollment, check if course is 100% completed
+                for (const enrollment of enrollments) {
+                    const courseId = enrollment.courseId || enrollment.course_id;
+                    if (!courseId) continue;
 
-                    // Skip invalid or duplicate courses
-                    if (!courseId || courseId === 'undefined' || processedCourses.has(courseId)) {
-                        continue;
-                    }
-
-                    processedCourses.add(courseId);
-                    totalEnrolledCourses++;
-
-                    // Get course details
-                    const course = await Course.findById(courseId);
-                    if (!course || !course.title) continue;
-
-                    // Get lessons for this course
-                    const lessons = await Lesson.findByCourseId(courseId);
-                    const totalLessons = lessons.length;
-
-                    // Get completed lessons count
-                    const completedLessonsSnapshot = await db.collection('user_progress')
-                        .where('user_id', '==', userId)
-                        .where('course_id', '==', courseId)
-                        .where('progress_type', '==', 'lesson_completed')
-                        .get();
-
-                    const completedLessonsCount = completedLessonsSnapshot.size;
-
-                    // Handle edge cases
-                    let percentage = 0;
-                    if (totalLessons === 0) {
-                        // If course has no lessons but user has progress, count as 100% if they completed any
-                        percentage = completedLessonsCount > 0 ? 100 : 0;
-                    } else {
-                        // Normal case: calculate percentage
-                        // Cap at 100% even if completedLessons > totalLessons (data inconsistency)
-                        percentage = Math.min(100, Math.round((completedLessonsCount / totalLessons) * 100));
-                    }
-
-                    // Check if course is completed (100%)
+                    // Calculate completion percentage for this course
+                    const percentage = await Progress.calculateCompletion(userId, courseId);
+                    
+                    // Count as completed if 100%
                     if (percentage === 100) {
                         completedCourses++;
                     }
                 }
 
-                // Calculate study points: SIMPLE - 100 pts per completed course
+                // Calculate study points: 100 pts per completed course
                 const studyPoints = completedCourses * 100;
 
                 // Debug log for first few users
@@ -174,6 +138,8 @@ exports.getLeaderboard = async (req, res) => {
                     hours: completedCourses, // Number of courses completed
                     points: studyPoints, // Study points based on courses completed
                     initials: initials.toUpperCase(),
+                    userId: userId,
+                    email: user.email,
                     color: ['yellow-400', 'gray-400', 'orange-400', 'purple-400', 'green-400', 'blue-400', 'pink-400'][Math.floor(Math.random() * 7)]
                 });
             } catch (error) {

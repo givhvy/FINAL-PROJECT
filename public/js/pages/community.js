@@ -142,17 +142,17 @@ function getUserInitials() {
 // ==================== PROGRESS & STATS ====================
 async function renderUserProgress() {
     try {
-        const response = await fetch(`/api/users/${user.id}/progress`, {
+        const response = await fetch(`/api/users/${user.id}/enrollments`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!response.ok) throw new Error('Failed to fetch progress');
         
-        const progressData = await response.json();
+        const enrollments = await response.json();
         
-        // Calculate courses completed
-        const completedCourses = progressData.filter(p => p.percentage === 100).length;
-        const totalCourses = progressData.length || 1;
+        // Calculate courses completed (based on enrollments with 100% progress)
+        const completedCourses = enrollments.filter(e => e.percentage === 100).length;
+        const totalCourses = enrollments.length || 1;
         const completionPercentage = (completedCourses / totalCourses) * 100;
 
         const courseCompletedCount = document.getElementById('course-completed-count');
