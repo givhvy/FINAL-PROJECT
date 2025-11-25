@@ -23,16 +23,6 @@ exports.register = async (req, res) => {
         // Determine the user role (default to 'student' if not specified)
         const userRole = role || 'student';
 
-        // FR1.5: Verify student status for users registering as students
-        if (userRole === 'student') {
-            if (!isEducationalEmail(email)) {
-                return res.status(400).json({
-                    error: 'Students must register with an educational email address (e.g., .edu, .edu.vn, .ac.uk)',
-                    hint: 'Please use your school or university email address'
-                });
-            }
-        }
-
         // Sử dụng User Model để tạo người dùng mới
         const newUser = await User.create({
             name,

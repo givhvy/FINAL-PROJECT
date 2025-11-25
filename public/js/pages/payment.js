@@ -369,6 +369,7 @@ async function createCheckoutSession(planId, planName, planPrice, billing) {
             courseName: courseNameWithBilling,
             price: planPrice,
             userId: user.id,
+            billingPeriod: billing,
             successUrl: successUrl,
             cancelUrl: cancelUrl
         })

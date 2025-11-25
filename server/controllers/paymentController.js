@@ -9,7 +9,7 @@ const Course = require('../models/Course');
 exports.createCheckoutSession = async (req, res) => {
     try {
         // Lấy thông tin cần thiết từ Frontend
-        const { courseId, courseName, price, successUrl, cancelUrl, userId } = req.body;
+        const { courseId, courseName, price, successUrl, cancelUrl, userId, billingPeriod } = req.body;
         
         // Kiểm tra .env của khóa Stripe
         if (!process.env.STRIPE_SECRET_KEY) {
@@ -18,6 +18,8 @@ exports.createCheckoutSession = async (req, res) => {
                 error: 'Configuration Error' 
             });
         }
+        
+        console.log('🔵 Creating Stripe session with billing period:', billingPeriod);
         
         // 1. Tạo phiên Stripe Checkout
         const session = await stripe.checkout.sessions.create({
@@ -41,7 +43,8 @@ exports.createCheckoutSession = async (req, res) => {
             client_reference_id: userId,
             metadata: {
                 course_id: courseId,
-                user_id: userId
+                user_id: userId,
+                billing_period: billingPeriod || 'monthly'
             },
             success_url: successUrl,
             cancel_url: cancelUrl,
@@ -134,24 +137,27 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         console.log('\n🔍 PAYMENT DEBUG - Checking subscription:');
         console.log('courseId:', courseId);
         console.log('courseName:', courseName);
-        console.log('courseName.toLowerCase():', courseName.toLowerCase());
+        console.log('session.metadata.billing_period:', session.metadata.billing_period);
         
         if (!courseId || courseName.toLowerCase().includes('pro') || courseName.toLowerCase().includes('subscription')) {
             console.log('✅ This IS a subscription purchase!');
             
-            // Determine subscription plan from courseName
+            // Determine subscription plan from metadata first, then fallback to courseName
+            const billingPeriod = session.metadata.billing_period || 'monthly';
             let subscriptionPlan = 'monthly';
             let durationMonths = 1;
             
-            if (courseName.toLowerCase().includes('quarterly') || courseName.toLowerCase().includes('3 month')) {
+            if (billingPeriod === 'yearly' || courseName.toLowerCase().includes('yearly') || courseName.toLowerCase().includes('year') || courseName.toLowerCase().includes('12 month')) {
+                subscriptionPlan = 'yearly';
+                durationMonths = 12;
+                console.log('📊 Detected YEARLY plan from:', billingPeriod === 'yearly' ? 'metadata' : 'courseName');
+            } else if (billingPeriod === 'quarterly' || courseName.toLowerCase().includes('quarterly') || courseName.toLowerCase().includes('3 month')) {
                 subscriptionPlan = 'quarterly';
                 durationMonths = 3;
                 console.log('📊 Detected QUARTERLY plan');
-            } else if (courseName.toLowerCase().includes('yearly') || courseName.toLowerCase().includes('year') || courseName.toLowerCase().includes('12 month')) {
-                subscriptionPlan = 'yearly';
-                durationMonths = 12;
-                console.log('📊 Detected YEARLY plan');
             } else {
+                subscriptionPlan = 'monthly';
+                durationMonths = 1;
                 console.log('📊 Detected MONTHLY plan (default)');
             }
 

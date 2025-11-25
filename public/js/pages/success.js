@@ -67,21 +67,30 @@ async function updateUserData() {
     if (!user || !token) return;
     
     try {
+        console.log('🔄 Fetching updated user data after payment...');
         const userResponse = await fetch(`/api/users/${user.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (userResponse.ok) {
             const updatedUser = await userResponse.json();
+            console.log('✅ Updated user data received:', updatedUser);
+            console.log('📅 Subscription details:');
+            console.log('  - Tier:', updatedUser.subscriptionTier);
+            console.log('  - Plan:', updatedUser.subscriptionPlan);
+            console.log('  - Start:', updatedUser.subscriptionStartDate);
+            console.log('  - End:', updatedUser.subscriptionEndDate);
+            
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            console.log('💾 User data saved to localStorage');
             
             // Refresh header UI to show Pro badge immediately
             if (typeof window.refreshUserSubscription === 'function') {
                 await window.refreshUserSubscription();
-                console.log('\u2705 Pro badge refreshed successfully');
+                console.log('✅ Pro badge refreshed successfully');
             }
         }
     } catch (error) {
-        console.error('Error updating user data:', error);
+        console.error('❌ Error updating user data:', error);
     }
 }
