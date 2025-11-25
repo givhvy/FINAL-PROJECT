@@ -134,17 +134,27 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         if (!courseId || courseName.toLowerCase().includes('pro') || courseName.toLowerCase().includes('subscription')) {
             // Determine subscription plan from courseName
             let subscriptionPlan = 'monthly';
+            let durationMonths = 1;
+            
             if (courseName.toLowerCase().includes('quarterly') || courseName.toLowerCase().includes('3 month')) {
                 subscriptionPlan = 'quarterly';
+                durationMonths = 3;
             } else if (courseName.toLowerCase().includes('yearly') || courseName.toLowerCase().includes('year') || courseName.toLowerCase().includes('12 month')) {
                 subscriptionPlan = 'yearly';
+                durationMonths = 12;
             }
+
+            // Calculate subscription end date
+            const startDate = new Date();
+            const endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + durationMonths);
 
             // Upgrade user with subscription details
             await User.update(userId, {
                 subscriptionTier: 'pro',
                 subscriptionPlan: subscriptionPlan,
-                subscriptionStartDate: new Date().toISOString()
+                subscriptionStartDate: startDate.toISOString(),
+                subscriptionEndDate: endDate.toISOString()
             });
         }
 

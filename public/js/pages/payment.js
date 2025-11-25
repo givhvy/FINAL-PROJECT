@@ -67,7 +67,7 @@ async function handleStudentVerification(e) {
             },
             body: JSON.stringify({
                 user_id: user.id,
-                student_email: email
+                email: email
             })
         });
         

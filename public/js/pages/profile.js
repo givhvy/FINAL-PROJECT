@@ -39,6 +39,23 @@ function setupEventListeners() {
     
     // Delete account button (only for students)
     setupDeleteAccount();
+
+    // Logout buttons
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
+
+    const mobileLogoutBtn = document.getElementById('mobile-logout-button');
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
 }
 
 // ==================== PROFILE RENDERING ====================
