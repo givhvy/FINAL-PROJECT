@@ -113,16 +113,16 @@ function initializeProfilePage(user) {
 # 1. Start server
 npm start
 
-# 2. Kiểm tra trong browser:
-#    - Mở trang đã refactor
-#    - Kiểm tra Console không có lỗi
-#    - Test tất cả các chức năng
-#    - Test dark mode
-#    - Test responsive
+    # 2. Kiểm tra trong browser:
+    #    - Mở trang đã refactor
+    #    - Kiểm tra Console không có lỗi
+    #    - Test tất cả các chức năng
+    #    - Test dark mode
+    #    - Test responsive
 
-# 3. Kiểm tra Network tab:
-#    - Tất cả JS files load thành công
-#    - Không có 404 errors
+    # 3. Kiểm tra Network tab:
+    #    - Tất cả JS files load thành công
+    #    - Không có 404 errors
 ```
 
 ## 🎯 LỢI ÍCH ĐÃ ĐẠT ĐƯỢC

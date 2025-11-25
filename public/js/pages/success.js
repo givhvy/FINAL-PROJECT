@@ -74,6 +74,12 @@ async function updateUserData() {
         if (userResponse.ok) {
             const updatedUser = await userResponse.json();
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            
+            // Refresh header UI to show Pro badge immediately
+            if (typeof window.refreshUserSubscription === 'function') {
+                await window.refreshUserSubscription();
+                console.log('\u2705 Pro badge refreshed successfully');
+            }
         }
     } catch (error) {
         console.error('Error updating user data:', error);

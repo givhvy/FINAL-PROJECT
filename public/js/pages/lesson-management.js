@@ -115,13 +115,13 @@ async function handleVideoUpload() {
     const uploadSuccess = document.getElementById('upload-success');
 
     const file = videoFileInputEl.files[0];
-    if (!file) {
-        alert('Please select a video file first');
+    if (!videoFile) {
+        notify.warning('Please select a video file first');
         return;
     }
 
-    if (file.size > 100 * 1024 * 1024) {
-        alert('File size must be less than 100MB');
+    if (videoFile.size > 100 * 1024 * 1024) {
+        notify.error('File size must be less than 100MB');
         return;
     }
 
@@ -275,8 +275,8 @@ async function fetchAndRenderCourseDetails() {
             `;
         }).join('');
     } catch (error) {
-        console.error('Error fetching course:', error);
-        alert('Failed to load course details');
+        console.error('Error loading course details:', error);
+        notify.error('Failed to load course details');
     }
 }
 
@@ -389,7 +389,7 @@ async function handleQuizSubmit(e) {
     }));
 
     if (questions.length === 0) {
-        alert('Please add at least one question');
+        notify.warning('Please add at least one question');
         return;
     }
 
@@ -463,8 +463,8 @@ async function handleContentActions(e) {
                     document.getElementById('lesson-video-url').value = lesson.videoUrl || lesson.video_url;
                 }
             } catch (error) {
-                console.error('Error fetching lesson:', error);
-                alert('Error loading lesson: ' + error.message);
+                console.error('Error loading lesson:', error);
+                notify.error('Error loading lesson: ' + error.message);
             }
         } else if (type === 'quiz') {
             try {
@@ -494,8 +494,8 @@ async function handleContentActions(e) {
                     });
                 }
             } catch (error) {
-                console.error('Error fetching quiz:', error);
-                alert('Error loading quiz: ' + error.message);
+                console.error('Error loading quiz:', error);
+                notify.error('Error loading quiz: ' + error.message);
             }
         }
     }

@@ -476,21 +476,51 @@ function renderPaidSubscription(userData, detailsEl, actionsEl) {
     let expirationDate;
     let planLabel;
     
-    switch (subscriptionPlan) {
-        case 'quarterly':
-            expirationDate = new Date(subscriptionStartDate);
-            expirationDate.setMonth(expirationDate.getMonth() + 3);
-            planLabel = '3 Months (Quarterly)';
-            break;
-        case 'yearly':
-            expirationDate = new Date(subscriptionStartDate);
-            expirationDate.setFullYear(expirationDate.getFullYear() + 1);
-            planLabel = '12 Months (Yearly)';
-            break;
-        default:
-            expirationDate = new Date(subscriptionStartDate);
-            expirationDate.setMonth(expirationDate.getMonth() + 1);
-            planLabel = '1 Month (Monthly)';
+    console.log('🔍 Profile Debug:', {
+        subscriptionPlan,
+        subscriptionStartDate,
+        subscriptionEndDate: userData.subscriptionEndDate,
+        fullUserData: userData
+    });
+    
+    // Use subscriptionEndDate from backend if available
+    if (userData.subscriptionEndDate) {
+        expirationDate = new Date(userData.subscriptionEndDate);
+        // Calculate duration in months
+        const monthsDiff = Math.round((expirationDate - subscriptionStartDate) / (1000 * 60 * 60 * 24 * 30));
+        
+        console.log('✅ Using subscriptionEndDate:', {
+            expirationDate,
+            monthsDiff,
+            calculation: `${expirationDate} - ${subscriptionStartDate}`
+        });
+        
+        if (monthsDiff >= 12) {
+            planLabel = `${monthsDiff} Months (Yearly)`;
+        } else if (monthsDiff >= 3) {
+            planLabel = `${monthsDiff} Months (Quarterly)`;
+        } else {
+            planLabel = `${monthsDiff} Month${monthsDiff > 1 ? 's' : ''} (Monthly)`;
+        }
+    } else {
+        console.log('⚠️ No subscriptionEndDate, using fallback calculation');
+        // Fallback to plan-based calculation
+        switch (subscriptionPlan) {
+            case 'quarterly':
+                expirationDate = new Date(subscriptionStartDate);
+                expirationDate.setMonth(expirationDate.getMonth() + 3);
+                planLabel = '3 Months (Quarterly)';
+                break;
+            case 'yearly':
+                expirationDate = new Date(subscriptionStartDate);
+                expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+                planLabel = '12 Months (Yearly)';
+                break;
+            default:
+                expirationDate = new Date(subscriptionStartDate);
+                expirationDate.setMonth(expirationDate.getMonth() + 1);
+                planLabel = '1 Month (Monthly)';
+        }
     }
     
     const daysRemaining = Math.ceil((expirationDate - new Date()) / (1000 * 60 * 60 * 24));
@@ -617,10 +647,22 @@ async function handleCancelSubscription() {
     const isStudent = user.studentEmail || user.isStudent;
     
     const confirmMsg = isStudent
-        ? '⚠️ Are you sure you want to cancel your student benefits?\n\nThis will:\n- Revert your account to Free tier\n- Remove access to premium courses\n- You can re-verify later with a valid .edu email'
-        : '⚠️ Are you sure you want to cancel your Pro subscription?\n\nThis will:\n- Revert your account to Free tier immediately\n- Remove access to premium courses and certificates';
+        ? 'Are you sure you want to cancel your student benefits?\n\nThis will:\n- Revert your account to Free tier\n- Remove access to premium courses\n- You can re-verify later with a valid .edu email'
+        : 'Are you sure you want to cancel your Pro subscription?\n\nThis will:\n- Revert your account to Free tier immediately\n- Remove access to premium courses and certificates';
     
-    if (!confirm(confirmMsg)) return;
+    const confirmed = await notify.confirm(
+        confirmMsg, 
+        'Cancel Subscription', 
+        {
+            icon: 'fa-exclamation-triangle',
+            iconColor: 'text-red-500',
+            confirmText: 'Yes, Cancel',
+            cancelText: 'Keep Subscription',
+            confirmClass: 'bg-red-600 hover:bg-red-700'
+        }
+    );
+    
+    if (!confirmed) return;
     
     const cancelBtn = document.getElementById('cancel-subscription-btn');
     if (cancelBtn) {

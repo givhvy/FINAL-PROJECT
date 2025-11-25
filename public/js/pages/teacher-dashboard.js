@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             showPage('dashboard-page'); // Show dashboard after data is loaded
         } catch (error) {
             console.error(error);
-            alert('Failed to load initial data.');
+            notify.error('Failed to load initial data.');
         }
     }
 
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </button>
                     </div>
                     <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-end items-center">
-                        <a href="/lesson-management?courseId=${course.id}" class="text-sm font-medium text-blue-600 hover:text-blue-800">Manage Lessons ?</a>
+                        <a href="/lesson-management?courseId=${course.id}" class="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">Manage Lessons <i class="fas fa-arrow-right text-xs"></i></a>
                     </div>
                 </div>
             </div>`;
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             imageUrlInput.value = uploadedImageUrl;
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Failed to upload image: ' + error.message);
+            notify.error('Failed to upload image: ' + error.message);
             imagePreview.classList.add('hidden');
         }
     });
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function showStudentProgressModal(studentId) {
         const student = allStudents.find(s => s.id === studentId);
         if (!student) {
-            alert('Student not found');
+            notify.warning('Student not found');
             return;
         }
 
@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             link.click();
         }).catch(err => {
             console.error('Error during certificate capture:', err);
-            alert('Failed to download certificate. Check console for details.');
+            notify.error('Failed to download certificate. Check console for details.');
         });
     }
 
@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const issueDate = dateInput.value ? new Date(dateInput.value).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
 
         if (!studentName || !courseTitle || !issueDate) {
-            alert('Please select all fields to generate a certificate.');
+            notify.warning('Please select all fields to generate a certificate.');
             return;
         }
 
@@ -1045,13 +1045,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(errorMessage);
             }
             
-            alert(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
+            notify.success(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
             courseModal.classList.add('hidden');
             await fetchInitialData(); 
             
         } catch (error) {
             console.error("Course Save Error:", error);
-            alert(`Error: Failed to ${isEditing ? 'update' : 'add'} course.\nDetails: ${error.message}`);
+            notify.error(`Failed to ${isEditing ? 'update' : 'add'} course: ${error.message}`);
         }
     });
     } // Close if (courseForm) check
@@ -1076,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!response.ok) throw new Error('Failed to delete course.');
                     await fetchInitialData(); // Refetch
                 } catch (error) {
-                    alert('Error: ' + error.message);
+                    notify.error('Error: ' + error.message);
                 }
             }
         } else if (button.classList.contains('toggle-access-btn')) {
@@ -1098,9 +1098,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 await fetchInitialData(); // Refetch to update UI
-                alert(`Course access changed to ${newLocked ? 'PRO' : 'FREE'}`);
+                notify.success(`Course access changed to ${newLocked ? 'PRO' : 'FREE'}`);
             } catch (error) {
-                alert('Error: ' + error.message);
+                notify.error('Error: ' + error.message);
             }
         }
     });
@@ -1161,8 +1161,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 <div class="flex items-center justify-between text-sm text-gray-500">
                     <div class="flex items-center space-x-4">
-                        <span>?? ${group.subject || 'General'}</span>
-                        <span>?? Created ${new Date(group.created_at).toLocaleDateString()}</span>
+                        <span>📚 ${group.subject || 'General'}</span>
+                        <span>📅 Created ${new Date(group.created_at).toLocaleDateString()}</span>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="viewGroupDetails('${group.id}')"
@@ -1206,18 +1206,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!response.ok) throw new Error('Failed to create study group');
 
-            alert('Study group created successfully!');
+            notify.success('Study group created successfully!');
             await fetchStudyGroups(); // Refresh the list
 
         } catch (error) {
             console.error('Error creating study group:', error);
-            alert('Failed to create study group. Please try again.');
+            notify.error('Failed to create study group. Please try again.');
         }
     }
 
     // View group details (placeholder for now)
     function viewGroupDetails(groupId) {
-        alert(`Group details functionality will be implemented soon.\nGroup ID: ${groupId}`);
+        notify.info(`Group details functionality will be implemented soon. Group ID: ${groupId}`);
     }
 
     // Delete study group
@@ -1233,12 +1233,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!response.ok) throw new Error('Failed to delete study group');
 
-            alert('Study group deleted successfully!');
+            notify.success('Study group deleted successfully!');
             await fetchStudyGroups(); // Refresh the list
 
         } catch (error) {
             console.error('Error deleting study group:', error);
-            alert('Failed to delete study group. Please try again.');
+            notify.error('Failed to delete study group. Please try again.');
         }
     }
 
@@ -1327,7 +1327,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error('Avatar upload error:', error);
-            alert('Failed to upload avatar: ' + error.message);
+            notify.error('Failed to upload avatar: ' + error.message);
             avatarUploadProgress.classList.add('hidden');
         }
     });
@@ -1389,12 +1389,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            alert('Profile updated successfully!');
+            notify.success('Profile updated successfully!');
             closeProfilePanel();
 
         } catch (error) {
             console.error('Profile update error:', error);
-            alert('Failed to update profile: ' + error.message);
+            notify.error('Failed to update profile: ' + error.message);
         }
     });
 

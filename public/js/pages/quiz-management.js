@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     lessonId = urlParams.get('lessonId');
     
     if (!lessonId) {
-        alert('No lesson selected.');
+        notify.warning('No lesson selected.');
         window.location.href = '/teacher';
         return;
     }
@@ -60,7 +60,7 @@ async function findOrCreateQuizForLesson() {
         await fetchAndRenderQuestions();
     } catch (error) {
         console.error('Error finding/creating quiz:', error);
-        alert('Failed to load quiz information');
+        notify.error('Failed to load quiz information');
     }
 }
 
@@ -116,7 +116,7 @@ async function handleAddQuestion(e) {
     e.preventDefault();
     
     if (!quizId) {
-        alert('Could not determine the quiz. Please try again.');
+        notify.warning('Could not determine the quiz. Please try again.');
         return;
     }
 
@@ -144,12 +144,12 @@ async function handleAddQuestion(e) {
 
         if (!response.ok) throw new Error('Failed to create question.');
         
-        alert('Question added successfully!');
+        notify.success('Question added successfully!');
         e.target.reset();
         await fetchAndRenderQuestions();
     } catch (error) {
         console.error('Error adding question:', error);
-        alert('Error: ' + error.message);
+        notify.error('Error: ' + error.message);
     }
 }
 
@@ -166,10 +166,10 @@ async function handleDeleteQuestion(questionId) {
 
         if (!response.ok) throw new Error('Failed to delete question.');
         
-        alert('Question deleted successfully!');
+        notify.success('Question deleted successfully!');
         await fetchAndRenderQuestions();
     } catch (error) {
         console.error('Error deleting question:', error);
-        alert('Error: ' + error.message);
+        notify.error('Error: ' + error.message);
     }
 }

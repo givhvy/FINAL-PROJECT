@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateDashboardStats();
         } catch (error) {
         console.error('Core Data Fetch Error:', error);
-        alert('Error loading essential data: ' + error.message);
+        notify.error('Error loading essential data: ' + error.message);
     }
     }
 
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const validStatuses = ['pending', 'completed', 'cancelled', 'refunded'];
         if (!validStatuses.includes(newStatus.toLowerCase())) {
-            alert('Invalid status. Please use: pending, completed, cancelled, or refunded');
+            notify.warning('Invalid status. Please use: pending, completed, cancelled, or refunded');
             return;
         }
 
@@ -373,11 +373,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!response.ok) throw new Error('Failed to update order status');
 
-            alert('Order status updated successfully!');
+            notify.success('Order status updated successfully!');
             loadOrders();
         } catch (error) {
         console.error('Error updating order status:', error);
-        alert('Error updating order status: ' + error.message);
+        notify.error('Error updating order status: ' + error.message);
     }
     }
 
@@ -638,12 +638,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(errorData.error || 'Failed to delete course');
             }
 
-            alert('Course deleted successfully!');
+            notify.success('Course deleted successfully!');
             await fetchAllData();
             renderCourseManagementPage();
         } catch (error) {
         console.error('Error deleting course:', error);
-        alert('Error: ' + error.message);
+        notify.error('Error: ' + error.message);
     }
     }
     async function openSubscriptionModal(planId = null) {
@@ -662,7 +662,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     document.getElementById('plan-features').value = plan.features.join('\n');
                 }
             } catch (error) {
-            alert('Could not load plan details.');
+            notify.error('Could not load plan details.');
             return;
         }
     } else {
@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) throw new Error('Failed to save plan.');
             closeSubscriptionModal();
             renderSubscriptionManagementPage();
-    } catch (error) { alert(`Error: ${error.message}`); }
+    } catch (error) { notify.error(`Error: ${error.message}`); }
     }
 
     async function handleDeletePlan(e) {
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const response = await fetch(`/api/subscriptions/${planId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
                 if (!response.ok) throw new Error('Failed to delete plan.');
                 renderSubscriptionManagementPage();
-    } catch (error) { alert(`Error: ${error.message}`); }
+    } catch (error) { notify.error(`Error: ${error.message}`); }
     }
     }
 
@@ -968,7 +968,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
         console.error('Blog image upload error:', error);
-        alert('Failed to upload image: ' + error.message);
+        notify.error('Failed to upload image: ' + error.message);
         blogUploadProgress.classList.add('hidden');
         blogProgressBar.style.width = '0%';
     }
@@ -1001,7 +1001,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (files.length > 0 && files[0].type.startsWith('image/')) {
                 uploadBlogImage(files[0]);
             } else {
-            alert('Please drop an image file (PNG, JPG, GIF)');
+            notify.warning('Please drop an image file (PNG, JPG, GIF)');
         }
     });
     }
@@ -1043,18 +1043,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!response.ok) throw new Error('Failed to delete blog post');
 
-            alert('Blog post deleted successfully!');
+            notify.success('Blog post deleted successfully!');
             await fetchAndRenderBlogPosts();
         } catch (error) {
         console.error('Error deleting blog post:', error);
-        alert(`Error: ${error.message}`);
+        notify.error(`Error: ${error.message}`);
     }
     }
 
     // View blog post (placeholder)
     function viewBlogPost(slug) {
         // TODO: Implement view functionality or redirect to blog page
-        alert(`View functionality will redirect to blog post: ${slug}`);
+        notify.info(`View functionality will redirect to blog post: ${slug}`);
     }
 
     // Handle blog form submission
@@ -1071,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Validate content is not empty
         if (!content || content === '<p><br></p>') {
-            alert('Please add content to your blog post.');
+            notify.warning('Please add content to your blog post.');
             return;
         }
 
@@ -1115,13 +1115,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const result = await response.json();
             console.log('Success response:', result);
 
-            alert(`Blog post ${currentEditingBlogId ? 'updated' : 'created'} successfully!`);
+            notify.success(`Blog post ${currentEditingBlogId ? 'updated' : 'created'} successfully!`);
             closeBlogModal();
             await fetchAndRenderBlogPosts();
         } catch (error) {
         console.error('Error saving blog post:', error);
         console.error('Error stack:', error.stack);
-        alert(`Error: ${error.message}`);
+        notify.error(`Error: ${error.message}`);
     }
     }
 
@@ -1384,11 +1384,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('user-modal').classList.add('hidden');
         renderUsersPage();
 
-        alert(`User ${userId ? 'updated' : 'created'} successfully!`);
+        notify.success(`User ${userId ? 'updated' : 'created'} successfully!`);
 
     } catch (error) {
     console.error('Error saving user:', error);
-    alert(`Error: ${error.message}`);
+    notify.error(`Error: ${error.message}`);
     }
     }
 
@@ -1422,11 +1422,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             renderUsersPage();
-            alert(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
+            notify.success(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
 
         } catch (error) {
         console.error('Error updating user role:', error);
-        alert(`Error: ${error.message}`);
+        notify.error(`Error: ${error.message}`);
     }
     }
 
@@ -1456,11 +1456,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             allUsers = allUsers.filter(u => u.id !== userId);
             renderUsersPage();
 
-            alert('User deleted successfully!');
+            notify.success('User deleted successfully!');
 
         } catch (error) {
         console.error('Error deleting user:', error);
-        alert(`Error: ${error.message}`);
+        notify.error(`Error: ${error.message}`);
     }
     }
 
@@ -1812,9 +1812,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('header-avatar').textContent = initials;
 
             document.getElementById('admin-profile-modal').classList.add('hidden');
-            alert('Profile updated successfully!');
+            notify.success('Profile updated successfully!');
         } catch (error) {
-        alert('Error updating profile: ' + error.message);
+        notify.error('Error updating profile: ' + error.message);
     }
     });
 

@@ -118,7 +118,7 @@ async function renderLessonPage(course) {
             const hasAccess = card.dataset.hasAccess === 'true';
 
             if (!hasAccess) {
-                alert('This course requires a Pro subscription. Upgrade to access this locked course!');
+                notify.warning('This course requires a Pro subscription. Upgrade to access this locked course!');
                 window.location.href = '/payment';
                 return;
             }

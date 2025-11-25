@@ -270,7 +270,7 @@ function showWeeklyGoalDialog() {
     if (newGoal && !isNaN(newGoal) && newGoal > 0) {
         localStorage.setItem('weeklyGoal', newGoal);
         renderUserProgress();
-        alert(`Weekly goal updated to ${newGoal} courses!`);
+        notify.success(`Weekly goal updated to ${newGoal} courses!`);
     }
 }
 
@@ -344,7 +344,7 @@ function getInitials(name) {
 async function renderMyStudyGroups() {
     const container = document.getElementById('my-study-groups-container');
     try {
-        const response = await fetch(`${API_BASE}/users/${user.id}/groups`, {
+        const response = await fetch(`${API_BASE}/community/users/${user.id}/groups`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -404,7 +404,7 @@ async function showAvailableGroups() {
     container.innerHTML = '<p class="text-gray-500">Loading groups...</p>';
 
     try {
-        const response = await fetch(`${API_BASE}/groups`, {
+        const response = await fetch(`${API_BASE}/community/groups`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -438,7 +438,7 @@ async function showAvailableGroups() {
 
 window.joinGroup = async function(groupId) {
     try {
-        const response = await fetch(`${API_BASE}/groups/${groupId}/join`, {
+        const response = await fetch(`${API_BASE}/community/groups/${groupId}/join`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -449,12 +449,12 @@ window.joinGroup = async function(groupId) {
 
         if (!response.ok) throw new Error('Failed to join group');
         
-        alert('Successfully joined the group!');
+        notify.success('Successfully joined the group!');
         document.getElementById('available-groups-modal').classList.add('hidden');
         renderMyStudyGroups();
     } catch (error) {
         console.error('Error joining group:', error);
-        alert('Failed to join group. Please try again.');
+        notify.error('Failed to join group. Please try again.');
     }
 };
 
@@ -488,6 +488,9 @@ async function openGroupForum(groupId, groupName) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex gap-4 animate-fade-in';
             
+            // Get user name from user object
+            const userName = msg.user?.name || msg.userName || 'Unknown User';
+            
             // Generate gradient colors based on user name
             const colors = [
                 'from-blue-500 to-indigo-600',
@@ -496,19 +499,19 @@ async function openGroupForum(groupId, groupName) {
                 'from-orange-500 to-red-600',
                 'from-cyan-500 to-blue-600'
             ];
-            const colorIndex = (msg.userName || '').length % colors.length;
+            const colorIndex = userName.length % colors.length;
             
             messageDiv.innerHTML = `
                 <div class="flex-shrink-0">
                     <div class="h-12 w-12 rounded-2xl bg-gradient-to-br ${colors[colorIndex]} flex items-center justify-center text-white font-bold shadow-lg text-lg">
-                        ${getInitials(msg.userName)}
+                        ${getInitials(userName)}
                     </div>
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 dark:border-gray-700">
                         <div class="flex items-center gap-3 mb-2">
-                            <span class="font-bold text-gray-900 dark:text-white text-sm">${escapeHtml(msg.userName)}</span>
-                            <span class="text-xs text-gray-400 dark:text-gray-500">${formatDate(msg.createdAt)}</span>
+                            <span class="font-bold text-gray-900 dark:text-white text-sm">${escapeHtml(userName)}</span>
+                            <span class="text-xs text-gray-400 dark:text-gray-500">${formatDate(msg.createdAt || msg.created_at)}</span>
                         </div>
                         <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed break-words">${escapeHtml(msg.message)}</p>
                     </div>
@@ -552,7 +555,7 @@ async function sendForumMessage() {
         openGroupForum(currentGroupId, groupName);
     } catch (error) {
         console.error('Error sending message:', error);
-        alert('Failed to send message. Please try again.');
+        notify.error('Failed to send message. Please try again.');
     }
 }
 
@@ -595,10 +598,10 @@ function startTimer() {
                 sessionsCompleted++;
                 localStorage.setItem('pomodoroSessions', sessionsCompleted);
                 document.getElementById('sessions-count').textContent = sessionsCompleted;
-                alert('Work session complete! Take a 5-minute break.');
+                notify.success('Work session complete! Take a 5-minute break.');
                 timeLeft = BREAK_TIME;
             } else {
-                alert('Break over! Ready for another work session?');
+                notify.info('Break over! Ready for another work session?');
                 timeLeft = WORK_TIME;
             }
 

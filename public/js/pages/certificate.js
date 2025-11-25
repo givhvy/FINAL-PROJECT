@@ -45,17 +45,17 @@ function handleGenerateCertificate() {
     
     // Validation
     if (!name) {
-        alert('Please enter a name');
+        notify.warning('Please enter a name');
         return;
     }
     
     if (!course) {
-        alert('Please enter a course name');
+        notify.warning('Please enter a course name');
         return;
     }
     
     if (!date) {
-        alert('Please select a date');
+        notify.warning('Please select a date');
         return;
     }
     
@@ -120,7 +120,7 @@ function downloadCertificateAsImage(fileName) {
     const certificateElement = document.getElementById('certificate');
     
     if (!certificateElement) {
-        alert('Certificate element not found');
+        notify.error('Certificate element not found');
         return;
     }
     
@@ -143,18 +143,13 @@ function downloadCertificateAsImage(fileName) {
         }, 'image/png');
     }).catch(error => {
         console.error('Error generating certificate image:', error);
-        alert('Failed to generate certificate image. Please try again or take a screenshot.');
+        notify.error('Failed to generate certificate image. Please try again or take a screenshot.');
     });
 }
 
 function showDownloadAlert(fileName) {
-    alert(
-        `Certificate generation ready!\n\n` +
-        `To download:\n` +
-        `1. Right-click on the certificate\n` +
-        `2. Select "Save Image As..."\n` +
-        `3. Save as: ${fileName}\n\n` +
-        `Alternatively, take a screenshot of the certificate.`
+    notify.info(
+        `Certificate generation ready! To download: 1) Right-click on the certificate, 2) Select "Save Image As...", 3) Save as: ${fileName}`
     );
 }
 

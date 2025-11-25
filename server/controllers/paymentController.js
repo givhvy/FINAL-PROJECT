@@ -147,7 +147,16 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             // Calculate subscription end date
             const startDate = new Date();
             const endDate = new Date(startDate);
-            endDate.setMonth(endDate.getMonth() + durationMonths);
+            // For yearly, add full year instead of just months
+            if (subscriptionPlan === 'yearly') {
+                endDate.setFullYear(endDate.getFullYear() + 1);
+            } else {
+                endDate.setMonth(endDate.getMonth() + durationMonths);
+            }
+            
+            console.log(`💳 Subscription Purchase: ${subscriptionPlan} plan`);
+            console.log(`📅 Start: ${startDate.toISOString()}`);
+            console.log(`📅 End: ${endDate.toISOString()}`);
 
             // Upgrade user with subscription details
             await User.update(userId, {
