@@ -486,17 +486,32 @@ async function openGroupForum(groupId, groupName) {
         messagesContainer.innerHTML = '';
         messages.forEach(msg => {
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'flex gap-3 mb-4';
+            messageDiv.className = 'flex gap-4 animate-fade-in';
+            
+            // Generate gradient colors based on user name
+            const colors = [
+                'from-blue-500 to-indigo-600',
+                'from-purple-500 to-pink-600',
+                'from-green-500 to-teal-600',
+                'from-orange-500 to-red-600',
+                'from-cyan-500 to-blue-600'
+            ];
+            const colorIndex = (msg.userName || '').length % colors.length;
+            
             messageDiv.innerHTML = `
-                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                    ${getInitials(msg.userName)}
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(msg.userName)}</span>
-                        <span class="text-xs text-gray-500">${formatDate(msg.createdAt)}</span>
+                <div class="flex-shrink-0">
+                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br ${colors[colorIndex]} flex items-center justify-center text-white font-bold shadow-lg text-lg">
+                        ${getInitials(msg.userName)}
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300">${escapeHtml(msg.message)}</p>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="font-bold text-gray-900 dark:text-white text-sm">${escapeHtml(msg.userName)}</span>
+                            <span class="text-xs text-gray-400 dark:text-gray-500">${formatDate(msg.createdAt)}</span>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed break-words">${escapeHtml(msg.message)}</p>
+                    </div>
                 </div>
             `;
             messagesContainer.appendChild(messageDiv);
@@ -523,8 +538,7 @@ async function sendForumMessage() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userId: user.id,
-                userName: user.name,
+                user_id: user.id,
                 message: message
             })
         });

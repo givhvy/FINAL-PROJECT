@@ -38,8 +38,22 @@ function setupEventListeners() {
         searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
     }
 
-    // Logout - handled by common header
-    // No need to setup separately
+    // Logout buttons
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
+
+    const mobileLogoutBtn = document.getElementById('mobile-logout-button');
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
 }
 
 // ==================== LOAD BLOG POSTS ====================

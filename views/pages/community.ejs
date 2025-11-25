@@ -15,12 +15,22 @@
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .online-indicator { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         /* Navigation Styles */
         .nav-link { padding: 0.25rem 0.5rem; color: #4b5563; transition: color 0.2s, border-color 0.2s; border-bottom: 2px solid transparent; font-weight: 500; }
         .nav-link:hover { color: #1f2937; border-bottom-color: #3b82f6; }
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
         /* Custom Logo Style */
         .header-logo { color: #2563eb; font-weight: 800; }
+        /* Custom Scrollbar for Forum */
+        #forum-messages-container::-webkit-scrollbar { width: 8px; }
+        #forum-messages-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        #forum-messages-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #forum-messages-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
     <script src="/js/darkmode.js"></script>
     <script>
@@ -165,24 +175,42 @@
                     </div>
                 </div>
 
-                <!-- Group Forum Modal -->
-                <div id="group-forum-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 m-4 max-w-3xl w-full max-h-96 overflow-y-auto">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 id="forum-group-title" class="text-lg font-bold text-gray-800 dark:text-gray-200">Group Forum</h3>
-                            <button id="close-forum-modal" class="text-gray-400 hover:text-gray-600 dark:text-gray-400">
-                                <i class="fas fa-times"></i>
+                <!-- Group Forum Modal - Modern Dashboard Style -->
+                <div id="group-forum-modal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden flex items-center justify-center z-[100] p-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-comments text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 id="forum-group-title" class="text-xl font-bold text-gray-900 dark:text-white">Group Forum</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Active discussion</p>
+                                </div>
+                            </div>
+                            <button id="close-forum-modal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200">
+                                <i class="fas fa-times text-xl"></i>
                             </button>
                         </div>
-                        <div id="forum-messages-container" class="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                            <!-- Messages will be loaded here -->
+
+                        <!-- Messages Container -->
+                        <div id="forum-messages-container" class="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-gray-50 dark:bg-gray-900">
+                            <!-- Messages will be loaded here with new styling -->
                         </div>
-                        <div class="flex space-x-2">
-                            <input id="new-message-input" type="text" placeholder="Type your message..."
-                                   class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button id="send-message-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                                Send
-                            </button>
+
+                        <!-- Input Area -->
+                        <div class="px-8 py-5 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <div class="flex items-end space-x-3">
+                                <div class="flex-1">
+                                    <input id="new-message-input" type="text" placeholder="Type your message..."
+                                           class="w-full px-5 py-3.5 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400">
+                                </div>
+                                <button id="send-message-btn" class="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
+                                    <span>Send</span>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

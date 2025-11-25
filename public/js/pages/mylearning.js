@@ -28,6 +28,23 @@ function setupEventListeners() {
         });
     });
 
+    // Logout buttons
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
+
+    const mobileLogoutBtn = document.getElementById('mobile-logout-button');
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '/login';
+        });
+    }
+
     // Close completion popup
     const closePopup = document.getElementById('close-completion-popup');
     const completionPopup = document.getElementById('completion-popup');
