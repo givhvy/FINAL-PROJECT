@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch and render blog posts
     async function fetchAndRenderBlogPosts() {
         try {
-            const response = await fetch('/api/blog', {
+            const response = await fetch('/api/blog?limit=1000', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 

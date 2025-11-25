@@ -38,6 +38,12 @@ function setupEventListeners() {
         searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
     }
 
+    // Load More button
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', loadMoreArticles);
+    }
+
     // Logout buttons
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
@@ -59,7 +65,7 @@ function setupEventListeners() {
 // ==================== LOAD BLOG POSTS ====================
 async function loadBlogPosts() {
     try {
-        const apiUrl = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/blog?status=published&limit=20';
+        const apiUrl = (window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/blog?status=published&limit=100';
         const response = await fetch(apiUrl);
         
         console.log('Blog API response status:', response.status);
@@ -157,6 +163,13 @@ function renderArticles() {
         container.appendChild(articleCard);
     });
 
+    // Update Load More button visibility
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+        const totalPages = Math.ceil(currentArticles.length / articlesPerPage);
+        loadMoreBtn.style.display = (currentPage < totalPages) ? 'inline-block' : 'none';
+    }
+
     renderPagination();
 }
 
@@ -186,6 +199,60 @@ function renderPagination() {
     }
 }
 
+// ==================== LOAD MORE ====================
+function loadMoreArticles() {
+    const totalPages = Math.ceil(currentArticles.length / articlesPerPage);
+    
+    if (currentPage < totalPages) {
+        currentPage++;
+        
+        // Append new articles instead of replacing
+        const container = document.getElementById('articlesGrid');
+        const startIdx = (currentPage - 1) * articlesPerPage;
+        const endIdx = startIdx + articlesPerPage;
+        const articlesToShow = currentArticles.slice(startIdx, endIdx);
+
+        articlesToShow.forEach(article => {
+            const articleCard = document.createElement('div');
+            articleCard.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-lg fade-in-up';
+            articleCard.onclick = () => showArticle(article.id);
+            articleCard.innerHTML = `
+                <div class="relative h-48 overflow-hidden">
+                    <img src="${article.imageUrl}" alt="${escapeHtml(article.title)}" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            ${escapeHtml(article.category)}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-3 text-gray-800 line-clamp-2">${escapeHtml(article.title)}</h3>
+                    <p class="text-gray-600 mb-4 line-clamp-3">${escapeHtml(article.excerpt)}</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${escapeHtml(article.author)}</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span><i class="far fa-clock mr-1"></i>${article.readTime} min read</span>
+                            <span>${article.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(articleCard);
+        });
+
+        // Hide Load More button if no more articles
+        if (currentPage >= totalPages) {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+    }
+}
+
 // ==================== CATEGORY FILTERING ====================
 function filterByCategory(category) {
     currentCategory = category;
@@ -204,6 +271,13 @@ function filterByCategory(category) {
             btn.classList.remove('category-active');
         }
     });
+
+    // Reset Load More button visibility
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+        const totalPages = Math.ceil(currentArticles.length / articlesPerPage);
+        loadMoreBtn.style.display = totalPages > 1 ? 'block' : 'none';
+    }
 
     renderArticles();
 }
