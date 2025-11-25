@@ -321,8 +321,8 @@ async function handlePlanSelection(e) {
         // Save to cart first for recovery
         addPlanToCart(plan);
         
-        // Create Stripe checkout session
-        await createCheckoutSession(planId, planName, planPrice);
+        // Create Stripe checkout session with billing period
+        await createCheckoutSession(planId, planName, planPrice, billing);
         
     } catch (error) {
         console.error('Payment Error:', error);
@@ -343,9 +343,21 @@ function addPlanToCart(plan) {
     }
 }
 
-async function createCheckoutSession(planId, planName, planPrice) {
+async function createCheckoutSession(planId, planName, planPrice, billing) {
     const successUrl = `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${window.location.origin}/cart`;
+    
+    // Append billing period to courseName so backend can detect subscription type
+    const courseNameWithBilling = billing === 'yearly' 
+        ? `${planName} (Yearly - 12 Months)` 
+        : `${planName} (Monthly)`;
+    
+    console.log('💳 Creating checkout session:', {
+        planName,
+        billing,
+        courseNameWithBilling,
+        price: planPrice
+    });
     
     const response = await fetchWithAuth('/api/payments/create-checkout-session', {
         method: 'POST',
@@ -354,7 +366,7 @@ async function createCheckoutSession(planId, planName, planPrice) {
         },
         body: JSON.stringify({
             courseId: planId,
-            courseName: planName,
+            courseName: courseNameWithBilling,
             price: planPrice,
             userId: user.id,
             successUrl: successUrl,

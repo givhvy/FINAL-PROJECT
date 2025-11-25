@@ -131,7 +131,14 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
 
         // Check if this is a subscription purchase (no specific courseId or subscription plan)
         // If it's a subscription, upgrade user to Pro tier with plan details
+        console.log('\n🔍 PAYMENT DEBUG - Checking subscription:');
+        console.log('courseId:', courseId);
+        console.log('courseName:', courseName);
+        console.log('courseName.toLowerCase():', courseName.toLowerCase());
+        
         if (!courseId || courseName.toLowerCase().includes('pro') || courseName.toLowerCase().includes('subscription')) {
+            console.log('✅ This IS a subscription purchase!');
+            
             // Determine subscription plan from courseName
             let subscriptionPlan = 'monthly';
             let durationMonths = 1;
@@ -139,9 +146,13 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             if (courseName.toLowerCase().includes('quarterly') || courseName.toLowerCase().includes('3 month')) {
                 subscriptionPlan = 'quarterly';
                 durationMonths = 3;
+                console.log('📊 Detected QUARTERLY plan');
             } else if (courseName.toLowerCase().includes('yearly') || courseName.toLowerCase().includes('year') || courseName.toLowerCase().includes('12 month')) {
                 subscriptionPlan = 'yearly';
                 durationMonths = 12;
+                console.log('📊 Detected YEARLY plan');
+            } else {
+                console.log('📊 Detected MONTHLY plan (default)');
             }
 
             // Calculate subscription end date
@@ -157,14 +168,24 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             console.log(`💳 Subscription Purchase: ${subscriptionPlan} plan`);
             console.log(`📅 Start: ${startDate.toISOString()}`);
             console.log(`📅 End: ${endDate.toISOString()}`);
+            console.log(`👤 Updating user: ${userId}`);
 
-            // Upgrade user with subscription details
-            await User.update(userId, {
+            const updateData = {
                 subscriptionTier: 'pro',
                 subscriptionPlan: subscriptionPlan,
                 subscriptionStartDate: startDate.toISOString(),
                 subscriptionEndDate: endDate.toISOString()
-            });
+            };
+            
+            console.log('📝 Update data:', JSON.stringify(updateData, null, 2));
+
+            // Upgrade user with subscription details
+            const updatedUser = await User.update(userId, updateData);
+            
+            console.log('✅ User updated successfully!');
+            console.log('Updated user data:', JSON.stringify(updatedUser.toJSON(), null, 2));
+        } else {
+            console.log('❌ This is NOT a subscription purchase (course purchase)');
         }
 
         res.status(201).json({

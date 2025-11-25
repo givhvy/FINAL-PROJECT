@@ -13,6 +13,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     user = checkAuth();
     if (!user) return;
     
+    console.log('\n🚨 INITIAL USER FROM LOCALSTORAGE:');
+    console.log(JSON.stringify(user, null, 2));
+    
+    // Fetch fresh user data from API
+    try {
+        console.log('\n🌐 Fetching fresh user data from API...');
+        const response = await fetch(`/api/users/${user.id}`);
+        console.log('📡 Response status:', response.status);
+        
+        if (response.ok) {
+            user = await response.json();
+            console.log('\n✅ FRESH USER DATA FROM API:');
+            console.log(JSON.stringify(user, null, 2));
+            console.log('\nSubscription fields:');
+            console.log('  subscriptionTier:', user.subscriptionTier);
+            console.log('  subscriptionPlan:', user.subscriptionPlan);
+            console.log('  subscriptionStartDate:', user.subscriptionStartDate);
+            console.log('  subscriptionEndDate:', user.subscriptionEndDate);
+            
+            // Update localStorage with fresh data
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+    } catch (error) {
+        console.error('❌ Error fetching fresh user data:', error);
+    }
+    
     // Setup event listeners
     setupEventListeners();
     
@@ -375,6 +401,12 @@ function createOrderCard(order) {
 
 // ==================== SUBSCRIPTION MANAGEMENT ====================
 function renderSubscription(userData) {
+    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🎯 renderSubscription called');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('userData.subscriptionTier:', userData.subscriptionTier);
+    console.log('Full userData:', JSON.stringify(userData, null, 2));
+    
     const loadingEl = document.getElementById('subscription-loading');
     const contentEl = document.getElementById('subscription-content');
     
@@ -384,14 +416,25 @@ function renderSubscription(userData) {
     const isPro = userData.subscriptionTier === 'pro';
     const isStudent = userData.studentEmail || userData.isStudent;
     
+    console.log('isPro:', isPro);
+    console.log('isStudent:', isStudent);
+    
     if (isPro) {
+        console.log('✅ Rendering PRO subscription');
         renderProSubscription(userData, isStudent);
     } else {
+        console.log('⚠️ Rendering FREE subscription');
         renderFreeSubscription();
     }
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 }
 
 function renderProSubscription(userData, isStudent) {
+    console.log('\n🔵 renderProSubscription called');
+    console.log('userData.subscriptionPlan:', userData.subscriptionPlan);
+    console.log('userData.subscriptionEndDate:', userData.subscriptionEndDate);
+    console.log('isStudent:', isStudent);
+    
     const tierIcon = document.getElementById('tier-icon');
     const tierName = document.getElementById('tier-name');
     const tierBadge = document.getElementById('tier-badge');
@@ -476,12 +519,17 @@ function renderPaidSubscription(userData, detailsEl, actionsEl) {
     let expirationDate;
     let planLabel;
     
-    console.log('🔍 Profile Debug:', {
-        subscriptionPlan,
-        subscriptionStartDate,
-        subscriptionEndDate: userData.subscriptionEndDate,
-        fullUserData: userData
-    });
+    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🔍 PROFILE DEBUG - renderPaidSubscription');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('Full userData:', JSON.stringify(userData, null, 2));
+    console.log('\nExtracted values:');
+    console.log('  subscriptionTier:', userData.subscriptionTier);
+    console.log('  subscriptionPlan:', subscriptionPlan);
+    console.log('  subscriptionStartDate:', userData.subscriptionStartDate);
+    console.log('  subscriptionEndDate:', userData.subscriptionEndDate);
+    console.log('  Parsed startDate:', subscriptionStartDate);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     
     // Use subscriptionEndDate from backend if available
     if (userData.subscriptionEndDate) {

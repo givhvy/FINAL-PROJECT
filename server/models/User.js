@@ -15,6 +15,9 @@ class User {
         this.avatarUrl = data.avatarUrl || data.profilePicture || null;
         this.phone = data.phone || null;
         this.subscriptionTier = data.subscriptionTier || 'free'; // 'free' or 'pro'
+        this.subscriptionPlan = data.subscriptionPlan || null; // 'monthly', 'quarterly', 'yearly'
+        this.subscriptionStartDate = data.subscriptionStartDate || null;
+        this.subscriptionEndDate = data.subscriptionEndDate || null;
         this.createdAt = data.createdAt || new Date().toISOString();
         this.updatedAt = data.updatedAt || new Date().toISOString();
         this.resetPasswordCode = data.resetPasswordCode || null;
