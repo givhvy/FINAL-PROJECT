@@ -15,11 +15,17 @@ exports.updateLessonProgress = async (req, res) => {
     // Check if course is completed and auto-generate certificate
     const completion = await Progress.calculateCompletion(userId, courseId);
     let certificateGenerated = false;
+    let certificateData = null;
 
     if (completion >= 100) {
       try {
-        await Certificate.generate(userId, courseId);
+        // Mark enrollment as completed
+        await Progress.markEnrollmentCompleted(userId, courseId);
+        
+        // Generate certificate
+        const certificate = await Certificate.generate(userId, courseId);
         certificateGenerated = true;
+        certificateData = certificate;
       } catch (err) {
         // Certificate might already exist, that's okay
         console.log('Certificate generation skipped:', err.message);
@@ -30,7 +36,8 @@ exports.updateLessonProgress = async (req, res) => {
       success: true,
       progress,
       completion,
-      certificateGenerated
+      certificateGenerated,
+      certificateData
     });
   } catch (error) {
     console.error('Error updating progress:', error);
@@ -60,6 +67,19 @@ exports.getCourseProgress = async (req, res) => {
     res.status(200).json(summary);
   } catch (error) {
     console.error('Error fetching course progress:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get completed lessons for a course
+exports.getCompletedLessons = async (req, res) => {
+  try {
+    const { userId, courseId } = req.params;
+    const completedLessons = await Progress.getCompletedLessons(userId, courseId);
+
+    res.status(200).json(completedLessons);
+  } catch (error) {
+    console.error('Error fetching completed lessons:', error);
     res.status(500).json({ error: error.message });
   }
 };

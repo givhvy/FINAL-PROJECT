@@ -227,6 +227,66 @@ exports.getUserProgressDetails = async (req, res) => {
     }
 };
 
+// NEW: Get user enrollments with course details and progress
+exports.getUserEnrollments = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Get all enrollments for user
+        const enrollments = await Enrollment.findByUserId(userId);
+
+        if (enrollments.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        // Get course details and progress for each enrollment
+        const enrollmentDetails = await Promise.all(
+            enrollments.map(async (enrollment) => {
+                try {
+                    const course = await Course.findById(enrollment.courseId);
+                    if (!course) return null;
+
+                    // Get lessons count
+                    const lessons = await Lesson.findByCourseId(enrollment.courseId);
+                    const totalLessons = lessons.length;
+
+                    // Get completed lessons count
+                    const progress = await Progress.getByEnrollment(userId, enrollment.courseId);
+                    const completedLessons = progress.filter(p => p.completed_at !== null).length;
+                    
+                    // Calculate percentage
+                    const percentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+                    return {
+                        enrollmentId: enrollment.id,
+                        courseId: course.id,
+                        title: course.title,
+                        description: course.description,
+                        thumbnail: course.thumbnail,
+                        price: course.price,
+                        totalLessons,
+                        completedLessons,
+                        percentage,
+                        enrolledAt: enrollment.enrolledAt,
+                        status: enrollment.status
+                    };
+                } catch (error) {
+                    console.error(`Error fetching details for enrollment ${enrollment.id}:`, error);
+                    return null;
+                }
+            })
+        );
+
+        // Filter out null results (failed fetches)
+        const validEnrollments = enrollmentDetails.filter(e => e !== null);
+
+        res.status(200).json(validEnrollments);
+    } catch (err) {
+        console.error("Get User Enrollments Error:", err);
+        res.status(500).json({ error: 'Failed to retrieve user enrollments. Please try again later.' });
+    }
+};
+
 // NEW: Update user role (Admin/Teacher phân quyền) (chỉnh cho admin dashboard chỉnh user role nếu cần)
 exports.updateUserRole = async (req, res) => {
     try {

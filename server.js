@@ -260,9 +260,14 @@ app.get('/quiz-management', (req, res) => {
   res.render('pages/quiz-management', { title: 'Quiz Management' });
 });
 
-// Certificate
+// Certificate Generator
 app.get('/certificate', (req, res) => {
-  res.render('pages/certificate', { title: 'Certificate' });
+  res.render('pages/certificate', { title: 'Certificate Generator' });
+});
+
+// Certificate Viewer
+app.get('/certificate-view', (req, res) => {
+  res.render('pages/certificate-view', { title: 'Certificate' });
 });
 
 

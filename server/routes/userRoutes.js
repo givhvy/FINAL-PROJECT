@@ -11,6 +11,8 @@ router.put('/:id/role', userController.updateUserRole);
 router.delete('/:id', userController.deleteUser);
 // NEW: GET /api/users/:id/progress -> Lấy tiến trình học tập chi tiết
 router.get('/:id/progress', userController.getUserProgressDetails);
+// NEW: GET /api/users/:id/enrollments -> Lấy danh sách courses đã enroll
+router.get('/:id/enrollments', userController.getUserEnrollments);
 // NEW: POST /api/users/verify-student -> Xác thực student email
 router.post('/verify-student', userController.verifyStudent);
 // NEW: POST /api/users/cancel-subscription -> Hủy subscription

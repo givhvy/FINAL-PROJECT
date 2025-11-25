@@ -260,7 +260,7 @@ function setupEventListeners() {
     if (viewCertBtn) {
         viewCertBtn.addEventListener('click', () => {
             document.getElementById('certificate-completion-popup').classList.add('hidden');
-            window.location.href = '/account#certificates';
+            window.location.href = '/mylearning#certificates';
         });
     }
 
@@ -340,12 +340,18 @@ async function fetchAllCourses() {
         allCoursesData = await response.json();
 
         try {
-            const progressResponse = await fetchWithAuth(`/api/users/${user.id}/progress`);
-            if (progressResponse.ok) {
-                const progressArray = await progressResponse.json();
+            // Use enrollments endpoint instead of progress (supports auto-enrollment)
+            const enrollmentsResponse = await fetchWithAuth(`/api/users/${user.id}/enrollments`);
+            if (enrollmentsResponse.ok) {
+                const enrollments = await enrollmentsResponse.json();
                 userProgressData = {};
-                progressArray.forEach(progress => {
-                    userProgressData[progress.courseId] = progress;
+                enrollments.forEach(enrollment => {
+                    userProgressData[enrollment.courseId] = {
+                        courseId: enrollment.courseId,
+                        percentage: enrollment.percentage || 0,
+                        completedLessons: enrollment.completedLessons || 0,
+                        totalLessons: enrollment.totalLessons || 0
+                    };
                 });
             }
         } catch (progressError) {

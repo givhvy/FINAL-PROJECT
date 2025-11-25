@@ -15,14 +15,11 @@ async function renderLessonPage(course) {
     // Fetch completed lessons
     completedLessonIds = new Set();
     try {
-        const progressRes = await fetchWithAuth(`/api/progress/user/${user.id}`);
+        const progressRes = await fetchWithAuth(`/api/progress/completed/${user.id}/${course.id}`);
         if (progressRes.ok) {
-            const allProgress = await progressRes.json();
-            const courseProgress = allProgress.filter(p =>
-                (p.courseId === course.id || p.course_id === course.id) &&
-                (p.progressType === 'lesson_completed' || p.progress_type === 'lesson_completed')
-            );
-            completedLessonIds = new Set(courseProgress.map(p => p.lessonId || p.lesson_id));
+            const completedLessons = await progressRes.json();
+            // Extract lesson IDs from user_progress records
+            completedLessonIds = new Set(completedLessons.map(p => p.lesson_id));
         }
     } catch (error) {
         console.warn('Could not fetch completed lessons:', error);
@@ -303,7 +300,7 @@ async function handleMarkAsComplete(event) {
             progressBarFill.style.width = `${result.completion}%`;
         }
 
-        if (result.certificateGenerated) {
+        if (result.certificateGenerated && result.certificateData) {
             showCertificateCompletionPopup(result.certificateData);
         } else {
             showToast('Progress saved successfully!', 'success');
@@ -502,8 +499,15 @@ function displayQuizResults(score, questions, userAnswers, percentage) {
 function showCertificateCompletionPopup(certificateData) {
     const popup = document.getElementById('certificate-completion-popup');
     const courseTitle = document.getElementById('cert-course-title');
+    const viewCertBtn = document.getElementById('view-my-certificate-btn');
 
-    courseTitle.textContent = certificateData.course_title;
+    courseTitle.textContent = certificateData.courseName || certificateData.course_title || 'Course';
+    
+    // Update View Certificate button to redirect to certificate viewer
+    viewCertBtn.onclick = () => {
+        window.location.href = `/certificate-view?id=${certificateData.id}`;
+    };
+    
     popup.classList.remove('hidden');
 
     if (typeof confetti !== 'undefined') {

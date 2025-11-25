@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate - <%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .certificate {
+            font-family: 'Playfair Display', serif;
+            background-color: #fff;
+            background-image: radial-gradient(#e6f0ff 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 12px solid transparent;
+            border-image: linear-gradient(45deg, #3b82f6, #3b82f6, #ec4899) 1;
+            pointer-events: none;
+        }
+        .certificate-title {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(45deg, #3b82f6, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .certificate-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: #1e3a8a;
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 0 1rem;
+        }
+        .seal {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            width: 120px;
+            height: 120px;
+        }
+        @media print {
+            body {
+                background-color: white;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .certificate-name {
+                font-size: 1.8rem;
+            }
+            .seal {
+                width: 80px;
+                height: 80px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <!-- Action Buttons -->
+        <div class="w-full max-w-4xl mb-4 flex justify-between items-center no-print">
+            <button onclick="window.history.back()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back
+            </button>
+            <div class="space-x-2">
+                <button onclick="printCertificate()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-print mr-2"></i>Print
+                </button>
+                <button onclick="downloadCertificate()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-download mr-2"></i>Download
+                </button>
+            </div>
+        </div>
+
+        <!-- Certificate -->
+        <div id="certificate-container" class="w-full max-w-4xl certificate rounded-xl shadow-2xl p-12 relative">
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-20">
+                <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+                <p class="text-gray-600">Loading certificate...</p>
+            </div>
+
+            <!-- Certificate Content (hidden initially) -->
+            <div id="certificate-content" class="hidden">
+                <!-- Header Icon -->
+                <div class="text-center mb-6">
+                    <div class="inline-block p-4 bg-blue-100 rounded-full">
+                        <svg class="w-16 h-16 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Certificate Header -->
+                <h2 class="text-center text-gray-600 tracking-widest text-sm font-semibold uppercase mb-2">CERTIFICATE OF COMPLETION</h2>
+                <h1 class="certificate-title text-5xl font-bold text-center mb-8">Achievement Award</h1>
+
+                <!-- Main Content -->
+                <p class="text-center text-gray-700 text-lg mb-2">This certifies that</p>
+                <h2 id="cert-name" class="certificate-name">Loading...</h2>
+                <p class="text-center text-gray-700 text-lg mb-8">has successfully completed the course</p>
+                
+                <h3 id="cert-course" class="text-3xl font-bold text-blue-700 text-center mb-8">Loading...</h3>
+
+                <!-- Date -->
+                <p id="cert-date" class="text-center text-gray-600 text-lg mb-12">Loading...</p>
+
+                <!-- Signatures -->
+                <div class="grid grid-cols-2 gap-8 mb-8">
+                    <div class="text-center">
+                        <div class="border-t-2 border-gray-300 pt-2">
+                            <p class="font-semibold text-gray-800">Jane Smith</p>
+                            <p class="text-sm text-gray-600">Course Instructor</p>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="border-t-2 border-gray-300 pt-2">
+                            <p class="font-semibold text-gray-800">Robert Johnson</p>
+                            <p class="text-sm text-gray-600">Program Director</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Seal -->
+                <div class="seal">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="48" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2,2"/>
+                        <path d="M50,20 L55,35 L70,35 L58,45 L63,60 L50,50 L37,60 L42,45 L30,35 L45,35 Z" fill="#3b82f6"/>
+                        <text x="50" y="75" text-anchor="middle" font-size="8" fill="#3b82f6" font-weight="bold">VERIFIED</text>
+                        <text x="50" y="82" text-anchor="middle" font-size="6" fill="#3b82f6">AUTHENTIC</text>
+                    </svg>
+                </div>
+
+                <!-- Certificate ID -->
+                <div class="text-center mt-8">
+                    <p class="text-xs text-gray-500">Certificate ID: <span id="cert-id" class="font-mono">Loading...</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/shared/api-utils.js"></script>
+    <script>
+        // Get certificate ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const certificateId = urlParams.get('id');
+
+        if (!certificateId) {
+            document.getElementById('loading').innerHTML = '<p class="text-red-600">Invalid certificate link</p>';
+        } else {
+            loadCertificate(certificateId);
+        }
+
+        async function loadCertificate(id) {
+            try {
+                const response = await fetchWithAuth(`/api/certificates/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error('Certificate not found');
+                }
+
+                const certificate = await response.json();
+
+                // Populate certificate data
+                document.getElementById('cert-name').textContent = certificate.userName || 'Student';
+                document.getElementById('cert-course').textContent = certificate.courseName || 'Course';
+                
+                // Format date
+                let dateStr = 'N/A';
+                const dateField = certificate.issuedAt || certificate.completedAt;
+                if (dateField) {
+                    if (dateField._seconds) {
+                        const date = new Date(dateField._seconds * 1000);
+                        dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    } else if (dateField.toDate && typeof dateField.toDate === 'function') {
+                        dateStr = dateField.toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    } else {
+                        const date = new Date(dateField);
+                        if (!isNaN(date.getTime())) {
+                            dateStr = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        }
+                    }
+                }
+                document.getElementById('cert-date').textContent = dateStr;
+                document.getElementById('cert-id').textContent = certificate.certificateId || id;
+
+                // Show certificate, hide loading
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('certificate-content').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading certificate:', error);
+                document.getElementById('loading').innerHTML = '<p class="text-red-600">Failed to load certificate. Please try again.</p>';
+            }
+        }
+
+        function printCertificate() {
+            window.print();
+        }
+
+        function downloadCertificate() {
+            // Use browser print dialog with "Save as PDF" option
+            alert('Please use your browser\'s Print function and select "Save as PDF" to download the certificate.');
+            window.print();
+        }
+    </script>
+</body>
+</html>

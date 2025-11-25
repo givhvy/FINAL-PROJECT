@@ -104,34 +104,67 @@ class Progress {
     static async calculateCompletion(userId, courseId) {
         const db = this.getDB();
 
-        // Get total lessons in course
-        const lessonsSnapshot = await db.collection('lessons')
+        // Get total lessons in course (try both camelCase and snake_case)
+        let lessonsSnapshot = await db.collection('lessons')
             .where('courseId', '==', courseId)
             .get();
+
+        // If empty, try snake_case
+        if (lessonsSnapshot.empty) {
+            lessonsSnapshot = await db.collection('lessons')
+                .where('course_id', '==', courseId)
+                .get();
+        }
 
         const totalLessons = lessonsSnapshot.size;
 
         if (totalLessons === 0) return 0;
 
-        // Get completed lessons (try camelCase first)
-        let progressSnapshot = await db.collection('progress')
+        // Get completed lessons from user_progress collection (where actual completion is stored)
+        const progressSnapshot = await db.collection('user_progress')
+            .where('user_id', '==', userId)
+            .where('course_id', '==', courseId)
+            .where('progress_type', '==', 'lesson_completed')
+            .get();
+
+        // Count only records with completed_at (actually completed)
+        const completedLessons = progressSnapshot.docs.filter(doc => {
+            const data = doc.data();
+            return data.completed_at !== null && data.completed_at !== undefined;
+        }).length;
+
+        return Math.round((completedLessons / totalLessons) * 100);
+    }
+
+    /**
+     * Mark enrollment as completed
+     */
+    static async markEnrollmentCompleted(userId, courseId) {
+        const db = this.getDB();
+
+        // Find enrollment (try camelCase first)
+        let enrollmentSnapshot = await db.collection('enrollments')
             .where('userId', '==', userId)
             .where('courseId', '==', courseId)
-            .where('completed', '==', true)
+            .limit(1)
             .get();
 
         // If empty, try snake_case (old schema)
-        if (progressSnapshot.empty) {
-            progressSnapshot = await db.collection('progress')
+        if (enrollmentSnapshot.empty) {
+            enrollmentSnapshot = await db.collection('enrollments')
                 .where('user_id', '==', userId)
                 .where('course_id', '==', courseId)
-                .where('completed', '==', true)
+                .limit(1)
                 .get();
         }
 
-        const completedLessons = progressSnapshot.size;
-
-        return Math.round((completedLessons / totalLessons) * 100);
+        if (!enrollmentSnapshot.empty) {
+            const enrollmentRef = enrollmentSnapshot.docs[0].ref;
+            await enrollmentRef.update({
+                completed: true,
+                completedAt: new Date().toISOString()
+            });
+        }
     }
 
     /**

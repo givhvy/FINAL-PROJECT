@@ -11,6 +11,9 @@ router.get('/lesson/:userId/:courseId/:lessonId', progressController.getLessonPr
 // GET /api/progress/course/:userId/:courseId - Get course progress summary
 router.get('/course/:userId/:courseId', progressController.getCourseProgress);
 
+// GET /api/progress/completed/:userId/:courseId - Get completed lessons
+router.get('/completed/:userId/:courseId', progressController.getCompletedLessons);
+
 // GET /api/progress/user/:userId - Get all user progress
 router.get('/user/:userId', progressController.getUserProgress);
 
