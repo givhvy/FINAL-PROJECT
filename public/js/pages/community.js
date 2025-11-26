@@ -450,17 +450,28 @@ window.joinGroup = async function(groupId) {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: user.id })
+            body: JSON.stringify({ user_id: user.id })
         });
 
-        if (!response.ok) throw new Error('Failed to join group');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to join group');
+        }
         
-        notify.success('Successfully joined the group!');
+        if (typeof showToast === 'function') {
+            showToast('Successfully joined the group!', 'success');
+        } else {
+            alert('Successfully joined the group!');
+        }
         document.getElementById('available-groups-modal').classList.add('hidden');
         renderMyStudyGroups();
     } catch (error) {
         console.error('Error joining group:', error);
-        notify.error('Failed to join group. Please try again.');
+        if (typeof showToast === 'function') {
+            showToast(error.message || 'Failed to join group. Please try again.', 'error');
+        } else {
+            alert(error.message || 'Failed to join group. Please try again.');
+        }
     }
 };
 
@@ -539,7 +550,7 @@ window.openGroupForum = openGroupForum;
 async function sendForumMessage() {
     const input = document.getElementById('new-message-input');
     const message = input.value.trim();
-
+    
     if (!message || !currentGroupId) return;
 
     try {

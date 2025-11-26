@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div>
             <p class="font-semibold text-gray-800 dark:text-gray-200">${plan.name}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">$${plan.monthlyPrice}/month � $${plan.annualPrice}/year</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">$${plan.monthlyPrice}/month | $${plan.annualPrice}/year</p>
             </div>
             </div>
             <div class="flex items-center gap-2">

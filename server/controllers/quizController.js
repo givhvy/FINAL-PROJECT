@@ -1,6 +1,30 @@
 const Quiz = require('../models/Quiz');
 const Question = require('../models/Question');
 
+// Helper function to normalize options to array format
+function normalizeOptions(options) {
+    if (!options) return [];
+    if (Array.isArray(options)) return options;
+    // Convert object {A, B, C, D} to array
+    return [options.A || '', options.B || '', options.C || '', options.D || ''].filter(o => o);
+}
+
+// Helper function to normalize correct answer to index (0, 1, 2, 3)
+function normalizeCorrectAnswer(answer) {
+    if (answer === undefined || answer === null) return 0;
+    // If it's already a number, return it
+    if (typeof answer === 'number') return answer;
+    // If it's a letter (A, B, C, D), convert to index
+    if (typeof answer === 'string') {
+        const letterMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+        if (letterMap[answer] !== undefined) return letterMap[answer];
+        // Try parsing as number
+        const parsed = parseInt(answer);
+        if (!isNaN(parsed)) return parsed;
+    }
+    return 0;
+}
+
 // Create a new quiz
 exports.createQuiz = async (req, res) => {
     try {
@@ -28,14 +52,19 @@ exports.createQuiz = async (req, res) => {
         // Create questions (the question inside quizz like lessons)
         const createdQuestions = [];
         for (const q of questions) {
+            // Normalize options to array format and correctAnswer to index
+            const normalizedOptions = normalizeOptions(q.options);
+            const normalizedCorrectAnswer = normalizeCorrectAnswer(q.correct_answer_index ?? q.correctAnswer);
+            
             const questionData = {
                 quizId: newQuiz.id,
                 quiz_id: newQuiz.id, // Backwards compatibility
                 questionText: q.question_text || q.questionText,
                 question_text: q.question_text || q.questionText, // Backwards compatibility
-                options: q.options,
-                correctAnswer: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer,
-                correct_answer_index: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer // Backwards compatibility
+                options: normalizedOptions,
+                correctAnswer: normalizedCorrectAnswer,
+                correctAnswerIndex: normalizedCorrectAnswer,
+                correct_answer_index: normalizedCorrectAnswer // Backwards compatibility
             };
             const createdQuestion = await Question.create(questionData);
             createdQuestions.push(createdQuestion);
@@ -148,12 +177,11 @@ exports.updateQuiz = async (req, res) => {
             });
         }
 
-        // Update quiz metadata
-        const updateData = {
-            title,
-            description,
-            questionCount: questions ? questions.length : undefined
-        };
+        // Update quiz metadata - filter out undefined values
+        const updateData = {};
+        if (title !== undefined) updateData.title = title;
+        if (description !== undefined) updateData.description = description;
+        if (questions && questions.length > 0) updateData.questionCount = questions.length;
 
         const updatedQuiz = await Quiz.update(quizId, updateData);
 
@@ -176,15 +204,19 @@ exports.updateQuiz = async (req, res) => {
             const createdQuestions = [];
             for (let i = 0; i < questions.length; i++) {
                 const q = questions[i];
+                // Normalize options to array format and correctAnswer to index
+                const normalizedOptions = normalizeOptions(q.options);
+                const normalizedCorrectAnswer = normalizeCorrectAnswer(q.correct_answer_index ?? q.correctAnswer);
+                
                 const questionData = {
                     quizId: quizId,
                     quiz_id: quizId,
                     questionText: q.question_text || q.questionText,
                     question_text: q.question_text || q.questionText,
-                    options: q.options,
-                    correctAnswer: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer,
-                    correctAnswerIndex: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswerIndex,
-                    correct_answer_index: q.correct_answer_index !== undefined ? q.correct_answer_index : q.correctAnswer,
+                    options: normalizedOptions,
+                    correctAnswer: normalizedCorrectAnswer,
+                    correctAnswerIndex: normalizedCorrectAnswer,
+                    correct_answer_index: normalizedCorrectAnswer,
                     order: i
                 };
                 const createdQuestion = await Question.create(questionData);

@@ -71,9 +71,25 @@ function setupEventListeners() {
     // Local video upload button
     document.getElementById('upload-video-local-btn').addEventListener('click', handleVideoLocalUpload);
 
-    // Form toggle buttons
-    document.getElementById('show-lesson-form-btn').addEventListener('click', () => setActiveForm('lesson'));
-    document.getElementById('show-quiz-form-btn').addEventListener('click', () => setActiveForm('quiz'));
+    // Form toggle buttons - reset editing mode when switching forms manually
+    document.getElementById('show-lesson-form-btn').addEventListener('click', () => {
+        currentEditingContentId = null;
+        setActiveForm('lesson');
+    });
+    document.getElementById('show-quiz-form-btn').addEventListener('click', () => {
+        currentEditingContentId = null;
+        setActiveForm('quiz');
+    });
+
+    // Cancel buttons - reset editing mode
+    document.getElementById('cancel-lesson-edit-btn').addEventListener('click', () => {
+        currentEditingContentId = null;
+        setActiveForm('lesson');
+    });
+    document.getElementById('cancel-quiz-edit-btn').addEventListener('click', () => {
+        currentEditingContentId = null;
+        setActiveForm('quiz');
+    });
 
     // Forms
     document.getElementById('lesson-form').addEventListener('submit', handleLessonSubmit);
@@ -207,20 +223,23 @@ function setActiveForm(formId) {
     lessonBtn.classList.toggle('active', isLesson);
     quizBtn.classList.toggle('active', !isLesson);
 
+    // Only reset forms if not in edit mode (currentEditingContentId will be set before calling setActiveForm for edit)
     if (isLesson) {
-        lessonForm.reset();
-        quill.setText('');
-        document.getElementById('lesson-form-title').textContent = 'Add a New Lesson';
-        lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
-        currentEditingContentId = null;
-        uploadedVideoUrl = null;
-        document.getElementById('upload-success').classList.add('hidden');
+        if (!currentEditingContentId) {
+            lessonForm.reset();
+            quill.setText('');
+            document.getElementById('lesson-form-title').textContent = 'Add a New Lesson';
+            lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
+            uploadedVideoUrl = null;
+            document.getElementById('upload-success').classList.add('hidden');
+        }
     } else {
-        quizForm.reset();
-        document.getElementById('quiz-form-title').textContent = 'Add a New Quiz';
-        quizForm.querySelector('button[type="submit"]').textContent = 'Save Quiz';
-        document.getElementById('questions-container').innerHTML = '';
-        currentEditingContentId = null;
+        if (!currentEditingContentId) {
+            quizForm.reset();
+            document.getElementById('quiz-form-title').textContent = 'Add a New Quiz';
+            quizForm.querySelector('button[type="submit"]').textContent = 'Save Quiz';
+            document.getElementById('questions-container').innerHTML = '';
+        }
     }
 }
 
@@ -375,17 +394,20 @@ async function handleQuizSubmit(e) {
     e.preventDefault();
 
     const quizTitle = document.getElementById('quiz-title').value.trim();
+    const quizDescription = document.getElementById('quiz-description')?.value.trim() || '';
     const questionItems = document.querySelectorAll('.question-item');
 
     const questions = Array.from(questionItems).map(item => ({
-        text: item.querySelector('.question-text').value.trim(),
+        questionText: item.querySelector('.question-text').value.trim(),
+        question_text: item.querySelector('.question-text').value.trim(),
         options: {
             A: item.querySelector('.option-a').value.trim(),
             B: item.querySelector('.option-b').value.trim(),
             C: item.querySelector('.option-c').value.trim(),
             D: item.querySelector('.option-d').value.trim()
         },
-        correctAnswer: item.querySelector('.correct-answer').value
+        correctAnswer: item.querySelector('.correct-answer').value,
+        correct_answer_index: item.querySelector('.correct-answer').value
     }));
 
     if (questions.length === 0) {
@@ -395,6 +417,7 @@ async function handleQuizSubmit(e) {
 
     const quizData = {
         title: quizTitle,
+        description: quizDescription,
         questions: questions,
         course_id: courseId
     };
@@ -443,7 +466,9 @@ async function handleContentActions(e) {
     const type = target.dataset.type;
 
     if (target.classList.contains('edit-content-btn')) {
+        // Set editing ID BEFORE calling setActiveForm so form doesn't reset
         currentEditingContentId = id;
+        console.log('Editing content ID set to:', currentEditingContentId);
 
         if (type === 'lesson') {
             try {
@@ -485,12 +510,27 @@ async function handleContentActions(e) {
                     const questionItems = document.querySelectorAll('.question-item');
                     quiz.questions.forEach((q, idx) => {
                         const item = questionItems[idx];
-                        item.querySelector('.question-text').value = q.text;
-                        item.querySelector('.option-a').value = q.options.A;
-                        item.querySelector('.option-b').value = q.options.B;
-                        item.querySelector('.option-c').value = q.options.C;
-                        item.querySelector('.option-d').value = q.options.D;
-                        item.querySelector('.correct-answer').value = q.correctAnswer || q.correct_answer;
+                        // Support both camelCase and snake_case from backend
+                        const questionText = q.questionText || q.question_text || q.text || '';
+                        item.querySelector('.question-text').value = questionText;
+                        
+                        // Handle options - could be object {A, B, C, D} or array
+                        const options = q.options || {};
+                        if (Array.isArray(options)) {
+                            item.querySelector('.option-a').value = options[0] || '';
+                            item.querySelector('.option-b').value = options[1] || '';
+                            item.querySelector('.option-c').value = options[2] || '';
+                            item.querySelector('.option-d').value = options[3] || '';
+                        } else {
+                            item.querySelector('.option-a').value = options.A || '';
+                            item.querySelector('.option-b').value = options.B || '';
+                            item.querySelector('.option-c').value = options.C || '';
+                            item.querySelector('.option-d').value = options.D || '';
+                        }
+                        
+                        // Support multiple field names for correct answer
+                        const correctAnswer = q.correctAnswer || q.correct_answer || q.correctAnswerIndex || q.correct_answer_index || '';
+                        item.querySelector('.correct-answer').value = correctAnswer;
                     });
                 }
             } catch (error) {

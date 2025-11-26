@@ -334,16 +334,29 @@ async function renderQuizInterface(quizId) {
         }
 
         let questionsHTML = questions.map((q, index) => {
-            const optionsHTML = (q.options || []).map((option, i) => `
+            // Handle options - could be object {A, B, C, D} or array
+            let optionsArray = [];
+            const opts = q.options || {};
+            if (Array.isArray(opts)) {
+                optionsArray = opts;
+            } else {
+                // Convert object to array
+                optionsArray = [opts.A || '', opts.B || '', opts.C || '', opts.D || ''].filter(o => o);
+            }
+            
+            const optionsHTML = optionsArray.map((option, i) => `
                 <label class="block p-3 border rounded-md hover:bg-gray-50 dark:bg-gray-700 cursor-pointer transition-colors">
                     <input type="radio" name="question-${index}" value="${i}" class="mr-3" required>
                     <span>${escapeHtml(option)}</span>
                 </label>
             `).join('');
             
+            // Support both camelCase and snake_case for question text
+            const questionText = q.questionText || q.question_text || q.text || '';
+            
             return `
                 <div class="question-block mb-6 pb-6 border-b last:border-b-0">
-                    <p class="font-semibold mb-3 text-gray-800 dark:text-gray-200">${index + 1}. ${escapeHtml(q.question_text)}</p>
+                    <p class="font-semibold mb-3 text-gray-800 dark:text-gray-200">${index + 1}. ${escapeHtml(questionText)}</p>
                     <div class="space-y-2">${optionsHTML}</div>
                 </div>
             `;
@@ -382,6 +395,9 @@ async function handleQuizSubmission(event, quizId, questions, courseId) {
     submitButton.disabled = true;
     submitButton.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Grading...`;
 
+    // Helper to convert letter answer to index
+    const letterToIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+    
     const userAnswers = [];
     let score = 0;
     let unanswered = false;
@@ -391,7 +407,17 @@ async function handleQuizSubmission(event, quizId, questions, courseId) {
         if (selectedOption) {
             const answerIndex = parseInt(selectedOption.value, 10);
             userAnswers[index] = answerIndex;
-            if (answerIndex === q.correct_answer_index) {
+            
+            // Get correct answer - handle multiple field names and formats
+            let correctIndex = q.correctAnswerIndex ?? q.correctAnswer ?? q.correct_answer ?? q.correct_answer_index;
+            // Convert letter to index if needed
+            if (typeof correctIndex === 'string' && letterToIndex[correctIndex] !== undefined) {
+                correctIndex = letterToIndex[correctIndex];
+            } else if (typeof correctIndex === 'string') {
+                correctIndex = parseInt(correctIndex, 10);
+            }
+            
+            if (answerIndex === correctIndex) {
                 score++;
             }
         } else {
@@ -433,11 +459,28 @@ function displayQuizResults(score, questions, userAnswers, percentage) {
     const contentArea = document.getElementById('content-main');
 
     let feedbackHTML = questions.map((q, index) => {
-        const correctAnswerIndex = q.correctAnswerIndex !== undefined ? q.correctAnswerIndex :
+        // Get correct answer - handle multiple field names
+        let correctAnswerIndex = q.correctAnswerIndex !== undefined ? q.correctAnswerIndex :
             (q.correctAnswer !== undefined ? q.correctAnswer :
                 (q.correct_answer !== undefined ? q.correct_answer : q.correct_answer_index));
+        
+        // If correctAnswer is a letter (A, B, C, D), convert to index
+        if (typeof correctAnswerIndex === 'string') {
+            const letterToIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+            correctAnswerIndex = letterToIndex[correctAnswerIndex.toUpperCase()] ?? correctAnswerIndex;
+        }
 
-        const optionsHTML = (q.options || []).map((option, i) => {
+        // Handle options - could be object {A, B, C, D} or array
+        let optionsArray = [];
+        const opts = q.options || {};
+        if (Array.isArray(opts)) {
+            optionsArray = opts;
+        } else {
+            // Convert object to array
+            optionsArray = [opts.A || '', opts.B || '', opts.C || '', opts.D || ''].filter(o => o);
+        }
+
+        const optionsHTML = optionsArray.map((option, i) => {
             let classes = 'block p-3 border rounded-md transition-colors';
             if (i === correctAnswerIndex) {
                 classes += ' bg-green-100 border-green-300 text-green-800 font-semibold';
@@ -450,9 +493,12 @@ function displayQuizResults(score, questions, userAnswers, percentage) {
 
         const isCorrect = userAnswers[index] === correctAnswerIndex;
         let correctAnswerText = 'N/A';
-        if (q.options && correctAnswerIndex !== undefined && q.options[correctAnswerIndex]) {
-            correctAnswerText = q.options[correctAnswerIndex];
+        if (optionsArray.length > 0 && correctAnswerIndex !== undefined && optionsArray[correctAnswerIndex]) {
+            correctAnswerText = optionsArray[correctAnswerIndex];
         }
+        
+        // Support both camelCase and snake_case for question text
+        const questionText = q.questionText || q.question_text || q.text || '';
 
         return `
             <div class="question-block mb-6 pb-6 border-b last:border-b-0">
@@ -460,7 +506,7 @@ function displayQuizResults(score, questions, userAnswers, percentage) {
                     <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${isCorrect ? 'bg-green-500' : 'bg-red-500'}">
                         <i class="fas fa-${isCorrect ? 'check' : 'times'} text-white text-sm"></i>
                     </div>
-                    <p class="font-semibold text-gray-800 dark:text-gray-200">${index + 1}. ${escapeHtml(q.question_text)}</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">${index + 1}. ${escapeHtml(questionText)}</p>
                 </div>
                 <div class="space-y-2 ml-9">${optionsHTML}</div>
                 <div class="ml-9 mt-3">
