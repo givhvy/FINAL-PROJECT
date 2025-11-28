@@ -541,6 +541,11 @@ async function sendForumMessage() {
     
     if (!message || !currentGroupId) return;
 
+    // Disable button while sending
+    const sendBtn = document.getElementById('send-message-btn');
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
     try {
         const response = await fetch(`${API_BASE}/groups/${currentGroupId}/messages`, {
             method: 'POST',
@@ -556,14 +561,56 @@ async function sendForumMessage() {
 
         if (!response.ok) throw new Error('Failed to send message');
         
+        // Clear input immediately
         input.value = '';
         
+        // Append new message directly without reloading entire modal
         const messagesContainer = document.getElementById('forum-messages-container');
-        const groupName = document.getElementById('forum-group-title').textContent;
-        openGroupForum(currentGroupId, groupName);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex gap-4 animate-fade-in';
+        
+        const userName = user.name || 'User';
+        const colors = [
+            'from-blue-500 to-indigo-600',
+            'from-purple-500 to-pink-600',
+            'from-green-500 to-teal-600',
+            'from-orange-500 to-red-600',
+            'from-cyan-500 to-blue-600'
+        ];
+        const colorIndex = userName.length % colors.length;
+        
+        messageDiv.innerHTML = `
+            <div class="flex-shrink-0">
+                <div class="h-12 w-12 rounded-2xl bg-gradient-to-br ${colors[colorIndex]} flex items-center justify-center text-white font-bold shadow-lg text-lg">
+                    ${getInitials(userName)}
+                </div>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-100 dark:border-gray-700">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="font-bold text-gray-900 dark:text-white text-sm">${escapeHtml(userName)}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">just now</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed break-words">${escapeHtml(message)}</p>
+                </div>
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        
+        // Smooth scroll to bottom
+        messagesContainer.scrollTo({
+            top: messagesContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+        
     } catch (error) {
         console.error('Error sending message:', error);
         notify.error('Failed to send message. Please try again.');
+    } finally {
+        // Re-enable button
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = 'Send <i class="fas fa-paper-plane ml-1"></i>';
     }
 }
 
