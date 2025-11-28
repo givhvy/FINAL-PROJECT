@@ -342,38 +342,70 @@ async function renderMyStudyGroups() {
         const groups = await response.json();
 
         if (!groups || groups.length === 0) {
-            container.innerHTML = '<p class="text-gray-500 text-sm">You haven\'t joined any study groups yet. Click "Join New Group" to get started!</p>';
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-2xl text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">You haven't joined any study groups yet.</p>
+                    <p class="text-gray-400 text-xs mt-1">Click "Join" to get started!</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = '';
-        groups.forEach(group => {
+        
+        // Color themes for cards
+        const cardColors = [
+            { bg: 'from-blue-50 to-indigo-50', border: 'border-blue-200', accent: 'bg-blue-500', badge: 'bg-green-100 text-green-700' },
+            { bg: 'from-purple-50 to-pink-50', border: 'border-purple-200', accent: 'bg-purple-500', badge: 'bg-green-100 text-green-700' },
+            { bg: 'from-emerald-50 to-teal-50', border: 'border-emerald-200', accent: 'bg-emerald-500', badge: 'bg-green-100 text-green-700' },
+            { bg: 'from-orange-50 to-amber-50', border: 'border-orange-200', accent: 'bg-orange-500', badge: 'bg-green-100 text-green-700' },
+            { bg: 'from-cyan-50 to-sky-50', border: 'border-cyan-200', accent: 'bg-cyan-500', badge: 'bg-green-100 text-green-700' }
+        ];
+        
+        groups.forEach((group, index) => {
+            const colors = cardColors[index % cardColors.length];
             const groupCard = document.createElement('div');
-            groupCard.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow mb-3';
+            groupCard.className = `bg-gradient-to-br ${colors.bg} dark:from-gray-800 dark:to-gray-750 rounded-2xl p-5 border ${colors.border} dark:border-gray-700 hover:shadow-lg transition-all duration-300 mb-4`;
             
-            const statusBadge = group.status ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">${escapeHtml(group.status)}</span>` : '';
-            const teacherInfo = group.teacher ? `<div class="text-xs text-gray-500 mb-3">Teacher: ${escapeHtml(group.teacher.name || group.teacher.email)}</div>` : '';
+            const statusBadge = group.status ? `<span class="${colors.badge} px-3 py-1 rounded-full text-xs font-medium">${escapeHtml(group.status)}</span>` : '';
+            const teacherInfo = group.teacher ? `
+                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Teacher: ${escapeHtml(group.teacher.name || group.teacher.email)}</span>
+                </div>
+            ` : '';
             const subject = group.subject || 'General';
             const memberCount = group.member_count || group.memberCount || 0;
             
             groupCard.innerHTML = `
-                <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold text-gray-800 dark:text-gray-200">${escapeHtml(group.name)}</h4>
+                <div class="flex items-start justify-between mb-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-100 text-base">${escapeHtml(group.name)}</h4>
                     ${statusBadge}
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">${escapeHtml(group.description || 'No description')}</div>
-                <div class="flex items-center space-x-2 mb-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">📚 ${escapeHtml(subject)}</span>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">👥 ${memberCount} members</span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">${escapeHtml(group.description || 'No description')}</p>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="text-lg">📚</span>
+                        <span>${escapeHtml(subject)}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="text-lg">👥</span>
+                        <span>${memberCount} members</span>
+                    </div>
                 </div>
                 ${teacherInfo}
-                <div class="flex space-x-2">
+                <div class="flex gap-2">
                     <button onclick="openGroupForum('${group.id}', '${escapeHtml(group.name)}')"
-                            class="flex-1 bg-blue-500 text-white py-2 px-3 rounded text-sm hover:bg-blue-600 transition-colors">
-                        💬 Forum
+                            class="flex-1 ${colors.accent} hover:opacity-90 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Forum</span>
                     </button>
-                    <button class="px-3 py-2 border rounded text-sm hover:bg-gray-50 dark:bg-gray-700 transition-colors">
-                        📋 Details
+                    <button class="px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Details</span>
                     </button>
                 </div>
             `;
@@ -381,7 +413,7 @@ async function renderMyStudyGroups() {
         });
     } catch (error) {
         console.error('Error fetching study groups:', error);
-        container.innerHTML = '<p class="text-red-500 text-sm">Error loading study groups.</p>';
+        container.innerHTML = '<p class="text-red-500 text-sm text-center py-4">Error loading study groups.</p>';
     }
 }
 
