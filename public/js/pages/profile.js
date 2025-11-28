@@ -7,6 +7,74 @@
 let user = null;
 let uploadedAvatarUrl = null;
 
+// ==================== FALLBACK FUNCTIONS (in case shared scripts not loaded) ====================
+if (typeof showToast === 'undefined') {
+    window.showToast = function(message, type = 'info', duration = 3000) {
+        const existingToast = document.getElementById('app-toast');
+        if (existingToast) existingToast.remove();
+        
+        const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500', warning: 'bg-yellow-500' };
+        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
+        
+        const toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = `fixed top-4 right-4 ${colors[type] || colors.info} text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-3`;
+        toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), duration);
+    };
+}
+
+if (typeof notify === 'undefined') {
+    window.notify = {
+        success: (msg, dur) => showToast(msg, 'success', dur),
+        error: (msg, dur) => showToast(msg, 'error', dur),
+        info: (msg, dur) => showToast(msg, 'info', dur),
+        warning: (msg, dur) => showToast(msg, 'warning', dur)
+    };
+}
+
+if (typeof fetchWithAuth === 'undefined') {
+    window.fetchWithAuth = async function(url, options = {}) {
+        const token = localStorage.getItem('token');
+        const headers = { ...options.headers };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(options.body);
+        }
+        return fetch(url, { ...options, headers });
+    };
+}
+
+if (typeof apiGet === 'undefined') {
+    window.apiGet = async function(url) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Request failed');
+        return response.json();
+    };
+}
+
+if (typeof apiPut === 'undefined') {
+    window.apiPut = async function(url, data) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('Request failed');
+        return response.json();
+    };
+}
+
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', async () => {
     // Check authentication
