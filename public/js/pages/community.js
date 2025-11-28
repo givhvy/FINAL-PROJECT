@@ -397,15 +397,11 @@ async function renderMyStudyGroups() {
                     </div>
                 </div>
                 ${teacherInfo}
-                <div class="flex gap-2">
+                <div>
                     <button onclick="openGroupForum('${group.id}', '${escapeHtml(group.name)}')"
-                            class="flex-1 ${colors.accent} hover:opacity-90 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-sm">
+                            class="w-full ${colors.accent} hover:opacity-90 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-sm">
                         <i class="fas fa-comment-dots"></i>
                         <span>Forum</span>
-                    </button>
-                    <button class="px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Details</span>
                     </button>
                 </div>
             `;

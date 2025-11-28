@@ -290,8 +290,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Fetch enrollment and progress data for all students
         const studentsWithData = await Promise.all(allStudents.map(async (student) => {
             try {
-                // Fetch enrollments
-                const enrollRes = await fetch(`/api/enrollments?userId=${student.id}`, {
+                // Fetch enrollments - use correct API path
+                const enrollRes = await fetch(`/api/users/${student.id}/enrollments`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const enrollments = enrollRes.ok ? await enrollRes.json() : [];
@@ -1149,104 +1149,250 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Display study groups in the UI
+    // Display study groups in the UI - Updated with modern card styling like community page
     function displayStudyGroups(groups) {
         const container = document.getElementById('groups-container');
 
         if (groups.length === 0) {
             container.innerHTML = `
-                <div class="text-center py-8 text-gray-500">
-                    <p>No study groups created yet.</p>
-                    <p>Click "Create Group" to get started!</p>
+                <div class="text-center py-12 text-gray-500">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-2xl text-gray-400"></i>
+                    </div>
+                    <p class="font-medium">No study groups created yet.</p>
+                    <p class="text-sm mt-1">Click "+ Create Study Group" to get started!</p>
                 </div>
             `;
             return;
         }
 
-        container.innerHTML = groups.map(group => `
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${group.name}</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mt-1">${group.description}</p>
-                    </div>
-                    <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                        ${group.member_count || 0} members
+        // Color themes for cards - matching community page style
+        const cardColors = [
+            { bg: 'from-blue-50 to-indigo-50', darkBg: 'dark:from-gray-800 dark:to-gray-750', border: 'border-blue-200', darkBorder: 'dark:border-gray-700', accent: 'bg-blue-500' },
+            { bg: 'from-purple-50 to-pink-50', darkBg: 'dark:from-gray-800 dark:to-gray-750', border: 'border-purple-200', darkBorder: 'dark:border-gray-700', accent: 'bg-purple-500' },
+            { bg: 'from-emerald-50 to-teal-50', darkBg: 'dark:from-gray-800 dark:to-gray-750', border: 'border-emerald-200', darkBorder: 'dark:border-gray-700', accent: 'bg-emerald-500' },
+            { bg: 'from-orange-50 to-amber-50', darkBg: 'dark:from-gray-800 dark:to-gray-750', border: 'border-orange-200', darkBorder: 'dark:border-gray-700', accent: 'bg-orange-500' },
+            { bg: 'from-cyan-50 to-sky-50', darkBg: 'dark:from-gray-800 dark:to-gray-750', border: 'border-cyan-200', darkBorder: 'dark:border-gray-700', accent: 'bg-cyan-500' }
+        ];
+
+        container.innerHTML = groups.map((group, index) => {
+            const colors = cardColors[index % cardColors.length];
+            const memberCount = group.member_count || 0;
+            const subject = group.subject || 'General';
+            const createdDate = group.created_at ? new Date(group.created_at).toLocaleDateString() : 'Unknown';
+            
+            return `
+            <div class="bg-gradient-to-br ${colors.bg} ${colors.darkBg} rounded-2xl p-5 border ${colors.border} ${colors.darkBorder} hover:shadow-lg transition-all duration-300">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-100 text-base">${escapeHtml(group.name)}</h3>
+                    <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                        ${memberCount} members
                     </span>
                 </div>
-
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                    <div class="flex items-center space-x-4">
-                        <span>📚 ${group.subject || 'General'}</span>
-                        <span>📅 Created ${new Date(group.created_at).toLocaleDateString()}</span>
+                
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">${escapeHtml(group.description || 'No description')}</p>
+                
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="text-lg">📚</span>
+                        <span>${escapeHtml(subject)}</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="openGroupForum('${group.id}', '${group.name.replace(/'/g, "\\'")}')"
-                                class="px-3 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors">
-                            💬 Access Forum
-                        </button>
-                        <button onclick="viewGroupDetails('${group.id}')"
-                                class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded">
-                            View Details
-                        </button>
-                        <button onclick="deleteGroup('${group.id}')"
-                                class="px-3 py-1 text-red-600 hover:bg-red-50 rounded">
-                            Delete
-                        </button>
+                    <div class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="text-lg">📅</span>
+                        <span>Created ${createdDate}</span>
                     </div>
                 </div>
+
+                <div class="flex gap-2">
+                    <button onclick="window.openGroupForum('${group.id}', '${escapeHtml(group.name).replace(/'/g, "\\'")}')"
+                            class="${colors.accent} hover:opacity-90 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-comment-dots"></i>
+                        Access Forum
+                    </button>
+                    <button onclick="window.editStudyGroup('${group.id}')"
+                            class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button>
+                    <button onclick="window.deleteStudyGroup('${group.id}')"
+                            class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
+                </div>
             </div>
-        `).join('');
+        `}).join('');
     }
 
-    // Create new study group
-    async function createStudyGroup() {
-        const name = prompt('Enter study group name:');
-        if (!name) return;
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
-        const description = prompt('Enter group description:');
-        if (!description) return;
+    // Show study group modal for create/edit
+    let currentEditingGroupId = null;
+    
+    function showStudyGroupModal(editMode = false, groupData = null) {
+        currentEditingGroupId = editMode ? groupData?.id : null;
+        
+        const modalHtml = `
+            <div id="study-group-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+                            ${editMode ? 'Edit Study Group' : 'Create Study Group'}
+                        </h3>
+                        <button onclick="closeStudyGroupModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="study-group-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Group Name *</label>
+                            <input type="text" id="group-name" required
+                                   value="${editMode && groupData ? escapeHtml(groupData.name) : ''}"
+                                   class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                   placeholder="Enter group name">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description *</label>
+                            <textarea id="group-description" required rows="3"
+                                      class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                      placeholder="Enter group description">${editMode && groupData ? escapeHtml(groupData.description) : ''}</textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject/Topic</label>
+                            <input type="text" id="group-subject"
+                                   value="${editMode && groupData ? escapeHtml(groupData.subject || '') : ''}"
+                                   class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                   placeholder="e.g., JavaScript, Python, Math">
+                        </div>
+                        
+                        <div class="flex gap-3 pt-4">
+                            <button type="button" onclick="closeStudyGroupModal()"
+                                    class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors">
+                                ${editMode ? 'Save Changes' : 'Create Group'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Add form submit handler
+        document.getElementById('study-group-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleStudyGroupSubmit(editMode);
+        });
+    }
 
-        const subject = prompt('Enter subject/topic:') || 'General';
+    // Close study group modal
+    window.closeStudyGroupModal = function() {
+        const modal = document.getElementById('study-group-modal');
+        if (modal) modal.remove();
+        currentEditingGroupId = null;
+    };
+
+    // Handle study group form submit
+    async function handleStudyGroupSubmit(editMode) {
+        const name = document.getElementById('group-name').value.trim();
+        const description = document.getElementById('group-description').value.trim();
+        const subject = document.getElementById('group-subject').value.trim() || 'General';
+
+        if (!name || !description) {
+            notify.error('Please fill in all required fields');
+            return;
+        }
 
         try {
-            const response = await fetch((window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin) + '/api/community/groups', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    subject,
-                    teacher_id: user.id
-                })
-            });
+            const baseUrl = window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin;
+            
+            if (editMode && currentEditingGroupId) {
+                // Update existing group
+                const response = await fetch(`${baseUrl}/api/community/groups/${currentEditingGroupId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, description, subject })
+                });
 
-            if (!response.ok) throw new Error('Failed to create study group');
+                if (!response.ok) throw new Error('Failed to update study group');
+                notify.success('Study group updated successfully!');
+            } else {
+                // Create new group
+                const response = await fetch(`${baseUrl}/api/community/groups`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        description,
+                        subject,
+                        teacher_id: user.id
+                    })
+                });
 
-            notify.success('Study group created successfully!');
-            await fetchStudyGroups(); // Refresh the list
+                if (!response.ok) throw new Error('Failed to create study group');
+                notify.success('Study group created successfully!');
+            }
+
+            closeStudyGroupModal();
+            await fetchStudyGroups();
 
         } catch (error) {
-            console.error('Error creating study group:', error);
-            notify.error('Failed to create study group. Please try again.');
+            console.error('Error saving study group:', error);
+            notify.error(editMode ? 'Failed to update study group.' : 'Failed to create study group.');
         }
     }
 
-    // View group details (placeholder for now)
-    function viewGroupDetails(groupId) {
-        notify.info(`Group details functionality will be implemented soon. Group ID: ${groupId}`);
-    }
+    // Edit study group - fetch data and show modal
+    window.editStudyGroup = async function(groupId) {
+        try {
+            const baseUrl = window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin;
+            const response = await fetch(`${baseUrl}/api/community/groups`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch group data');
+            
+            const groups = await response.json();
+            const group = groups.find(g => g.id === groupId);
+            
+            if (!group) {
+                notify.error('Group not found');
+                return;
+            }
+
+            showStudyGroupModal(true, group);
+        } catch (error) {
+            console.error('Error fetching group:', error);
+            notify.error('Failed to load group data');
+        }
+    };
 
     // Delete study group
-    async function deleteGroup(groupId) {
-        if (!confirm('Are you sure you want to delete this study group?')) return;
+    window.deleteStudyGroup = async function(groupId) {
+        if (!confirm('Are you sure you want to delete this study group? This action cannot be undone.')) return;
 
         try {
-            // Note: We'll need to add a delete endpoint to the backend
-            const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin}/api/community/groups/${groupId}`, {
+            const baseUrl = window.location.origin.includes('localhost') ? 'http://localhost:5000' : window.location.origin;
+            const response = await fetch(`${baseUrl}/api/community/groups/${groupId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -1254,16 +1400,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) throw new Error('Failed to delete study group');
 
             notify.success('Study group deleted successfully!');
-            await fetchStudyGroups(); // Refresh the list
+            await fetchStudyGroups();
 
         } catch (error) {
             console.error('Error deleting study group:', error);
             notify.error('Failed to delete study group. Please try again.');
         }
-    }
+    };
 
-    // Add event listener for create group button
-    document.getElementById('create-group-btn').addEventListener('click', createStudyGroup);
+    // Open group forum - exposed to global scope
+    window.openGroupForum = function(groupId, groupName) {
+        // Open forum in new tab or modal
+        window.open(`/community?group=${groupId}`, '_blank');
+    };
+
+    // Add event listener for create group button - now opens modal
+    document.getElementById('create-group-btn').addEventListener('click', () => showStudyGroupModal(false));
 
     // === EDIT PROFILE PANEL FUNCTIONS ===
     let uploadedAvatarUrl = null;
