@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (targetId === 'profile-page') loadProfileData();
         else if (targetId === 'students-page') fetchAndRenderAllStudents();
         else if (targetId === 'quizzes-page') renderQuizManagementPage();
-        else if (targetId === 'certificates-page') loadCertificatesDatabase();
         else if (targetId === 'groups-page') fetchStudyGroups();
     }
 

@@ -56,14 +56,36 @@ function setupEventListeners() {
         });
     }
 
-    // Video source toggle
-    const videoSourceUrl = document.getElementById('video-source-url');
+    // Video source toggle - only Cloud and Local now
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
 
-    videoSourceUrl.addEventListener('change', updateVideoInputVisibility);
     videoSourceUpload.addEventListener('change', updateVideoInputVisibility);
     videoSourceLocal.addEventListener('change', updateVideoInputVisibility);
+
+    // Browse file buttons
+    document.getElementById('select-video-btn').addEventListener('click', () => {
+        document.getElementById('lesson-video-file').click();
+    });
+    document.getElementById('select-local-video-btn').addEventListener('click', () => {
+        document.getElementById('lesson-video-local-file').click();
+    });
+
+    // File selection change handlers
+    document.getElementById('lesson-video-file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('selected-file-name').textContent = file.name;
+            document.getElementById('selected-file-info').classList.remove('hidden');
+        }
+    });
+    document.getElementById('lesson-video-local-file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('selected-local-file-name').textContent = file.name;
+            document.getElementById('selected-local-file-info').classList.remove('hidden');
+        }
+    });
 
     // Video upload button
     document.getElementById('upload-video-btn').addEventListener('click', handleVideoUpload);
@@ -104,20 +126,15 @@ function setupEventListeners() {
 
 // ==================== VIDEO SOURCE MANAGEMENT ====================
 function updateVideoInputVisibility() {
-    const videoUrlInput = document.getElementById('video-url-input');
     const videoFileInput = document.getElementById('video-file-input');
     const videoLocalInput = document.getElementById('video-local-input');
-    const videoSourceUrl = document.getElementById('video-source-url');
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
 
-    videoUrlInput.classList.add('hidden');
     videoFileInput.classList.add('hidden');
     videoLocalInput.classList.add('hidden');
 
-    if (videoSourceUrl.checked) {
-        videoUrlInput.classList.remove('hidden');
-    } else if (videoSourceUpload.checked) {
+    if (videoSourceUpload.checked) {
         videoFileInput.classList.remove('hidden');
     } else if (videoSourceLocal.checked) {
         videoLocalInput.classList.remove('hidden');
@@ -136,10 +153,7 @@ async function handleVideoUpload() {
         return;
     }
 
-    if (file.size > 100 * 1024 * 1024) {
-        notify.error('File size must be less than 100MB');
-        return;
-    }
+    // No file size limit for cloud uploads
 
     const formData = new FormData();
     formData.append('file', file);
@@ -230,8 +244,24 @@ function setActiveForm(formId) {
             quill.setText('');
             document.getElementById('lesson-form-title').textContent = 'Add a New Lesson';
             lessonForm.querySelector('button[type="submit"]').textContent = 'Save Lesson';
+            
+            // Reset video upload states
             uploadedVideoUrl = null;
+            uploadedVideoLocalUrl = null;
+            
+            // Reset Cloud upload UI
             document.getElementById('upload-success').classList.add('hidden');
+            document.getElementById('upload-progress').classList.add('hidden');
+            document.getElementById('selected-file-info').classList.add('hidden');
+            
+            // Reset Local upload UI
+            document.getElementById('upload-local-success').classList.add('hidden');
+            document.getElementById('upload-local-progress').classList.add('hidden');
+            document.getElementById('selected-local-file-info').classList.add('hidden');
+            
+            // Reset to Cloud upload option by default
+            document.getElementById('video-source-upload').checked = true;
+            updateVideoInputVisibility();
         }
     } else {
         if (!currentEditingContentId) {
@@ -266,29 +296,52 @@ async function fetchAndRenderCourseDetails() {
 
         allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
+        // Update content count
+        const contentCountEl = document.getElementById('content-count');
+        if (contentCountEl) {
+            contentCountEl.textContent = `${allContent.length} items`;
+        }
+
         if (allContent.length === 0) {
-            contentListUl.innerHTML = '<li class="text-gray-500 p-3">No lessons or quizzes yet. Add your first content!</li>';
+            contentListUl.innerHTML = `
+                <li class="text-center py-8">
+                    <div class="w-12 h-12 mx-auto mb-3 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <i class="fas fa-folder-open text-gray-400 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">No content yet</p>
+                    <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">Add your first lesson or quiz!</p>
+                </li>
+            `;
             return;
         }
 
         contentListUl.innerHTML = allContent.map((item, index) => {
-            const icon = item.type === 'lesson' ?
-                '<i class="fas fa-book-open text-blue-500"></i>' :
-                '<i class="fas fa-puzzle-piece text-green-500"></i>';
+            const isLesson = item.type === 'lesson';
+            const bgColor = isLesson ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20';
+            const iconBg = isLesson ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-green-100 dark:bg-green-900/30';
+            const iconColor = isLesson ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400';
+            const icon = isLesson ? 'fa-book-open' : 'fa-puzzle-piece';
 
             return `
-                <li class="flex justify-between items-center p-3 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    <div class="flex items-center space-x-3">
-                        ${icon}
-                        <span class="font-medium dark:text-gray-200">${index + 1}. ${escapeHtml(item.title)}</span>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button class="edit-content-btn text-blue-600 hover:text-blue-800 text-sm" data-id="${item.id}" data-type="${item.type}">
-                            Edit
-                        </button>
-                        <button class="delete-content-btn text-red-600 hover:text-red-800 text-sm" data-id="${item.id}" data-type="${item.type}">
-                            Delete
-                        </button>
+                <li class="content-item ${bgColor} rounded-xl p-3 cursor-pointer group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0">
+                                <i class="fas ${icon} ${iconColor} text-sm"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-medium text-gray-800 dark:text-gray-200 text-sm truncate">${index + 1}. ${escapeHtml(item.title)}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">${isLesson ? 'Lesson' : 'Quiz'}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="edit-content-btn p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" data-id="${item.id}" data-type="${item.type}" title="Edit">
+                                <i class="fas fa-edit text-sm"></i>
+                            </button>
+                            <button class="delete-content-btn p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" data-id="${item.id}" data-type="${item.type}" title="Delete">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
                     </div>
                 </li>
             `;
@@ -307,13 +360,10 @@ async function handleLessonSubmit(e) {
     const lessonContent = quill.root.innerHTML;
 
     let videoUrl = '';
-    const videoSourceUrl = document.getElementById('video-source-url');
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
 
-    if (videoSourceUrl.checked) {
-        videoUrl = document.getElementById('lesson-video-url').value.trim();
-    } else if (videoSourceUpload.checked) {
+    if (videoSourceUpload.checked) {
         videoUrl = uploadedVideoUrl || '';
     } else if (videoSourceLocal.checked) {
         videoUrl = uploadedVideoLocalUrl || '';
@@ -457,15 +507,19 @@ async function handleQuizSubmit(e) {
 
 // ==================== CONTENT ACTIONS ====================
 async function handleContentActions(e) {
-    const target = e.target;
-    if (!target.classList.contains('edit-content-btn') && !target.classList.contains('delete-content-btn')) {
+    // Use closest() to handle clicks on icon inside button
+    const editBtn = e.target.closest('.edit-content-btn');
+    const deleteBtn = e.target.closest('.delete-content-btn');
+    
+    if (!editBtn && !deleteBtn) {
         return;
     }
 
+    const target = editBtn || deleteBtn;
     const id = target.dataset.id;
     const type = target.dataset.type;
 
-    if (target.classList.contains('edit-content-btn')) {
+    if (editBtn) {
         // Set editing ID BEFORE calling setActiveForm so form doesn't reset
         currentEditingContentId = id;
         console.log('Editing content ID set to:', currentEditingContentId);
@@ -482,10 +536,18 @@ async function handleContentActions(e) {
                 document.getElementById('lesson-title').value = lesson.title;
                 quill.root.innerHTML = lesson.content || '';
 
-                if (lesson.videoUrl || lesson.video_url) {
-                    document.getElementById('video-source-url').checked = true;
+                // Handle video URL - now only Cloud and Local options
+                const videoUrl = lesson.videoUrl || lesson.video_url;
+                if (videoUrl) {
+                    // Check if it's a local server URL or cloud URL
+                    if (videoUrl.includes('/uploads/videos/') || videoUrl.startsWith('/uploads')) {
+                        document.getElementById('video-source-local').checked = true;
+                        uploadedVideoLocalUrl = videoUrl;
+                    } else {
+                        document.getElementById('video-source-upload').checked = true;
+                        uploadedVideoUrl = videoUrl;
+                    }
                     updateVideoInputVisibility();
-                    document.getElementById('lesson-video-url').value = lesson.videoUrl || lesson.video_url;
                 }
             } catch (error) {
                 console.error('Error loading lesson:', error);
@@ -540,8 +602,9 @@ async function handleContentActions(e) {
         }
     }
 
-    if (target.classList.contains('delete-content-btn')) {
-        const itemTitle = target.closest('li').querySelector('span.font-medium').textContent;
+    if (deleteBtn) {
+        const titleEl = target.closest('li').querySelector('p.font-medium');
+        const itemTitle = titleEl ? titleEl.textContent : 'this item';
         if (!confirm(`Are you sure you want to delete "${itemTitle}" (${type})?`)) {
             return;
         }

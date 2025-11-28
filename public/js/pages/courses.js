@@ -469,7 +469,7 @@ function createCourseCard(course) {
     courseCard.dataset.courseId = course.id;
 
     courseCard.innerHTML = `
-        <div class="h-40 relative overflow-hidden">
+        <div class="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-700">
             ${(course.imageUrl || course.thumbnail) && (course.imageUrl || course.thumbnail).trim() !== '' ?
                 `<img src="${escapeHtml(course.imageUrl || course.thumbnail)}" alt="${escapeHtml(course.title)}" class="w-full h-full object-cover" loading="lazy" decoding="async">
                  <div class="absolute inset-0 bg-black bg-opacity-10 hover:bg-opacity-20 transition-all duration-300"></div>` :
@@ -573,7 +573,7 @@ function createCompactCourseCard(course) {
     return `
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1"
              onclick="loadCourseDetails('${course.id}')">
-            <div class="relative h-40 overflow-hidden">
+            <div class="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-700">
                 ${courseImage && courseImage.trim() !== '' ?
                     `<img src="${escapeHtml(courseImage)}" alt="${escapeHtml(course.title)}" class="w-full h-full object-cover">` :
                     `<div class="bg-gradient-to-br from-blue-500 to-blue-600 w-full h-full flex items-center justify-center">
