@@ -90,6 +90,17 @@ function showToast(message, type = 'info', duration = 3000) {
 }
 
 /**
+ * Notify object for easier toast notifications
+ * Usage: notify.success('Message'), notify.error('Message'), etc.
+ */
+const notify = {
+    success: (message, duration) => showToast(message, 'success', duration),
+    error: (message, duration) => showToast(message, 'error', duration),
+    info: (message, duration) => showToast(message, 'info', duration),
+    warning: (message, duration) => showToast(message, 'warning', duration)
+};
+
+/**
  * Show loading state
  * @param {string} containerId - ID of container to show loading
  * @param {string} message - Loading message (optional)

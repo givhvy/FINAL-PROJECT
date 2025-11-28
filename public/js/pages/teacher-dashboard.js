@@ -1013,47 +1013,63 @@ document.addEventListener('DOMContentLoaded', async () => {
         courseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Get submit button and add loading state
+            const submitBtn = courseForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+
             const isLocked = document.getElementById('access-locked')?.checked || false;
             const courseData = {
                 title: document.getElementById('title')?.value,
                 description: document.getElementById('description')?.value,
-            locked: isLocked,
-            category: document.getElementById('category').value,
-            teacher_id: user.id,
-            imageUrl: uploadedImageUrl || document.getElementById('imageUrl').value
-        };
+                locked: isLocked,
+                category: document.getElementById('category').value,
+                teacher_id: user.id,
+                imageUrl: uploadedImageUrl || document.getElementById('imageUrl').value
+            };
 
-        const isEditing = !!currentEditingCourseId;
-        const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
-        const method = isEditing ? 'PUT' : 'POST';
+            const isEditing = !!currentEditingCourseId;
+            const apiUrl = isEditing ? `/api/courses/${currentEditingCourseId}` : '/api/courses';
+            const method = isEditing ? 'PUT' : 'POST';
 
-        try {
-            const response = await fetch(apiUrl, {
-                method,
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(courseData)
-            });
+            try {
+                const response = await fetch(apiUrl, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(courseData)
+                });
 
-            if (!response.ok) {
-                let errorMessage = 'An unknown error occurred during saving.';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.error || errorData.message || errorMessage;
-                } catch {
-                    errorMessage = await response.text();
+                if (!response.ok) {
+                    let errorMessage = 'An unknown error occurred during saving.';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || errorMessage;
+                    } catch {
+                        errorMessage = await response.text();
+                    }
+                    throw new Error(errorMessage);
                 }
-                throw new Error(errorMessage);
+                
+                notify.success(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
+                
+                // Reset form and close modal
+                courseForm.reset();
+                uploadedImageUrl = null;
+                currentEditingCourseId = null;
+                courseModal.classList.add('hidden');
+                
+                await fetchInitialData(); 
+                
+            } catch (error) {
+                console.error("Course Save Error:", error);
+                notify.error(`Failed to ${isEditing ? 'update' : 'add'} course: ${error.message}`);
+            } finally {
+                // Restore button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
-            
-            notify.success(`Course ${isEditing ? 'updated' : 'added'} successfully!`);
-            courseModal.classList.add('hidden');
-            await fetchInitialData(); 
-            
-        } catch (error) {
-            console.error("Course Save Error:", error);
-            notify.error(`Failed to ${isEditing ? 'update' : 'add'} course: ${error.message}`);
-        }
-    });
+        });
     } // Close if (courseForm) check
 
     // Edit/Delete buttons on course cards

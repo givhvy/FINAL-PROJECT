@@ -61,7 +61,7 @@ class Subscription {
     }
 
     /**
-     * Get all subscription plans
+     * Get all subscription plans ---- Function1 
      * @param {Object} filters - Filter options (active, limit)
      * @returns {Promise<Array<Subscription>>} - Array of Subscription objects
      */
@@ -118,7 +118,7 @@ class Subscription {
     }
 
     /**
-     * Create a new subscription plan (Create in CRUD)
+     * Create a new subscription plan (Create in CRUD) ---- Function2
      * @param {Object} subscriptionData - Subscription plan data
      * @returns {Promise<Subscription>} - Created Subscription object
      */
@@ -160,7 +160,7 @@ class Subscription {
     }
 
     /**
-     * Update subscription plan (Update in CRUD)
+     * Update subscription plan (Update in CRUD) ---- Function3 in Subscription class
      * @param {string} id - Subscription plan ID
      * @param {Object} updateData - Data to update
      * @returns {Promise<Subscription>} - Updated Subscription object
@@ -187,7 +187,7 @@ class Subscription {
     }
 
     /**
-     * Delete subscription plan (Delete in CRUD)
+     * Delete subscription plan (Delete in CRUD) ---- Function4 in Subscription class
      * @param {string} id - Subscription plan ID
      * @returns {Promise<boolean>} - true if successful
      */

@@ -74,11 +74,11 @@ function calculatePasswordStrength(password) {
     // Numbers or special characters
     if (/[0-9!@#$%^&*()]/.test(password)) strength += 25;
     
-    // Determine color and feedback text
+    // Determine color and feedback text // let để xài cho validate password dựa trên độ mạnh 
     let color = '#ef4444'; // red-500
     let feedback = 'Weak';
     
-    if (strength > 75) {
+    if (strength > 75) {  // if strength > 75 is true
         color = '#059669'; // emerald-600
         feedback = 'Strong';
     } else if (strength > 50) {

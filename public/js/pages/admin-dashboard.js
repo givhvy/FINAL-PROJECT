@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading orders:', error);
         document.getElementById('ordersTableBody').innerHTML = `
         <tr>
-        <td colspan="8" class="px-6 py-12 text-center text-red-500">
+        <td colspan="7" class="px-6 py-12 text-center text-red-500">
         <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
         <p>Error loading orders: ${error.message}</p>
         </td>
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (filteredOrders.length === 0) {
             tbody.innerHTML = `
             <tr>
-            <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
             <i class="fas fa-inbox text-4xl mb-2"></i>
             <p>No orders found</p>
             </td>
@@ -295,9 +295,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
             $${parseFloat(order.price || 0).toFixed(2)}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-            ${order.paymentMethod || 'N/A'}
-            </td>
             <td class="px-6 py-4 whitespace-nowrap">
             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
             ${order.status}
@@ -306,8 +303,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
             ${orderDate}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex gap-2">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+            <div class="flex gap-2 justify-end">
             <button onclick="updateOrderStatus('${order.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Update Status">
             <i class="fas fa-edit"></i>
             </button>
@@ -629,7 +626,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
-                method: 'DELETE',
+                method: 'DELETE', // gửi method http làm DELETE
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -1770,7 +1767,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize TinyMCE editor on page load
     initBlogEditor();
 
-    // Admin Profile Edit
+    // Admin Profile Edit (đóng mở admin profile modal bằng cách classList.remove của javascript để xóa class hidden của tailwind css để hiện được modal) 
     let selectedAvatarColor = 'blue-500';
     document.getElementById('admin-profile-section')?.addEventListener('click', () => {
         document.getElementById('edit-admin-name').value = user.name || '';

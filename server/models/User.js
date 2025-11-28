@@ -27,14 +27,14 @@ class User {
     }
 
     /**
-     * Lấy instance của Firestore
+     * Lấy database của Firestore bằng cách sử dụng static để nhanh hơn
      */
     static getDB() {
         return getFirestore();
     }
 
     /**
-     * Tìm người dùng theo email
+     * Tìm người dùng theo email // sử dụng cho sign in và kiểm tra trùng email khi đăng ký 
      * @param {string} email - Email người dùng
      * @returns {Promise<User|null>} - User object hoặc null
      */
@@ -42,7 +42,7 @@ class User {
         try {
             const db = this.getDB();
             const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('email', '==', email).get();
+            const snapshot = await usersRef.where('email', '==', email).get(); //firebase sdk for snapshot
 
             if (snapshot.empty) {
                 return null;
@@ -75,6 +75,7 @@ class User {
         }
     }
 
+
     /**
      * Lấy tất cả người dùng
      * @param {Object} filters - Bộ lọc (role, limit, etc.)
@@ -103,16 +104,16 @@ class User {
     }
 
     /**
-     * Tạo người dùng mới (Create in CRUD)
+     * Tạo người dùng mới (Create in CRUD) // xài cho signup.js
      * @param {Object} userData - Dữ liệu người dùng
      * @returns {Promise<User>} - User object đã tạo
      */
     static async create(userData) {
         try {
-            const db = this.getDB();
+            const db = this.getDB(); // Lấy Firestore DB
 
             // Kiểm tra email đã tồn tại chưa
-            const existingUser = await this.findByEmail(userData.email);
+            const existingUser = await this.findByEmail(userData.email); // Kiểm tra email đã tồn tại chưa
             if (existingUser) {
                 throw new Error('Email already in use');
             }
@@ -144,7 +145,7 @@ class User {
             });
 
             newUser.id = docRef.id;
-            return newUser;
+            return newUser; // try nếu được thì return create user còn nếu ko được thì catch (error) 
         } catch (error) {
             throw new Error(`Error creating user: ${error.message}`);
         }

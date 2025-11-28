@@ -86,7 +86,7 @@ async function generateMissingCertificates() {
         certificate_number: certificateNumber,
         student_name: userData.name,
         course_title: courseData.title,
-        instructor_name: courseData.instructor || courseData.instructorName || 'CodeMaster Academy',
+        instructor_name: courseData.instructor || courseData.instructorName || 'UniLearn Academy',
         instructor_id: courseData.instructorId || courseData.instructor_id || 'admin',
         completion_date: issuedDate,
         issued_at: issuedDate,

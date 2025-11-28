@@ -1,6 +1,6 @@
 /**
  * Community Page JavaScript
- * Handles study groups, forum, leaderboard, progress tracking, and Pomodoro timer
+ * Handles study groups, forum, leaderboard, and progress tracking
  */
 
 // ==================== GLOBAL VARIABLES ====================
@@ -9,17 +9,6 @@ const user = JSON.parse(localStorage.getItem('user'));
 const token = localStorage.getItem('token');
 
 let currentGroupId = null;
-
-// Pomodoro Timer Variables
-let timerInterval;
-let timeLeft = 25 * 60;
-let isRunning = false;
-let isWorkSession = true;
-let sessionsCompleted = parseInt(localStorage.getItem('pomodoroSessions') || '0');
-
-const WORK_TIME = 25 * 60;
-const BREAK_TIME = 5 * 60;
-const CIRCLE_CIRCUMFERENCE = 351.86;
 
 // ==================== AUTH GUARD ====================
 if (!token || !user) {
@@ -30,7 +19,6 @@ if (!token || !user) {
 document.addEventListener('DOMContentLoaded', () => {
     initializeUserHeader();
     setupEventListeners();
-    initializePomodoroTimer();
     
     // Fetch data
     renderUserProgress();
@@ -577,77 +565,6 @@ async function sendForumMessage() {
         console.error('Error sending message:', error);
         notify.error('Failed to send message. Please try again.');
     }
-}
-
-// ==================== POMODORO TIMER ====================
-function initializePomodoroTimer() {
-    document.getElementById('sessions-count').textContent = sessionsCompleted;
-    document.getElementById('start-timer').addEventListener('click', startTimer);
-    document.getElementById('pause-timer').addEventListener('click', pauseTimer);
-    document.getElementById('reset-timer').addEventListener('click', resetTimer);
-    updateTimerDisplay();
-}
-
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('timer-display').textContent = 
-        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    const totalTime = isWorkSession ? WORK_TIME : BREAK_TIME;
-    const progress = ((totalTime - timeLeft) / totalTime) * CIRCLE_CIRCUMFERENCE;
-    document.getElementById('timer-progress').style.strokeDashoffset = CIRCLE_CIRCUMFERENCE - progress;
-}
-
-function startTimer() {
-    if (isRunning) return;
-    
-    isRunning = true;
-    document.getElementById('start-timer').classList.add('hidden');
-    document.getElementById('pause-timer').classList.remove('hidden');
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            isRunning = false;
-
-            if (isWorkSession) {
-                sessionsCompleted++;
-                localStorage.setItem('pomodoroSessions', sessionsCompleted);
-                document.getElementById('sessions-count').textContent = sessionsCompleted;
-                notify.success('Work session complete! Take a 5-minute break.');
-                timeLeft = BREAK_TIME;
-            } else {
-                notify.info('Break over! Ready for another work session?');
-                timeLeft = WORK_TIME;
-            }
-
-            isWorkSession = !isWorkSession;
-            document.getElementById('start-timer').classList.remove('hidden');
-            document.getElementById('pause-timer').classList.add('hidden');
-            updateTimerDisplay();
-        }
-    }, 1000);
-}
-
-function pauseTimer() {
-    clearInterval(timerInterval);
-    isRunning = false;
-    document.getElementById('start-timer').classList.remove('hidden');
-    document.getElementById('pause-timer').classList.add('hidden');
-}
-
-function resetTimer() {
-    clearInterval(timerInterval);
-    isRunning = false;
-    isWorkSession = true;
-    timeLeft = WORK_TIME;
-    document.getElementById('start-timer').classList.remove('hidden');
-    document.getElementById('pause-timer').classList.add('hidden');
-    updateTimerDisplay();
 }
 
 // ==================== HELPER FUNCTIONS ====================

@@ -1,4 +1,4 @@
-// ====== 1. IMPORT CÁC MODULE CẦN THIẾT ======
+// ====== 1. IMPORT CÁC MODULE CẦN THIẾT EXPRESS.js server.js ======
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -157,7 +157,7 @@ app.use('/api/blog', blogRoutes);
 app.use('/api/upload', uploadRoutes);
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Welcome to the CodeMaster E-Learning API with Firebase!' });
+  res.json({ message: 'Welcome to the UniLearn E-Learning API with Firebase!' });
 });
 
 // ====== 7. ROUTING CHO CÁC TRANG (EJS Views) ======
@@ -271,7 +271,7 @@ app.get('/certificate-view', (req, res) => {
 });
 
 
-// ====== 7. XỬ LÝ LỚI (ERROR HANDLING) ======
+// ====== 7. XỬ LÝ LỖI (ERROR HANDLING) ======
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Error: Something went wrong on the server' });

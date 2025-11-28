@@ -5,10 +5,10 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const Course = require('../models/Course');
 
-// --- Stripe Integration Logic ---
+// --- Stripe Integration Logic using STRIPE SDK ---
 exports.createCheckoutSession = async (req, res) => {
     try {
-        // Lấy thông tin cần thiết từ Frontend
+        // Lấy thông tin cần thiết từ Frontend và cả vài thông tin ở firestore
         const { courseId, courseName, price, successUrl, cancelUrl, userId, billingPeriod } = req.body;
         
         // Kiểm tra .env của khóa Stripe

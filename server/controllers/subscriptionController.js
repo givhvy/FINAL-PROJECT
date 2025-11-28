@@ -16,7 +16,7 @@ exports.getSubscriptionPlans = async (req, res) => {
 
         const plans = await Subscription.findAll(filters);
 
-        res.status(200).json(plans.map(p => p.toJSON()));
+        res.status(200).json(plans.map(p => p.toJSON())); // 200 ok cho try
     } catch (error) {
         console.error("Get Subscription Plans Error:", error);
         res.status(500).json({ success: false, error: 'Failed to retrieve subscription plans.' });
@@ -93,7 +93,7 @@ exports.deleteSubscriptionPlan = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Subscription plan deleted successfully.'
+            message: 'Subscription plan deleted successfully.' // try nếu đúng trong khu code try này thì ra deleted succesfully
         });
     } catch (error) {
         console.error("Delete Subscription Plan Error:", error);
