@@ -131,12 +131,12 @@ async function handleVideoUpload() {
     const uploadSuccess = document.getElementById('upload-success');
 
     const file = videoFileInputEl.files[0];
-    if (!videoFile) {
+    if (!file) {
         notify.warning('Please select a video file first');
         return;
     }
 
-    if (videoFile.size > 100 * 1024 * 1024) {
+    if (file.size > 100 * 1024 * 1024) {
         notify.error('File size must be less than 100MB');
         return;
     }
