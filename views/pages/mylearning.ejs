@@ -195,21 +195,39 @@
                 <div id="tab-content-container">
 
                     <div id="content-dashboard">
-                        <!-- Learning Progress section hidden - using enrollment-based progress display instead -->
-
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                            <h2 class="text-lg font-semibold mb-4">My Enrolled Courses</h2>
-                            <div id="enrolled-courses-list" class="space-y-4">
-                                <p class="text-gray-500">Loading your enrolled courses...</p>
+                        <!-- Your Courses Section -->
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <i class="fas fa-book-open text-blue-500"></i>
+                                    Your Courses
+                                </h2>
+                                <a href="/courses" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium">View all</a>
+                            </div>
+                            <div id="enrolled-courses-list" class="p-5 space-y-3">
+                                <div class="text-center py-8">
+                                    <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-3"></i>
+                                    <p class="text-gray-500 dark:text-gray-400">Loading your courses...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div id="content-grades" class="hidden">
-                           <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">My Quiz Grades</h2>
-                           <div id="my-grades-list" class="space-y-4">
-                                <p class="text-gray-500 text-center py-4">Loading your grades...</p>
-                           </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                            <div class="p-5 border-b border-gray-100 dark:border-gray-700">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <i class="fas fa-clipboard-check text-purple-500"></i>
+                                    Quiz Results
+                                </h2>
+                            </div>
+                            <div id="my-grades-list" class="p-5 space-y-3">
+                                <div class="text-center py-8">
+                                    <i class="fas fa-spinner fa-spin text-purple-500 text-2xl mb-3"></i>
+                                    <p class="text-gray-500 dark:text-gray-400">Loading your grades...</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="content-certificates" class="hidden">

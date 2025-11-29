@@ -280,11 +280,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tableBody = document.getElementById('students-table-body');
 
         if (allStudents.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">No students registered yet.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">No students registered yet.</td></tr>`;
             return;
         }
 
-        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">Loading student data...</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">Loading student data...</td></tr>';
 
         // Fetch enrollment and progress data for all students
         const studentsWithData = await Promise.all(allStudents.map(async (student) => {
@@ -347,30 +347,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                     <span class="font-semibold">${enrolledCourses}</span> course${enrolledCourses !== 1 ? 's' : ''}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mr-2" style="width: 120px;">
-                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${overallProgress}%"></div>
-                        </div>
-                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">${overallProgress}%</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button data-student-id="${student.id}" class="view-progress-btn text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1">
-                        <i class="fas fa-chart-line"></i> View Progress
-                    </button>
-                </td>
             `;
             tableBody.appendChild(studentRow);
         });
 
-        // Add listener for view progress
-        document.querySelectorAll('.view-progress-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const studentId = e.currentTarget.dataset.studentId;
-                showStudentProgressModal(studentId);
-            });
-        });
     }
 
     // Show detailed student progress in a modal

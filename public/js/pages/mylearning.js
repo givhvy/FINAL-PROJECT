@@ -106,7 +106,11 @@ function setActiveTab(targetId) {
 // ==================== ENROLLED COURSES ====================
 async function fetchAndRenderEnrolledCourses() {
     const enrolledListDiv = document.getElementById('enrolled-courses-list');
-    enrolledListDiv.innerHTML = '<p class="text-gray-500">Loading your enrolled courses...</p>';
+    enrolledListDiv.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-3"></i>
+            <p class="text-gray-500 dark:text-gray-400">Loading your courses...</p>
+        </div>`;
 
     try {
         // Fetch user enrollments with course details and progress
@@ -118,39 +122,43 @@ async function fetchAndRenderEnrolledCourses() {
         const enrollments = await enrollmentsResponse.json();
 
         if (!Array.isArray(enrollments) || enrollments.length === 0) {
-            enrolledListDiv.innerHTML = '<p class="text-gray-500">You are not enrolled in any courses yet. <a href="/courses" class="text-blue-600 hover:underline">Browse courses</a></p>';
+            enrolledListDiv.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-book-open text-blue-500 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">You haven't enrolled in any courses yet</p>
+                    <a href="/courses" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors">
+                        <i class="fas fa-search"></i> Browse Courses
+                    </a>
+                </div>`;
             return;
         }
 
         enrolledListDiv.innerHTML = '';
         enrollments.forEach(enrollment => {
             const percentage = enrollment.percentage || 0;
-            const progressColor = percentage === 100 ? 'green' : percentage >= 50 ? 'blue' : percentage > 0 ? 'yellow' : 'gray';
+            const totalLessons = enrollment.totalLessons || 0;
+            const completedLessons = Math.round((percentage / 100) * totalLessons);
 
             const courseItem = document.createElement('div');
-            courseItem.className = 'quiz-card border rounded-lg p-4 hover:shadow-md transition-shadow';
+            courseItem.className = 'group flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-300 cursor-pointer';
+            courseItem.onclick = () => window.location.href = `/courses#lesson/${enrollment.courseId}`;
             courseItem.innerHTML = `
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center flex-1">
-                        <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
-                            <i class="fas fa-book text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 truncate">${escapeHtml(enrollment.title)}</h4>
-                            <p class="text-sm text-gray-500">${enrollment.totalLessons || 0} lessons</p>
-                        </div>
-                    </div>
-                    <button onclick="window.location.href='/courses#lesson/${enrollment.courseId}'" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition ml-3 flex-shrink-0">
-                        Continue
-                    </button>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-book text-white text-lg"></i>
                 </div>
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600">Progress</span>
-                        <span class="text-${progressColor}-600 font-medium">${percentage}%</span>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold text-gray-800 dark:text-gray-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${escapeHtml(enrollment.title)}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${completedLessons}/${totalLessons} Lessons</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Progress</p>
+                        <p class="text-lg font-bold ${percentage === 100 ? 'text-green-600' : 'text-blue-600'}">${percentage}%</p>
                     </div>
-                    <div class="progress-bar-container">
-                        <div class="h-full progress-fill-${progressColor}" style="width: ${percentage}%"></div>
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i class="fas fa-arrow-right text-blue-600 group-hover:text-white text-sm"></i>
                     </div>
                 </div>
             `;
@@ -158,7 +166,13 @@ async function fetchAndRenderEnrolledCourses() {
         });
     } catch (error) {
         console.error('Error fetching enrolled courses:', error);
-        enrolledListDiv.innerHTML = '<p class="text-red-500">Error loading enrolled courses.</p>';
+        enrolledListDiv.innerHTML = `
+            <div class="text-center py-8">
+                <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-exclamation-triangle text-red-500"></i>
+                </div>
+                <p class="text-red-500">Error loading your courses</p>
+            </div>`;
     }
 }
 
@@ -273,7 +287,11 @@ async function fetchAndRenderMyGrades() {
     const gradesListDiv = document.getElementById('my-grades-list');
     if (!gradesListDiv) return;
 
-    gradesListDiv.innerHTML = '<p class="text-gray-500">Loading your grades...</p>';
+    gradesListDiv.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas fa-spinner fa-spin text-purple-500 text-2xl mb-3"></i>
+            <p class="text-gray-500 dark:text-gray-400">Loading your grades...</p>
+        </div>`;
 
     try {
         const gradesResponse = await fetchWithAuth(`/api/grades?userId=${user.id}`);
@@ -282,7 +300,14 @@ async function fetchAndRenderMyGrades() {
         const grades = await gradesResponse.json();
 
         if (!Array.isArray(grades) || grades.length === 0) {
-            gradesListDiv.innerHTML = '<p class="text-gray-500">No grades available yet. Complete some quizzes to see your results here!</p>';
+            gradesListDiv.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-clipboard-list text-purple-500 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-2">No quiz results yet</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Complete quizzes to see your grades here</p>
+                </div>`;
             return;
         }
 
@@ -297,24 +322,33 @@ async function fetchAndRenderMyGrades() {
             const passStatus = score >= 70;
 
             const gradeCard = document.createElement('div');
-            gradeCard.className = 'border rounded-lg p-4 flex justify-between items-center';
+            gradeCard.className = 'group flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800 hover:bg-purple-50/50 dark:hover:bg-purple-900/10 transition-all duration-300';
             gradeCard.innerHTML = `
-                <div>
-                    <h4 class="font-semibold text-gray-800">${escapeHtml(quizTitle)}</h4>
-                    <p class="text-sm text-gray-500">Date: ${formatDate(grade.createdAt || grade.created_at)}</p>
+                <div class="w-12 h-12 rounded-xl ${passStatus ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-red-500 to-rose-600'} flex items-center justify-center flex-shrink-0">
+                    <i class="fas ${passStatus ? 'fa-check' : 'fa-times'} text-white text-lg"></i>
                 </div>
-                <div class="grade-score">
-                    <div class="text-2xl font-bold ${passStatus ? 'text-green-600' : 'text-red-600'}">${score}%</div>
-                    <div class="text-xs ${passStatus ? 'text-green-600' : 'text-red-600'} font-medium">
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-semibold text-gray-800 dark:text-gray-200 truncate">${escapeHtml(quizTitle)}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${formatDate(grade.createdAt || grade.created_at)}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-2xl font-bold ${passStatus ? 'text-green-600' : 'text-red-600'}">${score}%</p>
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full ${passStatus ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'}">
                         ${passStatus ? 'Passed' : 'Failed'}
-                    </div>
+                    </span>
                 </div>
             `;
             gradesListDiv.appendChild(gradeCard);
         });
     } catch (error) {
         console.error('Error fetching grades:', error);
-        gradesListDiv.innerHTML = '<p class="text-red-500">Error loading grades.</p>';
+        gradesListDiv.innerHTML = `
+            <div class="text-center py-8">
+                <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-exclamation-triangle text-red-500"></i>
+                </div>
+                <p class="text-red-500">Error loading grades</p>
+            </div>`;
     }
 }
 

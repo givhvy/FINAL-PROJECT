@@ -423,6 +423,7 @@ function renderCourses() {
 
 function createCourseCard(course) {
     const totalLessons = course.lessons ? course.lessons.length : 0;
+    const totalQuizzes = course.quizzes ? course.quizzes.length : 0;
     const courseProgress = userProgressData[course.id];
     const actualProgress = courseProgress ? courseProgress.percentage : 0;
     
@@ -464,6 +465,18 @@ function createCourseCard(course) {
     const iconClass = iconMap[course.category || course.level] || 'fa-graduation-cap';
     const descriptionText = course.description || 'No description provided.';
 
+    // Build content count text
+    let contentCountText = '';
+    if (totalLessons > 0 && totalQuizzes > 0) {
+        contentCountText = `${totalLessons} lesson${totalLessons !== 1 ? 's' : ''} and ${totalQuizzes} quiz${totalQuizzes !== 1 ? 'zes' : ''}`;
+    } else if (totalLessons > 0) {
+        contentCountText = `${totalLessons} lesson${totalLessons !== 1 ? 's' : ''}`;
+    } else if (totalQuizzes > 0) {
+        contentCountText = `${totalQuizzes} quiz${totalQuizzes !== 1 ? 'zes' : ''}`;
+    } else {
+        contentCountText = 'No content yet';
+    }
+
     const courseCard = document.createElement('div');
     courseCard.className = 'course-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 cursor-pointer flex flex-col';
     courseCard.dataset.courseId = course.id;
@@ -479,50 +492,42 @@ function createCourseCard(course) {
             }
         </div>
         <div class="p-5 flex-grow flex flex-col">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-sm text-gray-500">${totalLessons} lessons</span>
-            </div>
+            <span class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">${contentCountText}</span>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">${escapeHtml(course.title)}</h3>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2 two-line-ellipsis">${escapeHtml(descriptionText)}</p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 two-line-ellipsis">${escapeHtml(descriptionText)}</p>
 
             ${course.teacher ? `
-                <div class="flex items-center space-x-2 mb-3">
-                    <div class="flex-shrink-0">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
                         ${course.teacher.avatarUrl ?
-                            `<img src="${escapeHtml(course.teacher.avatarUrl)}" alt="${escapeHtml(course.teacher.name)}" class="h-6 w-6 rounded-full object-cover">` :
-                            `<div class="h-6 w-6 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-semibold">
+                            `<img src="${escapeHtml(course.teacher.avatarUrl)}" alt="${escapeHtml(course.teacher.name)}" class="h-7 w-7 rounded-full object-cover">` :
+                            `<div class="h-7 w-7 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-semibold">
                                 ${course.teacher.name ? escapeHtml(course.teacher.name.charAt(0).toUpperCase()) : 'T'}
                             </div>`
                         }
+                        <span class="text-sm text-gray-600 dark:text-gray-400">${escapeHtml(course.teacher.name || 'Instructor')}</span>
                     </div>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-chalkboard-teacher mr-1"></i>${escapeHtml(course.teacher.name || 'Instructor')}
-                    </span>
+                    ${tierBadge}
                 </div>
             ` : course.instructor ? `
-                <div class="flex items-center space-x-2 mb-3">
-                    <i class="fas fa-user-circle text-gray-400 text-lg"></i>
-                    <span class="text-xs text-gray-600 dark:text-gray-400">${escapeHtml(course.instructor)}</span>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="h-7 w-7 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center text-white text-xs font-semibold">
+                            ${escapeHtml(course.instructor.charAt(0).toUpperCase())}
+                        </div>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">${escapeHtml(course.instructor)}</span>
+                    </div>
+                    ${tierBadge}
                 </div>
-            ` : ''}
+            ` : `<div class="flex justify-end mb-3">${tierBadge}</div>`}
 
             <div class="mt-auto border-t pt-3">
-                <div class="flex justify-between items-center mb-2">
-                    ${tierBadge}
-                    <div class="flex items-center text-sm text-gray-500">
-                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                        <span>4.7</span>
-                    </div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600 dark:text-gray-400">Progress</span>
+                    <span class="text-${progressColor}-600 font-medium">${actualProgress}%</span>
                 </div>
-                
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600 dark:text-gray-400">Progress</span>
-                        <span class="text-${progressColor}-600 font-medium">${actualProgress}%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="h-full progress-fill-${progressColor}" style="width: ${actualProgress}%"></div>
-                    </div>
+                <div class="progress-bar-container">
+                    <div class="h-full progress-fill-${progressColor}" style="width: ${actualProgress}%"></div>
                 </div>
             </div>
         </div>
