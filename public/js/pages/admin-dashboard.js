@@ -1598,52 +1598,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Show Teacher View and Student View buttons for Admin
+    // Show Student View button for Admin
     if (user.role === 'admin') {
-        const teacherViewButton = document.getElementById('teacher-view-button');
         const studentViewButton = document.getElementById('student-view-button');
-
-        if (teacherViewButton) {
-            teacherViewButton.classList.remove('hidden');
-            // Temporarily store admin role, switch to teacher role, then redirect
-            teacherViewButton.addEventListener('click', () => {
-                // Save current role
-                localStorage.setItem('original_role', user.role);
-
-                // Temporarily switch to teacher role
-                const tempUser = { ...user, role: 'teacher' };
-                localStorage.setItem('user', JSON.stringify(tempUser));
-
-                // Redirect to admin dashboard (will now show as teacher view)
-                window.location.reload();
-            });
-        }
 
         if (studentViewButton) {
             studentViewButton.classList.remove('hidden');
             studentViewButton.addEventListener('click', () => {
                 window.location.href = '/courses';
             });
-        }
-    }
-
-    // Check if we need to restore admin role
-    const originalRole = localStorage.getItem('original_role');
-    if (originalRole === 'admin' && user.role === 'teacher') {
-        // Add a "Back to Admin" button
-        const headerElement = document.querySelector('.flex.items-center.space-x-4');
-        if (headerElement) {
-            const backToAdminBtn = document.createElement('button');
-            backToAdminBtn.className = 'px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center space-x-2';
-            backToAdminBtn.innerHTML = '<i class="fas fa-shield-alt"></i><span>Back to Admin</span>';
-            backToAdminBtn.addEventListener('click', () => {
-                // Restore admin role
-                const adminUser = { ...user, role: 'admin' };
-                localStorage.setItem('user', JSON.stringify(adminUser));
-                localStorage.removeItem('original_role');
-                window.location.reload();
-            });
-            headerElement.insertBefore(backToAdminBtn, headerElement.firstChild);
         }
     }
 

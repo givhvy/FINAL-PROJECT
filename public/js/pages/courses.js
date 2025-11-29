@@ -492,7 +492,6 @@ function createCourseCard(course) {
             }
         </div>
         <div class="p-5 flex-grow flex flex-col">
-            <span class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">${contentCountText}</span>
             <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">${escapeHtml(course.title)}</h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 two-line-ellipsis">${escapeHtml(descriptionText)}</p>
 

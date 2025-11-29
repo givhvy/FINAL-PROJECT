@@ -7,7 +7,8 @@ const {
     getLessons,
     getLessonById,
     updateLesson,
-    deleteLesson
+    deleteLesson,
+    reorderContent
 } = require('../controllers/lessonController');
 
 // --- ĐỊNH NGHĨA CÁC ROUTE CHO /api/lessons ---
@@ -17,6 +18,9 @@ router.get('/', getLessons);
 
 // POST /api/lessons
 router.post('/', createLesson);
+
+// POST /api/lessons/reorder - Bulk reorder content
+router.post('/reorder', reorderContent);
 
 // GET /api/lessons/:id
 router.get('/:id', getLessonById);

@@ -10,7 +10,13 @@ async function renderLessonPage(course) {
     const quizzes = (course.quizzes || []).map(item => ({ ...item, contentType: 'quiz' }));
 
     const allContent = [...lessons, ...quizzes];
-    allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    // Sort by order first, then by createdAt as fallback
+    allContent.sort((a, b) => {
+        const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+        const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+        if (orderA !== orderB) return orderA - orderB;
+        return new Date(a.createdAt) - new Date(b.createdAt);
+    });
 
     // Fetch completed lessons
     completedLessonIds = new Set();

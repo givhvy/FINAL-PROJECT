@@ -23,6 +23,23 @@
         .content-item:hover {
             transform: translateX(4px);
         }
+        /* Drag & Drop Styles */
+        .content-item[draggable="true"] {
+            cursor: grab;
+        }
+        .content-item[draggable="true"]:active {
+            cursor: grabbing;
+        }
+        .content-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .drag-handle {
+            cursor: grab;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
         .ql-container {
             border-radius: 0 0 12px 12px;
             min-height: 120px;
@@ -81,10 +98,14 @@
 
                 <!-- Existing Content Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-2">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Existing Content</h3>
                         <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full" id="content-count">0 items</span>
                     </div>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mb-4 flex items-center gap-1">
+                        <i class="fas fa-grip-vertical"></i>
+                        <span>Drag items to reorder</span>
+                    </p>
                     <div class="max-h-[400px] overflow-y-auto pr-2 space-y-2">
                         <ul id="content-list" class="space-y-2">
                             <li class="text-gray-500 text-sm py-4 text-center">Loading content...</li>

@@ -27,6 +27,8 @@ class Quiz {
 
         this.isPublished = data.isPublished !== undefined ? data.isPublished : false;
 
+        this.order = data.order || 0;
+
         this.createdAt = data.createdAt || data.created_at || new Date().toISOString();
         this.created_at = data.created_at || data.createdAt || new Date().toISOString();
 
@@ -86,13 +88,22 @@ class Quiz {
                 query = query.where('isPublished', '==', filters.isPublished);
             }
 
-            // Limit
+            const snapshot = await query.get();
+            let quizzes = snapshot.docs.map(doc => new Quiz({ id: doc.id, ...doc.data() }));
+
+            // Sort by order in memory to avoid composite index requirement
+            quizzes.sort((a, b) => {
+                const orderA = a.order || 0;
+                const orderB = b.order || 0;
+                return orderA - orderB; // Ascending order
+            });
+
+            // Limit after sorting
             if (filters.limit) {
-                query = query.limit(filters.limit);
+                quizzes = quizzes.slice(0, filters.limit);
             }
 
-            const snapshot = await query.get();
-            return snapshot.docs.map(doc => new Quiz({ id: doc.id, ...doc.data() }));
+            return quizzes;
         } catch (error) {
             throw new Error(`Error finding all quizzes: ${error.message}`);
         }
@@ -150,6 +161,7 @@ class Quiz {
                 passingScore: newQuiz.passingScore,
                 totalPoints: newQuiz.totalPoints,
                 isPublished: newQuiz.isPublished,
+                order: newQuiz.order,
                 createdAt: newQuiz.createdAt,
                 updatedAt: newQuiz.updatedAt
             });
@@ -252,6 +264,33 @@ class Quiz {
             return await this.findById(id);
         } catch (error) {
             throw new Error(`Error updating total points: ${error.message}`);
+        }
+    }
+
+    /**
+     * Thay đổi thứ tự quiz
+     * @param {string} id - Quiz ID
+     * @param {number} newOrder - Thứ tự mới
+     * @returns {Promise<Quiz>} - Quiz object đã cập nhật
+     */
+    static async reorder(id, newOrder) {
+        try {
+            const db = this.getDB();
+            const quizRef = db.collection('quizzes').doc(id);
+            const doc = await quizRef.get();
+
+            if (!doc.exists) {
+                throw new Error('Quiz not found');
+            }
+
+            await quizRef.update({
+                order: newOrder,
+                updatedAt: new Date().toISOString()
+            });
+
+            return await this.findById(id);
+        } catch (error) {
+            throw new Error(`Error reordering quiz: ${error.message}`);
         }
     }
 

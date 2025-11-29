@@ -12,6 +12,8 @@ let courseId = null;
 let currentEditingContentId = null;
 let uploadedVideoUrl = null;
 let uploadedVideoLocalUrl = null; // For local server uploads
+let draggedItem = null; // For drag & drop
+let allContentItems = []; // Store all content for reordering
 
 // ==================== AUTH GUARD ====================
 if (!token || !user || (user.role !== 'teacher' && user.role !== 'admin')) {
@@ -294,7 +296,16 @@ async function fetchAndRenderCourseDetails() {
             ...quizzes.map(q => ({ ...q, type: 'quiz' }))
         ];
 
-        allContent.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        // Sort by order first, then by createdAt as fallback
+        allContent.sort((a, b) => {
+            const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+            const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+            if (orderA !== orderB) return orderA - orderB;
+            return new Date(a.createdAt) - new Date(b.createdAt);
+        });
+
+        // Store for reordering
+        allContentItems = allContent;
 
         // Update content count
         const contentCountEl = document.getElementById('content-count');
@@ -323,14 +334,21 @@ async function fetchAndRenderCourseDetails() {
             const icon = isLesson ? 'fa-book-open' : 'fa-puzzle-piece';
 
             return `
-                <li class="content-item ${bgColor} rounded-xl p-3 cursor-pointer group">
+                <li class="content-item ${bgColor} rounded-xl p-3 cursor-grab group transition-all duration-200" 
+                    draggable="true" 
+                    data-id="${item.id}" 
+                    data-type="${item.type}"
+                    data-index="${index}">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
+                            <div class="drag-handle w-6 h-9 flex items-center justify-center cursor-grab text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
                             <div class="w-9 h-9 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0">
                                 <i class="fas ${icon} ${iconColor} text-sm"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="font-medium text-gray-800 dark:text-gray-200 text-sm truncate">${index + 1}. ${escapeHtml(item.title)}</p>
+                                <p class="font-medium text-gray-800 dark:text-gray-200 text-sm truncate"><span class="content-index">${index + 1}</span>. ${escapeHtml(item.title)}</p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">${isLesson ? 'Lesson' : 'Quiz'}</p>
                             </div>
                         </div>
@@ -346,6 +364,9 @@ async function fetchAndRenderCourseDetails() {
                 </li>
             `;
         }).join('');
+
+        // Setup drag & drop handlers
+        setupDragAndDrop();
     } catch (error) {
         console.error('Error loading course details:', error);
         notify.error('Failed to load course details');
@@ -373,7 +394,8 @@ async function handleLessonSubmit(e) {
         title: lessonTitle,
         content: lessonContent,
         videoUrl: videoUrl,
-        course_id: courseId
+        course_id: courseId,
+        order: currentEditingContentId ? undefined : allContentItems.length // Add to end if new
     };
 
     try {
@@ -469,7 +491,8 @@ async function handleQuizSubmit(e) {
         title: quizTitle,
         description: quizDescription,
         questions: questions,
-        course_id: courseId
+        course_id: courseId,
+        order: currentEditingContentId ? undefined : allContentItems.length // Add to end if new
     };
 
     try {
@@ -624,5 +647,117 @@ async function handleContentActions(e) {
             console.error('Delete error:', error);
             alert('Error: ' + error.message);
         }
+    }
+}
+
+// ==================== DRAG & DROP ====================
+function setupDragAndDrop() {
+    const contentList = document.getElementById('content-list');
+    const items = contentList.querySelectorAll('.content-item[draggable="true"]');
+    
+    items.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('dragenter', handleDragEnter);
+        item.addEventListener('dragleave', handleDragLeave);
+        item.addEventListener('drop', handleDrop);
+    });
+}
+
+function handleDragStart(e) {
+    draggedItem = this;
+    this.classList.add('opacity-50', 'scale-95');
+    this.style.cursor = 'grabbing';
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.index);
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('opacity-50', 'scale-95');
+    this.style.cursor = 'grab';
+    
+    // Remove drag-over styling from all items
+    document.querySelectorAll('.content-item').forEach(item => {
+        item.classList.remove('border-2', 'border-blue-500', 'border-dashed', 'bg-blue-100', 'dark:bg-blue-900/40');
+    });
+    
+    draggedItem = null;
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    if (this !== draggedItem) {
+        this.classList.add('border-2', 'border-blue-500', 'border-dashed');
+    }
+}
+
+function handleDragLeave(e) {
+    this.classList.remove('border-2', 'border-blue-500', 'border-dashed');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    
+    if (this === draggedItem) return;
+    
+    const contentList = document.getElementById('content-list');
+    const items = Array.from(contentList.querySelectorAll('.content-item[draggable="true"]'));
+    
+    const fromIndex = items.indexOf(draggedItem);
+    const toIndex = items.indexOf(this);
+    
+    if (fromIndex < toIndex) {
+        this.parentNode.insertBefore(draggedItem, this.nextSibling);
+    } else {
+        this.parentNode.insertBefore(draggedItem, this);
+    }
+    
+    // Update visual indexes
+    updateContentIndexes();
+    
+    // Save new order to server
+    saveContentOrder();
+}
+
+function updateContentIndexes() {
+    const items = document.querySelectorAll('.content-item[draggable="true"]');
+    items.forEach((item, index) => {
+        const indexSpan = item.querySelector('.content-index');
+        if (indexSpan) {
+            indexSpan.textContent = index + 1;
+        }
+        item.dataset.index = index;
+    });
+}
+
+async function saveContentOrder() {
+    const items = document.querySelectorAll('.content-item[draggable="true"]');
+    const orderData = Array.from(items).map((item, index) => ({
+        id: item.dataset.id,
+        type: item.dataset.type,
+        order: index
+    }));
+    
+    try {
+        const response = await fetchWithAuth('/api/lessons/reorder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ items: orderData })
+        });
+        
+        if (!response.ok) throw new Error('Failed to save order');
+        
+        notify.success('Content order saved');
+    } catch (error) {
+        console.error('Error saving order:', error);
+        notify.error('Failed to save content order');
     }
 }

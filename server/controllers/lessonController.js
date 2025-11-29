@@ -1,5 +1,6 @@
 const Lesson = require('../models/Lesson');
 const Course = require('../models/Course');
+const Quiz = require('../models/Quiz');
 
 // Create a new lesson (checkpoint, Create in Controller)
 exports.createLesson = async (req, res, next) => {
@@ -112,6 +113,33 @@ exports.deleteLesson = async (req, res, next) => {
     res.status(200).json({ message: 'Lesson deleted successfully' });
   } catch (err) {
     console.error("Delete Lesson Error:", err);
+    next(err);
+  }
+};
+
+// Reorder course content (lessons and quizzes)
+exports.reorderContent = async (req, res, next) => {
+  try {
+    const { items } = req.body;
+    
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({ error: 'Items array is required' });
+    }
+
+    const updatePromises = items.map(item => {
+      if (item.type === 'lesson') {
+        return Lesson.reorder(item.id, item.order);
+      } else if (item.type === 'quiz') {
+        return Quiz.reorder(item.id, item.order);
+      }
+      return Promise.resolve();
+    });
+
+    await Promise.all(updatePromises);
+    
+    res.status(200).json({ message: 'Content reordered successfully' });
+  } catch (err) {
+    console.error("Reorder Content Error:", err);
     next(err);
   }
 };
