@@ -75,6 +75,25 @@ if (typeof apiPut === 'undefined') {
     };
 }
 
+if (typeof apiPost === 'undefined') {
+    window.apiPost = async function(url, data) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Request failed');
+        }
+        return response.json();
+    };
+}
+
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', async () => {
     // Check authentication
