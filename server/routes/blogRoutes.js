@@ -34,4 +34,4 @@ router.put('/:id', authMiddleware, updateBlogPost);
 // DELETE /api/blog/:id -> Xóa blog post (cần auth, chỉ admin/teacher và author)
 router.delete('/:id', authMiddleware, deleteBlogPost);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

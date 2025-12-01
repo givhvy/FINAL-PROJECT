@@ -584,9 +584,9 @@ async function handleQuizSubmission(event, quizId, questions, courseId) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userId: user.id,
-                quizId: quizId,
-                courseId: courseId,
+                userId: user.id, // lấy từ localStorage (khi đã login bằng teacher)
+                quizId: quizId, // lấy từ URL hiện tại để hiện đúng id
+                courseId: courseId, // lấy từ Url hiện tại để hiện đúng id như cách google auth nhả ra token
                 score: percentage,
                 totalQuestions: questions.length,
                 correctAnswers: score

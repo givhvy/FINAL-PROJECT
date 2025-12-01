@@ -18,9 +18,9 @@ class Grade {
         const db = this.getDB();
         const gradeRef = db.collection('grades').doc();
         const grade = {
-            user_id: gradeData.userId,      // Store as snake_case for Firestore queries
-            quiz_id: gradeData.quizId,      // Store as snake_case for Firestore queries
-            course_id: gradeData.courseId,  // Store as snake_case for Firestore queries
+            user_id: gradeData.userId, // sử dụng Fk, lưu id user dưới dạng reference 
+            quiz_id: gradeData.quizId,      // sử dụng fk, lưu id quizz dưới dạng reference
+            course_id: gradeData.courseId,  // sử dụng fk, lưu id course dưới dạng reference
             score: gradeData.score,
             totalQuestions: gradeData.totalQuestions || 0,
             correctAnswers: gradeData.correctAnswers || 0,

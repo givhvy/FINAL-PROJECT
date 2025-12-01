@@ -35,7 +35,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
 
 // ====== 3. KHỞI TẠO ỨNG DỤNG VÀ FIREBASE ======
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; //process.env nodejs environment
 
 // Khởi tạo Firebase Admin SDK
 if (!admin.apps.length) {
@@ -56,8 +56,8 @@ app.set('views', path.join(__dirname, 'views'));
 // ====== 5. MIDDLEWARE (PHẦN MỀM TRUNG GIAN) ======
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Phục vụ static files từ thư mục public
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Phục vụ uploaded files (videos, etc.)
+app.use(express.static(path.join(__dirname, 'public'))); // Browser tự Phục vụ static files từ thư mục public
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Phục vụ uploaded files (videos, etc.) theo local host
 
 // Session middleware for Passport
 const session = require('express-session');

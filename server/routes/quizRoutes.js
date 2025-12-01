@@ -13,4 +13,4 @@ router.put('/:id', quizController.updateQuiz);
 // DELETE /api/quizzes/:id
 router.delete('/:id', quizController.deleteQuiz);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

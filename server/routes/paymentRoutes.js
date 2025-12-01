@@ -15,4 +15,4 @@ router.post('/create-checkout-session', paymentController.createCheckoutSession)
 // NEW: POST /api/payments/verify-and-create-order (Verify Stripe payment and create order)
 router.post('/verify-and-create-order', paymentController.verifyPaymentAndCreateOrder);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

@@ -38,7 +38,7 @@ const SPECIFIC_EDUCATIONAL_DOMAINS = [
 ];
 
 /**
- * Validates if an email address belongs to an educational institution
+ * Validates if an email address belongs to an educational institution, kiểm tra email
  * @param {string} email - The email address to validate
  * @returns {boolean} - True if the email is from an educational institution
  */

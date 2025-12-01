@@ -151,7 +151,7 @@ function showConfirmDialog(options = {}) {
     }
     
     // Create dialog element
-    const dialog = document.createElement('div');
+    const dialog = document.createElement('div'); // tạo div trống // bộ nhớ RAM
     dialog.id = 'confirm-dialog';
     dialog.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
     dialog.innerHTML = `
@@ -169,7 +169,7 @@ function showConfirmDialog(options = {}) {
         </div>
     `;
     
-    document.body.appendChild(dialog);
+    document.body.appendChild(dialog); // sau khi tạo xong dùng appendChild để in ra màn hình 
     document.body.style.overflow = 'hidden';
     
     // Add event listeners

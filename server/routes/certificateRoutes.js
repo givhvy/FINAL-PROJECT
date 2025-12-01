@@ -1,20 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const certificateController = require('../controllers/certificateController');
-const { generateMissingCertificates } = require('../utils/generateMissingCertificates');
 
 // Certificate routes
 router.get('/', certificateController.getCertificates);
 router.post('/', certificateController.createCertificate);
 router.post('/generate', certificateController.generateCertificate);
-router.post('/generate-missing', async (req, res) => {
-    try {
-        await generateMissingCertificates();
-        res.json({ success: true, message: 'Missing certificates generated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
 
 router.get('/debug-enrollments', async (req, res) => {
     try {
@@ -43,4 +34,4 @@ router.get('/:id', certificateController.getCertificateById);
 router.put('/:id', certificateController.updateCertificate);
 router.delete('/:id', certificateController.deleteCertificate);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

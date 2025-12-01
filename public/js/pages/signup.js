@@ -163,7 +163,7 @@ async function handleSignupSubmit(e) {
     }
     
     // Combine first and last name
-    const name = `${firstName} ${lastName}`;
+    const name = `${firstName} ${lastName}`; // merge lại cho dễ ở send registration và biến thành full name 
     
     // Disable submit button
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -187,34 +187,34 @@ async function handleSignupSubmit(e) {
             })
         });
         
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to create account.');
-        }
-        
-        // Show success and redirect
-        showSignupSuccess();
-        
-        // Hide form
-        form.classList.add('hidden');
-        
-        // Redirect to login after 2 seconds
-        setTimeout(() => {
-            window.location.href = '/login';
-        }, 2000);
-        
-    } catch (error) {
-        console.error('Signup Error:', error);
-        showSignupError(error.message);
-        
-        // Re-enable submit button
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Account';
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create account.');
+            }
+            
+            // Show success and redirect
+            showSignupSuccess();
+            
+            // Hide form
+            form.classList.add('hidden');
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Signup Error:', error);
+            showSignupError(error.message);
+            
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
         }
     }
-}
 
 // ==================== UI FEEDBACK ====================
 function showSignupSuccess() {

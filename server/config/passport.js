@@ -19,7 +19,7 @@ module.exports = function(app) {
   
   console.log('✅ Google OAuth configured! Registering strategy...');
 
-  // Serialize user
+  // Serialize user , ghi id vào 
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });

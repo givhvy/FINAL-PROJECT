@@ -51,4 +51,4 @@ router.post('/video', authMiddleware, upload.single('file'), uploadController.up
 router.post('/video-local', authMiddleware, localVideoUpload.single('file'), uploadController.uploadVideoLocal); // Upload to server disk (no size limit)
 router.post('/profile-picture', authMiddleware, profileUpload.single('file'), uploadController.uploadProfilePicture);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

@@ -31,4 +31,4 @@ router.put('/:id', updateLesson);
 // DELETE /api/lessons/:id
 router.delete('/:id', deleteLesson);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

@@ -23,4 +23,4 @@ router.delete('/reset/:userId/:courseId', progressController.resetCourseProgress
 // POST /api/progress/bulk - Bulk update lessons progress
 router.post('/bulk', progressController.bulkUpdateProgress);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

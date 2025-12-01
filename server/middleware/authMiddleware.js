@@ -9,10 +9,10 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // soi đúng vé access của jwt chưa
     
     // Get user data from Firestore
-    const db = getFirestore();
+    const db = getFirestore(); // kiểm tra thêm với firestore , ví dụ admin xóa role 5 phút trước
     const userRef = db.collection('users').doc(decoded.userId);
     const userSnap = await userRef.get();
     
@@ -21,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
     }
     
     req.user = { id: userSnap.id, ...userSnap.data() };
-    next();
+    next(); // accept 
   } catch (error) {
     res.status(400).json({ error: 'Invalid token.' });
   }

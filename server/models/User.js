@@ -104,7 +104,7 @@ class User {
     }
 
     /**
-     * Tạo người dùng mới (Create in CRUD) // xài cho signup.js
+     * Tạo người dùng mới (Create in CRUD) // xài cho signup.js và authController.js
      * @param {Object} userData - Dữ liệu người dùng
      * @returns {Promise<User>} - User object đã tạo
      */
@@ -132,7 +132,7 @@ class User {
                 updatedAt: new Date().toISOString()
             });
 
-            const docRef = await db.collection('users').add({
+            const docRef = await db.collection('users').add({ // cất vào kho firestore
                 name: newUser.name,
                 email: newUser.email,
                 password: newUser.password,

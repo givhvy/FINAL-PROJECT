@@ -8,4 +8,4 @@ router.get('/:id', gradeController.getGradeById);
 router.put('/:id', gradeController.updateGrade);
 router.delete('/:id', gradeController.deleteGrade);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

@@ -8,4 +8,4 @@ router.post('/', questionController.createQuestion);
 // GET /api/questions -> Lấy câu hỏi (theo quizId)
 router.get('/', questionController.getQuestionsByQuiz);
 
-module.exports = router;
+module.exports = router; // cho server.js xài

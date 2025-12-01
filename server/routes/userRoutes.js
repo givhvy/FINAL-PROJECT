@@ -18,4 +18,4 @@ router.post('/verify-student', userController.verifyStudent);
 // NEW: POST /api/users/cancel-subscription -> Hủy subscription
 router.post('/cancel-subscription', userController.cancelSubscription);
 
-module.exports = router;
+module.exports = router; // cho server.js xài 

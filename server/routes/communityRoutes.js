@@ -39,5 +39,5 @@ router.get('/groups/:groupId/messages', groupMessageController.getGroupMessages)
 // POST /api/community/groups/:groupId/messages -> Post message to group forum
 router.post('/groups/:groupId/messages', groupMessageController.postGroupMessage);
 
-module.exports = router;
+module.exports = router; // cho server.js xài
 

@@ -49,7 +49,7 @@ router.get('/google/callback',
   }),
   (req, res) => {
     try {
-      // Generate JWT token
+      // Generate JWT token // 
       const token = jwt.sign(
         { 
           userId: req.user.id,
@@ -79,4 +79,4 @@ router.get('/google/callback',
 
 
 // Xuất router để server.js có thể sử dụng
-module.exports = router;
+module.exports = router; 

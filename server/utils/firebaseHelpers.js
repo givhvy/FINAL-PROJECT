@@ -20,7 +20,7 @@ class ValidationError extends Error {
  * Get document or throw 404 error
  */
 async function getDocOrThrow(collection, docId, errorMessage) {
-    const db = getFirestore();
+    const db = getFirestore(); // mở firestore ra lấy document
     const doc = await db.collection(collection).doc(docId).get();
     if (!doc.exists) {
         throw new NotFoundError(errorMessage || `${collection} not found`);
@@ -29,7 +29,7 @@ async function getDocOrThrow(collection, docId, errorMessage) {
 }
 
 /**
- * Batch get documents by IDs
+ * Batch get documents by IDs , lấy cùng lúc
  */
 async function batchGetByIds(collection, ids) {
     if (!ids || ids.length === 0) return [];
@@ -42,14 +42,14 @@ async function batchGetByIds(collection, ids) {
             .get()
     );
 
-    const snapshots = await Promise.all(promises);
+    const snapshots = await Promise.all(promises); // đợi trả về hết tất cả 
     return snapshots.flatMap(snap =>
         snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
     );
 }
 
 /**
- * Split array into chunks
+ * Split array into chunks, chia các mảnh ra 
  */
 function chunkArray(array, size) {
     const chunks = [];
@@ -76,7 +76,7 @@ async function docExists(collection, docId) {
  * @param {string} collection - Collection name
  * @param {Array} docIds - Array of document IDs to delete
  */
-async function batchDelete(collection, docIds) {
+async function batchDelete(collection, docIds) { 
     if (!docIds || docIds.length === 0) return;
 
     const db = getFirestore();
@@ -85,7 +85,7 @@ async function batchDelete(collection, docIds) {
         batch.delete(db.collection(collection).doc(id));
     });
 
-    await batch.commit();
+    await batch.commit(); // xóa tất cả cùng l lúc 
 }
 
 /**
