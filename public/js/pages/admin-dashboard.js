@@ -475,13 +475,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         tableBody.innerHTML = courses.map(course => {
             const isExpanded = expandedCourses.has(course.id);
             const createdDate = course.createdAt ? new Date(course.createdAt).toLocaleDateString('en-US') : 'N/A';
+            const thumbnail = course.thumbnail || course.image || '';
+            const imageHTML = thumbnail 
+                ? `<img src="${thumbnail}" alt="${course.title}" class="w-12 h-12 rounded-lg object-cover">`
+                : `<div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center"><i class="fas fa-book-open text-white text-sm"></i></div>`;
 
             return `
             <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors course-row" data-course-id="${course.id}">
             <td class="px-5 py-4">
-            <button onclick="toggleCourseDetails('${course.id}')" class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-            <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'} text-blue-500 text-xs"></i>
-            </button>
+            ${imageHTML}
             </td>
             <td class="px-5 py-4">
             <div class="font-medium text-gray-800 dark:text-gray-200">${course.title}</div>
@@ -507,7 +509,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </tr>
             ${isExpanded ? `
                 <tr class="course-details bg-gray-50/50 dark:bg-gray-800/50" data-course-id="${course.id}">
-                <td colspan="6" class="px-5 py-4">
+                <td colspan="7" class="px-5 py-4">
                 <div class="ml-8 space-y-4">
                 <div id="course-lessons-${course.id}" class="course-content-section">
                 <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
@@ -792,7 +794,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (posts.length === 0) {
             tableBody.innerHTML = `
             <tr>
-            <td colspan="6" class="text-center py-8 text-gray-500">
+            <td colspan="7" class="text-center py-8 text-gray-500">
             <i class="fas fa-blog text-4xl mb-4"></i>
             <p>No blog posts found.</p>
             <p>Click "Create New Post" to get started!</p>
@@ -818,8 +820,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         ? '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Published</span>'
         : '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Draft</span>';
 
+        const featuredImage = post.featured_image || post.featuredImage || '';
+        const imageHTML = featuredImage 
+            ? `<img src="${featuredImage}" alt="${post.title}" class="w-12 h-12 rounded-lg object-cover">`
+            : `<div class="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center"><i class="fas fa-image text-gray-400"></i></div>`;
+
         return `
-        <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700">
+        <tr class="text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+        <td class="px-4 py-3">
+        ${imageHTML}
+        </td>
         <td class="px-4 py-3">
         <div class="font-medium">${post.title}</div>
         <div class="text-xs text-gray-500">${(post.excerpt || '').substring(0, 60)}${post.excerpt && post.excerpt.length > 60 ? '...' : ''}</div>
