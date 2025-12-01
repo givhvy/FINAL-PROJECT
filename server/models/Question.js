@@ -1,9 +1,9 @@
 const { getFirestore } = require('firebase-admin/firestore');
 
-/**
- * Question Model
- * Xử lý tất cả các thao tác liên quan đến câu hỏi trong Firestore
- */
+//
+// Question Model
+// Xử lý tất cả các thao tác liên quan đến câu hỏi trong Firestore
+ 
 class Question {
     constructor(data) {
         this.id = data.id || null;
@@ -37,18 +37,16 @@ class Question {
         this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+    //
+    // Lấy instance của Firestore
+    //
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm câu hỏi theo ID
-     * @param {string} id - Question ID
-     * @returns {Promise<Question|null>} - Question object hoặc null
-     */
+    //
+    // Tìm câu hỏi theo ID
+    //
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -64,11 +62,9 @@ class Question {
         }
     }
 
-    /**
-     * Lấy tất cả câu hỏi
-     * @param {Object} filters - Bộ lọc (quizId, questionType, etc.)
-     * @returns {Promise<Array<Question>>} - Mảng Question objects
-     */
+    //
+    // Lấy tất cả câu hỏi
+    //
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -125,11 +121,7 @@ class Question {
         }
     }
 
-    /**
-     * Lấy tất cả câu hỏi của một quiz
-     * @param {string} quizId - Quiz ID
-     * @returns {Promise<Array<Question>>} - Mảng Question objects
-     */
+  // Lấy tất cả câu hỏi của một quiz
     static async findByQuizId(quizId) {
         try {
             return await this.findAll({ quizId });
@@ -138,11 +130,9 @@ class Question {
         }
     }
 
-    /**
-     * Tạo câu hỏi mới (Create in CRUD)
-     * @param {Object} questionData - Dữ liệu câu hỏi
-     * @returns {Promise<Question>} - Question object đã tạo
-     */
+    //
+    // Tạo câu hỏi mới (Create in CRUD)
+    //
     static async create(questionData) {
         try {
             console.log('Question.create called with:', {
@@ -189,12 +179,7 @@ class Question {
         }
     }
 
-    /**
-     * Cập nhật câu hỏi (Update in CRUD)
-     * @param {string} id - Question ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Question>} - Question object đã cập nhật
-     */
+// Cập nhật câu hỏi (Update in CRUD)
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -214,11 +199,9 @@ class Question {
         }
     }
 
-    /**
-     * Xóa câu hỏi (Delete in CRUD)
-     * @param {string} id - Question ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    //
+    // Xóa câu hỏi (Delete in CRUD)
+    //
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -229,12 +212,9 @@ class Question {
         }
     }
 
-    /**
-     * Thay đổi thứ tự câu hỏi (reorder)
-     * @param {string} id - Question ID
-     * @param {number} newOrder - Thứ tự mới
-     * @returns {Promise<Question>} - Question object đã cập nhật
-     */
+    //
+    // Thay đổi thứ tự câu hỏi (reorder)
+    //
     static async reorder(id, newOrder) {
         try {
             const db = this.getDB();
@@ -256,11 +236,7 @@ class Question {
         }
     }
 
-    /**
-     * Kiểm tra câu trả lời
-     * @param {string|Array} answer - Câu trả lời của học sinh
-     * @returns {boolean} - true nếu đúng
-     */
+// Kiểm tra câu trả lời
     checkAnswer(answer) {
         if (Array.isArray(this.correctAnswer)) {
             // Đối với câu hỏi nhiều đáp án
@@ -272,10 +248,9 @@ class Question {
         }
     }
 
-    /**
-     * Lấy câu hỏi không có đáp án (để gửi cho học sinh)
-     * @returns {Object} - Question object không có correctAnswer
-     */
+    //
+    // Lấy câu hỏi không có đáp án (để gửi cho học sinh)
+    //
     toStudentJSON() {
         const obj = { ...this };
         delete obj.correctAnswer;
@@ -283,10 +258,9 @@ class Question {
         return obj;
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Question object
-     */
+    //
+    // Chuyển đổi thành object đơn giản
+    //
     toJSON() {
         // Return object with both camelCase and snake_case for compatibility
         return {

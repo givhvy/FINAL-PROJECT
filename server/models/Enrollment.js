@@ -1,9 +1,7 @@
 const { getFirestore } = require('firebase-admin/firestore');
 
-/**
- * Enrollment Model
- * Tracks user enrollments in courses
- */
+//Enrollment Model
+// Tracks user enrollments in courses
 class Enrollment {
     constructor(data) {
         this.id = data.id || null;
@@ -21,18 +19,12 @@ class Enrollment {
         this.status = data.status || 'active'; // 'active', 'completed', 'dropped'
     }
 
-    /**
-     * Get Firestore instance
-     */
+    // Get Firestore instance
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Find all enrollments for a user
-     * @param {string} userId - User ID
-     * @returns {Promise<Array<Enrollment>>} - Array of enrollments
-     */
+    // Find all enrollments for a user (read in CRUD)
     static async findByUserId(userId) {
         try {
             const db = this.getDB();
@@ -55,11 +47,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Find all enrollments for a course
-     * @param {string} courseId - Course ID
-     * @returns {Promise<Array<Enrollment>>} - Array of enrollments
-     */
+ // Find all enrollments for a course
     static async findByCourseId(courseId) {
         try {
             const db = this.getDB();
@@ -82,12 +70,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Find a specific enrollment
-     * @param {string} userId - User ID
-     * @param {string} courseId - Course ID
-     * @returns {Promise<Enrollment|null>} - Enrollment or null
-     */
+    // Find a specific enrollment
     static async findOne(userId, courseId) {
         try {
             const db = this.getDB();
@@ -117,11 +100,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Create a new enrollment
-     * @param {Object} enrollmentData - Enrollment data
-     * @returns {Promise<Enrollment>} - Created enrollment
-     */
+    // Create a new enrollment
     static async create(enrollmentData) {
         try {
             const db = this.getDB();
@@ -148,12 +127,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Update enrollment status (update in CRUD)
-     * @param {string} id - Enrollment ID
-     * @param {string} status - New status
-     * @returns {Promise<Enrollment>} - Updated enrollment
-     */
+    // Update enrollment status (update in CRUD)
     static async updateStatus(id, status) {
         try {
             const db = this.getDB();
@@ -166,11 +140,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Delete an enrollment
-     * @param {string} id - Enrollment ID
-     * @returns {Promise<boolean>} - true if deleted
-     */
+    // Delete an enrollment
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -181,11 +151,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Count active enrollments for a user
-     * @param {string} userId - User ID
-     * @returns {Promise<number>} - Count of active enrollments
-     */
+    // Count active enrollments for a user
     static async countActiveEnrollments(userId) {
         try {
             const enrollments = await this.findByUserId(userId);
@@ -195,11 +161,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Count enrollments by multiple courses (fixes N+1 query problem)
-     * @param {Array<string>} courseIds - Array of course IDs
-     * @returns {Promise<Object>} - Object with courseId as key and count as value
-     */
+ // Count enrollments by multiple courses (fixes N+1 query problem) 
     static async countByCourses(courseIds) {
         try {
             if (!courseIds || courseIds.length === 0) return {};
@@ -247,12 +209,7 @@ class Enrollment {
         }
     }
 
-    /**
-     * Check if user is enrolled in course
-     * @param {string} userId - User ID
-     * @param {string} courseId - Course ID
-     * @returns {Promise<boolean>} - true if enrolled
-     */
+// Check if user is enrolled in course
     static async isEnrolled(userId, courseId) {
         try {
             const enrollment = await this.findOne(userId, courseId);

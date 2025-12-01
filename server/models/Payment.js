@@ -19,18 +19,12 @@ class Payment {
         this.updatedAt = data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+ // 
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm payment theo ID
-     * @param {string} id - Payment ID
-     * @returns {Promise<Payment|null>} - Payment object hoặc null
-     */
+// Tìm payment theo ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -46,11 +40,7 @@ class Payment {
         }
     }
 
-    /**
-     * Tìm payment theo Order ID
-     * @param {string} orderId - Order ID
-     * @returns {Promise<Payment|null>} - Payment object hoặc null
-     */
+    // Tìm payment theo Order ID
     static async findByOrderId(orderId) {
         try {
             const db = this.getDB();
@@ -70,11 +60,7 @@ class Payment {
         }
     }
 
-    /**
-     * Tìm payment theo Transaction ID
-     * @param {string} transactionId - Transaction ID
-     * @returns {Promise<Payment|null>} - Payment object hoặc null
-     */
+    // Tìm payment theo Transaction ID
     static async findByTransactionId(transactionId) {
         try {
             const db = this.getDB();
@@ -94,11 +80,7 @@ class Payment {
         }
     }
 
-    /**
-     * Lấy tất cả payment
-     * @param {Object} filters - Bộ lọc (userId, orderId, paymentStatus, etc.)
-     * @returns {Promise<Array<Payment>>} - Mảng Payment objects
-     */
+ // Lấy tất cả payment ---- Function1 
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -139,11 +121,7 @@ class Payment {
         }
     }
 
-    /**
-     * Lấy tất cả payment của một người dùng
-     * @param {string} userId - User ID
-     * @returns {Promise<Array<Payment>>} - Mảng Payment objects
-     */
+    // Lấy tất cả payment của một người dùng
     static async findByUserId(userId) {
         try {
             return await this.findAll({ userId });
@@ -152,11 +130,7 @@ class Payment {
         }
     }
 
-    /**
-     * Tạo payment mới
-     * @param {Object} paymentData - Dữ liệu payment
-     * @returns {Promise<Payment>} - Payment object đã tạo
-     */
+    // Tạo payment mới
     static async create(paymentData) {
         try {
             const db = this.getDB();
@@ -187,12 +161,7 @@ class Payment {
         }
     }
 
-    /**
-     * Cập nhật payment  (Update in CRUD)
-     * @param {string} id - Payment ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Payment>} - Payment object đã cập nhật
-     */
+   // Cập nhật payment  (Update in CRUD)
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -212,11 +181,7 @@ class Payment {
         }
     }
 
-    /**
-     * Xóa payment (Delete in CRUD)
-     * @param {string} id - Payment ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    // Xóa payment (Delete in CRUD)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -227,12 +192,7 @@ class Payment {
         }
     }
 
-    /**
-     * Cập nhật trạng thái payment (Update in CRUD 2)
-     * @param {string} id - Payment ID
-     * @param {string} paymentStatus - Trạng thái mới
-     * @returns {Promise<Payment>} - Payment object đã cập nhật
-     */
+    // Cập nhật trạng thái payment (Update in CRUD 2)
     static async updateStatus(id, paymentStatus) {
         try {
             const db = this.getDB();
@@ -254,13 +214,7 @@ class Payment {
         }
     }
 
-    /**
-     * Hoàn thành payment
-     * @param {string} id - Payment ID
-     * @param {string} transactionId - Transaction ID từ gateway
-     * @param {Object} gatewayResponse - Response từ gateway
-     * @returns {Promise<Payment>} - Payment object đã cập nhật
-     */
+   // Hoàn Thành Payment
     static async complete(id, transactionId, gatewayResponse = null) {
         try {
             const db = this.getDB();
@@ -284,12 +238,7 @@ class Payment {
         }
     }
 
-    /**
-     * Đánh dấu payment thất bại
-     * @param {string} id - Payment ID
-     * @param {Object} gatewayResponse - Response từ gateway
-     * @returns {Promise<Payment>} - Payment object đã cập nhật
-     */
+    // Đánh dấu payment thất bại
     static async fail(id, gatewayResponse = null) {
         try {
             const db = this.getDB();
@@ -312,11 +261,7 @@ class Payment {
         }
     }
 
-    /**
-     * Hoàn tiền payment (Update in CRUD 3)
-     * @param {string} id - Payment ID
-     * @returns {Promise<Payment>} - Payment object đã cập nhật
-     */
+    // Hoàn tiền payment (Update in CRUD 3)
     static async refund(id) {
         try {
             return await this.updateStatus(id, 'refunded');
@@ -325,11 +270,7 @@ class Payment {
         }
     }
 
-    /**
-     * Lấy tổng số tiền đã thanh toán
-     * @param {Object} filters - Bộ lọc (userId, startDate, endDate)
-     * @returns {Promise<number>} - Tổng số tiền
-     */
+    // Lấy tổng số tiền đã thanh toán
     static async getTotalAmount(filters = {}) {
         try {
             const payments = await this.findAll({
@@ -343,10 +284,7 @@ class Payment {
         }
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Payment object
-     */
+    // Chuyển đổi thành object đơn giản
     toJSON() {
         return { ...this };
     }

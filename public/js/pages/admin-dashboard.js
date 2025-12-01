@@ -1164,14 +1164,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Setup role filter buttons
         roleFilterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class from all buttons
+                // Remove active class and reset styles for all buttons
                 roleFilterBtns.forEach(b => {
-                    b.classList.remove('active', 'bg-blue-600', 'text-white', 'dark:bg-blue-600');
-                    b.classList.add('border-gray-300', 'dark:border-gray-600');
+                    b.classList.remove('active', 'bg-blue-500', 'bg-blue-600', 'text-white', 'dark:bg-blue-600');
+                    b.classList.add('border', 'border-gray-200', 'dark:border-gray-600', 'text-gray-600', 'dark:text-gray-400');
                 });
                 // Add active class to clicked button
-                btn.classList.add('active', 'bg-blue-600', 'text-white', 'dark:bg-blue-600');
-                btn.classList.remove('border-gray-300', 'dark:border-gray-600');
+                btn.classList.add('active', 'bg-blue-500', 'text-white');
+                btn.classList.remove('border', 'border-gray-200', 'dark:border-gray-600', 'text-gray-600', 'dark:text-gray-400');
 
                 currentRoleFilter = btn.dataset.role;
                 filterUsers();
@@ -1245,9 +1245,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="text-gray-600 dark:text-gray-300">${user.email || 'N/A'}</span>
             </td>
             <td class="px-5 py-4">
-            <span class="px-3 py-1 text-xs rounded-full font-medium ${roleColor}">
+            <div class="relative inline-block role-dropdown-container">
+            <button class="role-badge-btn px-3 py-1 text-xs rounded-full font-medium ${roleColor} cursor-pointer hover:opacity-80 transition-opacity" data-user-id="${user.id}" data-current-role="${user.role || 'student'}">
             ${(user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1)}
-            </span>
+            <i class="fas fa-caret-down ml-1 text-xs"></i>
+            </button>
+            <div class="role-dropdown hidden absolute left-0 mt-1 w-32 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-30" data-role-dropdown-id="${user.id}">
+            <button data-role="student" data-user-id="${user.id}" class="role-option w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center ${user.role === 'student' ? 'text-green-600 font-medium' : 'text-gray-700 dark:text-gray-300'}">
+            <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>Student
+            </button>
+            <button data-role="teacher" data-user-id="${user.id}" class="role-option w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center ${user.role === 'teacher' ? 'text-blue-600 font-medium' : 'text-gray-700 dark:text-gray-300'}">
+            <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>Teacher
+            </button>
+            <button data-role="admin" data-user-id="${user.id}" class="role-option w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center ${user.role === 'admin' ? 'text-red-600 font-medium' : 'text-gray-700 dark:text-gray-300'}">
+            <span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span>Admin
+            </button>
+            </div>
+            </div>
             </td>
             <td class="px-5 py-4 text-gray-600 dark:text-gray-400">${joinDate}</td>
             <td class="px-5 py-4">
@@ -1265,10 +1279,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button data-action="edit" data-user-id="${user.id}" class="user-action-btn w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center">
             <i class="fas fa-edit w-5 text-blue-500"></i>
             <span>Edit User</span>
-            </button>
-            <button data-action="change-role" data-user-id="${user.id}" data-user-role="${user.role}" class="user-action-btn w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center">
-            <i class="fas fa-user-cog w-5 text-purple-500"></i>
-            <span>Change Role</span>
             </button>
             <hr class="my-1 border-gray-100 dark:border-gray-700">
             <button data-action="delete" data-user-id="${user.id}" class="user-action-btn w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center">
@@ -1299,9 +1309,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Close dropdown when clicking outside
-            document.addEventListener('click', () => {
-    document.querySelectorAll('.user-dropdown').forEach(d => d.classList.add('hidden'));
-    });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-dropdown') && !e.target.closest('.user-menu-toggle')) {
+                document.querySelectorAll('.user-dropdown').forEach(d => d.classList.add('hidden'));
+            }
+            if (!e.target.closest('.role-dropdown') && !e.target.closest('.role-badge-btn')) {
+                document.querySelectorAll('.role-dropdown').forEach(d => d.classList.add('hidden'));
+            }
+        });
+
+        // Add role badge click handlers
+        document.querySelectorAll('.role-badge-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const userId = btn.dataset.userId;
+                const dropdown = document.querySelector(`[data-role-dropdown-id="${userId}"]`);
+
+                // Close all other role dropdowns
+                document.querySelectorAll('.role-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.add('hidden');
+                });
+                // Close all user action dropdowns
+                document.querySelectorAll('.user-dropdown').forEach(d => d.classList.add('hidden'));
+
+                dropdown.classList.toggle('hidden');
+            });
+        });
+
+        // Add role option click handlers
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const newRole = option.dataset.role;
+                const userId = option.dataset.userId;
+                const user = allUsers.find(u => u.id === userId);
+                
+                if (user && user.role !== newRole) {
+                    await changeUserRole(userId, newRole);
+                }
+                // Close dropdown
+                document.querySelectorAll('.role-dropdown').forEach(d => d.classList.add('hidden'));
+            });
+        });
     }
 
     // Edit user - open modal with user data
@@ -1389,15 +1438,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     }
 
-    // Quick role change
-    async function quickRoleChange(userId, currentRole) {
-        const roles = ['student', 'teacher', 'admin'];
-        const newRole = prompt(`Change role for user:\n\nCurrent role: ${currentRole}\n\nEnter new role (student/teacher/admin):`, currentRole);
-
-        if (!newRole || newRole === currentRole || !roles.includes(newRole.toLowerCase())) {
-            return;
-        }
-
+    // Change user role (called from role dropdown)
+    async function changeUserRole(userId, newRole) {
         try {
             const response = await fetch(`/api/users/${userId}/role`, {
                 method: 'PUT',
@@ -1405,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ role: newRole.toLowerCase() })
+                body: JSON.stringify({ role: newRole })
             });
 
             if (!response.ok) {
@@ -1415,16 +1457,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const userIndex = allUsers.findIndex(u => u.id === userId);
             if (userIndex !== -1) {
-                allUsers[userIndex].role = newRole.toLowerCase();
+                allUsers[userIndex].role = newRole;
             }
 
             renderUsersPage();
-            notify.success(`Role updated successfully! User is now a ${newRole.toLowerCase()}.`);
+            notify.success(`Role updated successfully! User is now a ${newRole}.`);
 
         } catch (error) {
-        console.error('Error updating user role:', error);
-        notify.error(`Error: ${error.message}`);
-    }
+            console.error('Error updating user role:', error);
+            notify.error(`Error: ${error.message}`);
+        }
     }
 
     // Delete user
@@ -1719,11 +1761,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (action === 'edit') {
         editUser(userId);
-    } else if (action === 'change-role') {
-    const currentRole = button.dataset.userRole;
-    await quickRoleChange(userId, currentRole);
     } else if (action === 'delete') {
-    await deleteUser(userId);
+        await deleteUser(userId);
     }
     });
 

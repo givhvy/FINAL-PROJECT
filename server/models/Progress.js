@@ -6,9 +6,7 @@ class Progress {
         return getFirestore();
     }
 
-    /**
-     * Update lesson progress (update)
-     */
+  // Update lesson progress (update)
     static async updateLessonProgress(userId, courseId, lessonId, completed = true) {
         const db = this.getDB();
         if (!userId || !courseId || !lessonId) {
@@ -39,9 +37,7 @@ class Progress {
         };
     }
 
-    /**
-     * Get progress for a specific lesson
-     */
+  // Get progress for a specific lesson
     static async getLessonProgress(userId, courseId, lessonId) {
         const db = this.getDB();
         const progressId = `${userId}_${courseId}_${lessonId}`;
@@ -55,10 +51,10 @@ class Progress {
         };
     }
 
-    /**
-     * Get all progress for a user's enrollment in a course
-     * If courseId is not provided, returns all progress for the user
-     */
+    //
+    // Get all progress for a user's enrollment in a course
+    // If courseId is not provided, returns all progress for the user
+    //
     static async getByEnrollment(userId, courseId = null) {
         const db = this.getDB();
 
@@ -79,9 +75,9 @@ class Progress {
         }));
     }
 
-    /**
-     * Get completed lessons for a user in a course
-     */
+    //
+    // Get completed lessons for a user in a course
+    //
     static async getCompletedLessons(userId, courseId) {
         const db = this.getDB();
 
@@ -98,9 +94,9 @@ class Progress {
         }));
     }
 
-    /**
-     * Calculate completion percentage
-     */
+    //
+    // Calculate completion percentage
+    //
     static async calculateCompletion(userId, courseId) {
         const db = this.getDB();
 
@@ -136,9 +132,9 @@ class Progress {
         return Math.round((completedLessons / totalLessons) * 100);
     }
 
-    /**
-     * Mark enrollment as completed
-     */
+    //
+    // Mark enrollment as completed
+    //
     static async markEnrollmentCompleted(userId, courseId) {
         const db = this.getDB();
 
@@ -167,9 +163,9 @@ class Progress {
         }
     }
 
-    /**
-     * Update enrollment progress percentage (update)
-     */
+    //
+    // Update enrollment progress percentage (update)
+    //
     static async updateEnrollmentProgress(userId, courseId) {
         const db = this.getDB();
         const completionPercentage = await this.calculateCompletion(userId, courseId);
@@ -204,18 +200,18 @@ class Progress {
         return completionPercentage;
     }
 
-    /**
-     * Check if user has completed a specific lesson
-     */
+    //
+    // Check if user has completed a specific lesson
+    //
     static async isLessonCompleted(userId, courseId, lessonId) {
         const db = this.getDB();
         const progress = await this.getLessonProgress(userId, courseId, lessonId);
         return progress ? progress.completed : false;
     }
 
-    /**
-     * Get course progress summary
-     */
+    //
+    // Get course progress summary
+    //
     static async getCourseSummary(userId, courseId) {
         const db = this.getDB();
         const completionPercentage = await this.calculateCompletion(userId, courseId);
@@ -239,9 +235,7 @@ class Progress {
         };
     }
 
-    /**
-     * Reset progress for a course (for retaking)
-     */
+// Reset progress for a course (for retaking)
     static async resetCourseProgress(userId, courseId) {
         const db = this.getDB();
         const progressDocs = await this.getByEnrollment(userId, courseId);
@@ -257,9 +251,7 @@ class Progress {
         await this.updateEnrollmentProgress(userId, courseId);
     }
 
-    /**
-     * Mark multiple lessons as completed
-     */
+  // Mark multiple lessons as completed
     static async bulkUpdateLessons(userId, courseId, lessonIds, completed = true) {
         const db = this.getDB();
         const batch = db.batch();
@@ -284,9 +276,7 @@ class Progress {
         await this.updateEnrollmentProgress(userId, courseId);
     }
 
-    /**
-     * Get user's overall progress across all courses
-     */
+  // Get user's overall progress across all courses
     static async getUserOverallProgress(userId) {
         const db = this.getDB();
 
@@ -321,10 +311,9 @@ class Progress {
         return progressData;
     }
 
-    /**
-     * Get user's enrollments with progress percentage
-     * Returns array of {courseId, userId, percentage, completedLessons, totalLessons}
-     */
+    // Get user's enrollments with progress percentage
+   //Returns array of {courseId, userId, percentage, completedLessons, totalLessons}
+    
     static async getUserEnrollmentsWithProgress(userId, courseId = null) {
         const db = this.getDB();
 
@@ -390,11 +379,9 @@ class Progress {
         return results;
     }
 
-    /**
-     * Get daily progress count (lessons completed today)
-     * @param {string} userId - User ID
-     * @returns {Promise<number>} - Count of lessons completed today
-     */
+    //
+    // Get daily progress count (lessons completed today)
+    //
     static async getDailyProgress(userId) {
         const db = this.getDB();
 
@@ -411,11 +398,9 @@ class Progress {
         return snapshot.size;
     }
 
-    /**
-     * Get weekly progress count (lessons completed this week)
-     * @param {string} userId - User ID
-     * @returns {Promise<number>} - Count of lessons completed this week
-     */
+    //
+    // Get weekly progress count (lessons completed this week)
+    //
     static async getWeeklyProgress(userId) {
         const db = this.getDB();
 
@@ -432,12 +417,7 @@ class Progress {
         return snapshot.size;
     }
 
-    /**
-     * Calculate study points based on lessons and courses completed
-     * @param {number} lessonsCount - Number of lessons completed
-     * @param {number} coursesCount - Number of courses completed
-     * @returns {number} - Total study points
-     */
+// Calculate study points based on lessons and courses completed
     static calculateStudyPoints(lessonsCount, coursesCount) {
         // 10 points per lesson, 100 bonus points per completed course
         return (lessonsCount * 10) + (coursesCount * 100);

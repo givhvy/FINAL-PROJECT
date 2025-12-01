@@ -6,9 +6,7 @@ class GroupMessage {
         return getFirestore();
     }
 
-    /**
-     * Create a new group message (checkpoint, )
-     */
+// Create a new group message
     static async create(messageData) {
         this.validate(messageData);
 
@@ -30,9 +28,7 @@ class GroupMessage {
         };
     }
 
-    /**
-     * Get all messages for a group with user information
-     */
+    // Get all messages for a group with user information
     static async findByGroup(groupId) {
         const db = this.getDB();
         const User = require('./User');
@@ -73,9 +69,7 @@ class GroupMessage {
         return messages;
     }
 
-    /**
-     * Create message with user info returned
-     */
+    // Create message with user info returned
     static async createWithUser(messageData) {
         const db = this.getDB();
         const User = require('./User');
@@ -98,9 +92,7 @@ class GroupMessage {
         };
     }
 
-    /**
-     * Delete a message
-     */
+    // Delete a message
     static async delete(messageId) {
         const db = this.getDB();
         await db.collection('group_messages').doc(messageId).delete();
@@ -122,9 +114,8 @@ class GroupMessage {
         await batch.commit();
     }
 
-    /**
-     * Validate message data
-     */
+    // Validate message data
+    
     static validate(data) {
         if (!data.group_id) {
             throw new ValidationError('Group ID is required');

@@ -1,10 +1,9 @@
 const { getFirestore } = require('firebase-admin/firestore');
 const bcrypt = require('bcryptjs');
 
-/**
- * User Model
- * Xử lý tất cả các thao tác liên quan đến người dùng trong Firestore
- */
+//
+// User class , firestore collection 'users'
+//
 class User {
     constructor(data) {
         this.id = data.id || null;
@@ -26,18 +25,16 @@ class User {
         this.resetPasswordExpires = data.resetPasswordExpires || null;
     }
 
-    /**
-     * Lấy database của Firestore bằng cách sử dụng static để nhanh hơn
-     */
+    //
+    // Lấy database của Firestore bằng cách sử dụng static để nhanh hơn
+    //
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm người dùng theo email // sử dụng cho sign in và kiểm tra trùng email khi đăng ký 
-     * @param {string} email - Email người dùng
-     * @returns {Promise<User|null>} - User object hoặc null
-     */
+    //
+    // Tìm người dùng theo email, sử dụng cho sign in và kiểm tra trùng email khi đăng ký 
+    //
     static async findByEmail(email) {
         try {
             const db = this.getDB();
@@ -55,11 +52,9 @@ class User {
         }
     }
 
-    /**
-     * Tìm người dùng theo ID
-     * @param {string} id - User ID
-     * @returns {Promise<User|null>} - User object hoặc null
-     */
+    //
+    // Tìm người dùng theo ID
+    //
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -76,11 +71,9 @@ class User {
     }
 
 
-    /**
-     * Lấy tất cả người dùng
-     * @param {Object} filters - Bộ lọc (role, limit, etc.)
-     * @returns {Promise<Array<User>>} - Mảng User objects
-     */
+//
+// Check if email is .edu domain
+//
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -103,11 +96,9 @@ class User {
         }
     }
 
-    /**
-     * Tạo người dùng mới (Create in CRUD) // xài cho signup.js và authController.js
-     * @param {Object} userData - Dữ liệu người dùng
-     * @returns {Promise<User>} - User object đã tạo
-     */
+    //
+    // Tạo người dùng mới (Create in CRUD) // xài cho signup.js và authController.js
+    //
     static async create(userData) {
         try {
             const db = this.getDB(); // Lấy Firestore DB
@@ -151,12 +142,9 @@ class User {
         }
     }
 
-    /**
-     * Cập nhật thông tin người dùng (Update in CRUD)
-     * @param {string} id - User ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<User>} - User object đã cập nhật
-     */
+    //
+    // Cập nhật thông tin người dùng (Update in CRUD)
+    //
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -185,11 +173,7 @@ class User {
         }
     }
 
-    /**
-     * Xóa người dùng (Delete in CRUD)
-     * @param {string} id - User ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+// Xóa người dùng (Delete in CRUD)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -200,20 +184,14 @@ class User {
         }
     }
 
-    /**
-     * So sánh password
-     * @param {string} password - Password cần so sánh
-     * @returns {Promise<boolean>} - true nếu password đúng
-     */
+    
+// So sánh password
+    
     async comparePassword(password) {
         return await bcrypt.compare(password, this.password);
     }
 
-    /**
-     * Lưu mã reset password
-     * @param {string} code - Mã reset
-     * @param {Date} expiresAt - Thời gian hết hạn
-     */
+    // Lưu mã reset password
     async saveResetCode(code, expiresAt) {
         try {
             const db = User.getDB();
@@ -228,9 +206,7 @@ class User {
         }
     }
 
-    /**
-     * Xóa mã reset password (clear reset code)
-     */
+    // Xóa mã reset password (clear reset code)
     async clearResetCode() {
         try {
             const db = User.getDB();
@@ -245,32 +221,19 @@ class User {
         }
     }
 
-    /**
-     * Check if email is .edu domain
-     * @param {string} email - Email to check
-     * @returns {boolean} - true if email ends with .edu
-     */
+// Check if email is .edu domain
     static isEduEmail(email) {
         return email.toLowerCase().endsWith('.edu');
     }
 
-    /**
-     * Check if email is educational (.edu or .ac domain) (Check if sinh viên greenwich)
-     * @param {string} email - Email to check
-     * @returns {boolean} - true if email is educational domain
-     */
+// Check if email is educational (.edu or .ac domain) (Check if sinh viên greenwich)
     static isEducationalEmail(email) {
         const lowerEmail = email.toLowerCase();
         return lowerEmail.endsWith('.edu') || lowerEmail.endsWith('.ac.uk') ||
                lowerEmail.endsWith('.edu.vn') || lowerEmail.includes('.ac.');
     }
 
-    /**
-     * Verify user as student by checking email and updating to Pro tier
-     * @param {string} userId - User ID
-     * @param {string} email - Student email to verify (can be different from account email)
-     * @returns {Promise<User>} - Updated user with Pro tier
-     */
+// Verify user as student by checking email edu and updating to Pro tier
     static async verifyAsStudent(userId, email) {
         try {
             // Find user by ID
@@ -295,19 +258,12 @@ class User {
         }
     }
 
-    /**
-     * Check if user has Pro tier
-     * @returns {boolean} - true if user is Pro
-     */
+// check if user is Pro tier
     isPro() {
         return this.subscriptionTier === 'pro';
     }
 
-    /**
-     * Upgrade user to Pro tier
-     * @param {string} id - User ID
-     * @returns {Promise<User>} - Updated user
-     */
+// Upgrade user to Pro tier
     static async upgradeToProTier(id) {
         try {
             return await this.update(id, { subscriptionTier: 'pro' });
@@ -316,11 +272,7 @@ class User {
         }
     }
 
-    /**
-     * Downgrade user to Free tier
-     * @param {string} id - User ID
-     * @returns {Promise<User>} - Updated user
-     */
+// Downgrade user to Free tier
     static async downgradeToFreeTier(id) {
         try {
             return await this.update(id, { subscriptionTier: 'free' });
@@ -329,11 +281,8 @@ class User {
         }
     }
 
-    /**
-     * Cancel subscription - revert to free tier and clear subscription data
-     * @param {string} id - User ID
-     * @returns {Promise<User>} - Updated user
-     */
+    // Cancel subscription - revert to free tier and clear subscription data
+   
     static async cancelSubscription(id) {
         try {
             const user = await this.findById(id);
@@ -356,10 +305,7 @@ class User {
         }
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản (loại bỏ password)
-     * @returns {Object} - User object không có password
-     */
+ // Chuyển đổi thành object đơn giản (loại bỏ password)
     toJSON() {
         const obj = { ...this };
         delete obj.password;
@@ -368,11 +314,7 @@ class User {
         return obj;
     }
 
-    /**
-     * Batch get users by IDs (fixes N+1 query problem)
-     * @param {Array<string>} userIds - Array of user IDs
-     * @returns {Promise<Array<Object>>} - Array of sanitized user objects
-     */
+  // Batch get users by IDs (fixes N+1 query problem)
     static async findByIds(userIds) {
         try {
             if (!userIds || userIds.length === 0) return [];
@@ -413,8 +355,6 @@ class User {
     /**
      * Sanitize user data (remove password and sensitive fields)
      * Static method for sanitizing plain objects
-     * @param {Object} userData - User data object
-     * @returns {Object} - Sanitized user data
      */
     static sanitize(userData) {
         if (!userData) return null;
@@ -423,11 +363,7 @@ class User {
         return sanitized;
     }
 
-    /**
-     * Get public profile (sanitized user data)
-     * @param {string} userId - User ID
-     * @returns {Promise<Object>} - Sanitized user object
-     */
+// Get public profile (sanitized user data)
     static async getPublicProfile(userId) {
         try {
             const user = await this.findById(userId);
@@ -438,11 +374,7 @@ class User {
         }
     }
 
-    /**
-     * Check if user is admin
-     * @param {string} userId - User ID
-     * @returns {Promise<boolean>} - true if user is admin
-     */
+ // Check if user is admin
     static async isAdmin(userId) {
         try {
             const user = await this.findById(userId);
@@ -452,11 +384,7 @@ class User {
         }
     }
 
-    /**
-     * Check if user is teacher
-     * @param {string} userId - User ID
-     * @returns {Promise<boolean>} - true if user is teacher or admin
-     */
+ // Check if user is teacher or admin
     static async isTeacher(userId) {
         try {
             const user = await this.findById(userId);

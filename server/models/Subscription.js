@@ -1,9 +1,6 @@
 const { getFirestore } = require('firebase-admin/firestore');
 
-/**
- * Subscription Model
- * Handles all subscription plan operations in Firestore
- */
+// Subscription class , firestore collection 'subscriptions'
 class Subscription {
     constructor(data) {
         this.id = data.id || null;
@@ -33,18 +30,12 @@ class Subscription {
         this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Get Firestore instance
-     */
+// Get Firestore instance
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Find subscription plan by ID
-     * @param {string} id - Subscription plan ID
-     * @returns {Promise<Subscription|null>} - Subscription object or null
-     */
+// Find subscription plan by ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -60,11 +51,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Get all subscription plans ---- Function1 
-     * @param {Object} filters - Filter options (active, limit)
-     * @returns {Promise<Array<Subscription>>} - Array of Subscription objects
-     */
+// Get all subscription plans ---- Function1 
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -117,11 +104,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Create a new subscription plan (Create in CRUD) ---- Function2
-     * @param {Object} subscriptionData - Subscription plan data
-     * @returns {Promise<Subscription>} - Created Subscription object
-     */
+    // Create a new subscription plan (Create in CRUD) ---- Function2
     static async create(subscriptionData) {
         try {
             const db = this.getDB();
@@ -159,12 +142,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Update subscription plan (Update in CRUD) ---- Function3 in Subscription class
-     * @param {string} id - Subscription plan ID
-     * @param {Object} updateData - Data to update
-     * @returns {Promise<Subscription>} - Updated Subscription object
-     */
+// Update subscription plan (Update in CRUD) ---- Function3
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -186,11 +164,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Delete subscription plan (Delete in CRUD) ---- Function4 in Subscription class
-     * @param {string} id - Subscription plan ID
-     * @returns {Promise<boolean>} - true if successful
-     */
+// Delete subscription plan (Delete in CRUD) ---- Function delete in Subscription class
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -201,10 +175,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Get popular subscription plans
-     * @returns {Promise<Array<Subscription>>} - Array of popular Subscription objects
-     */
+// Get popular subscription plans
     static async getPopular() {
         try {
             const db = this.getDB();
@@ -219,10 +190,7 @@ class Subscription {
         }
     }
 
-    /**
-     * Convert to JSON
-     * @returns {Object} - Subscription object
-     */
+// Convert to JSON object
     toJSON() {
         return { ...this };
     }

@@ -31,18 +31,12 @@ class Lesson {
         this.updatedAt = data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+  // Lấy instance của Firestore
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm bài học theo ID
-     * @param {string} id - Lesson ID
-     * @returns {Promise<Lesson|null>} - Lesson object hoặc null
-     */
+    // Tìm bài học theo ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -58,11 +52,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Lấy tất cả bài học
-     * @param {Object} filters - Bộ lọc (courseId, isPublished, etc.)
-     * @returns {Promise<Array<Lesson>>} - Mảng Lesson objects
-     */
+    // Lấy tất cả bài học (read in CRUD)
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -103,11 +93,7 @@ class Lesson {
         }
     }
 
-    /**
-     * tìm theo courseId
-     * @param {string} courseId - Course ID
-     * @returns {Promise<Array<Lesson>>} - Mảng Lesson objects
-     */
+    // tìm theo courseId
     static async findByCourseId(courseId) {
         try {
             return await this.findAll({ courseId });
@@ -116,11 +102,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Batch get lessons by multiple course IDs (fixes N+1 query problem)
-     * @param {Array<string>} courseIds - Array of course IDs
-     * @returns {Promise<Array<Lesson>>} - Array of Lesson objects
-     */
+    // Batch get lessons by multiple duplicate course IDs (fixes N+1 query problem)
     static async findByCourseIds(courseIds) {
         try {
             if (!courseIds || courseIds.length === 0) return [];
@@ -169,11 +151,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Tạo bài học mới (create in CRUD)
-     * @param {Object} lessonData - Dữ liệu bài học
-     * @returns {Promise<Lesson>} - Lesson object đã tạo
-     */
+    // Tạo bài học mới (create in CRUD)
     static async create(lessonData) {
         try {
             const db = this.getDB();
@@ -206,12 +184,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Cập nhật bài học (update in CRUD)
-     * @param {string} id - Lesson ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Lesson>} - Lesson object đã cập nhật
-     */
+    // Cập nhật bài học (update in CRUD)
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -231,11 +204,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Xóa bài học (Delete in CRUD)
-     * @param {string} id - Lesson ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    // Xóa bài học (Delete in CRUD)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -246,12 +215,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Thay đổi thứ tự bài học
-     * @param {string} id - Lesson ID
-     * @param {number} newOrder - Thứ tự mới
-     * @returns {Promise<Lesson>} - Lesson object đã cập nhật
-     */
+    // Thay đổi thứ tự bài học
     static async reorder(id, newOrder) {
         try {
             const db = this.getDB();
@@ -273,12 +237,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Publish/Unpublish bài học
-     * @param {string} id - Lesson ID
-     * @param {boolean} isPublished - Trạng thái publish
-     * @returns {Promise<Lesson>} - Lesson object đã cập nhật
-     */
+    // Publish/Unpublish bài học
     static async togglePublish(id, isPublished) {
         try {
             const db = this.getDB();
@@ -300,12 +259,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Thêm tài nguyên vào bài học
-     * @param {string} id - Lesson ID
-     * @param {Object} resource - Tài nguyên mới
-     * @returns {Promise<Lesson>} - Lesson object đã cập nhật
-     */
+// Thêm tài nguyên vào bài học
     static async addResource(id, resource) {
         try {
             const db = this.getDB();
@@ -330,12 +284,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Xóa tài nguyên khỏi bài học
-     * @param {string} id - Lesson ID
-     * @param {number} resourceIndex - Index của tài nguyên cần xóa
-     * @returns {Promise<Lesson>} - Lesson object đã cập nhật
-     */
+    // Xóa tài nguyên khỏi bài học
     static async removeResource(id, resourceIndex) {
         try {
             const db = this.getDB();
@@ -360,10 +309,7 @@ class Lesson {
         }
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Lesson object
-     */
+// Chuyển đổi thành object đơn giản
     toJSON() {
         return { ...this };
     }

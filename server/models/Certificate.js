@@ -3,12 +3,10 @@ const { getDocOrThrow, ValidationError } = require('../utils/firebaseHelpers');
 
 class Certificate {
     static getDB() {
-        return getFirestore();
+        return getFirestore(); // Get Firestore instance
     }
 
-    /**
-     * Generate certificate for course completion
-     */
+// Generate certificate for course completion
     static async generate(userId, courseId) {
         // Validate completion
         const { enrollment, course, user } = await this.validateCompletion(userId, courseId);
@@ -42,9 +40,7 @@ class Certificate {
         };
     }
 
-    /**
-     * Validate course completion requirements
-     */
+// Validate course completion requirements
     static async validateCompletion(userId, courseId) {
         const db = this.getDB();
 
@@ -87,17 +83,13 @@ class Certificate {
         return { enrollment, course, user };
     }
 
-    /**
-     * Find certificate by ID
-     */
+// Find certificate by ID
     static async findById(certId) {
         const db = this.getDB();
         return await getDocOrThrow('certificates', certId, 'Certificate not found');
     }
 
-    /**
-     * Find certificate by user and course
-     */
+    // Find certificate by user and course
     static async findByUserAndCourse(userId, courseId) {
         const db = this.getDB();
 
@@ -125,9 +117,7 @@ class Certificate {
         };
     }
 
-    /**
-     * Find all certificates by user
-     */
+    // Find all certificates by user
     static async findByUser(userId) {
         const db = this.getDB();
 
@@ -158,9 +148,7 @@ class Certificate {
         return certificates;
     }
 
-    /**
-     * Find all certificates for a course
-     */
+    // Find all certificates for a course
     static async findByCourse(courseId) {
         const db = this.getDB();
 
@@ -191,9 +179,7 @@ class Certificate {
         return certificates;
     }
 
-    /**
-     * Verify certificate by certificate ID
-     */
+    // Verify certificate by certificate ID
     static async verify(certificateId) {
         const db = this.getDB();
         const snapshot = await db.collection('certificates')
@@ -217,9 +203,7 @@ class Certificate {
         return cert;
     }
 
-    /**
-     * Revoke certificate
-     */
+    // Revoke certificate
     static async revoke(certId) {
         const db = this.getDB();
         await db.collection('certificates').doc(certId).update({
@@ -231,9 +215,7 @@ class Certificate {
         return await this.findById(certId);
     }
 
-    /**
-     * Delete certificate
-     */
+    // Delete certificate
     static async delete(certId) {
         const db = this.getDB();
         await db.collection('certificates').doc(certId).delete();
@@ -249,9 +231,7 @@ class Certificate {
         return `CERT-${timestamp}-${random}`;
     }
 
-    /**
-     * Get certificate count for a user
-     */
+// Get certificate count for a user
     static async countByUser(userId) {
         const db = this.getDB();
 
@@ -270,9 +250,7 @@ class Certificate {
         return snapshot.size;
     }
 
-    /**
-     * Get certificate count for a course
-     */
+// Get certificate count for a course
     static async countByCourse(courseId) {
         const db = this.getDB();
 

@@ -19,18 +19,12 @@ class Order {
         this.updatedAt = data.updatedAt || data.updated_at || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+// Lấy instance của Firestore
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm đơn hàng theo ID
-     * @param {string} id - Order ID
-     * @returns {Promise<Order|null>} - Order object hoặc null
-     */
+    // Tìm đơn hàng theo ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -46,11 +40,7 @@ class Order {
         }
     }
 
-    /**
-     * Lấy tất cả đơn hàng
-     * @param {Object} filters - Bộ lọc (userId, courseId, status, etc.)
-     * @returns {Promise<Array<Order>>} - Mảng Order objects
-     */
+    // Lấy tất cả đơn hàng
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -102,11 +92,7 @@ class Order {
         }
     }
 
-    /**
-     * Lấy tất cả đơn hàng của một người dùng
-     * @param {string} userId - User ID
-     * @returns {Promise<Array<Order>>} - Mảng Order objects
-     */
+    // Lấy tất cả đơn hàng của một người dùng
     static async findByUserId(userId) {
         try {
             return await this.findAll({ userId });
@@ -115,11 +101,7 @@ class Order {
         }
     }
 
-    /**
-     * Lấy tất cả đơn hàng của một khóa học
-     * @param {string} courseId - Course ID
-     * @returns {Promise<Array<Order>>} - Mảng Order objects
-     */
+    // Lấy tất cả đơn hàng của một khóa học
     static async findByCourseId(courseId) {
         try {
             return await this.findAll({ courseId });
@@ -128,12 +110,7 @@ class Order {
         }
     }
 
-    /**
-     * Lấy tất cả đơn hàng của một người dùng theo trạng thái
-     * @param {string} userId - User ID
-     * @param {string} status - Order status
-     * @returns {Promise<Array<Order>>} - Mảng Order objects
-     */
+    // Lấy tất cả đơn hàng của một người dùng theo trạng thái
     static async findByUserIdAndStatus(userId, status) {
         try {
             return await this.findAll({ userId, status });
@@ -142,11 +119,7 @@ class Order {
         }
     }
 
-    /**
-     * Tạo đơn hàng mới (Create in CRUD)
-     * @param {Object} orderData - Dữ liệu đơn hàng
-     * @returns {Promise<Order>} - Order object đã tạo
-     */
+    // Tạo đơn hàng mới (Create in CRUD)
     static async create(orderData) {
         try {
             const db = this.getDB();
@@ -176,12 +149,7 @@ class Order {
         }
     }
 
-    /**
-     * Cập nhật đơn hàng (Update in CRUD)
-     * @param {string} id - Order ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Order>} - Order object đã cập nhật
-     */
+    // Cập nhật đơn hàng (Update in CRUD)
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -201,11 +169,7 @@ class Order {
         }
     }
 
-    /**
-     * Xóa đơn hàng (Delete in CRUD)
-     * @param {string} id - Order ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    // Xóa đơn hàng (Delete in CRUD)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -216,12 +180,7 @@ class Order {
         }
     }
 
-    /**
-     * Cập nhật trạng thái đơn hàng (Update in CRUD 2)
-     * @param {string} id - Order ID
-     * @param {string} status - Trạng thái mới
-     * @returns {Promise<Order>} - Order object đã cập nhật
-     */
+    // Cập nhật trạng thái đơn hàng (Update in CRUD 2)
     static async updateStatus(id, status) {
         try {
             const db = this.getDB();
@@ -243,12 +202,7 @@ class Order {
         }
     }
 
-    /**
-     * Hoàn thành đơn hàng 
-     * @param {string} id - Order ID
-     * @param {string} paymentId - Payment ID
-     * @returns {Promise<Order>} - Order object đã cập nhật
-     */
+ // Hoàn thành đơn hàng 
     static async complete(id, paymentId) {
         try {
             const db = this.getDB();
@@ -271,11 +225,7 @@ class Order {
         }
     }
 
-    /**
-     * Hủy đơn hàng
-     * @param {string} id - Order ID
-     * @returns {Promise<Order>} - Order object đã cập nhật
-     */
+    // Hủy đơn hàng
     static async cancel(id) {
         try {
             return await this.updateStatus(id, 'cancelled');
@@ -284,11 +234,7 @@ class Order {
         }
     }
 
-    /**
-     * Hoàn tiền đơn hàng
-     * @param {string} id - Order ID
-     * @returns {Promise<Order>} - Order object đã cập nhật
-     */
+    // Hoàn tiền đơn hàng
     static async refund(id) {
         try {
             return await this.updateStatus(id, 'refunded');
@@ -297,11 +243,7 @@ class Order {
         }
     }
 
-    /**
-     * Lấy tổng doanh thu
-     * @param {Object} filters - Bộ lọc (userId, courseId, startDate, endDate)
-     * @returns {Promise<number>} - Tổng doanh thu
-     */
+    // Lấy tổng doanh thu
     static async getTotalRevenue(filters = {}) {
         try {
             const orders = await this.findAll({
@@ -314,11 +256,7 @@ class Order {
             throw new Error(`Error getting total revenue: ${error.message}`);
         }
     }
-
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Order object
-     */
+// Chuyển đổi thành object đơn giản
     toJSON() {
         return { ...this };
     }

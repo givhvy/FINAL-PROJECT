@@ -1,9 +1,6 @@
 const { getFirestore } = require('firebase-admin/firestore');
 
-/**
- * Quiz Model
- * Xử lý tất cả các thao tác liên quan đến quiz trong Firestore
- */
+// Quiz class , firestore collection 'quizzes'
 class Quiz {
     constructor(data) {
         this.id = data.id || null;
@@ -36,18 +33,16 @@ class Quiz {
         this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+    //
+    // Lấy instance của Firestore
+    //
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm quiz theo ID
-     * @param {string} id - Quiz ID
-     * @returns {Promise<Quiz|null>} - Quiz object hoặc null
-     */
+    //
+    // Tìm quiz theo ID
+    //
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -63,11 +58,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Lấy tất cả quiz
-     * @param {Object} filters - Bộ lọc (courseId, lessonId, isPublished, etc.)
-     * @returns {Promise<Array<Quiz>>} - Mảng Quiz objects
-     */
+    //
+    // Lấy tất cả quiz
+    //
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -109,11 +102,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Lấy tất cả quiz của một khóa học
-     * @param {string} courseId - Course ID
-     * @returns {Promise<Array<Quiz>>} - Mảng Quiz objects
-     */
+    //
+    // Lấy tất cả quiz của một khóa học
+    //
     static async findByCourseId(courseId) {
         try {
             return await this.findAll({ courseId });
@@ -122,11 +113,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Lấy quiz của một bài học
-     * @param {string} lessonId - Lesson ID
-     * @returns {Promise<Array<Quiz>>} - Mảng Quiz objects
-     */
+    //
+    // Lấy quiz của một bài học
+    //
     static async findByLessonId(lessonId) {
         try {
             return await this.findAll({ lessonId });
@@ -135,11 +124,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Tạo quiz mới (Create in CRUD)
-     * @param {Object} quizData - Dữ liệu quiz
-     * @returns {Promise<Quiz>} - Quiz object đã tạo
-     */
+    //
+    // Tạo quiz mới (Create in CRUD)
+    //
     static async create(quizData) {
         try {
             const db = this.getDB();
@@ -173,12 +160,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Cập nhật quiz (Update in CRUD)
-     * @param {string} id - Quiz ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Quiz>} - Quiz object đã cập nhật
-     */
+    //
+    // Cập nhật quiz (Update in CRUD)
+    //
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -198,11 +182,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Xóa quiz (Delete in CRUD)
-     * @param {string} id - Quiz ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    //
+    // Xóa quiz (Delete in CRUD)
+    //
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -213,12 +195,7 @@ class Quiz {
         }
     }
 
-    /**
-     * Publish/Unpublish quiz
-     * @param {string} id - Quiz ID
-     * @param {boolean} isPublished - Trạng thái publish
-     * @returns {Promise<Quiz>} - Quiz object đã cập nhật
-     */
+// Publish/Unpublish quiz
     static async togglePublish(id, isPublished) {
         try {
             const db = this.getDB();
@@ -240,12 +217,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Cập nhật tổng điểm của quiz
-     * @param {string} id - Quiz ID
-     * @param {number} totalPoints - Tổng điểm
-     * @returns {Promise<Quiz>} - Quiz object đã cập nhật
-     */
+    //
+    // Cập nhật tổng điểm của quiz
+    //
     static async updateTotalPoints(id, totalPoints) {
         try {
             const db = this.getDB();
@@ -267,12 +241,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Thay đổi thứ tự quiz
-     * @param {string} id - Quiz ID
-     * @param {number} newOrder - Thứ tự mới
-     * @returns {Promise<Quiz>} - Quiz object đã cập nhật
-     */
+    //
+    // Thay đổi thứ tự quiz
+    //
     static async reorder(id, newOrder) {
         try {
             const db = this.getDB();
@@ -294,10 +265,9 @@ class Quiz {
         }
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Quiz object
-     */
+    //
+    // Chuyển đổi thành object đơn giản
+    //
     toJSON() {
         return { ...this };
     }

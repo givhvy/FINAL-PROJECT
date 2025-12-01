@@ -38,18 +38,12 @@ class Blog {
         this.updated_at = data.updated_at || data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Get Firestore instance
-     */
+ // Get Firestore instance
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Generate slug from title
-     * @param {string} title - Blog post title
-     * @returns {string} - URL-friendly slug
-     */
+ // Generate slug from title
     static generateSlug(title) {
         return title
             .toLowerCase()
@@ -59,11 +53,7 @@ class Blog {
             .trim('-');
     }
 
-    /**
-     * Find blog post by ID
-     * @param {string} id - Blog post ID
-     * @returns {Promise<Blog|null>} - Blog object or null
-     */
+    // Find blog post by ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -79,11 +69,7 @@ class Blog {
         }
     }
 
-    /**
-     * Find blog post by slug
-     * @param {string} slug - Blog post slug
-     * @returns {Promise<Blog|null>} - Blog object or null
-     */
+    // Find blog post by slug
     static async findBySlug(slug) {
         try {
             const db = this.getDB();
@@ -103,11 +89,7 @@ class Blog {
         }
     }
 
-    /**
-     * Get all blog posts with filters
-     * @param {Object} filters - Filter options (status, tag, authorId, page, limit, search)
-     * @returns {Promise<Array<Blog>>} - Array of Blog objects
-     */
+    // Get all blog posts with filters
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -165,11 +147,7 @@ class Blog {
         }
     }
 
-    /**
-     * Get total count of blog posts
-     * @param {Object} filters - Filter options (status, tag, authorId, search)
-     * @returns {Promise<number>} - Total count
-     */
+    // Get total count of blog posts
     static async count(filters = {}) {
         try {
             const db = this.getDB();
@@ -209,11 +187,7 @@ class Blog {
         }
     }
 
-    /**
-     * Get blog posts by author
-     * @param {string} authorId - Author ID
-     * @returns {Promise<Array<Blog>>} - Array of Blog objects
-     */
+  // Get blog posts by author
     static async findByAuthor(authorId) {
         try {
             return await this.findAll({ authorId });
@@ -222,11 +196,7 @@ class Blog {
         }
     }
 
-    /**
-     * Create a new blog post (Create in CRUD)
-     * @param {Object} blogData - Blog post data
-     * @returns {Promise<Blog>} - Created Blog object
-     */
+    // Create a new blog post (Create in CRUD)
     static async create(blogData) {
         try {
             const db = this.getDB();
@@ -272,12 +242,7 @@ class Blog {
         }
     }
 
-    /**
-     * Update blog post (Update in CRUD)
-     * @param {string} id - Blog post ID
-     * @param {Object} updateData - Data to update
-     * @returns {Promise<Blog>} - Updated Blog object
-     */
+// Update blog post (Update in CRUD)
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -304,11 +269,7 @@ class Blog {
         }
     }
 
-    /**
-     * Delete blog post (Delete in CRUD)
-     * @param {string} id - Blog post ID
-     * @returns {Promise<boolean>} - true if successful
-     */
+    // Delete blog post (Delete in CRUD)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -319,11 +280,7 @@ class Blog {
         }
     }
 
-    /**
-     * Increment view count
-     * @param {string} id - Blog post ID
-     * @returns {Promise<Blog>} - Updated Blog object
-     */
+    // Increment view count
     static async incrementViewCount(id) {
         try {
             const db = this.getDB();
@@ -346,10 +303,7 @@ class Blog {
         }
     }
 
-    /**
-     * Get all unique tags
-     * @returns {Promise<Array<{tag: string, count: number}>>} - Array of tag objects with counts
-     */
+// Get all unique tags (read)
     static async getAllTags() {
         try {
             const db = this.getDB();
@@ -377,10 +331,7 @@ class Blog {
         }
     }
 
-    /**
-     * Convert to JSON
-     * @returns {Object} - Blog post object
-     */
+    // Convert to JSON
     toJSON() {
         return { ...this };
     }

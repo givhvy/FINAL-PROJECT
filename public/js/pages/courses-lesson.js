@@ -265,11 +265,17 @@ async function renderLessonContent(lessonId, courseId) {
                 }
             } else if (data.startsWith('/uploads/') || data.includes('cloudinary.com')) {
                 videoHTML = `
-                    <div class="aspect-video bg-gray-900 rounded-t-2xl overflow-hidden">
-                        <video class="w-full h-full" controls controlsList="nodownload">
+                    <div class="aspect-video bg-gray-900 rounded-t-2xl overflow-hidden relative group video-container">
+                        <video id="lesson-video" class="w-full h-full" controls controlsList="nodownload">
                             <source src="${escapeHtml(data)}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
+                        <!-- Play Button Overlay -->
+                        <div id="play-overlay" class="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer transition-opacity duration-300">
+                            <button id="play-btn" class="w-20 h-20 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                                <i class="fas fa-play text-white text-3xl ml-1"></i>
+                            </button>
+                        </div>
                     </div>`;
             }
 
@@ -317,6 +323,40 @@ async function renderLessonContent(lessonId, courseId) {
             </div>`;
 
         contentArea.innerHTML = contentHTML;
+
+        // Setup video play button overlay
+        const video = document.getElementById('lesson-video');
+        const playOverlay = document.getElementById('play-overlay');
+        const playBtn = document.getElementById('play-btn');
+        
+        if (video && playOverlay) {
+            // Click on overlay or play button to start video
+            playOverlay.addEventListener('click', () => {
+                video.play();
+                playOverlay.style.opacity = '0';
+                playOverlay.style.pointerEvents = 'none';
+            });
+
+            // Show overlay again when video is paused (optional - remove if annoying)
+            video.addEventListener('pause', () => {
+                if (video.currentTime > 0 && !video.ended) {
+                    playOverlay.style.opacity = '1';
+                    playOverlay.style.pointerEvents = 'auto';
+                }
+            });
+
+            // Hide overlay when video plays
+            video.addEventListener('play', () => {
+                playOverlay.style.opacity = '0';
+                playOverlay.style.pointerEvents = 'none';
+            });
+
+            // Show overlay when video ends
+            video.addEventListener('ended', () => {
+                playOverlay.style.opacity = '1';
+                playOverlay.style.pointerEvents = 'auto';
+            });
+        }
 
         const markCompleteBtn = document.getElementById('mark-complete-btn');
         if (markCompleteBtn && !isCompleted) {

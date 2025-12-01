@@ -6,9 +6,7 @@ class Group {
         return getFirestore();
     }
 
-    /**
-     * Create a new study group
-     */
+// Create a new study group
     static async create(groupData) {
         this.validate(groupData);
 
@@ -32,16 +30,12 @@ class Group {
         };
     }
 
-    /**
-     * Find group by ID
-     */
+    // Find group by ID
     static async findById(groupId) {
         return await getDocOrThrow('study_groups', groupId, 'Study group not found');
     }
 
-    /**
-     * Get all active study groups with teacher info and member count
-     */
+    // Get all active study groups with teacher info and member count
     static async getAllActive() {
         const db = this.getDB();
         const User = require('./User');
@@ -77,9 +71,7 @@ class Group {
         return groups;
     }
 
-    /**
-     * Get user's study groups (checkpoint)
-     */
+ // Get user's study groups
     static async findByUser(userId) {
         const db = this.getDB();
         const User = require('./User');
@@ -123,9 +115,7 @@ class Group {
         return groups;
     }
 
-    /**
-     * Add user to group
-     */
+    // Add user to group
     static async addMember(groupId, userId) {
         const db = this.getDB();
 
@@ -155,9 +145,7 @@ class Group {
         };
     }
 
-    /**
-     * Get member count for a group
-     */
+    // Get member count for a group
     static async getMemberCount(groupId) {
         const db = this.getDB();
         const membersQuery = db.collection('group_members').where('group_id', '==', groupId);
@@ -165,9 +153,7 @@ class Group {
         return membersSnapshot.size;
     }
 
-    /**
-     * Delete a study group and all related data
-     */
+    // Delete a study group and all related data
     static async delete(groupId) {
         const db = this.getDB();
 
@@ -201,9 +187,7 @@ class Group {
         await batch.commit();
     }
 
-    /**
-     * Update group information
-     */
+// Update group information
     static async update(groupId, updateData) {
         const db = this.getDB();
 
@@ -220,9 +204,7 @@ class Group {
         return await this.findById(groupId);
     }
 
-    /**
-     * Validate group data (kiểm tra input vào từ bên form)
-     */
+    // Validate group data (kiểm tra input vào từ bên form)
     static validate(data) {
         if (!data.name || data.name.length < 3) {
             throw new ValidationError('Group name must be at least 3 characters');

@@ -50,7 +50,7 @@ console.log('Firebase Admin SDK initialized successfully!');
 
 // ====== 4. CẤU HÌNH VIEW ENGINE (EJS) ======
 const path = require('path');
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');  // chạy luôn front end views ejs ở đây luôn khi npm start
 app.set('views', path.join(__dirname, 'views'));
 
 // ====== 5. MIDDLEWARE (PHẦN MỀM TRUNG GIAN) ======

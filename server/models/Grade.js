@@ -6,9 +6,7 @@ class Grade {
         return getFirestore();
     }
 
-    /**
-     * Create a new grade (create in crud) (checkpoint)
-     */
+   // Create a new grade (create in crud) (checkpoint)
     static async create(gradeData) {
         console.log('\n=== GRADE CREATE ===');
         console.log('Input gradeData:', gradeData);
@@ -44,16 +42,12 @@ class Grade {
         return result;
     }
 
-    /**
-     * Find grade by ID
-     */
+ // Find grade by ID
     static async findById(gradeId) {
         return await getDocOrThrow('grades', gradeId, 'Grade not found');
     }
 
-    /**
-     * Find grades by quiz
-     */
+// Find grades by quiz
     static async findByQuiz(quizId) {
         const db = this.getDB();
 
@@ -73,9 +67,7 @@ class Grade {
         return grades;
     }
 
-    /**
-     * Find grades by student
-     */
+    // Find grades by student
     static async findByStudent(userId) {
         const db = this.getDB();
 
@@ -99,9 +91,7 @@ class Grade {
         return grades;
     }
 
-    /**
-     * Find grade by user and quiz
-     */
+    // Find grade by user and quiz
     static async findByUserAndQuiz(userId, quizId) {
         const db = this.getDB();
 
@@ -120,26 +110,20 @@ class Grade {
         };
     }
 
-    /**
-     * Calculate average score for a quiz
-     */
+    // Calculate average score for a quiz
     static calculateAverage(grades) {
         if (grades.length === 0) return 0;
         const sum = grades.reduce((acc, grade) => acc + grade.score, 0);
         return Math.round((sum / grades.length) * 100) / 100;
     }
 
-    /**
-     * Calculate student's average across all courses
-     */
+    // Calculate student's average across all courses
     static async getStudentAverage(userId) {
         const grades = await this.findByStudent(userId);
         return this.calculateAverage(grades);
     }
 
-    /**
-     * Get quiz statistics (total attempts, average score, highest score, lowest score)
-     */
+    // Get quiz statistics (total attempts, average score, highest score, lowest score)
     static async getQuizStats(quizId) {
         const grades = await this.findByQuiz(quizId);
 
@@ -162,9 +146,7 @@ class Grade {
         };
     }
 
-    /**
-     * Update grade (update in crud)
-     */
+    // Update grade (update in crud)
     static async update(gradeId, updateData) {
         const db = this.getDB();
         await db.collection('grades').doc(gradeId).update({
@@ -175,17 +157,13 @@ class Grade {
         return await this.findById(gradeId);
     }
 
-    /**
-     * Delete grade (delete in crud)
-     */
+    // Delete grade (delete in crud)
     static async delete(gradeId) {
         const db = this.getDB();
         await db.collection('grades').doc(gradeId).delete();
     }
 
-    /**
-     * Validate grade data (check if correct, if not then error)
-     */
+    // Validate grade data (check if correct, if not then error)
     static validate(data) {
         if (!data.userId) {
             throw new ValidationError('User ID is required');

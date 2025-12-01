@@ -32,18 +32,12 @@ class Course {
         this.updatedAt = data.updatedAt || new Date().toISOString();
     }
 
-    /**
-     * Lấy instance của Firestore
-     */
+// Lấy instance của Firestore
     static getDB() {
         return getFirestore();
     }
 
-    /**
-     * Tìm khóa học theo ID
-     * @param {string} id - Course ID
-     * @returns {Promise<Course|null>} - Course object hoặc null
-     */
+    // Tìm khóa học theo ID
     static async findById(id) {
         try {
             const db = this.getDB();
@@ -59,11 +53,7 @@ class Course {
         }
     }
 
-    /**
-     * Lấy tất cả khóa học
-     * @param {Object} filters - Bộ lọc (category, level, isPublished, etc.)
-     * @returns {Promise<Array<Course>>} - Mảng Course objects
-     */
+ // Lấy tất cả khóa học ---- Function1
     static async findAll(filters = {}) {
         try {
             const db = this.getDB();
@@ -105,11 +95,7 @@ class Course {
         }
     }
 
-    /**
-     * Tìm kiếm khóa học theo tiêu đề
-     * @param {string} searchTerm - Từ khóa tìm kiếm
-     * @returns {Promise<Array<Course>>} - Mảng Course objects
-     */
+// Tìm kiếm khóa học theo tiêu đề 
     static async search(searchTerm) {
         try {
             const db = this.getDB();
@@ -129,11 +115,7 @@ class Course {
         }
     }
 
-    /**
-     * Tạo khóa học mới (Create in CRUD)
-     * @param {Object} courseData - Dữ liệu khóa học
-     * @returns {Promise<Course>} - Course object đã tạo
-     */
+    // Tạo khóa học mới (Create in CRUD)
     static async create(courseData) {
         try {
             const db = this.getDB();
@@ -173,12 +155,7 @@ class Course {
         }
     }
 
-    /**
-     * Cập nhật khóa học
-     * @param {string} id - Course ID
-     * @param {Object} updateData - Dữ liệu cần cập nhật
-     * @returns {Promise<Course>} - Course object đã cập nhật
-     */
+    // Cập nhật khóa học
     static async update(id, updateData) {
         try {
             const db = this.getDB();
@@ -198,11 +175,7 @@ class Course {
         }
     }
 
-    /**
-     * Xóa khóa học (Delete in CRUD, checkpoint)
-     * @param {string} id - Course ID
-     * @returns {Promise<boolean>} - true nếu xóa thành công
-     */
+    // Xóa khóa học (Delete in CRUD, checkpoint)
     static async delete(id) {
         try {
             const db = this.getDB();
@@ -213,11 +186,7 @@ class Course {
         }
     }
 
-    /**
-     * Tăng số lượng học sinh đăng ký (Mỗi khi có người mới học → cộng thêm 1 vào số học sinh.)
-     * @param {string} id - Course ID
-     * @returns {Promise<Course>} - Course object đã cập nhật
-     */
+    // Tăng số lượng học sinh đăng ký (Mỗi khi có người mới học → cộng thêm 1 vào số học sinh.)
     static async incrementEnrollment(id) {
         try {
             const db = this.getDB();
@@ -240,12 +209,7 @@ class Course {
         }
     }
 
-    /**
-     * Publish/Unpublish khóa học
-     * @param {string} id - Course ID
-     * @param {boolean} isPublished - Trạng thái publish
-     * @returns {Promise<Course>} - Course object đã cập nhật
-     */
+    // Publish/Unpublish khóa học
     static async togglePublish(id, isPublished) {
         try {
             const db = this.getDB();
@@ -267,11 +231,7 @@ class Course {
         }
     }
 
-    /**
-     * Lấy các khóa học phổ biến nhất
-     * @param {number} limit - Số lượng khóa học
-     * @returns {Promise<Array<Course>>} - Mảng Course objects
-     */
+    // Lấy các khóa học phổ biến nhất
     static async getPopular(limit = 10) {
         try {
             const db = this.getDB();
@@ -287,11 +247,7 @@ class Course {
         }
     }
 
-    /**
-     * Get all courses with teacher details and enrollment counts (fixes N+1 query)
-     * @param {Object} filters - Optional filters (same as findAll)
-     * @returns {Promise<Array<Object>>} - Array of course objects with teacher and enrollmentCount
-     */
+// Get all courses with teacher details and enrollment counts (fixes N+1 query)
     static async getAllWithDetails(filters = {}) {
         try {
             const User = require('./User');
@@ -346,10 +302,7 @@ class Course {
         }
     }
 
-    /**
-     * Chuyển đổi thành object đơn giản
-     * @returns {Object} - Course object
-     */
+    // Chuyển đổi thành object đơn giản
     toJSON() {
         return { ...this };
     }
