@@ -243,9 +243,21 @@ async function renderLessonContent(lessonId, courseId) {
             let embedUrl = '';
 
             if (data.includes('youtube.com') || data.includes('youtu.be')) {
-                embedUrl = data.includes('watch?v=')
-                    ? data.replace('watch?v=', 'embed/')
-                    : data.replace('youtu.be/', 'youtube.com/embed/');
+                // Extract video ID from various YouTube URL formats
+                let videoId = '';
+                if (data.includes('watch?v=')) {
+                    const match = data.match(/watch\?v=([a-zA-Z0-9_-]+)/);
+                    if (match) videoId = match[1];
+                } else if (data.includes('youtu.be/')) {
+                    const match = data.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                    if (match) videoId = match[1];
+                } else if (data.includes('embed/')) {
+                    const match = data.match(/embed\/([a-zA-Z0-9_-]+)/);
+                    if (match) videoId = match[1];
+                }
+                if (videoId) {
+                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                }
             } else if (data.includes('drive.google.com/embed')) {
                 embedUrl = data;
             } else if (data.includes('drive.google.com/file/d/')) {

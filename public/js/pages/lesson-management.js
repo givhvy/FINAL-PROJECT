@@ -12,6 +12,7 @@ let courseId = null;
 let currentEditingContentId = null;
 let uploadedVideoUrl = null;
 let uploadedVideoLocalUrl = null; // For local server uploads
+let youtubeVideoUrl = null; // For YouTube links
 let draggedItem = null; // For drag & drop
 let allContentItems = []; // Store all content for reordering
 
@@ -58,12 +59,20 @@ function setupEventListeners() {
         });
     }
 
-    // Video source toggle - only Cloud and Local now
+    // Video source toggle - Cloud, Local, and YouTube
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
+    const videoSourceYoutube = document.getElementById('video-source-youtube');
 
     videoSourceUpload.addEventListener('change', updateVideoInputVisibility);
     videoSourceLocal.addEventListener('change', updateVideoInputVisibility);
+    videoSourceYoutube.addEventListener('change', updateVideoInputVisibility);
+
+    // YouTube URL input handler
+    const youtubeUrlInput = document.getElementById('youtube-url-input');
+    if (youtubeUrlInput) {
+        youtubeUrlInput.addEventListener('input', handleYoutubeUrlInput);
+    }
 
     // Browse file buttons
     document.getElementById('select-video-btn').addEventListener('click', () => {
@@ -130,17 +139,68 @@ function setupEventListeners() {
 function updateVideoInputVisibility() {
     const videoFileInput = document.getElementById('video-file-input');
     const videoLocalInput = document.getElementById('video-local-input');
+    const videoYoutubeInput = document.getElementById('video-youtube-input');
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
+    const videoSourceYoutube = document.getElementById('video-source-youtube');
 
     videoFileInput.classList.add('hidden');
     videoLocalInput.classList.add('hidden');
+    videoYoutubeInput.classList.add('hidden');
 
     if (videoSourceUpload.checked) {
         videoFileInput.classList.remove('hidden');
     } else if (videoSourceLocal.checked) {
         videoLocalInput.classList.remove('hidden');
+    } else if (videoSourceYoutube.checked) {
+        videoYoutubeInput.classList.remove('hidden');
     }
+}
+
+// ==================== YOUTUBE URL HANDLER ====================
+function handleYoutubeUrlInput(e) {
+    const url = e.target.value.trim();
+    const previewContainer = document.getElementById('youtube-preview');
+    const previewIframe = document.getElementById('youtube-preview-iframe');
+    
+    if (!url) {
+        previewContainer.classList.add('hidden');
+        youtubeVideoUrl = null;
+        return;
+    }
+
+    const embedUrl = convertToYoutubeEmbed(url);
+    if (embedUrl) {
+        youtubeVideoUrl = url;
+        previewIframe.src = embedUrl;
+        previewContainer.classList.remove('hidden');
+    } else {
+        previewContainer.classList.add('hidden');
+        youtubeVideoUrl = null;
+    }
+}
+
+function convertToYoutubeEmbed(url) {
+    if (!url) return null;
+    
+    // Handle youtube.com/watch?v=VIDEO_ID
+    if (url.includes('youtube.com/watch?v=')) {
+        const videoId = url.split('watch?v=')[1].split('&')[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Handle youtu.be/VIDEO_ID
+    if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Handle youtube.com/embed/VIDEO_ID (already embed format)
+    if (url.includes('youtube.com/embed/')) {
+        return url;
+    }
+    
+    return null;
 }
 
 // ==================== VIDEO UPLOAD ====================
@@ -250,6 +310,7 @@ function setActiveForm(formId) {
             // Reset video upload states
             uploadedVideoUrl = null;
             uploadedVideoLocalUrl = null;
+            youtubeVideoUrl = null;
             
             // Reset Cloud upload UI
             document.getElementById('upload-success').classList.add('hidden');
@@ -260,6 +321,10 @@ function setActiveForm(formId) {
             document.getElementById('upload-local-success').classList.add('hidden');
             document.getElementById('upload-local-progress').classList.add('hidden');
             document.getElementById('selected-local-file-info').classList.add('hidden');
+            
+            // Reset YouTube UI
+            document.getElementById('youtube-url-input').value = '';
+            document.getElementById('youtube-preview').classList.add('hidden');
             
             // Reset to Cloud upload option by default
             document.getElementById('video-source-upload').checked = true;
@@ -383,11 +448,14 @@ async function handleLessonSubmit(e) {
     let videoUrl = '';
     const videoSourceUpload = document.getElementById('video-source-upload');
     const videoSourceLocal = document.getElementById('video-source-local');
+    const videoSourceYoutube = document.getElementById('video-source-youtube');
 
     if (videoSourceUpload.checked) {
         videoUrl = uploadedVideoUrl || '';
     } else if (videoSourceLocal.checked) {
         videoUrl = uploadedVideoLocalUrl || '';
+    } else if (videoSourceYoutube.checked) {
+        videoUrl = youtubeVideoUrl || document.getElementById('youtube-url-input').value.trim() || '';
     }
 
     const lessonData = {
@@ -559,14 +627,28 @@ async function handleContentActions(e) {
                 document.getElementById('lesson-title').value = lesson.title;
                 quill.root.innerHTML = lesson.content || '';
 
-                // Handle video URL - now only Cloud and Local options
+                // Handle video URL - Cloud, Local, or YouTube
                 const videoUrl = lesson.videoUrl || lesson.video_url;
                 if (videoUrl) {
-                    // Check if it's a local server URL or cloud URL
-                    if (videoUrl.includes('/uploads/videos/') || videoUrl.startsWith('/uploads')) {
+                    // Check if it's a YouTube URL
+                    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                        document.getElementById('video-source-youtube').checked = true;
+                        document.getElementById('youtube-url-input').value = videoUrl;
+                        youtubeVideoUrl = videoUrl;
+                        // Show preview
+                        const embedUrl = convertToYoutubeEmbed(videoUrl);
+                        if (embedUrl) {
+                            document.getElementById('youtube-preview-iframe').src = embedUrl;
+                            document.getElementById('youtube-preview').classList.remove('hidden');
+                        }
+                    }
+                    // Check if it's a local server URL
+                    else if (videoUrl.includes('/uploads/videos/') || videoUrl.startsWith('/uploads')) {
                         document.getElementById('video-source-local').checked = true;
                         uploadedVideoLocalUrl = videoUrl;
-                    } else {
+                    } 
+                    // Otherwise it's a cloud URL
+                    else {
                         document.getElementById('video-source-upload').checked = true;
                         uploadedVideoUrl = videoUrl;
                     }
