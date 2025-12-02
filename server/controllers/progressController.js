@@ -1,7 +1,7 @@
 const Progress = require('../models/Progress');
 const Certificate = require('../models/Certificate');
 
-// Update lesson progress
+// Update lesson progress , update từ courses-lesson.js yêu cầu từ mark as complete qua route /api/progress/lesson
 exports.updateLessonProgress = async (req, res) => {
   try {
     const { userId, courseId, lessonId, completed } = req.body;
@@ -17,7 +17,7 @@ exports.updateLessonProgress = async (req, res) => {
     let certificateGenerated = false;
     let certificateData = null;
 
-    if (completion >= 100) {
+    if (completion >= 100) { // tự tạo ceritficate sau khi hoàn thành xong course
       try {
         // Mark enrollment as completed
         await Progress.markEnrollmentCompleted(userId, courseId);

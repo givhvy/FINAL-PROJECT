@@ -1,5 +1,5 @@
 /**
- * Homepage (Index) JavaScript  
+ * Homepage (Index) JavaScript // LANDING PAGE DONE
  * Handles particle animation background and mobile menu
  */
 

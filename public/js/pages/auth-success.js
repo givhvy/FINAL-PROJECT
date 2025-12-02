@@ -1,7 +1,7 @@
 /**
  * Auth Success Page JavaScript
  * Handles OAuth authentication success
- */
+ */ // sau khi đăng nhập google thành công DONE (auth-success.ejs)
 
 // Extract token and user data from URL
 const urlParams = new URLSearchParams(window.location.search);

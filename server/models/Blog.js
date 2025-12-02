@@ -196,7 +196,7 @@ class Blog {
         }
     }
 
-    // Create a new blog post (Create in CRUD)
+    // Create a new blog post (Create in CRUD) nối với controller Blog.create
     static async create(blogData) {
         try {
             const db = this.getDB();

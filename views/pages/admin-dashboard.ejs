@@ -85,10 +85,6 @@
                     <i class="fas fa-receipt w-5 mr-3 text-center"></i>
                     <span>Orders</span>
                 </div>
-                <div class="sidebar-item flex items-center px-4 py-3 rounded-xl cursor-pointer text-gray-600 dark:text-gray-400" data-target="certificates">
-                    <i class="fas fa-award w-5 mr-3 text-center"></i>
-                    <span>Certificates</span>
-                </div>
                 <div class="sidebar-item flex items-center px-4 py-3 rounded-xl cursor-pointer text-gray-600 dark:text-gray-400" data-target="blog">
                     <i class="fas fa-pen-nib w-5 mr-3 text-center"></i>
                     <span>Blog</span>
@@ -403,51 +399,6 @@
                                         <td colspan="7" class="text-center py-12 text-gray-500 dark:text-gray-400">
                                             <i class="fas fa-spinner fa-spin text-3xl mb-3 text-blue-500"></i>
                                             <p>Loading orders...</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="certificates" class="page-content hidden">
-                    <!-- Header -->
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Certificate Management</h2>
-                        <p class="text-gray-500 dark:text-gray-400 mt-1">View and manage all issued certificates</p>
-                    </div>
-
-                    <!-- Certificates Table Card -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <!-- Filter Bar -->
-                        <div class="p-5 border-b border-gray-100 dark:border-gray-700">
-                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">All Certificates</h3>
-                                <div class="relative">
-                                    <input type="text" id="certificate-search" placeholder="Search certificates..." class="bg-gray-50 dark:bg-gray-700 border-0 dark:text-gray-200 rounded-xl px-4 py-2.5 pl-10 w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <i class="fas fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
-                                        <th class="px-5 py-4">Student</th>
-                                        <th class="px-5 py-4">Email</th>
-                                        <th class="px-5 py-4">Course</th>
-                                        <th class="px-5 py-4">Issue Date</th>
-                                        <th class="px-5 py-4">Certificate ID</th>
-                                        <th class="px-5 py-4 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="certificates-table-body" class="divide-y divide-gray-100 dark:divide-gray-700">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-12 text-gray-500 dark:text-gray-400">
-                                            <i class="fas fa-spinner fa-spin text-3xl mb-3 text-blue-500"></i>
-                                            <p>Loading certificates...</p>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -40,7 +40,7 @@ const createBlogPost = async (req, res) => {
             authorName: user.name
         };
 
-        const newBlog = await Blog.create(blogData);
+        const newBlog = await Blog.create(blogData); // gọi mdoel Blog.create
 
         res.status(201).json({
             success: true,
@@ -104,7 +104,7 @@ const getBlogPostBySlug = async (req, res) => {
         const { slug } = req.params;
         let blog;
 
-        // Try finding by slug first
+        // tim bằng slug trước
         blog = await Blog.findBySlug(slug);
 
         // If not found by slug, try by ID

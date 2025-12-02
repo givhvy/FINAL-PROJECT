@@ -7,7 +7,7 @@
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user'));
 
-let quill; // Quill editor instance
+let quill; // Quill editor instance // chạy quill editor
 let courseId = null;
 let currentEditingContentId = null;
 let uploadedVideoUrl = null;

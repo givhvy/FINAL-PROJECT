@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const blogForm = document.getElementById('blog-form');
     const blogModalTitle = document.getElementById('blog-modal-title');
 
-    // Initialize Quill editor for blog content
+    // Initialize Quill editor for blog content , sử dụng quill
     function initBlogEditor() {
         if (typeof Quill !== 'undefined') {
             const toolbarOptions = [

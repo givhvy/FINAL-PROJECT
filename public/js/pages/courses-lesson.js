@@ -386,7 +386,7 @@ async function handleMarkAsComplete(event) {
     try {
         await autoEnrollUser(courseId);
 
-        const response = await fetchWithAuth('/api/progress/lesson', {
+        const response = await fetchWithAuth('/api/progress/lesson', { // gọi tới progress Routes để tới controller, POST to mark lesson as complete
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
